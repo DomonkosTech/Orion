@@ -6,7 +6,7 @@ import './App.css';
 function App() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
+    //i hate niggers i want to rape niggers
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const particlesInit = async (engine: any) => {
         await loadFull(engine);
