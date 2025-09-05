@@ -9,7 +9,7 @@ function App() {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const particlesInit = async (engine: any) => {
-        await loadFull(engine); // runtime works, no TS errors
+        await loadFull(engine);
     };
 
     const handleLogin = (e: React.FormEvent) => {
