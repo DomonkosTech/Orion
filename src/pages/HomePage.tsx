@@ -1,7 +1,7 @@
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { Link } from "react-router-dom";
-import "./HomePage.css"; // separate CSS for page-specific styling
+import "./HomePage.css";
 
 function HomePage() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
