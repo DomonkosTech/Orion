@@ -1,0 +1,106 @@
+.glass-button {
+    padding: 10px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    backdrop-filter: blur(10px) saturate(150%);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.glass-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 6px 40px rgba(0, 0, 0, 0.2);
+}
+
+.glass-button:disabled {
+    background: rgba(255, 255, 255, 0.05);
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+
+
+
+
+
+
+.glass-panel {
+    width: 40%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    padding-bottom: 40px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.2); /* enyhe sötétítés */
+    color: white;
+    backdrop-filter: blur(10px) saturate(150%);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.glass-panel input {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    width: 250px;
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+}
+
+.glass-panel input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Container for the flag and the text */
+.lang-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    font-size: 25px;
+    width: fit-content;
+    padding: 8px;
+    padding-left: 15px;
+    padding-right: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.2);
+    color: white;
+    backdrop-filter: blur(10px) saturate(150%);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    display: flex; /* Aligns items horizontally */
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    overflow: hidden; /* This is crucial for hiding the content */
+}
+
+/* Initially hide the language options */
+.language-options {
+    max-width: 0;
+    opacity: 0;
+    transition: max-width 0.5s ease, opacity 0.3s ease;
+    white-space: nowrap; /* Prevents the text from wrapping */
+    font-size: 15px;
+    font-weight: bold;
+}
+
+/* Show the language options on hover */
+.lang-container:hover .language-options {
+    max-width: 200px; /* A value large enough to show the full text */
+    opacity: 1;
+}
+
+/* Styles for the flag icon */
+.flag-icon {
+    font-size: 25px; /* Adjust as needed */
+    flex-shrink: 0; /* Prevents the flag from shrinking */
+}
