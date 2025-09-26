@@ -17,6 +17,7 @@ const PageTwo: React.FC = () => {
         localStorage.clear()
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const particlesInit = async (engine: any) => {
         await loadFull(engine);
     };
