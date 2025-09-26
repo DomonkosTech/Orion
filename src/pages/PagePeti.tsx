@@ -60,7 +60,7 @@ const PageTwo: React.FC = () => {
             {/* Glass overlay */}
             <div className="glass-overlay"></div>
 
-            {/* Page contentb    */}
+            {/* Page content */}
             <div className="homepage-content" >
                 <div className="lang-container">
                     <div className="language-options">
