@@ -1,25 +1,33 @@
-import React, { useState } from "react";
+import React, {useCallback, useState} from "react";
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import "./HomePage.css";
-import "./button.css";
-const PageTwo: React.FC = () => {
+import { useNavigate } from "react-router-dom";
+
+const LoginPage: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleLogin = () => {
-        localStorage.setItem("email", email);
-        localStorage.setItem("password", password);
-        window.location.href = "/domonkos";
+        // simple mock login (you can replace this with backend validation later)
+        if (email.trim() && password.trim()) {
+            localStorage.setItem("loggedIn", "true");
+            localStorage.setItem("email", email);
+            navigate("/"); // redirect to HomePage.tsx
+        }
     };
 
     const handleRegister = () => {
-        localStorage.clear()
+        localStorage.clear();
+        alert("Registration placeholder — not yet implemented.");
     };
 
-    const particlesInit = async (engine: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const particlesInit = useCallback(async (engine: any) => {
         await loadFull(engine);
-    };
+    }, []);
+
 
     return (
         <div className="homepage-container">
@@ -31,14 +39,20 @@ const PageTwo: React.FC = () => {
                     background: { color: { value: "#000000" } },
                     fpsLimit: 60,
                     particles: {
-                        number: { value: 0 }, // random részecskéket nem generálunk
+                        number: { value: 0 },
                         shape: { type: "circle" },
-                        size: { value: 300, animation: { enable: true, speed: 1, minimumValue: 450 } },
-                        opacity: { value: 0.25, animation: { enable: true, speed: 0.3, minimumValue: 0.1 } },
+                        size: {
+                            value: 300,
+                            animation: { enable: true, speed: 1, minimumValue: 450 },
+                        },
+                        opacity: {
+                            value: 0.25,
+                            animation: { enable: true, speed: 0.3, minimumValue: 0.1 },
+                        },
                         move: {
-                            enable: false,      // engedélyezzük a mozgást
-                            speed: 0.1,        // lassú mozgás
-                            straight: false,   // kicsit kanyargós mozgás
+                            enable: false,
+                            speed: 0.1,
+                            straight: false,
                             outModes: { default: "out" },
                         },
                         shadow: { enable: true, color: "#1e90ff", blur: 100 },
@@ -61,7 +75,7 @@ const PageTwo: React.FC = () => {
             <div className="glass-overlay"></div>
 
             {/* Page content */}
-            <div className="homepage-content" >
+            <div className="homepage-content">
                 <div className="lang-container">
                     <div className="language-options">
                         <p>válassz nyelvet</p>
@@ -69,24 +83,31 @@ const PageTwo: React.FC = () => {
                     <div className="flag-icon">
                         <span role="img" aria-label="Magyar zászló">🇭🇺</span>
                     </div>
-
                 </div>
+
                 <div className="glass-panel">
                     <h1>Belépés</h1>
 
-                    <div style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        gap: "10px",
-                        marginTop: "20px"
-                    }}>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: "10px",
+                            marginTop: "20px",
+                        }}
+                    >
                         <input
                             type="email"
                             placeholder="Email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            style={{ padding: "10px", borderRadius: "5px", border: "none", width: "250px" }}
+                            style={{
+                                padding: "10px",
+                                borderRadius: "5px",
+                                border: "none",
+                                width: "250px",
+                            }}
                         />
 
                         <input
@@ -94,9 +115,14 @@ const PageTwo: React.FC = () => {
                             placeholder="Jelszó"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            style={{ padding: "10px", borderRadius: "5px", border: "none", width: "250px", }}
+                            style={{
+                                padding: "10px",
+                                borderRadius: "5px",
+                                border: "none",
+                                width: "250px",
+                            }}
                         />
-                        <br/>
+                        <br />
 
                         <button
                             onClick={handleLogin}
@@ -106,13 +132,9 @@ const PageTwo: React.FC = () => {
                             Belépés
                         </button>
 
-                        <button
-                            onClick={handleRegister}
-                            className="glass-button"
-                        >
+                        <button onClick={handleRegister} className="glass-button">
                             Regisztráció
                         </button>
-
                     </div>
                 </div>
             </div>
@@ -120,6 +142,4 @@ const PageTwo: React.FC = () => {
     );
 };
 
-export default PageTwo;
-
-
+export default LoginPage;
