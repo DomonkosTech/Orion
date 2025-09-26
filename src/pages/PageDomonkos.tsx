@@ -5,7 +5,7 @@ function PageDomonkos() {
     // Score
     const [score, setScore] = useState(0);
 
-    // Upgrades asdasda asdasdasasdasdsadsadasask
+    // Upgrades asdasda asdasdasasdasdsadsadasaskdsadas
     const [flatBonus, setFlatBonus] = useState(1);
     const [flatCost, setFlatCost] = useState(10);
 
