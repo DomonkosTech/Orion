@@ -1,8 +1,6 @@
-import React, {useCallback, useState} from "react";
-import Particles from "react-tsparticles";
-import { loadFull } from "tsparticles";
-import "./HomePage.css";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./LoginPage.css";
 
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -19,125 +17,86 @@ const LoginPage: React.FC = () => {
     };
 
     const handleRegister = () => {
-        localStorage.clear();
-        alert("Registration placeholder — not yet implemented.");
+        navigate("/register");
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const particlesInit = useCallback(async (engine: any) => {
-        await loadFull(engine);
-    }, []);
-
-
     return (
-        <div className="homepage-container">
-            {/* Background particles */}
-            <Particles
-                id="tsparticles"
-                init={particlesInit}
-                options={{
-                    background: { color: { value: "#000000" } },
-                    fpsLimit: 60,
-                    particles: {
-                        number: { value: 0 },
-                        shape: { type: "circle" },
-                        size: {
-                            value: 300,
-                            animation: { enable: true, speed: 1, minimumValue: 450 },
-                        },
-                        opacity: {
-                            value: 0.25,
-                            animation: { enable: true, speed: 0.3, minimumValue: 0.1 },
-                        },
-                        move: {
-                            enable: false,
-                            speed: 0.1,
-                            straight: false,
-                            outModes: { default: "out" },
-                        },
-                        shadow: { enable: true, color: "#1e90ff", blur: 100 },
-                    },
-                    manualParticles: [
-                        {
-                            position: { x: 60, y: 0 },
-                            options: { color: { value: "#0a58f7" }, size: { value: 550 } },
-                        },
-                        {
-                            position: { x: 25, y: 86 },
-                            options: { color: { value: "#1e90ff" }, size: { value: 500 } },
-                        },
-                    ],
-                    detectRetina: true,
-                }}
-            />
+        <div className="login-container">
+            {/* Header */}
+            <header className="login-header">
+                <div className="logo">ProfiPortál</div>
+                <nav className="navigation">
+                    <button onClick={() => navigate("/")} className="nav-btn">Főoldal</button>
+                </nav>
+            </header>
 
-            {/* Glass overlay */}
-            <div className="glass-overlay"></div>
+            {/* Main Content */}
+            <div className="login-content">
+                <div className="login-card">
+                    <h1>Bejelentkezés</h1>
+                    <p className="login-subtitle">Üdvözöljük újra a ProfiPortál-on</p>
 
-            {/* Page content */}
-            <div className="homepage-content">
-                <div className="lang-container">
-                    <div className="language-options">
-                        <p>válassz nyelvet</p>
-                    </div>
-                    <div className="flag-icon">
-                        <span role="img" aria-label="Magyar zászló">🇭🇺</span>
-                    </div>
-                </div>
+                    <div className="login-form">
+                        <div className="input-group">
+                            <label htmlFor="email">Email cím</label>
+                            <input
+                                id="email"
+                                type="email"
+                                placeholder="email@pelda.hu"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="form-input"
+                            />
+                        </div>
 
-                <div className="glass-panel">
-                    <h1>Belépés</h1>
+                        <div className="input-group">
+                            <label htmlFor="password">Jelszó</label>
+                            <input
+                                id="password"
+                                type="password"
+                                placeholder="••••••••"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="form-input"
+                            />
+                        </div>
 
-                    <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            gap: "10px",
-                            marginTop: "20px",
-                        }}
-                    >
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            style={{
-                                padding: "10px",
-                                borderRadius: "5px",
-                                border: "none",
-                                width: "250px",
-                            }}
-                        />
-
-                        <input
-                            type="password"
-                            placeholder="Jelszó"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            style={{
-                                padding: "10px",
-                                borderRadius: "5px",
-                                border: "none",
-                                width: "250px",
-                            }}
-                        />
-                        <br />
+                        <div className="login-options">
+                            <label className="checkbox-label">
+                                <input type="checkbox" />
+                                <span className="checkmark"></span>
+                                Emlékezz rám
+                            </label>
+                            <a href="#" className="forgot-password">Elfelejtett jelszó?</a>
+                        </div>
 
                         <button
                             onClick={handleLogin}
                             disabled={email.trim().length < 1 || password.trim().length < 1}
-                            className="glass-button"
+                            className="login-btn primary"
                         >
-                            Belépés
+                            Bejelentkezés
                         </button>
 
-                        <button onClick={handleRegister} className="glass-button">
-                            Regisztráció
+                        <div className="divider">
+                            <span>vagy</span>
+                        </div>
+
+                        <button onClick={handleRegister} className="login-btn secondary">
+                            Új fiók létrehozása
                         </button>
+                    </div>
+
+                    <div className="login-footer">
+                        <p>Problémád van a bejelentkezéssel? <a href="#">Segítségkérés</a></p>
                     </div>
                 </div>
             </div>
+
+            {/* Simple Footer */}
+            <footer className="login-footer-bottom">
+                <p>© 2025 ProfiPortál. Minden jog fenntartva.</p>
+            </footer>
         </div>
     );
 };
