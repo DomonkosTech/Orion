@@ -1,102 +1,96 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./LoginPage.css";
+import { supabase } from "../supabaseClient";
+import bcrypt from "bcryptjs";
 
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleLogin = () => {
-        // simple mock login (you can replace this with backend validation later)
-        if (email.trim() && password.trim()) {
-            localStorage.setItem("loggedIn", "true");
-            localStorage.setItem("email", email);
-            navigate("/"); // redirect to HomePage.tsx
+    const handleLogin = async () => {
+        if (!email.trim() || !password.trim()) {
+            alert("Kérlek, töltsd ki mindkét mezőt!");
+            return;
         }
+
+        // 1️⃣ Felhasználó lekérése email alapján
+        const { data: user, error: userError } = await supabase
+            .from("users")
+            .select("id")
+            .eq("email", email)
+            .maybeSingle();
+
+        if (userError) {
+            console.error("Supabase hiba:", userError);
+        }
+
+        if (!user) {
+            alert("Nincs ilyen email a rendszerben!");
+            return;
+        }
+
+        // 2️⃣ Jelszó-hash lekérése
+        const { data: credentials, error: credError } = await supabase
+            .from("user_credentials")
+            .select("password_hash")
+            .eq("user_id", user.id)
+            .maybeSingle();
+
+        if (credError) {
+            console.error("Supabase hiba:", credError);
+        }
+
+        if (!credentials) {
+            alert("Ehhez a felhasználóhoz nincs jelszó beállítva!");
+            return;
+        }
+
+        // 3️⃣ Jelszó ellenőrzése
+        const match = await bcrypt.compare(password, credentials.password_hash);
+
+        if (!match) {
+            alert("Hibás jelszó!");
+            return;
+        }
+
+        alert("Sikeres bejelentkezés!");
+        navigate("/");
     };
+
 
     const handleRegister = () => {
         navigate("/register");
     };
 
     return (
-        <div className="login-container">
-            {/* Header */}
-            <header className="login-header">
-                <div className="logo">ProfiPortál</div>
-                <nav className="navigation">
-                    <button onClick={() => navigate("/")} className="nav-btn">Főoldal</button>
-                </nav>
-            </header>
+        <div>
+            <h1>Bejelentkezés</h1>
 
-            {/* Main Content */}
-            <div className="login-content">
-                <div className="login-card">
-                    <h1>Bejelentkezés</h1>
-                    <p className="login-subtitle">Üdvözöljük újra a ProfiPortál-on</p>
-
-                    <div className="login-form">
-                        <div className="input-group">
-                            <label htmlFor="email">Email cím</label>
-                            <input
-                                id="email"
-                                type="email"
-                                placeholder="email@pelda.hu"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="form-input"
-                            />
-                        </div>
-
-                        <div className="input-group">
-                            <label htmlFor="password">Jelszó</label>
-                            <input
-                                id="password"
-                                type="password"
-                                placeholder="••••••••"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                className="form-input"
-                            />
-                        </div>
-
-                        <div className="login-options">
-                            <label className="checkbox-label">
-                                <input type="checkbox" />
-                                <span className="checkmark"></span>
-                                Emlékezz rám
-                            </label>
-                            <a href="#" className="forgot-password">Elfelejtett jelszó?</a>
-                        </div>
-
-                        <button
-                            onClick={handleLogin}
-                            disabled={email.trim().length < 1 || password.trim().length < 1}
-                            className="login-btn primary"
-                        >
-                            Bejelentkezés
-                        </button>
-
-                        <div className="divider">
-                            <span>vagy</span>
-                        </div>
-
-                        <button onClick={handleRegister} className="login-btn secondary">
-                            Új fiók létrehozása
-                        </button>
-                    </div>
-
-                    <div className="login-footer">
-                        <p>Problémád van a bejelentkezéssel? <a href="#">Segítségkérés</a></p>
-                    </div>
-                </div>
+            <div>
+                <label>Email:</label>
+                <input
+                    type="email"
+                    placeholder="email@pelda.hu"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                />
             </div>
 
-            {/* Simple Footer */}
-            <footer className="login-footer-bottom">
-                <p>© 2025 ProfiPortál. Minden jog fenntartva.</p>
-            </footer>
+            <div>
+                <label>Jelszó:</label>
+                <input
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                />
+            </div>
+
+            <div>
+                <button onClick={handleLogin}>Bejelentkezés</button>
+                <button onClick={handleRegister}>Regisztráció</button>
+            </div>
         </div>
     );
 };
