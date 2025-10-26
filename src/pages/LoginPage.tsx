@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "../supabaseClient";
-import bcrypt from "bcryptjs";
+
 
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -14,49 +13,28 @@ const LoginPage: React.FC = () => {
             return;
         }
 
-        // 1️⃣ Felhasználó lekérése email alapján
-        const { data: user, error: userError } = await supabase
-            .from("users")
-            .select("id")
-            .eq("email", email)
-            .maybeSingle();
+        try {
+            const res = await fetch("http://localhost:4000/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            });
 
-        if (userError) {
-            console.error("Supabase hiba:", userError);
+            const data = await res.json();
+
+            if (!res.ok) {
+                alert(data.error || "Hiba a bejelentkezés során");
+                return;
+            }
+
+            alert("Sikeres bejelentkezés!");
+            navigate("/");
+        } catch (err) {
+            console.error(err);
+            alert("Hálózati hiba történt");
         }
-
-        if (!user) {
-            alert("Nincs ilyen email a rendszerben!");
-            return;
-        }
-
-        // 2️⃣ Jelszó-hash lekérése
-        const { data: credentials, error: credError } = await supabase
-            .from("user_credentials")
-            .select("password_hash")
-            .eq("user_id", user.id)
-            .maybeSingle();
-
-        if (credError) {
-            console.error("Supabase hiba:", credError);
-        }
-
-        if (!credentials) {
-            alert("Ehhez a felhasználóhoz nincs jelszó beállítva!");
-            return;
-        }
-
-        // 3️⃣ Jelszó ellenőrzése
-        const match = await bcrypt.compare(password, credentials.password_hash);
-
-        if (!match) {
-            alert("Hibás jelszó!");
-            return;
-        }
-
-        alert("Sikeres bejelentkezés!");
-        navigate("/");
     };
+
 
 
     const handleRegister = () => {
