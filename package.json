@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "server": "tsx src/server.ts",
-    "dev": "concurrently \"vite\" \"tsx src/server.ts\"",
+    "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -14,6 +14,7 @@
     "@supabase/supabase-js": "^2.76.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
