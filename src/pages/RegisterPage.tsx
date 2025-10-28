@@ -8,15 +8,18 @@ const RegisterPage: React.FC = () => {
         password: "",
         confirmPassword: "",
         phoneNumber: "",
-        birthPlace: "",
         birthDate: "",
+        birthPlace: "",
         address: "",
+        personalId: "",
+        addressCardNumber: "",
         taxNumber: "",
         nationality: "",
-        shortBio: "",
         qualifications: "",
+        shortBio: "",
         termsAccepted: false
     });
+
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -91,6 +94,24 @@ const RegisterPage: React.FC = () => {
                 alert(credentialsData.error || "Hiba a jelszó mentése során");
                 return;
             }
+
+            const documentsResponse = await fetch("http://localhost:4000/api/register/documents", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    user_id: userData.userId,
+                    personal_id: formData.personalId,
+                    address_card_number: formData.addressCardNumber
+                }),
+            })
+
+            const documentsData = await documentsResponse.json();
+
+            if (!documentsResponse.ok) {
+                alert(documentsData.error || "Hiba a személyes adatok mentése során");
+                return;
+            }
+
 
             alert("Sikeres regisztráció! Most már bejelentkezhet.");
             navigate("/login");
@@ -191,6 +212,30 @@ const RegisterPage: React.FC = () => {
             </div>
 
             <div>
+                <label htmlFor="personalId">Személyi szám</label>
+                <input
+                    id="personalId"
+                    name="personalId"
+                    type="text"
+                    placeholder="123456AB"
+                    value={formData.personalId}
+                    onChange={handleInputChange}
+                />
+            </div>
+
+            <div>
+                <label htmlFor="addressCardNumber">Lakcímkártya szám</label>
+                <input
+                    id="addressCardNumber"
+                    name="addressCardNumber"
+                    type="text"
+                    placeholder="AA1234567"
+                    value={formData.addressCardNumber}
+                    onChange={handleInputChange}
+                />
+            </div>
+
+            <div>
                 <label htmlFor="taxNumber">Adószám</label>
                 <input
                     id="taxNumber"
@@ -263,6 +308,7 @@ const RegisterPage: React.FC = () => {
                 Már van fiókja? <a href="#" onClick={() => navigate("/login")}>Jelentkezzen be itt</a>
             </p>
         </form>
+
 
     );
 };
