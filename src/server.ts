@@ -114,6 +114,34 @@ app.post("/api/register/credentials", async (req, res) => {
     }
 });
 
+app.post("/api/register/documents", async (req, res) => {
+    const { user_id, personal_id, address_card_number } = req.body;
+    if (!user_id || !personal_id || !address_card_number) {
+        return res.status(400).json({ error: "personal_id and address_card_number are required" });
+    }
+
+    if (!ENCRYPTION_KEY) {
+        return res.status(500).json({ error: "Encryption key not configured" });
+    }
+
+    try {
+        // Use raw SQL query with pgp_sym_encrypt
+        const { error } = await supabase.rpc('insert_encrypted_documents', {
+            p_user_id: user_id,
+            p_personal_id: personal_id,
+            p_address_card_number: address_card_number,
+            p_encryption_key: ENCRYPTION_KEY
+        });
+
+        if (error) throw error;
+        res.json({ success: true });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "user documents setup failed" });
+    }
+})
+
 
 
 // Start server
