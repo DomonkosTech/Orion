@@ -9,6 +9,15 @@ const LoginPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
+    async function getUserInfo() {
+        const res = await fetch("http://localhost:4000/api/user-info", {
+            credentials: "include", // Ez is fontos!
+        });
+        const data = await res.json();
+        console.log("User info:", data);
+    }
+
+
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
@@ -23,18 +32,26 @@ const LoginPage: React.FC = () => {
             const res = await fetch("http://localhost:4000/api/user-login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
+                credentials: "include", // Ez fontos a cookie-hoz!
+                body: JSON.stringify({ email, password, rememberMe }),
             });
 
             const data = await res.json();
 
-            if (!res.ok) {
-                alert(data.error || "Hiba a bejelentkezés során");
-                return;
+
+            if (data.success)
+            {
+                alert("Sikeres bejelentkezés!");
+                await getUserInfo();
+                navigate("/");
+
+            }
+            else{
+                alert(data.error || "Hiba történt")
             }
 
-            alert("Sikeres bejelentkezés!");
-            navigate("/");
+
+
 
         } catch (err) {
             console.error(err);
