@@ -79,6 +79,7 @@ app.post("/api/user-login", async (req, res) => {
         console.log("Remember me enabled");
         cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 hét
     }
+
     // ha rememberMe === false -> nem adunk meg maxAge-et => session cookie lesz
 
     res.cookie("auth_token", token, cookieOptions);
