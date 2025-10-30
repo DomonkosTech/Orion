@@ -105,6 +105,8 @@ const CompanyRegisterPage: React.FC = () => {
 
     return (
         <form onSubmit={handleRegister}>
+            <h1>cég regisztráció</h1>
+
             <div>
                 <label>Email cím *</label>
                 <input type="email" name="email" value={formData.email} onChange={handleInputChange} required />

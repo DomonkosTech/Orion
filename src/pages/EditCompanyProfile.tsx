@@ -42,7 +42,7 @@ const EditCompanyProfile: React.FC = () => {
     useEffect(() => {
         const fetchCompany = async () => {
             try {
-                const res = await fetch("http://localhost:4000/api/get-company-info", {
+                const res = await fetch("http://localhost:4000/api/company/getinfo", {
                     credentials: "include",
                 });
                 const data = await res.json();
@@ -63,7 +63,7 @@ const EditCompanyProfile: React.FC = () => {
 
     const handleSave = async () => {
         try {
-            const res = await fetch("http://localhost:4000/api/update-company-info", {
+            const res = await fetch("http://localhost:4000/api/company/updateinfo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
