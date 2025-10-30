@@ -3,7 +3,7 @@ import HomePage from "./pages/HomePage.tsx";
 import LoginPage from "./pages/LoginPage.tsx";
 import RegisterPage from "./pages/RegisterPage.tsx"; // Add this import
 import IsLoggedIn from "./IsLoggedIn.tsx";
-import Profile_editor from "./pages/profile-editor.tsx";
+import EditUserProfile from "./pages/EditUserProfile.tsx";
 
 function App() {
     return (
@@ -15,7 +15,7 @@ function App() {
                     </IsLoggedIn>
                 }
                 />
-                <Route path="/profile_editor" element={<Profile_editor />}/>
+                <Route path="/EditUserProfile" element={<EditUserProfile />}/>
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} /> {/* Add this route */}
             </Routes>

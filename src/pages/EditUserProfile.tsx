@@ -17,11 +17,31 @@ interface Documents {
     address_card_number: string;
 }
 
-const ProfileEditor: React.FC = () => {
+const handleLogout = async () => {
+    try {
+        const res = await fetch("http://localhost:4000/api/logout", {
+            method: "POST",
+            credentials: "include",
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert("Sikeresen kijelentkeztél!");
+            window.location.href = "/login"; // átirányítás login oldalra
+        }
+    } catch (err) {
+        console.error("Logout error:", err);
+        alert("Hiba történt a kijelentkezés során!");
+    }}
+
+
+const EditUserProfile: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [documents, setDocuments] = useState<Documents | null>(null);
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false); // 🆕 szerkesztés állapot
+
+
+
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -236,8 +256,15 @@ const ProfileEditor: React.FC = () => {
                     )}
                 </div>
             </form>
+            <br/>
+            <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-500 text-white rounded-md"
+            >
+                Kijelentkezés
+            </button>
         </div>
     );
 };
 
-export default ProfileEditor;
+export default EditUserProfile;

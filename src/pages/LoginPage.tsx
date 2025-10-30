@@ -43,7 +43,7 @@ const LoginPage: React.FC = () => {
             {
                 alert("Sikeres bejelentkezés!");
                 await getUserInfo();
-                navigate("/");
+                navigate("/EditUserProfile");
 
             }
             else{
