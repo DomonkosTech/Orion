@@ -9,13 +9,7 @@ const UserLoginPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    async function getUserInfo() {
-        const res = await fetch("http://localhost:4000/api/user-info", {
-            credentials: "include", // Ez is fontos!
-        });
-        const data = await res.json();
-        console.log("User info:", data);
-    }
+
 
 
     const handleLogin = async (e: React.FormEvent) => {
@@ -29,7 +23,7 @@ const UserLoginPage: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const res = await fetch("http://localhost:4000/api/user-login", {
+            const res = await fetch("http://localhost:4000/api/user/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include", // Ez fontos a cookie-hoz!
@@ -42,7 +36,6 @@ const UserLoginPage: React.FC = () => {
             if (data.success)
             {
                 alert("Sikeres bejelentkezés!");
-                await getUserInfo();
                 navigate("/EditUserProfile");
 
             }
@@ -65,6 +58,10 @@ const UserLoginPage: React.FC = () => {
         navigate("/UserRegisterPage");
     };
 
+    const handleswitch = () => {
+        navigate("/CompanyLoginPage");
+    };
+
     const handleForgotPassword = () => {
         // Implement forgot password functionality
         alert("Elfelejtett jelszó funkció hamarosan elérhető!");
@@ -72,6 +69,7 @@ const UserLoginPage: React.FC = () => {
 
     return (
         <form onSubmit={handleLogin}>
+            <h1>Felhasználó bejelentkezés</h1>
             <div>
                 <label htmlFor="email">Email cím</label>
                 <input
@@ -124,6 +122,9 @@ const UserLoginPage: React.FC = () => {
                     Regisztráljon itt
                 </a>
             </p>
+            <button type="button" onClick={handleswitch}>
+                cég nézet
+            </button>
         </form>
 
     );

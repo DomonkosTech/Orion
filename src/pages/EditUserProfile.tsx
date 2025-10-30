@@ -50,7 +50,7 @@ const EditUserProfile: React.FC = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch("http://localhost:4000/api/get-user-info", {
+                const res = await fetch("http://localhost:4000/api/user/getinfo", {
                     credentials: "include",
                 });
                 const data = await res.json();
@@ -78,7 +78,7 @@ const EditUserProfile: React.FC = () => {
                 documents,
             };
 
-            const res = await fetch("http://localhost:4000/api/update-user-info", {
+            const res = await fetch("http://localhost:4000/api/user/updateinfo", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",

@@ -30,8 +30,13 @@ app.use(cors({
 
 
 
-// Login endpoint
-app.post("/api/user-login", async (req, res) => {
+///////////////////////////////////////////////////
+//          user login and register              //
+///////////////////////////////////////////////////
+
+
+//login endpoint
+app.post("/api/user/login", async (req, res) => {
     const { email, password, rememberMe } = req.body;
 
     if (!email || !password)
@@ -63,11 +68,9 @@ app.post("/api/user-login", async (req, res) => {
         return res.status(500).json({ error: "JWT secret not configured" });
     }
 
-    // Token élettartam
     const expiresIn = rememberMe ? "7d" : "15m";
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn });
 
-    // Cookie beállítása
     const cookieOptions: CookieOptions = {
         httpOnly: true,
         secure: false,//process.env.NODE_ENV === "production"
@@ -75,97 +78,17 @@ app.post("/api/user-login", async (req, res) => {
     };
 
     if (rememberMe) {
-        // 1 hétig élő cookie
         console.log("Remember me enabled");
         cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 hét
     }
-
-    // ha rememberMe === false -> nem adunk meg maxAge-et => session cookie lesz
 
     res.cookie("auth_token", token, cookieOptions);
     res.json({ success: true, message: "Login successful" });
 });
 
 
-
-
-app.post("/api/company-login", async (req, res) => {
-    const { email, password, rememberMe } = req.body;
-
-    if (!email || !password)
-        return res.status(400).json({ error: "Missing fields" });
-
-    const { data: company } = await supabase
-        .from("companies")
-        .select("id")
-        .eq("email", email)
-        .maybeSingle();
-
-    if (!company)
-        return res.status(404).json({ error: "No user found" });
-
-    const { data: credentials } = await supabase
-        .from("company_credentials")
-        .select("password_hash")
-        .eq("company_id", company.id)
-        .maybeSingle();
-
-    if (!credentials)
-        return res.status(404).json({ error: "No password set" });
-
-    const match = await bcrypt.compare(password, credentials.password_hash);
-    if (!match)
-        return res.status(401).json({ error: "Invalid password" });
-
-    if (!JWT_SECRET) {
-        return res.status(500).json({ error: "JWT secret not configured" });
-    }
-
-    // Token élettartam
-    const expiresIn = rememberMe ? "7d" : "15m";
-    const token = jwt.sign({ companyId: company.id }, JWT_SECRET, { expiresIn });
-
-    // Cookie beállítása
-    const cookieOptions: CookieOptions = {
-        httpOnly: true,
-        secure: false,//process.env.NODE_ENV === "production"
-        sameSite: "strict" as const
-    };
-
-    if (rememberMe) {
-        // 1 hétig élő cookie
-        console.log("Remember me enabled");
-        cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 hét
-    }
-
-    // ha rememberMe === false -> nem adunk meg maxAge-et => session cookie lesz
-
-    res.cookie("auth_token", token, cookieOptions);
-    res.json({ success: true, message: "Login successful" });
-});
-
-
-
-
-
-app.post("/api/logout", (_req, res) => {
-    try {
-        // A 'auth_token' cookie törlése
-        res.clearCookie("auth_token", {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === "production",
-            sameSite: "lax",
-        });
-
-        res.json({ success: true, message: "Sikeres kijelentkezés" });
-    } catch (err) {
-        console.error("Logout error:", err);
-        res.status(500).json({ error: "Kijelentkezés sikertelen" });
-    }
-});
-
-
-app.get("/api/get-user-info", async (req, res) => {
+//get user info endpoint
+app.get("/api/user/getinfo", async (req, res) => {
     const token = req.cookies.auth_token;
     if (!token)
         return res.status(401).json({ error: "Missing token" });
@@ -205,13 +128,14 @@ app.get("/api/get-user-info", async (req, res) => {
             documents: documents,
         });
 
-    } catch (err) {
-        console.error("get-user-info error:", err);
+    } catch {
         res.status(401).json({ error: "Invalid or expired token" });
     }
 });
 
-app.post("/api/update-user-info", async (req, res) => {
+
+//update user info endpoint
+app.post("/api/user/updateinfo", async (req, res) => {
     const token = req.cookies.auth_token;
     if (!token) return res.status(401).json({ error: "Missing token" });
     if (!JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
@@ -223,7 +147,6 @@ app.post("/api/update-user-info", async (req, res) => {
         const data = req.body;
         const documents = data.documents;
 
-        // Update users táblát
         const { data: updatedUser, error: userError } = await supabase
             .from("users")
             .update({
@@ -243,7 +166,6 @@ app.post("/api/update-user-info", async (req, res) => {
 
         if (userError) throw userError;
 
-        // Update dokumentumok
         if (documents) {
             if (!ENCRYPTION_KEY) return res.status(500).json({ error: "Encryption key not configured" });
 
@@ -270,37 +192,8 @@ app.post("/api/update-user-info", async (req, res) => {
 });
 
 
-
-
-
-
-
-
-
-
-// User info endpoint
-app.get("/api/user-info", async (req, res) => {
-    const token = req.cookies.auth_token;
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET) {
-        return res.status(500).json({ error: "JWT secret not configured" });
-    }
-
-    try {
-        const decoded = jwt.verify(token, JWT_SECRET);
-        res.json({ success: true, decoded });
-    } catch (err) {
-        console.error("JWT verify error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
-    }
-});
-
-
-
-
-app.post("/api/register", async (req, res) => {
+// register endpoint
+app.post("/api/user/register", async (req, res) => {
     const { email, phone_number, birth_place, birth_date, address, tax_number, nationality, terms_accepted, short_bio, qualifications } = req.body;
 
     if (!email || !terms_accepted) {
@@ -337,7 +230,9 @@ app.post("/api/register", async (req, res) => {
     }
 });
 
-app.post("/api/register/credentials", async (req, res) => {
+
+// register credentials endpoint
+app.post("/api/user/register/credentials", async (req, res) => {
     const { user_id, password } = req.body;
 
     if (!user_id || !password) {
@@ -359,7 +254,9 @@ app.post("/api/register/credentials", async (req, res) => {
     }
 });
 
-app.post("/api/register/documents", async (req, res) => {
+
+// register documents endpoint
+app.post("/api/user/register/documents", async (req, res) => {
     const { user_id, personal_id, address_card_number } = req.body;
     if (!user_id || !personal_id || !address_card_number) {
         return res.status(400).json({ error: "personal_id and address_card_number are required" });
@@ -370,7 +267,6 @@ app.post("/api/register/documents", async (req, res) => {
     }
 
     try {
-        // Use rvaw SQL query with pgp_sym_encrypt
         const { error } = await supabase.rpc('insert_encrypted_documents', {
             p_user_id: user_id,
             p_personal_id: personal_id,
@@ -388,6 +284,67 @@ app.post("/api/register/documents", async (req, res) => {
 })
 
 
+
+
+
+///////////////////////////////////////////////////
+//         company login and register            //
+///////////////////////////////////////////////////
+
+
+//login endpoint
+app.post("/api/company/login", async (req, res) => {
+    const { email, password, rememberMe } = req.body;
+
+    if (!email || !password)
+        return res.status(400).json({ error: "Missing fields" });
+
+    const { data: company } = await supabase
+        .from("companies")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle();
+
+    if (!company)
+        return res.status(404).json({ error: "No user found" });
+
+    const { data: credentials } = await supabase
+        .from("company_credentials")
+        .select("password_hash")
+        .eq("company_id", company.id)
+        .maybeSingle();
+
+    if (!credentials)
+        return res.status(404).json({ error: "No password set" });
+
+    const match = await bcrypt.compare(password, credentials.password_hash);
+    if (!match)
+        return res.status(401).json({ error: "Invalid password" });
+
+    if (!JWT_SECRET) {
+        return res.status(500).json({ error: "JWT secret not configured" });
+    }
+
+    const expiresIn = rememberMe ? "7d" : "15m";
+    const token = jwt.sign({ companyId: company.id }, JWT_SECRET, { expiresIn });
+
+    const cookieOptions: CookieOptions = {
+        httpOnly: true,
+        secure: false,//process.env.NODE_ENV === "production"
+        sameSite: "strict" as const
+    };
+
+    if (rememberMe) {
+        console.log("Remember me enabled");
+        cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 hét
+    }
+
+    res.cookie("auth_token", token, cookieOptions);
+    res.json({ success: true, message: "Login successful" });
+});
+
+
+//register endpoint
 app.post("/api/company/register", async (req, res) => {
     const { email,  name, address, tax_number, contact_person_name, activity_scope, website, short_description, phone_number, terms_accepted } = req.body;
     if (!email || !terms_accepted) {
@@ -423,6 +380,8 @@ app.post("/api/company/register", async (req, res) => {
     }
 })
 
+
+//register credentials endpoint
 app.post("/api/company/register/credentials", async (req, res) => {
     const { company_id, password } = req.body;
 
@@ -446,9 +405,8 @@ app.post("/api/company/register/credentials", async (req, res) => {
 });
 
 
-// ... existing code ...
-
-app.get("/api/get-company-info", async (req, res) => {
+//get company info endpoint
+app.get("/api/company/getinfo", async (req, res) => {
     const token = req.cookies.auth_token;
     if (!token)
         return res.status(401).json({ error: "Missing token" });
@@ -479,7 +437,9 @@ app.get("/api/get-company-info", async (req, res) => {
     }
 });
 
-app.post("/api/update-company-info", async (req, res) => {
+
+//update company info endpoint
+app.post("/api/company/updateinfo", async (req, res) => {
     const token = req.cookies.auth_token;
     if (!token) return res.status(401).json({ error: "Missing token" });
     if (!JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
@@ -520,7 +480,48 @@ app.post("/api/update-company-info", async (req, res) => {
     }
 });
 
+
+
+
+///////////////////////////////////////////////////
+//           logout and check auth               //
+///////////////////////////////////////////////////
+
+
+// Logout endpoint
+app.post("/api/logout", (_req, res) => {
+    try {
+        // A 'auth_token' cookie törlése
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+        });
+
+        res.json({ success: true, message: "Sikeres kijelentkezés" });
+    } catch (err) {
+        console.error("Logout error:", err);
+        res.status(500).json({ error: "Kijelentkezés sikertelen" });
+    }
+});
+
+
+// Check auth endpoint
+app.get("/auth/check", (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token) return res.json({ loggedIn: false });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET!);
+        return res.json({ loggedIn: true, user: decoded });
+    } catch {
+        return res.json({ loggedIn: false });
+    }
+});
+
 // ... existing code ...
+
+
 
 
 // Start server

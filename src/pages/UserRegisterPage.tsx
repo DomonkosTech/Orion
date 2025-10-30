@@ -53,7 +53,7 @@ const UserRegisterPage: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const userResponse = await fetch("http://localhost:4000/api/register", {
+            const userResponse = await fetch("http://localhost:4000/api/user/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -78,7 +78,7 @@ const UserRegisterPage: React.FC = () => {
             }
 
             // Then create credentials
-            const credentialsResponse = await fetch("http://localhost:4000/api/register/credentials", {
+            const credentialsResponse = await fetch("http://localhost:4000/api/user/register/credentials", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -94,7 +94,7 @@ const UserRegisterPage: React.FC = () => {
                 return;
             }
 
-            const documentsResponse = await fetch("http://localhost:4000/api/register/documents", {
+            const documentsResponse = await fetch("http://localhost:4000/api/user/register/documents", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -124,6 +124,8 @@ const UserRegisterPage: React.FC = () => {
 
     return (
         <form onSubmit={handleRegister}>
+            <h1>Felhasználó regisztráció</h1>
+
             <div>
                 <label htmlFor="email">Email cím *</label>
                 <input

@@ -23,7 +23,7 @@ const CompanyLoginPage: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const res = await fetch("http://localhost:4000/api/company-login", {
+            const res = await fetch("http://localhost:4000/api/company/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include", // Ez fontos a cookie-hoz!
@@ -58,14 +58,22 @@ const CompanyLoginPage: React.FC = () => {
         navigate("/CompanyRegisterPage");
     };
 
+    const handleswitch = () => {
+        navigate("/UserLoginPage");
+    };
+
     const handleForgotPassword = () => {
         // Implement forgot password functionality
         alert("Elfelejtett jelszó funkció hamarosan elérhető!");
     };
 
     return (
+
         <form onSubmit={handleLogin}>
+            <h1>cég bejelentkezés</h1>
+
             <div>
+
                 <label htmlFor="email">Email cím</label>
                 <input
                     id="email"
@@ -117,6 +125,9 @@ const CompanyLoginPage: React.FC = () => {
                     Regisztráljon itt
                 </a>
             </p>
+            <button type="button" onClick={handleswitch}>
+                felhasználó nézet
+            </button>
         </form>
 
     );
