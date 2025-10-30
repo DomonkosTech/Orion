@@ -90,6 +90,21 @@ app.post("/api/user-login", async (req, res) => {
 
 
 
+app.post("/api/logout", (_req, res) => {
+    try {
+        // A 'auth_token' cookie törlése
+        res.clearCookie("auth_token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+        });
+
+        res.json({ success: true, message: "Sikeres kijelentkezés" });
+    } catch (err) {
+        console.error("Logout error:", err);
+        res.status(500).json({ error: "Kijelentkezés sikertelen" });
+    }
+});
 
 
 app.get("/api/get-user-info", async (req, res) => {
@@ -138,19 +153,63 @@ app.get("/api/get-user-info", async (req, res) => {
     }
 });
 
+app.post("/api/update-user-info", async (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token) return res.status(401).json({ error: "Missing token" });
+    if (!JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
 
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+        const user_id = decoded.userId;
 
+        const data = req.body;
+        const documents = data.documents;
 
+        // Update users táblát
+        const { data: updatedUser, error: userError } = await supabase
+            .from("users")
+            .update({
+                email: data.email,
+                phone_number: data.phone_number,
+                birth_place: data.birth_place,
+                birth_date: data.birth_date,
+                address: data.address,
+                tax_number: data.tax_number,
+                nationality: data.nationality,
+                short_bio: data.short_bio,
+                qualifications: data.qualifications
+            })
+            .eq("id", user_id)
+            .select()
+            .single();
 
+        if (userError) throw userError;
 
+        // Update dokumentumok
+        if (documents) {
+            if (!ENCRYPTION_KEY) return res.status(500).json({ error: "Encryption key not configured" });
 
+            const { error: docError } = await supabase.rpc("update_encrypted_documents", {
+                p_user_id: user_id,
+                p_personal_id: documents.personal_id,
+                p_address_card_number: documents.address_card_number,
+                p_encryption_key: ENCRYPTION_KEY
+            });
 
+            if (docError) throw docError;
+        }
 
+        res.json({
+            success: true,
+            user: updatedUser,
+            documents: documents ? [documents] : []
+        });
 
-
-
-
-
+    } catch (err) {
+        console.error("Update user info error:", err);
+        res.status(500).json({ error: "Update failed" });
+    }
+});
 
 
 
