@@ -86,6 +86,81 @@ app.post("/api/user-login", async (req, res) => {
     res.json({ success: true, message: "Login successful" });
 });
 
+
+
+
+
+
+
+app.get("/api/get-user-info", async (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token)
+        return res.status(401).json({ error: "Missing token" });
+
+    if (!JWT_SECRET)
+        return res.status(500).json({ error: "JWT secret not configured" });
+
+    if (!ENCRYPTION_KEY)
+        return res.status(500).json({ error: "Encryption key not configured" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+        const user_id = decoded.userId;
+
+        const { data: user, error: userError } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", user_id)
+            .single();
+
+        if (userError) throw userError;
+
+        const { data: documents, error: decryptError } = await supabase.rpc(
+            "get_decrypted_documents",
+            {
+                p_user_id: user_id,
+                p_encryption_key: ENCRYPTION_KEY,
+            }
+        );
+
+        if (decryptError) throw decryptError;
+        console.log("Decrypted documents:", documents);
+        // 🔹 Válasz összeállítása
+        res.json({
+            success: true,
+            user,
+            documents: documents,
+        });
+
+    } catch (err) {
+        console.error("get-user-info error:", err);
+        res.status(401).json({ error: "Invalid or expired token" });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // User info endpoint
 app.get("/api/user-info", async (req, res) => {
     const token = req.cookies.auth_token;
