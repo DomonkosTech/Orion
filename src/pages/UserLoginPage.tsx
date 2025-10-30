@@ -62,7 +62,7 @@ const UserLoginPage: React.FC = () => {
     };
 
     const handleRegister = () => {
-        navigate("/register");
+        navigate("/UserRegisterPage");
     };
 
     const handleForgotPassword = () => {

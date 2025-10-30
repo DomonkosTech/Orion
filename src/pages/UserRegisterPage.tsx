@@ -53,7 +53,6 @@ const UserRegisterPage: React.FC = () => {
         setIsLoading(true);
 
         try {
-            // First create user in users table
             const userResponse = await fetch("http://localhost:4000/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -114,7 +113,7 @@ const UserRegisterPage: React.FC = () => {
 
 
             alert("Sikeres regisztráció! Most már bejelentkezhet.");
-            navigate("/login");
+            navigate("/UserLoginPage");
         } catch (err) {
             console.error(err);
             alert("Hálózati hiba történt");
@@ -300,12 +299,12 @@ const UserRegisterPage: React.FC = () => {
                 {isLoading ? "Regisztráció..." : "Regisztráció"}
             </button>
 
-            <button type="button" onClick={() => navigate("/login")}>
+            <button type="button" onClick={() => navigate("/UserLoginPage")}>
                 Bejelentkezés
             </button>
 
             <p>
-                Már van fiókja? <a href="#" onClick={() => navigate("/login")}>Jelentkezzen be itt</a>
+                Már van fiókja? <a href="#" onClick={() => navigate("/UserLoginPage")}>Jelentkezzen be itt</a>
             </p>
         </form>
 

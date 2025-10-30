@@ -89,6 +89,64 @@ app.post("/api/user-login", async (req, res) => {
 
 
 
+app.post("/api/company-login", async (req, res) => {
+    const { email, password, rememberMe } = req.body;
+
+    if (!email || !password)
+        return res.status(400).json({ error: "Missing fields" });
+
+    const { data: company } = await supabase
+        .from("companies")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle();
+
+    if (!company)
+        return res.status(404).json({ error: "No user found" });
+
+    const { data: credentials } = await supabase
+        .from("company_credentials")
+        .select("password_hash")
+        .eq("company_id", company.id)
+        .maybeSingle();
+
+    if (!credentials)
+        return res.status(404).json({ error: "No password set" });
+
+    const match = await bcrypt.compare(password, credentials.password_hash);
+    if (!match)
+        return res.status(401).json({ error: "Invalid password" });
+
+    if (!JWT_SECRET) {
+        return res.status(500).json({ error: "JWT secret not configured" });
+    }
+
+    // Token élettartam
+    const expiresIn = rememberMe ? "7d" : "15m";
+    const token = jwt.sign({ companyId: company.id }, JWT_SECRET, { expiresIn });
+
+    // Cookie beállítása
+    const cookieOptions: CookieOptions = {
+        httpOnly: true,
+        secure: false,//process.env.NODE_ENV === "production"
+        sameSite: "strict" as const
+    };
+
+    if (rememberMe) {
+        // 1 hétig élő cookie
+        console.log("Remember me enabled");
+        cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 hét
+    }
+
+    // ha rememberMe === false -> nem adunk meg maxAge-et => session cookie lesz
+
+    res.cookie("auth_token", token, cookieOptions);
+    res.json({ success: true, message: "Login successful" });
+});
+
+
+
+
 
 app.post("/api/logout", (_req, res) => {
     try {
@@ -386,6 +444,83 @@ app.post("/api/company/register/credentials", async (req, res) => {
         res.status(500).json({ error: "Password setup failed" });
     }
 });
+
+
+// ... existing code ...
+
+app.get("/api/get-company-info", async (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token)
+        return res.status(401).json({ error: "Missing token" });
+
+    if (!JWT_SECRET)
+        return res.status(500).json({ error: "JWT secret not configured" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
+        const company_id = decoded.companyId;
+
+        const { data: company, error: companyError } = await supabase
+            .from("companies")
+            .select("*")
+            .eq("id", company_id)
+            .single();
+
+        if (companyError) throw companyError;
+
+        res.json({
+            success: true,
+            company,
+        });
+
+    } catch (err) {
+        console.error("get-company-info error:", err);
+        res.status(401).json({ error: "Invalid or expired token" });
+    }
+});
+
+app.post("/api/update-company-info", async (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token) return res.status(401).json({ error: "Missing token" });
+    if (!JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: string };
+        const company_id = decoded.companyId;
+
+        const data = req.body;
+
+        const { data: updatedCompany, error: companyError } = await supabase
+            .from("companies")
+            .update({
+                email: data.email,
+                name: data.name,
+                phone_number: data.phone_number,
+                address: data.address,
+                tax_number: data.tax_number,
+                contact_person_name: data.contact_person_name,
+                activity_scope: data.activity_scope,
+                website: data.website,
+                short_description: data.short_description
+            })
+            .eq("id", company_id)
+            .select()
+            .single();
+
+        if (companyError) throw companyError;
+
+        res.json({
+            success: true,
+            company: updatedCompany
+        });
+
+    } catch (err) {
+        console.error("Update company info error:", err);
+        res.status(500).json({ error: "Update failed" });
+    }
+});
+
+// ... existing code ...
 
 
 // Start server

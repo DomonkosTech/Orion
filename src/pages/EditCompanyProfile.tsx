@@ -2,31 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 
-interface User {
+interface Company {
     email: string;
-    phone_number: string;
-    birth_place: string;
-    birth_date: string;
+    name: string;
     address: string;
     tax_number: string;
-    nationality: string;
-    short_bio: string;
-    qualifications: string;
-}
-
-interface Documents {
-    personal_id: string;
-    address_card_number: string;
+    contact_person_name: string;
+    activity_scope: string;
+    website: string;
+    short_description: string;
+    phone_number: string;
 }
 
 
-
-
-const EditUserProfile: React.FC = () => {
-    const [user, setUser] = useState<User | null>(null);
-    const [documents, setDocuments] = useState<Documents | null>(null);
+const EditCompanyProfile: React.FC = () => {
+    const [company, setCompany] = useState<Company | null>(null);
     const [loading, setLoading] = useState(true);
-    const [editMode, setEditMode] = useState(false); // 🆕 szerkesztés állapot
+    const [editMode, setEditMode] = useState(false);
     const navigate = useNavigate();
 
 
@@ -39,24 +31,23 @@ const EditUserProfile: React.FC = () => {
             const data = await res.json();
             if (data.success) {
                 alert("Sikeresen kijelentkeztél!");
-                navigate("/UserLoginPage"); // átirányítás login oldalra
+                navigate("/CompanyLoginPage");
             }
         } catch (err) {
             console.error("Logout error:", err);
             alert("Hiba történt a kijelentkezés során!");
-        }}
-
+        }
+    }
 
     useEffect(() => {
-        const fetchUser = async () => {
+        const fetchCompany = async () => {
             try {
-                const res = await fetch("http://localhost:4000/api/get-user-info", {
+                const res = await fetch("http://localhost:4000/api/get-company-info", {
                     credentials: "include",
                 });
                 const data = await res.json();
                 if (data.success) {
-                    setUser(data.user);
-                    setDocuments(data.documents?.[0] || null);
+                    setCompany(data.company);
                 }
             } catch (err) {
                 console.error("Fetch error:", err);
@@ -64,31 +55,24 @@ const EditUserProfile: React.FC = () => {
                 setLoading(false);
             }
         };
-        fetchUser();
+        fetchCompany();
     }, []);
 
     if (loading) return <p>Betöltés...</p>;
-    if (!user) return <p>Nem található felhasználói adat.</p>;
+    if (!company) return <p>Nem található cég adat.</p>;
 
-    // 🆕 Mentés gomb kezelő
     const handleSave = async () => {
         try {
-            const payload = {
-                ...user,
-                documents,
-            };
-
-            const res = await fetch("http://localhost:4000/api/update-user-info", {
+            const res = await fetch("http://localhost:4000/api/update-company-info", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify(payload),
+                body: JSON.stringify(company),
             });
 
             const data = await res.json();
             if (data.success) {
-                setUser(data.user);
-                setDocuments(data.documents?.[0] || null);
+                setCompany(data.company);
                 setEditMode(false);
                 alert("Sikeres mentés!");
             } else {
@@ -102,16 +86,27 @@ const EditUserProfile: React.FC = () => {
 
     return (
         <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
-            <h2 className="text-2xl font-semibold mb-6 text-center">Profil adatok</h2>
+            <h2 className="text-2xl font-semibold mb-6 text-center">Cég profil adatok</h2>
 
             <form className="grid grid-cols-1 gap-4">
                 <label>
                     <span className="block font-medium">Email:</span>
                     <input
-                        type="text"
-                        value={user.email}
+                        type="email"
+                        value={company.email}
                         readOnly={!editMode}
-                        onChange={(e) => setUser({ ...user, email: e.target.value })}
+                        onChange={(e) => setCompany({ ...company, email: e.target.value })}
+                        className="w-full p-2 border rounded-md"
+                    />
+                </label>
+
+                <label>
+                    <span className="block font-medium">Cég neve:</span>
+                    <input
+                        type="text"
+                        value={company.name}
+                        readOnly={!editMode}
+                        onChange={(e) => setCompany({ ...company, name: e.target.value })}
                         className="w-full p-2 border rounded-md"
                     />
                 </label>
@@ -119,32 +114,10 @@ const EditUserProfile: React.FC = () => {
                 <label>
                     <span className="block font-medium">Telefonszám:</span>
                     <input
-                        type="text"
-                        value={user.phone_number}
+                        type="tel"
+                        value={company.phone_number}
                         readOnly={!editMode}
-                        onChange={(e) => setUser({ ...user, phone_number: e.target.value })}
-                        className="w-full p-2 border rounded-md"
-                    />
-                </label>
-
-                <label>
-                    <span className="block font-medium">Születési hely:</span>
-                    <input
-                        type="text"
-                        value={user.birth_place}
-                        readOnly={!editMode}
-                        onChange={(e) => setUser({ ...user, birth_place: e.target.value })}
-                        className="w-full p-2 border rounded-md"
-                    />
-                </label>
-
-                <label>
-                    <span className="block font-medium">Születési dátum:</span>
-                    <input
-                        type="date"
-                        value={user.birth_date}
-                        readOnly={!editMode}
-                        onChange={(e) => setUser({ ...user, birth_date: e.target.value })}
+                        onChange={(e) => setCompany({ ...company, phone_number: e.target.value })}
                         className="w-full p-2 border rounded-md"
                     />
                 </label>
@@ -153,9 +126,9 @@ const EditUserProfile: React.FC = () => {
                     <span className="block font-medium">Cím:</span>
                     <input
                         type="text"
-                        value={user.address}
+                        value={company.address}
                         readOnly={!editMode}
-                        onChange={(e) => setUser({ ...user, address: e.target.value })}
+                        onChange={(e) => setCompany({ ...company, address: e.target.value })}
                         className="w-full p-2 border rounded-md"
                     />
                 </label>
@@ -164,20 +137,42 @@ const EditUserProfile: React.FC = () => {
                     <span className="block font-medium">Adószám:</span>
                     <input
                         type="text"
-                        value={user.tax_number}
+                        value={company.tax_number}
                         readOnly={!editMode}
-                        onChange={(e) => setUser({ ...user, tax_number: e.target.value })}
+                        onChange={(e) => setCompany({ ...company, tax_number: e.target.value })}
                         className="w-full p-2 border rounded-md"
                     />
                 </label>
 
                 <label>
-                    <span className="block font-medium">Állampolgárság:</span>
+                    <span className="block font-medium">Kapcsolattartó neve:</span>
                     <input
                         type="text"
-                        value={user.nationality}
+                        value={company.contact_person_name}
                         readOnly={!editMode}
-                        onChange={(e) => setUser({ ...user, nationality: e.target.value })}
+                        onChange={(e) => setCompany({ ...company, contact_person_name: e.target.value })}
+                        className="w-full p-2 border rounded-md"
+                    />
+                </label>
+
+                <label>
+                    <span className="block font-medium">Tevékenységi kör:</span>
+                    <input
+                        type="text"
+                        value={company.activity_scope}
+                        readOnly={!editMode}
+                        onChange={(e) => setCompany({ ...company, activity_scope: e.target.value })}
+                        className="w-full p-2 border rounded-md"
+                    />
+                </label>
+
+                <label>
+                    <span className="block font-medium">Weboldal:</span>
+                    <input
+                        type="url"
+                        value={company.website}
+                        readOnly={!editMode}
+                        onChange={(e) => setCompany({ ...company, website: e.target.value })}
                         className="w-full p-2 border rounded-md"
                     />
                 </label>
@@ -185,52 +180,14 @@ const EditUserProfile: React.FC = () => {
                 <label>
                     <span className="block font-medium">Rövid bemutatkozás:</span>
                     <textarea
-                        value={user.short_bio}
+                        value={company.short_description}
                         readOnly={!editMode}
-                        onChange={(e) => setUser({ ...user, short_bio: e.target.value })}
+                        onChange={(e) => setCompany({ ...company, short_description: e.target.value })}
                         className="w-full p-2 border rounded-md"
+                        rows={4}
                     />
                 </label>
 
-                <label>
-                    <span className="block font-medium">Végzettség(ek):</span>
-                    <textarea
-                        value={user.qualifications}
-                        readOnly={!editMode}
-                        onChange={(e) => setUser({ ...user, qualifications: e.target.value })}
-                        className="w-full p-2 border rounded-md"
-                    />
-                </label>
-
-                {documents && (
-                    <>
-                        <label>
-                            <span className="block font-medium">Személyi igazolvány szám:</span>
-                            <input
-                                type="text"
-                                value={documents.personal_id}
-                                readOnly={!editMode}
-                                onChange={(e) => setDocuments({ ...documents, personal_id: e.target.value })}
-                                className="w-full p-2 border rounded-md"
-                            />
-                        </label>
-
-                        <label>
-                            <span className="block font-medium">Lakcímkártya szám:</span>
-                            <input
-                                type="text"
-                                value={documents.address_card_number}
-                                readOnly={!editMode}
-                                onChange={(e) =>
-                                    setDocuments({ ...documents, address_card_number: e.target.value })
-                                }
-                                className="w-full p-2 border rounded-md"
-                            />
-                        </label>
-                    </>
-                )}
-
-                {/* 🆕 Szerkesztés / Mentés gombok */}
                 <div className="flex gap-4 mt-4">
                     {!editMode ? (
                         <button
@@ -271,4 +228,4 @@ const EditUserProfile: React.FC = () => {
     );
 };
 
-export default EditUserProfile;
+export default EditCompanyProfile;
