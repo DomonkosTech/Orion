@@ -32,6 +32,7 @@ const EditCompanyProfile: React.FC = () => {
             if (data.success) {
                 alert("Sikeresen kijelentkeztél!");
                 navigate("/CompanyLoginPage");
+                window.location.reload();
             }
         } catch (err) {
             console.error("Logout error:", err);

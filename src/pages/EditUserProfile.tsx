@@ -40,6 +40,7 @@ const EditUserProfile: React.FC = () => {
             if (data.success) {
                 alert("Sikeresen kijelentkeztél!");
                 navigate("/UserLoginPage"); // átirányítás login oldalra
+                window.location.reload();
             }
         } catch (err) {
             console.error("Logout error:", err);

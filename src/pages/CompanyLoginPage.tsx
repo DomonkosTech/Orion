@@ -37,6 +37,7 @@ const CompanyLoginPage: React.FC = () => {
             {
                 alert("Sikeres bejelentkezés!");
                 navigate("/EditCompanyProfile");
+                window.location.reload();
 
             }
             else{
