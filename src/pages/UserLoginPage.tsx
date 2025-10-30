@@ -37,6 +37,7 @@ const UserLoginPage: React.FC = () => {
             {
                 alert("Sikeres bejelentkezés!");
                 navigate("/EditUserProfile");
+                window.location.reload();
 
             }
             else{

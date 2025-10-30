@@ -12,7 +12,7 @@ function App() {
     return (
         <Router>
             <Routes>
-                {/* Védett útvonalak */}
+                {/* 🔒 Csak bejelentkezve elérhető oldalak */}
                 <Route
                     path="/"
                     element={
@@ -38,11 +38,39 @@ function App() {
                     }
                 />
 
-                {/* Nyilvános oldalak */}
-                <Route path="/CompanyLoginPage" element={<CompanyLoginPage />} />
-                <Route path="/CompanyRegisterPage" element={<CompanyRegisterPage />} />
-                <Route path="/UserLoginPage" element={<UserLoginPage />} />
-                <Route path="/UserRegisterPage" element={<UserRegisterPage />} />
+                {/* 🚫 Csak kijelentkezve elérhető oldalak */}
+                <Route
+                    path="/UserLoginPage"
+                    element={
+                        <IsLoggedIn mode="guest">
+                            <UserLoginPage />
+                        </IsLoggedIn>
+                    }
+                />
+                <Route
+                    path="/UserRegisterPage"
+                    element={
+                        <IsLoggedIn mode="guest">
+                            <UserRegisterPage />
+                        </IsLoggedIn>
+                    }
+                />
+                <Route
+                    path="/CompanyLoginPage"
+                    element={
+                        <IsLoggedIn mode="guest">
+                            <CompanyLoginPage />
+                        </IsLoggedIn>
+                    }
+                />
+                <Route
+                    path="/CompanyRegisterPage"
+                    element={
+                        <IsLoggedIn mode="guest">
+                            <CompanyRegisterPage />
+                        </IsLoggedIn>
+                    }
+                />
             </Routes>
         </Router>
     );
