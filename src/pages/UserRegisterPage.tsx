@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./auth.css";
 
-const RegisterPage: React.FC = () => {
+const UserRegisterPage: React.FC = () => {
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -313,4 +313,4 @@ const RegisterPage: React.FC = () => {
     );
 };
 
-export default RegisterPage;
+export default UserRegisterPage;

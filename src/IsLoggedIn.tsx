@@ -9,7 +9,7 @@ function IsLoggedIn({ children }: Props) {
     const loggedIn = localStorage.getItem("loggedIn") === "true";
 
     if (!loggedIn) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/ComapnyRegisterPage" replace />;
     }
 
     return children;

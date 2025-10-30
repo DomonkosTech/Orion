@@ -330,6 +330,63 @@ app.post("/api/register/documents", async (req, res) => {
 })
 
 
+app.post("/api/company/register", async (req, res) => {
+    const { email,  name, address, tax_number, contact_person_name, activity_scope, website, short_description, phone_number, terms_accepted } = req.body;
+    if (!email || !terms_accepted) {
+        return res.status(400).json({ error: "Email and terms acceptance are required" });
+    }
+    try {
+        const { data: company, error } = await supabase
+            .from("companies")
+            .insert([
+                {
+                    email,
+                    name,
+                    address,
+                    tax_number,
+                    contact_person_name,
+                    activity_scope,
+                    website,
+                    short_description,
+                    terms_accepted,
+                    verified: true,
+                    join_date: new Date().toISOString(),
+                    phone_number,
+                }
+            ])
+            .select()
+            .single();
+
+        if (error) throw error;
+        res.json({ success: true, companyId: company.id });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Registration failed" });
+    }
+})
+
+app.post("/api/company/register/credentials", async (req, res) => {
+    const { company_id, password } = req.body;
+
+    if (!company_id || !password) {
+        return res.status(400).json({ error: "Company ID and password are required" });
+    }
+
+    try {
+        const password_hash = await bcrypt.hash(password, 12);
+
+        const { error } = await supabase
+            .from("company_credentials")
+            .insert([{ company_id, password_hash }]);
+
+        if (error) throw error;
+        res.json({ success: true });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Password setup failed" });
+    }
+});
+
 
 // Start server
 app.listen(4000, () => console.log("Server running on http://localhost:4000"));

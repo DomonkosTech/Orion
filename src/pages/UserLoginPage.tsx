@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./auth.css";
 
-const LoginPage: React.FC = () => {
+const UserLoginPage: React.FC = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
@@ -129,4 +129,4 @@ const LoginPage: React.FC = () => {
     );
 };
 
-export default LoginPage;
+export default UserLoginPage;
