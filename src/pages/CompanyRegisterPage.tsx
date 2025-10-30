@@ -94,7 +94,7 @@ const CompanyRegisterPage: React.FC = () => {
             }
 
             alert("Sikeres céges regisztráció! Most már bejelentkezhet.");
-            navigate("/login");
+            navigate("/CompanyLoginPage");
         } catch (err) {
             console.error(err);
             alert("Hálózati hiba történt");
@@ -158,7 +158,7 @@ const CompanyRegisterPage: React.FC = () => {
             <button type="submit" disabled={isLoading}>
                 {isLoading ? "Regisztráció..." : "Regisztráció"}
             </button>
-            <button type="button" onClick={() => navigate("/login")}>Bejelentkezés</button>
+            <button type="button" onClick={() => navigate("/CompanyLoginPage")}>Bejelentkezés</button>
         </form>
     );
 };

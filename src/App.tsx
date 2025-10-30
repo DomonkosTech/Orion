@@ -4,8 +4,9 @@ import UserLoginPage from "./pages/UserLoginPage.tsx";
 import UserRegisterPage from "./pages/UserRegisterPage.tsx"; // Add this import
 import IsLoggedIn from "./IsLoggedIn.tsx";
 import EditUserProfile from "./pages/EditUserProfile.tsx";
-import ComapnyRegisterPage from "./pages/CompanyRegisterPage.tsx";
+import CompanyRegisterPage from "./pages/CompanyRegisterPage.tsx";
 import CompanyLoginPage from "./pages/CompanyLoginPage.tsx";
+import EditCompanyProfile from "./pages/EditCompanyProfile.tsx";
 
 function App() {
     return (
@@ -18,10 +19,11 @@ function App() {
                 }
                 />
                 <Route path="/CompanyLoginPage" element={<CompanyLoginPage />}/>
-                <Route path="/ComapnyRegisterPage" element={<ComapnyRegisterPage />}/>
+                <Route path="/CompanyRegisterPage" element={<CompanyRegisterPage />}/>
                 <Route path="/EditUserProfile" element={<EditUserProfile />}/>
-                <Route path="/login" element={<UserLoginPage />} />
-                <Route path="/register" element={<UserRegisterPage />} /> {/* Add this route */}
+                <Route path="/EditCompanyProfile" element={<EditCompanyProfile />}/>
+                <Route path="/UserLoginPage" element={<UserLoginPage />} />
+                <Route path="/UserRegisterPage" element={<UserRegisterPage />} /> {/* Add this route */}
             </Routes>
         </Router>
     );
