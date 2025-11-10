@@ -7,6 +7,7 @@ import EditUserProfile from "./pages/EditUserProfile.tsx";
 import CompanyRegisterPage from "./pages/CompanyRegisterPage.tsx";
 import CompanyLoginPage from "./pages/CompanyLoginPage.tsx";
 import EditCompanyProfile from "./pages/EditCompanyProfile.tsx";
+import AddJob from "./pages/AddJob.tsx";
 
 function App() {
     return (
@@ -37,6 +38,14 @@ function App() {
                         </IsLoggedIn>
                     }
                 />
+
+                <Route path="/AddJob" element={
+                    <IsLoggedIn>
+                        <AddJob />
+                    </IsLoggedIn>
+                    }
+                />
+
 
                 {/* 🚫 Csak kijelentkezve elérhető oldalak */}
                 <Route
