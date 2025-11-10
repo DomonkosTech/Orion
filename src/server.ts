@@ -503,8 +503,8 @@ app.post("/api/addadvertisment/create", async (req, res) => {
             .from("advertisement")
             .select("*", { count: "exact", head: true })
             .eq("company_id", company_id);
-        if (count! >= 1) {
-            return res.status(400).json({ error: "Elérted a maximum 5 hirdetés limitet, törölj egyet az új létrehozásához." });
+        if (count! >= 3) {
+            return res.status(400).json({ error: "Elérted a maximum 3 hirdetés limitet, törölj egyet az új létrehozásához." });
         }
 
         const { position, hourly_wage, tasks, requirements, is_active, search_start, job_description } = req.body;
