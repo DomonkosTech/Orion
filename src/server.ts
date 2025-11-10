@@ -482,6 +482,61 @@ app.post("/api/company/updateinfo", async (req, res) => {
 
 
 
+///////////////////////////////////////////////////
+//             add advertisment                  //
+///////////////////////////////////////////////////
+app.post("/api/addadvertisment/create", async (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token) {
+        return res.status(401).json({ error: "Nincs bejelentkezve, próbálja újra!" });
+    }
+
+    if (!JWT_SECRET) {
+        return res.status(500).json({ error: "JWT secret not configured" });
+    }
+
+    try {
+        // JWT token dekódolása a company_id megszerzéséhez
+        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
+        const company_id = decoded.companyId;
+        const { count} = await supabase
+            .from("advertisement")
+            .select("*", { count: "exact", head: true })
+            .eq("company_id", company_id);
+        if (count! >= 1) {
+            return res.status(400).json({ error: "Elérted a maximum 5 hirdetés limitet, törölj egyet az új létrehozásához." });
+        }
+
+        const { position, hourly_wage, tasks, requirements, is_active, search_start, job_description } = req.body;
+
+        const { data: advertisement, error } = await supabase
+            .from("advertisement")
+            .insert([
+                {
+                    position,
+                    hourly_wage,
+                    tasks,
+                    requirements,
+                    is_active,
+                    search_start,
+                    company_id,
+                    job_description,
+                }
+            ])
+            .select()
+            .single();
+
+        if (error) throw error;
+
+        res.json({ success: true, advertisement });
+    } catch (error) {
+        console.error("Advertisement creation error:", error);
+        res.status(500).json({ error: "Hirdetés létrehozása sikertelen" });
+    }
+});
+
+
+
 
 ///////////////////////////////////////////////////
 //           logout and check auth               //
