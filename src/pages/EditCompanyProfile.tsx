@@ -220,10 +220,11 @@ const EditCompanyProfile: React.FC = () => {
             </form>
             <br/>
             <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-500 text-white rounded-md"
-            >
+                onClick={handleLogout}>
                 Kijelentkezés
+            </button>
+            <button onClick={() => navigate("/company")}>
+                föoldal
             </button>
         </div>
     );

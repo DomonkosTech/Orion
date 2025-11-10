@@ -69,7 +69,7 @@ app.post("/api/user/login", async (req, res) => {
     }
 
     const expiresIn = rememberMe ? "7d" : "15m";
-    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn });
+    const token = jwt.sign({ userId: user.id, userType: 'user' }, JWT_SECRET, { expiresIn }, );
 
     const cookieOptions: CookieOptions = {
         httpOnly: true,
@@ -326,7 +326,7 @@ app.post("/api/company/login", async (req, res) => {
     }
 
     const expiresIn = rememberMe ? "7d" : "15m";
-    const token = jwt.sign({ companyId: company.id }, JWT_SECRET, { expiresIn });
+    const token = jwt.sign({ companyId: company.id, userType: 'company' }, JWT_SECRET, { expiresIn });
 
     const cookieOptions: CookieOptions = {
         httpOnly: true,
@@ -567,8 +567,12 @@ app.get("/auth/check", (req, res) => {
     if (!token) return res.json({ loggedIn: false });
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET!);
-        return res.json({ loggedIn: true, user: decoded });
+        const decoded = jwt.verify(token, JWT_SECRET!) as jwt.JwtPayload;
+        return res.json({ 
+            loggedIn: true, 
+            user: decoded,
+            userType: decoded.userType
+        });
     } catch {
         return res.json({ loggedIn: false });
     }
