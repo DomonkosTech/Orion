@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import "./HomePage.css";
 
-function HomePage() {
+function UserHomePage() {
     return (
         <div className="homepage-container">
             {/* Header */}
@@ -87,4 +87,4 @@ function HomePage() {
     );
 }
 
-export default HomePage;
+export default UserHomePage;

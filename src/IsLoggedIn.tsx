@@ -3,12 +3,13 @@ import { Navigate } from "react-router-dom";
 
 interface Props {
     children: React.ReactElement;
-    mode?: "protected" | "guest";
+    mode?: "user" | "guest" | "company";
 }
 
-function IsLoggedIn({ children, mode = "protected" }: Props) {
+function IsLoggedIn({ children, mode = "user" }: Props) {
     const [loading, setLoading] = useState(true);
     const [loggedIn, setLoggedIn] = useState(false);
+    const [userType, setUserType] = useState<"user" | "company" | null>(null);
 
     useEffect(() => {
         fetch("http://localhost:4000/auth/check", {
@@ -16,8 +17,14 @@ function IsLoggedIn({ children, mode = "protected" }: Props) {
             credentials: "include"
         })
             .then(res => res.json())
-            .then(data => setLoggedIn(data.loggedIn))
-            .catch(() => setLoggedIn(false))
+            .then(data => {
+                setLoggedIn(data.loggedIn);
+                setUserType(data.userType || null);
+            })
+            .catch(() => {
+                setLoggedIn(false);
+                setUserType(null);
+            })
             .finally(() => setLoading(false));
     }, []);
 
@@ -25,12 +32,19 @@ function IsLoggedIn({ children, mode = "protected" }: Props) {
         return <div>Betöltés...</div>;
     }
 
-    if (mode === "protected" && !loggedIn) {
+    // Guest mód: ha be van jelentkezve, átirányítás
+    if (mode === "guest" && loggedIn) {
+        return <Navigate to="/" replace />;
+    }
+
+    // User mód: csak user típusú felhasználók érhetik el
+    if (mode === "user" && (!loggedIn || userType !== "user")) {
         return <Navigate to="/UserLoginPage" replace />;
     }
 
-    if (mode === "guest" && loggedIn) {
-        return <Navigate to="/" replace />;
+    // Company mód: csak company típusú felhasználók érhetik el
+    if (mode === "company" && (!loggedIn || userType !== "company")) {
+        return <Navigate to="/CompanyLoginPage" replace />;
     }
 
     return children;

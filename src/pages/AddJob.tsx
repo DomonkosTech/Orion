@@ -151,7 +151,7 @@ const AddJob: React.FC = () => {
                 {isLoading ? "Létrehozás..." : "Hirdetés létrehozása"}
             </button>
 
-            <button type="button" onClick={() => navigate("/")}>
+            <button type="button" onClick={() => navigate("/company")}>
                 Vissza a főoldalra
             </button>
         </form>
