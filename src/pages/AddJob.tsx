@@ -5,7 +5,9 @@ import "./auth.css";
 
 const AddJob: React.FC = () => {
     const [formData, setFormData] = useState({
+        title: "",
         position: "",
+        location: "",
         hourly_wage: "",
         tasks: "",
         requirements: "",
@@ -28,8 +30,8 @@ const AddJob: React.FC = () => {
         e.preventDefault();
 
         // Basic validation
-        if (!formData.position.trim() || !formData.hourly_wage.trim()) {
-            alert("Kérlek, töltsd ki a pozíció és órabér mezőket!");
+        if (!formData.title.trim() || !formData.position.trim() || !formData.location.trim() || !formData.hourly_wage.trim()) {
+            alert("Kérlek, töltsd ki a cím, pozíció, helyszín és órabér mezőket!");
             return;
         }
 
@@ -41,7 +43,9 @@ const AddJob: React.FC = () => {
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify({
+                    title: formData.title,
                     position: formData.position,
+                    location: formData.location,
                     hourly_wage: parseFloat(formData.hourly_wage),
                     tasks: formData.tasks,
                     requirements: formData.requirements,
@@ -58,7 +62,7 @@ const AddJob: React.FC = () => {
             }
 
             alert("Sikeres hirdetés létrehozás!");
-            navigate("/");
+            navigate("/company");
         } catch (err) {
             console.error(err);
             alert("Hálózati hiba történt");
@@ -72,6 +76,19 @@ const AddJob: React.FC = () => {
             <h1>Álláshirdetés létrehozása</h1>
 
             <div>
+                <label htmlFor="title">Hirdetés címe *</label>
+                <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    placeholder="pl. Raktáros munkatárs kerestetik"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    required
+                />
+            </div>
+
+            <div>
                 <label htmlFor="position">Pozíció *</label>
                 <input
                     id="position"
@@ -79,6 +96,19 @@ const AddJob: React.FC = () => {
                     type="text"
                     placeholder="pl. Raktáros"
                     value={formData.position}
+                    onChange={handleInputChange}
+                    required
+                />
+            </div>
+
+            <div>
+                <label htmlFor="location">Munkavégzés helye *</label>
+                <input
+                    id="location"
+                    name="location"
+                    type="text"
+                    placeholder="pl. Budapest, XIII. kerület"
+                    value={formData.location}
                     onChange={handleInputChange}
                     required
                 />
@@ -122,7 +152,7 @@ const AddJob: React.FC = () => {
             </div>
 
             <div>
-                <label htmlFor="requirements">Követelmények</label>
+                <label htmlFor="requirements">Követelmények(feltételek)</label>
                 <textarea
                     id="requirements"
                     name="requirements"

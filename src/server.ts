@@ -507,13 +507,15 @@ app.post("/api/addadvertisment/create", async (req, res) => {
             return res.status(400).json({ error: "Elérted a maximum 3 hirdetés limitet, törölj egyet az új létrehozásához." });
         }
 
-        const { position, hourly_wage, tasks, requirements, is_active, search_start, job_description } = req.body;
+        const { title, position, location, hourly_wage, tasks, requirements, is_active, search_start, job_description } = req.body;
 
         const { data: advertisement, error } = await supabase
             .from("advertisement")
             .insert([
                 {
+                    title,
                     position,
+                    location,
                     hourly_wage,
                     tasks,
                     requirements,
@@ -534,7 +536,6 @@ app.post("/api/addadvertisment/create", async (req, res) => {
         res.status(500).json({ error: "Hirdetés létrehozása sikertelen" });
     }
 });
-
 
 
 
