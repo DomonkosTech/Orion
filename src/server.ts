@@ -482,9 +482,12 @@ app.post("/api/company/updateinfo", async (req, res) => {
 
 
 
+
 ///////////////////////////////////////////////////
-//             add advertisment                  //
+//                 advertisment                  //
 ///////////////////////////////////////////////////
+
+// create advertisment endpoint
 app.post("/api/addadvertisment/create", async (req, res) => {
     const token = req.cookies.auth_token;
     if (!token) {
@@ -537,6 +540,117 @@ app.post("/api/addadvertisment/create", async (req, res) => {
     }
 });
 
+// get advertisments by company id endpoint
+app.get("/api/advertisements/by-company", async (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token) {
+        return res.status(401).json({ error: "Nincs bejelentkezve, próbálja újra!" });
+    }
+
+    if (!JWT_SECRET) {
+        return res.status(500).json({ error: "JWT secret not configured" });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
+        const company_id = decoded.companyId;
+
+        const { data, error } = await supabase
+            .from("advertisement")
+            .select("id, title, position")
+            .eq("company_id", company_id)
+            .order("id", { ascending: true });
+
+        if (error) throw error;
+
+        res.json({
+            success: true,
+            advertisements: data
+        });
+
+    } catch (error) {
+        console.error("Advertisement fetch error:", error);
+        res.status(500).json({ error: "Hirdetések lekérdezése sikertelen" });
+    }
+});
+
+
+// get advertisment info endpoint
+app.post("/api/addadvertisment/getinfo", async (req, res) => {
+    const token = req.cookies.auth_token;
+    const { id } = req.body;
+    if (!token)
+        return res.status(401).json({ error: "Missing token" });
+
+    if (!JWT_SECRET)
+        return res.status(500).json({ error: "JWT secret not configured" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
+        const company_id = decoded.companyId;
+
+        const { data: advertisement, error: companyError } = await supabase
+            .from("advertisement")
+            .select("*")
+            .eq("id", id)
+            .eq("company_id", company_id)
+            .single();
+
+        if (companyError) throw companyError;
+
+        res.json({
+            success: true,
+            advertisement,
+        });
+
+    } catch (err) {
+        console.error("get-company-info error:", err);
+        res.status(401).json({ error: "Invalid or expired token" });
+    }
+});
+
+
+//update advertisment info endpoint
+app.post("/api/advertisement/updateinfo", async (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token) return res.status(401).json({ error: "Missing token" });
+    if (!JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: string };
+        const company_id = decoded.companyId;
+
+        const data = req.body;
+        const id = data.id;
+
+        const { data: updatedadvertisement, error: advertisementError } = await supabase
+            .from("advertisement")
+            .update({
+                title: data.title,
+                position: data.position,
+                location: data.location,
+                hourly_wage: data.hourly_wage,
+                tasks: data.tasks,
+                requirements: data.requirements,
+                job_description: data.job_description,
+            })
+            .eq("id", id)
+            .eq("company_id", company_id)
+            .select()
+            .single();
+
+        if (advertisementError) throw advertisementError;
+
+        res.json({
+            success: true,
+            company: updatedadvertisement
+        });
+
+    } catch (err) {
+        console.error("Update advertisement info error:", err);
+        res.status(500).json({ error: "Update failed" });
+    }
+});
 
 
 ///////////////////////////////////////////////////
@@ -578,6 +692,8 @@ app.get("/auth/check", (req, res) => {
         return res.json({ loggedIn: false });
     }
 });
+
+
 
 // ... existing code ...
 

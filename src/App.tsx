@@ -9,6 +9,7 @@ import CompanyLoginPage from "./pages/CompanyLoginPage.tsx";
 import EditCompanyProfile from "./pages/EditCompanyProfile.tsx";
 import AddJob from "./pages/AddJob.tsx";
 import CompanyHomePage from "./pages/CompanyHomePage.tsx";
+import EditJob from "./pages/EditJob.tsx";
 
 function App() {
     return (
@@ -38,6 +39,14 @@ function App() {
                     element={
                         <IsLoggedIn mode="company">
                             <CompanyHomePage/>
+                        </IsLoggedIn>
+                    }
+                />
+                <Route
+                    path="/company/edit/:id"
+                    element={
+                        <IsLoggedIn mode="company">
+                            <EditJob/>
                         </IsLoggedIn>
                     }
                 />
