@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./auth.css";
 
 const CompanyRegisterPage: React.FC = () => {
     const [formData, setFormData] = useState({

@@ -14,7 +14,7 @@ console.log("Encryption key loaded:", ENCRYPTION_KEY);
 console.log("JWT secret loaded:", JWT_SECRET);
 
 // Initialize Supabase client
-import { supabase } from "./supabaseClient";
+import { supabase } from "../lib/supabaseClient.ts";
 
 // Initialize Express app
 const app = express();
