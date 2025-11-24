@@ -1,15 +1,15 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import UserHomePage from "./pages/UserHomePage.tsx";
-import UserLoginPage from "./pages/UserLoginPage.tsx";
-import UserRegisterPage from "./pages/UserRegisterPage.tsx";
+import UserHomePage from "./features/user/HomePage/UserHomePage.tsx";
+import UserLoginPage from "./features/user/LoginPage/UserLoginPage.tsx";
+import UserRegisterPage from "./features/user/RegisterPage/UserRegisterPage.tsx";
 import IsLoggedIn from "./IsLoggedIn.tsx";
-import EditUserProfile from "./pages/EditUserProfile.tsx";
-import CompanyRegisterPage from "./pages/CompanyRegisterPage.tsx";
-import CompanyLoginPage from "./pages/CompanyLoginPage.tsx";
-import EditCompanyProfile from "./pages/EditCompanyProfile.tsx";
-import AddJob from "./pages/AddJob.tsx";
-import CompanyHomePage from "./pages/CompanyHomePage.tsx";
-import EditJob from "./pages/EditJob.tsx";
+import EditUserProfile from "./features/user/EditProfile/EditUserProfile.tsx";
+import CompanyRegisterPage from "./features/company/RegisterPage/CompanyRegisterPage.tsx";
+import CompanyLoginPage from "./features/company/LoginPage/CompanyLoginPage.tsx";
+import EditCompanyProfile from "./features/company/EditProfile/EditCompanyProfile.tsx";
+import AddJob from "./features/job/AddJob.tsx";
+import CompanyHomePage from "./features/company/HomePage/CompanyHomePage.tsx";
+import EditJob from "./features/job/EditJob.tsx";
 
 function App() {
     return (
