@@ -10,6 +10,7 @@ import EditCompanyProfile from "./features/company/EditProfile/EditCompanyProfil
 import AddJob from "./features/job/AddJob.tsx";
 import CompanyHomePage from "./features/company/HomePage/CompanyHomePage.tsx";
 import EditJob from "./features/job/EditJob.tsx";
+import ListJobs from "./features/job/list_jobs.tsx";
 
 function App() {
     return (
@@ -21,6 +22,14 @@ function App() {
                     element={
                         <IsLoggedIn mode="user">
                             <UserHomePage />
+                        </IsLoggedIn>
+                    }
+                />
+                <Route
+                    path="/listjobs"
+                    element={
+                        <IsLoggedIn mode="user">
+                            <ListJobs />
                         </IsLoggedIn>
                     }
                 />
