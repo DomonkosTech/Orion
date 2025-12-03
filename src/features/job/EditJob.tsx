@@ -1,7 +1,6 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
 
-// 1. Átnevezés Company-ról Advertisement-re
 interface Advertisement {
     title: string;          // Hirdetés címe
     position: string;       // Pozíció / Munkakör

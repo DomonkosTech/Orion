@@ -10,6 +10,9 @@ function UserHomePage() {
                 <nav className="navigation">
                     <Link to="/login" className="nav-btn">Bejelentkezés</Link>
                     <Link to="/register" className="nav-btn primary">Regisztráció</Link>
+
+                    <Link to="/listjobs" className="nav-btn">Állások Böngészése</Link>
+
                 </nav>
             </header>
 
