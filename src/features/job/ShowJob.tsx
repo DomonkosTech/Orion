@@ -17,6 +17,7 @@ const ShowJob = () => {
     const [advertisement, setAdvertisement] = useState<Advertisement | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -43,6 +44,29 @@ const ShowJob = () => {
         };
         fetchAdvertisement();
     }, [id]);
+
+    const handleSubmitApplication = async () => {
+        setLoading(true);
+        try {
+            const res = await fetch("http://localhost:4000/api/addadvertisment/submitApplication", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ id }),
+            });
+            const data = await res.json();
+            if (data.success) {
+                setApplicationStatus("Sikeres jelentkezés!");
+            } else {
+                setApplicationStatus(data.error || "A jelentkezés sikertelen.");
+            }
+        } catch (err) {
+            console.error("Submit application error:", err);
+            setApplicationStatus("Hiba történt a jelentkezés során.");
+        } finally {
+            setLoading(false);
+        }
+    };
 
     if (loading) {
         return <p>Betöltés...</p>;
@@ -105,7 +129,15 @@ const ShowJob = () => {
                 >
                     Vissza az állások listájához
                 </button>
+                <button
+                    type="button"
+                    onClick={handleSubmitApplication}
+                    className="ml-4 px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
+                >
+                    Jelentkezés
+                </button>
             </div>
+            {applicationStatus && <p className="mt-4 text-center">{applicationStatus}</p>}
         </div>
     );
 };
