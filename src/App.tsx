@@ -11,6 +11,7 @@ import AddJob from "./features/job/AddJob.tsx";
 import CompanyHomePage from "./features/company/HomePage/CompanyHomePage.tsx";
 import EditJob from "./features/job/EditJob.tsx";
 import ListJobs from "./features/job/list_jobs.tsx";
+import ShowJob from "./features/job/ShowJob.tsx";
 
 function App() {
     return (
@@ -25,6 +26,15 @@ function App() {
                         </IsLoggedIn>
                     }
                 />
+                <Route
+                    path="/job/show/:id"
+                    element={
+                        <IsLoggedIn mode="user">
+                            <ShowJob/>
+                        </IsLoggedIn>
+                    }
+                />
+
                 <Route
                     path="/listjobs"
                     element={
