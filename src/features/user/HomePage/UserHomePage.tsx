@@ -8,10 +8,9 @@ function UserHomePage() {
             <header className="header">
                 <div className="logo">ProfiPortál</div>
                 <nav className="navigation">
-                    <Link to="/login" className="nav-btn">Bejelentkezés</Link>
-                    <Link to="/register" className="nav-btn primary">Regisztráció</Link>
 
-                    <Link to="/listjobs" className="nav-btn">Állások Böngészése</Link>
+                    <Link to="/jobapplication" className="nav-btn">munkáim/jelentkezéseim</Link>
+                    <Link to="/listjobs" className="nav-btn primary">Állások Böngészése</Link>
 
                 </nav>
             </header>

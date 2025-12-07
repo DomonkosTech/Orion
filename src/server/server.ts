@@ -794,6 +794,58 @@ app.post("/api/addadvertisment/submitApplication", async (req, res) => {
 
 
 
+app.post("/api/addadvertisment/getallsubmit", async (req, res) => {
+    const token = req.cookies.auth_token;
+
+    if (!token)
+        return res.status(401).json({ error: "Missing token" });
+
+    if (!JWT_SECRET)
+        return res.status(500).json({ error: "JWT secret not configured" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+        const uid = decoded.userId;
+
+        const { data: user } = await supabase
+            .from("users")
+            .select("id")
+            .eq("id", uid)
+            .maybeSingle();
+
+        if (!user)
+            return res.status(403).json({ error: "please login" });
+
+        const { data: submit} = await supabase
+            .from("job_applications")
+            .select("id, status, last_updated, advertisement_id, advertisment:advertisement(title)")
+            .eq("user_id", uid)
+        const { data: work} = await supabase
+            .from("employees")
+            .select("id, position, job_title, hourly_wage, hire_date, company:companies(name)")
+            .eq("user_id", uid)
+
+        console.log(work);
+        if (submit == null && work == null) return res.status(403).json({ error: "no data found" });
+        res.json({
+            success: true,
+            submit,
+            work,
+        });
+    }
+    catch (err) {
+            console.error("submitApplication error:", err);
+
+            if (err instanceof jwt.JsonWebTokenError) {
+                return res.status(401).json({ error: "Invalid or expired token" });
+            }
+
+            return res.status(500).json({ error: "Internal server error" });
+    }
+});
+
+
+
 
 ///////////////////////////////////////////////////
 //           logout and check auth               //
