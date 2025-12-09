@@ -11,6 +11,7 @@ function UserHomePage() {
 
                     <Link to="/jobapplication" className="nav-btn">munkáim/jelentkezéseim</Link>
                     <Link to="/listjobs" className="nav-btn primary">Állások Böngészése</Link>
+                    <Link to="/EditUserProfile" className="nav-btn">profile szerkesztése</Link>
 
                 </nav>
             </header>
