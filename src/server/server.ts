@@ -6,6 +6,13 @@ dotenv.config();
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import type { CookieOptions } from "express";
+import multer from "multer";
+
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 5 * 1024 * 1024 } // opcionális (5 MB limit)
+});
+
 
 //import secret keys
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
@@ -284,6 +291,73 @@ app.post("/api/user/register/documents", async (req, res) => {
 })
 
 
+// upload resume endpoint
+app.post("/api/upload-resume", upload.single("resume"), async (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token) return res.status(401).json({ error: "Missing token" });
+    if (!process.env.JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
+
+    try {
+        // --- JWT DECODE ---
+        const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: number };
+        const uid = decoded.userId;
+
+        // --- FILE VALIDATION ---
+        const file = req.file;
+        if (!file) return res.status(400).json({ error: "Nincs fájl kiválasztva." });
+
+        const BUCKET = "resumes";
+
+        // --- CHECK IF USER ALREADY HAS A REAL FILE ---
+        const { data: existingFiles, error: listError } = await supabase
+            .storage
+            .from(BUCKET)
+            .list(`${uid}/`);
+
+        if (listError) {
+            console.error("Storage list error:", listError);
+            return res.status(500).json({ error: "Hiba a mappa ellenőrzésekor" });
+        }
+
+        const realFiles = (existingFiles || []).filter(f => f.metadata && f.metadata.size > 0);
+
+        if (realFiles.length > 0) {
+            return res.status(400).json({ error: "Már töltöttél fel önéletrajzot. Csak egy fájl engedélyezett." });
+        }
+
+        // --- SAFE FILE NAME ---
+        const safeName = file.originalname
+            .normalize("NFKD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/\s+/g, "_")
+            .replace(/[^a-zA-Z0-9._-]/g, "");
+
+        // --- FINAL FILE PATH ---
+        const filePath = `${uid}/${Date.now()}_${safeName}`;
+
+        // --- UPLOAD FILE ---
+        const { error: uploadError } = await supabase
+            .storage
+            .from(BUCKET)
+            .upload(filePath, file.buffer, {
+                contentType: file.mimetype,
+            });
+
+        if (uploadError) {
+            console.error("Storage upload error:", uploadError);
+            return res.status(500).json({ error: "Hiba a fájl tárolásakor", details: uploadError.message });
+        }
+
+        return res.status(200).json({
+            message: "Sikeres feltöltés",
+            filePath,
+        });
+
+    } catch (err) {
+        const e = err instanceof Error ? err.message : "Ismeretlen hiba";
+        return res.status(500).json({ error: e });
+    }
+});
 
 
 

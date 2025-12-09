@@ -12,7 +12,8 @@ import CompanyHomePage from "./features/company/HomePage/CompanyHomePage.tsx";
 import EditJob from "./features/job/EditJob.tsx";
 import ListJobs from "./features/job/list_jobs.tsx";
 import ShowJob from "./features/job/ShowJob.tsx";
-import JobApplication from "./features/user/JobApplications/JobApplication.tsx"
+import JobApplication from "./features/user/JobApplications/JobApplication.tsx";
+import UploadResume from "./features/user/UploadResume/UploadResume.tsx";
 
 function App() {
     return (
@@ -24,6 +25,14 @@ function App() {
                     element={
                         <IsLoggedIn mode="user">
                             <UserHomePage />
+                        </IsLoggedIn>
+                    }
+                />
+                <Route
+                    path="/uploadresume"
+                    element={
+                        <IsLoggedIn mode="user">
+                            <UploadResume />
                         </IsLoggedIn>
                     }
                 />
