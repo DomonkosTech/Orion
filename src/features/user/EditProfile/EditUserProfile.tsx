@@ -20,11 +20,10 @@ interface Documents {
 }
 
 
-
-
 const EditUserProfile: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const [documents, setDocuments] = useState<Documents | null>(null);
+    const [resume, setResume] = useState<boolean>(false);
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false); // 🆕 szerkesztés állapot
     const navigate = useNavigate();
@@ -58,6 +57,7 @@ const EditUserProfile: React.FC = () => {
                 if (data.success) {
                     setUser(data.user);
                     setDocuments(data.documents?.[0] || null);
+                    setResume(data.resume);
                 }
             } catch (err) {
                 console.error("Fetch error:", err);
@@ -67,6 +67,25 @@ const EditUserProfile: React.FC = () => {
         };
         fetchUser();
     }, []);
+
+    const handleDeleteResume = async () => {
+        try {
+            const res = await fetch("http://localhost:4000/api/user/resume", {
+                method: "DELETE",
+                credentials: "include",
+            });
+            const data = await res.json();
+            if (data.success) {
+                setResume(false);
+                alert("Önéletrajz sikeresen törölve!");
+            } else {
+                alert(data.error || "Hiba történt a törlés során.");
+            }
+        } catch (err) {
+            console.error("Delete resume error:", err);
+            alert("Hiba történt az önéletrajz törlése során.");
+        }
+    };
 
     if (loading) return <p>Betöltés...</p>;
     if (!user) return <p>Nem található felhasználói adat.</p>;
@@ -230,6 +249,33 @@ const EditUserProfile: React.FC = () => {
                         </label>
                     </>
                 )}
+
+                <div className="mt-6">
+                    <h3 className="text-lg font-medium">Önéletrajz</h3>
+                    {resume ? (
+                        <div>
+                            <p>Önéletrajz feltöltve.</p>
+                            <button
+                                type="button"
+                                onClick={handleDeleteResume}
+                                className="px-4 py-2 bg-red-500 text-white rounded-md mt-2"
+                            >
+                                Önéletrajz törlése
+                            </button>
+                        </div>
+                    ) : (
+                        <div>
+                            <p>Nincs önéletrajz feltöltve.</p>
+                            <button
+                                type="button"
+                                onClick={() => navigate("/uploadresume")}
+                                className="px-4 py-2 bg-blue-500 text-white rounded-md mt-2"
+                            >
+                                Önéletrajz feltöltése
+                            </button>
+                        </div>
+                    )}
+                </div>
 
                 {/* 🆕 Szerkesztés / Mentés gombok */}
                 <div className="flex gap-4 mt-4">

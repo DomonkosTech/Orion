@@ -126,6 +126,31 @@ app.get("/api/user/getinfo", async (req, res) => {
             }
         );
 
+        const BUCKET = "resumes";
+
+        // --- CHECK IF USER ALREADY HAS A REAL FILE ---
+        const { data: existingFiles, error: listError } = await supabase
+            .storage
+            .from(BUCKET)
+            .list(`${user_id}/`);
+
+        if (listError) {
+            console.error("Storage list error:", listError);
+            return res.status(500).json({ error: "Hiba a mappa ellenőrzésekor" });
+        }
+
+        const realFiles = (existingFiles || []).filter(f => f.metadata && f.metadata.size > 0);
+
+        let resume: boolean;
+        if (realFiles.length > 0) {
+            resume = true;
+        }
+        else
+        {
+            resume = false;
+        }
+
+
         if (decryptError) throw decryptError;
         console.log("Decrypted documents:", documents);
         // 🔹 Válasz összeállítása
@@ -133,6 +158,7 @@ app.get("/api/user/getinfo", async (req, res) => {
             success: true,
             user,
             documents: documents,
+            resume: resume
         });
 
     } catch {
@@ -356,6 +382,61 @@ app.post("/api/upload-resume", upload.single("resume"), async (req, res) => {
     } catch (err) {
         const e = err instanceof Error ? err.message : "Ismeretlen hiba";
         return res.status(500).json({ error: e });
+    }
+});
+
+
+// delete resume endpoint
+app.delete("/api/user/resume", async (req, res) => {
+    const token = req.cookies.auth_token;
+    if (!token) return res.status(401).json({ error: "Missing token" });
+    if (!JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
+        const userId = decoded.userId;
+        const BUCKET = "resumes";
+
+        // --- LIST FILES ---
+        const { data: files, error: listError } = await supabase
+            .storage
+            .from(BUCKET)
+            .list(`${userId}/`);
+
+        if (listError) {
+            console.error("Storage list error:", listError);
+            return res.status(500).json({ error: "Hiba a fájlok listázásakor." });
+        }
+
+        if (!files || files.length === 0) {
+            return res.status(404).json({ error: "Nincs feltöltött önéletrajz." });
+        }
+
+        // --- ONLY REAL FILES (metadata exists + size > 0) ---
+        const realFiles = files.filter(f => f.metadata && f.metadata.size > 0);
+
+        if (realFiles.length === 0) {
+            return res.status(404).json({ error: "Nincs eltávolítható önéletrajz." });
+        }
+
+        // --- BUILD PATHS ---
+        const filePaths = realFiles.map(file => `${userId}/${file.name}`);
+
+        // --- DELETE ONLY FILES ---
+        const { error: removeError } = await supabase
+            .storage
+            .from(BUCKET)
+            .remove(filePaths);
+
+        if (removeError) {
+            console.error("Storage remove error:", removeError);
+            return res.status(500).json({ error: "Hiba az önéletrajz törlésekor." });
+        }
+
+        return res.json({ success: true, message: "Önéletrajz sikeresen törölve." });
+
+    } catch (err) {
+        return res.status(401).json({ error: "Invalid or expired token", err });
     }
 });
 
