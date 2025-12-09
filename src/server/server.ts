@@ -387,7 +387,7 @@ app.post("/api/upload-resume", upload.single("resume"), async (req, res) => {
 
 
 // delete resume endpoint
-app.delete("/api/user/resume", async (req, res) => {
+app.delete("/api/delete-resume", async (req, res) => {
     const token = req.cookies.auth_token;
     if (!token) return res.status(401).json({ error: "Missing token" });
     if (!JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });

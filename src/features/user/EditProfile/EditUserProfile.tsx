@@ -70,7 +70,7 @@ const EditUserProfile: React.FC = () => {
 
     const handleDeleteResume = async () => {
         try {
-            const res = await fetch("http://localhost:4000/api/user/resume", {
+            const res = await fetch("http://localhost:4000/api/delete-resume", {
                 method: "DELETE",
                 credentials: "include",
             });
