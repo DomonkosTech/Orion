@@ -1,10 +1,11 @@
 import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 const UploadResume = () => {
     const [file, setFile] = useState<File | null>(null);
     const [sending, setSending] = useState(false);
     const [url, setUrl] = useState<string | null>(null);
-
+    const navigate = useNavigate()
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
         if (!selectedFile) return;
@@ -46,11 +47,9 @@ const UploadResume = () => {
                 throw new Error(err.error || "Feltöltési hiba");
             }
 
-            const data = await response.json();
 
             alert("PDF sikeresen feltöltve!");
-            setUrl(data.url);
-            setFile(null);
+            navigate("/");
 
         } catch (err: unknown) {
             if (err instanceof Error) {
