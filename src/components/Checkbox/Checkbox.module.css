@@ -1,0 +1,20 @@
+/* src/components/Checkbox/Checkbox.module.css */
+.container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: #1a1a1a; /* Makes the checkbox black when checked */
+    cursor: pointer;
+}
+
+.text {
+    font-size: 0.9rem;
+    color: #333;
+}

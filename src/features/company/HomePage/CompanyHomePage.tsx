@@ -58,7 +58,6 @@ const CompanyHomePage: React.FC = () => {
             if (data.success) {
                 alert("Sikeresen kijelentkeztél!");
                 navigate("/");
-                window.location.reload();
             }
         } catch (err) {
             console.error("Logout error:", err);
