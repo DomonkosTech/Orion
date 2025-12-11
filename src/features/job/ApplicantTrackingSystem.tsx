@@ -11,6 +11,8 @@ interface ApplicantUser {
     nationality: string;
     short_bio: string;
     qualifications: string;
+    lname: string;
+    fname: string;
 }
 
 interface Applicant {
@@ -127,6 +129,8 @@ export const ApplicantTrackingSystem: React.FC = () => {
                     <table className="min-w-full bg-white">
                         <thead className="bg-gray-200">
                             <tr>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vezetéknév</th>
+                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keresztnév</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Születési Dátum</th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Születési Hely</th>
@@ -137,6 +141,8 @@ export const ApplicantTrackingSystem: React.FC = () => {
                         <tbody className="divide-y divide-gray-200">
                             {applicants.map((applicant) => (
                                 <tr key={applicant.id}>
+                                    <td className="px-6 py-4 whitespace-nowrap">{applicant.users.lname}</td>
+                                    <td className="px-6 py-4 whitespace-nowrap">{applicant.users.fname}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{applicant.users.email}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{new Date(applicant.users.birth_date).toLocaleDateString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{applicant.users.birth_place}</td>

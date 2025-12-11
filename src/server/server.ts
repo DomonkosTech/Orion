@@ -191,7 +191,9 @@ app.post("/api/user/updateinfo", async (req, res) => {
                 tax_number: data.tax_number,
                 nationality: data.nationality,
                 short_bio: data.short_bio,
-                qualifications: data.qualifications
+                qualifications: data.qualifications,
+                lname: data.lname,
+                fname: data.fname,
             })
             .eq("id", user_id)
             .select()
@@ -227,7 +229,7 @@ app.post("/api/user/updateinfo", async (req, res) => {
 
 // register endpoint
 app.post("/api/user/register", async (req, res) => {
-    const { email, phone_number, birth_place, birth_date, address, tax_number, nationality, terms_accepted, short_bio, qualifications } = req.body;
+    const { email, phone_number, birth_place, birth_date, address, tax_number, nationality, terms_accepted, short_bio, qualifications, lname, fname } = req.body;
 
     if (!email || !terms_accepted) {
         return res.status(400).json({ error: "Email and terms acceptance are required" });
@@ -249,7 +251,10 @@ app.post("/api/user/register", async (req, res) => {
                     short_bio,
                     qualifications,
                     activated: true,
-                    join_date: new Date().toISOString()
+                    join_date: new Date().toISOString(),
+                    lname: lname,
+                    fname: fname
+
                 }
             ])
             .select()
@@ -1036,7 +1041,9 @@ app.post("/api/ATS/getinfo", async (req, res) => {
                     address,
                     nationality,
                     short_bio,
-                    qualifications
+                    qualifications,
+                    lname,
+                    fname
                     
                 )
             `)
