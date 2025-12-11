@@ -30,7 +30,7 @@ const EditCompanyProfile: React.FC = () => {
             });
             const data = await res.json();
             if (data.success) {
-                try { window.dispatchEvent(new Event("auth-changed")); } catch {}
+                try { window.dispatchEvent(new Event("auth-changed")); } catch { /* empty */ }
                 alert("Sikeresen kijelentkeztél!");
                 navigate("/CompanyLoginPage");
             }
