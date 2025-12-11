@@ -14,6 +14,7 @@ import ListJobs from "./features/job/list_jobs.tsx";
 import ShowJob from "./features/job/ShowJob.tsx";
 import JobApplication from "./features/user/JobApplications/JobApplication.tsx";
 import UploadResume from "./features/user/UploadResume/UploadResume.tsx";
+import ApplicantTrackingSystem from "./features/job/ApplicantTrackingSystem.tsx";
 
 function App() {
     return (
@@ -76,6 +77,14 @@ function App() {
                     element={
                         <IsLoggedIn mode="company">
                             <CompanyHomePage/>
+                        </IsLoggedIn>
+                    }
+                />
+                <Route
+                    path="/company/ATS/:id"
+                    element={
+                        <IsLoggedIn mode="company">
+                            <ApplicantTrackingSystem/>
                         </IsLoggedIn>
                     }
                 />

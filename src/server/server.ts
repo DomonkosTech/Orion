@@ -1000,6 +1000,214 @@ app.post("/api/addadvertisment/getallsubmit", async (req, res) => {
 });
 
 
+//Applicant tracking endpoint
+app.post("/api/ATS/getinfo", async (req, res) => {
+    const token = req.cookies.auth_token;
+    const { id } = req.body;
+    if (!token)
+        return res.status(401).json({ error: "Missing token" });
+
+    if (!JWT_SECRET)
+        return res.status(500).json({ error: "JWT secret not configured" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
+        const company_id = decoded.companyId;
+
+        const { data: company } = await supabase
+            .from("companies")
+            .select("id")
+            .eq("id", company_id)
+            .maybeSingle();
+
+        if (!company)
+            return res.status(403).json({ error: "please login" });
+
+        const { data: applicants, error } = await supabase
+            .from("job_applications")
+            .select(`
+                id,
+                last_updated,
+                users (
+                    email,
+                    phone_number,
+                    birth_place,
+                    birth_date,
+                    address,
+                    nationality,
+                    short_bio,
+                    qualifications
+                    
+                )
+            `)
+            .eq("advertisement_id", id)
+            .eq("status", "submitted");
+
+
+        if (error) throw error;
+
+        res.json({
+            success: true,
+            applicants,
+        });
+
+    } catch (err) {
+        console.error("get-company-info error:", err);
+        res.status(401).json({ error: "Invalid or expired token" });
+    }
+});
+
+
+//reject application endpoint
+app.post("/api/ATS/reject_application", async (req, res) => {
+
+    const token = req.cookies.auth_token;
+    const { id } = req.body;
+    if (!token)
+        return res.status(401).json({ error: "Missing token" });
+
+    if (!JWT_SECRET)
+        return res.status(500).json({ error: "JWT secret not configured" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
+        const company_id = decoded.companyId;
+
+        const { data: company } = await supabase
+            .from("companies")
+            .select("id")
+            .eq("id", company_id)
+            .maybeSingle();
+
+        if (!company)
+            return res.status(403).json({ error: "please login" });
+
+        const { error } = await supabase
+            .from("job_applications")
+            .update({
+                status: "rejected"
+            })
+            .eq("id", id)
+            .maybeSingle();
+
+        if (error) throw error;
+
+
+        res.json({success: true});
+
+
+    } catch (err) {
+        console.error("get-company-info error:", err);
+        res.status(401).json({ error: "Invalid or expired token" });
+    }
+
+})
+
+
+//accept application endpoint
+app.post("/api/ATS/accept_application", async (req, res) => {
+    const token = req.cookies.auth_token;
+    const { id } = req.body;
+    if (!token)
+        return res.status(401).json({ error: "Missing token" });
+
+    if (!JWT_SECRET)
+        return res.status(500).json({ error: "JWT secret not configured" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
+        const company_id = decoded.companyId;
+
+        const { data: company } = await supabase
+            .from("companies")
+            .select("id")
+            .eq("id", company_id)
+            .maybeSingle();
+
+        if (!company)
+            return res.status(403).json({ error: "please login" });
+
+
+        interface Advertisement {
+            company_id: number;
+            position: string;
+            title: string;
+            hourly_wage: number;
+        }
+
+        interface User {
+            id: number;
+        }
+
+        interface ApplicantResult {
+            id: number;
+            last_updated: string;
+            advertisement: Advertisement;
+            users: User;
+        }
+
+        const { data: applicants, error } = await supabase
+            .from("job_applications")
+            .select(`
+        id,
+        last_updated,
+        advertisement:advertisement_id (
+            company_id,
+            position,
+            title,
+            hourly_wage
+        ),
+        users:user_id (
+            id
+        )
+    `)
+            .eq("id", id)
+            .maybeSingle<ApplicantResult>();
+
+
+        if (!applicants || !applicants.users || !applicants.advertisement)
+            return res.status(403).json({ error: "please login" });
+
+
+
+
+        const adat = applicants.users;
+        const adat2 = applicants.advertisement;
+
+
+        const { error: erro } = await supabase
+            .from("employees")
+            .insert([
+                {
+                    user_id: adat.id,
+                    company_id: adat2.company_id,
+                    position: adat2.position,
+                    job_title: adat2.title,
+                    hourly_wage: adat2.hourly_wage,
+                }
+            ]);
+
+        const { error: er } = await supabase
+            .from("job_applications")
+            .delete()
+            .eq("id", id)
+
+        if (error) throw error;
+        if (erro) throw erro;
+        if (er) throw er;
+
+
+        res.json({
+            success: true,
+
+        });
+
+    } catch (err) {
+        console.error("get-company-info error:", err);
+        res.status(401).json({ error: "Invalid or expired token" });
+    }
+});
+
 
 
 ///////////////////////////////////////////////////
