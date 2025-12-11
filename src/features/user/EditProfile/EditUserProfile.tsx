@@ -39,9 +39,9 @@ const EditUserProfile: React.FC = () => {
             });
             const data = await res.json();
             if (data.success) {
+                try { window.dispatchEvent(new Event("auth-changed")); } catch {}
                 alert("Sikeresen kijelentkeztél!");
                 navigate("/UserLoginPage"); // átirányítás login oldalra
-                window.location.reload();
             }
         } catch (err) {
             console.error("Logout error:", err);

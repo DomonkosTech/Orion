@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast, Toaster } from "react-hot-toast";
+import styles from "./CompanyRegisterPage.module.css";
+
+// Shared Components
+import InputField from "../../../components/InputField/InputField";
+import Checkbox from "../../../components/Checkbox/Checkbox";
+import Button from "../../../components/buttons/button";
 
 const CompanyRegisterPage: React.FC = () => {
+    const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Form state
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -17,40 +28,38 @@ const CompanyRegisterPage: React.FC = () => {
         termsAccepted: false
     });
 
-    const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
+    // Handle text inputs
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev, [name]: value }));
+    };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value, type } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-        }));
+    // Handle specific checkbox change (since our Checkbox component returns boolean)
+    const handleCheckboxChange = (checked: boolean) => {
+        setFormData(prev => ({ ...prev, termsAccepted: checked }));
     };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Alap validáció
-        if (!formData.email.trim() || !formData.password.trim()) {
-            alert("Kérlek, töltsd ki az email és jelszó mezőket!");
+        // 1. Validation
+        if (!formData.email.trim() || !formData.password.trim() || !formData.name.trim()) {
+            toast.error("Kérlek, töltsd ki a kötelező mezőket!");
             return;
         }
-
         if (formData.password !== formData.confirmPassword) {
-            alert("A jelszavak nem egyeznek!");
+            toast.error("A jelszavak nem egyeznek!");
             return;
         }
-
         if (!formData.termsAccepted) {
-            alert("El kell fogadnia a felhasználási feltételeket!");
+            toast.error("El kell fogadnia a felhasználási feltételeket!");
             return;
         }
 
         setIsLoading(true);
 
         try {
-            // Cégtábla feltöltése
+            // 2. Register Company
             const companyResponse = await fetch("http://localhost:4000/api/company/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -71,11 +80,10 @@ const CompanyRegisterPage: React.FC = () => {
             const companyData = await companyResponse.json();
 
             if (!companyResponse.ok) {
-                alert(companyData.error || "Hiba a céges regisztráció során");
-                return;
+                throw new Error(companyData.error || "Hiba a céges regisztráció során");
             }
 
-            // Céges hitelesítő adatok mentése
+            // 3. Register Credentials
             const credentialsResponse = await fetch("http://localhost:4000/api/company/register/credentials", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -88,79 +96,170 @@ const CompanyRegisterPage: React.FC = () => {
             const credentialsData = await credentialsResponse.json();
 
             if (!credentialsResponse.ok) {
-                alert(credentialsData.error || "Hiba a jelszó mentése során");
-                return;
+                throw new Error(credentialsData.error || "Hiba a jelszó mentése során");
             }
 
-            alert("Sikeres céges regisztráció! Most már bejelentkezhet.");
-            navigate("/CompanyLoginPage");
-        } catch (err) {
+            toast.success("Sikeres regisztráció! Bejelentkezés...");
+            setTimeout(() => navigate("/CompanyLoginPage"), 1500);
+
+
+        } catch (err: unknown) {
             console.error(err);
-            alert("Hálózati hiba történt");
+            if (err instanceof Error) {
+                toast.error(err.message);
+            } else {
+                toast.error("Hálózati hiba történt");
+            }
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <form onSubmit={handleRegister}>
-            <h1>cég regisztráció</h1>
+        <div className={styles.container}>
+            <Toaster />
+            <form onSubmit={handleRegister} className={styles.form}>
+                <div className={styles.header}>
+                    <h1>Cég regisztráció</h1>
+                    <p>Hozzon létre fiókot vállalkozása számára</p>
+                </div>
 
-            <div>
-                <label>Email cím *</label>
-                <input type="email" name="email" value={formData.email} onChange={handleInputChange} required />
-            </div>
-            <div>
-                <label>Jelszó *</label>
-                <input type="password" name="password" value={formData.password} onChange={handleInputChange} required />
-            </div>
-            <div>
-                <label>Jelszó megerősítése *</label>
-                <input type="password" name="confirmPassword" value={formData.confirmPassword} onChange={handleInputChange} required />
-            </div>
-            <div>
-                <label>Cég neve *</label>
-                <input type="text" name="name" value={formData.name} onChange={handleInputChange} required />
-            </div>
-            <div>
-                <label>Lakcím *</label>
-                <input type="text" name="address" value={formData.address} onChange={handleInputChange} required />
-            </div>
-            <div>
-                <label>Adószám *</label>
-                <input type="text" name="taxNumber" value={formData.taxNumber} onChange={handleInputChange} required />
-            </div>
-            <div>
-                <label>Kapcsolattartó neve *</label>
-                <input type="text" name="contactPersonName" value={formData.contactPersonName} onChange={handleInputChange} required />
-            </div>
-            <div>
-                <label>Tevékenységi kör *</label>
-                <input type="text" name="activityScope" value={formData.activityScope} onChange={handleInputChange} required />
-            </div>
-            <div>
-                <label>Weboldal</label>
-                <input type="text" name="website" value={formData.website} onChange={handleInputChange} />
-            </div>
-            <div>
-                <label>Rövid bemutatkozás *</label>
-                <textarea name="shortDescription" value={formData.shortDescription} onChange={handleInputChange} rows={3} required />
-            </div>
-            <div>
-                <label>Telefonszám *</label>
-                <input type="tel" name="phoneNumber" value={formData.phoneNumber} onChange={handleInputChange} required />
-            </div>
-            <div>
-                <label>
-                    <input type="checkbox" name="termsAccepted" checked={formData.termsAccepted} onChange={handleInputChange} required />
-                    Elfogadom a <a href="/terms">felhasználási feltételeket</a> *
-                </label>
-            </div>
-            <button type="submit" disabled={isLoading}>
-                {isLoading ? "Regisztráció..." : "Regisztráció"}
-            </button>
-            <button type="button" onClick={() => navigate("/CompanyLoginPage")}>Bejelentkezés</button>
-        </form>
+                {/* Grid Layout for compact view */}
+                <div className={styles.grid}>
+                    {/* Column 1: Account Info */}
+                    <div className={styles.section}>
+                        <h3>Fiók adatok</h3>
+                        <InputField
+                            label="Email cím *"
+                            name="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            required
+                        />
+                        <InputField
+                            label="Jelszó *"
+                            name="password"
+                            type="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            required
+                        />
+                        <InputField
+                            label="Jelszó megerősítése *"
+                            name="confirmPassword"
+                            type="password"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    {/* Column 2: Company Basic Info */}
+                    <div className={styles.section}>
+                        <h3>Cégadatok</h3>
+                        <InputField
+                            label="Cég neve *"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            required
+                        />
+                        <InputField
+                            label="Adószám *"
+                            name="taxNumber"
+                            value={formData.taxNumber}
+                            onChange={handleChange}
+                            required
+                        />
+                        <InputField
+                            label="Weboldal"
+                            name="website"
+                            value={formData.website}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    {/* Column 3: Contact Info */}
+                    <div className={styles.section}>
+                        <h3>Elérhetőség</h3>
+                        <InputField
+                            label="Kapcsolattartó neve *"
+                            name="contactPersonName"
+                            value={formData.contactPersonName}
+                            onChange={handleChange}
+                            required
+                        />
+                        <InputField
+                            label="Telefonszám *"
+                            name="phoneNumber"
+                            type="tel"
+                            value={formData.phoneNumber}
+                            onChange={handleChange}
+                            required
+                        />
+                        <InputField
+                            label="Lakcím *"
+                            name="address"
+                            value={formData.address}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    {/* Column 4: Details */}
+                    <div className={styles.section}>
+                        <h3>Tevékenység</h3>
+                        <InputField
+                            label="Tevékenységi kör *"
+                            name="activityScope"
+                            value={formData.activityScope}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        {/* Manual Textarea styling to match InputField */}
+                        <div className={styles.textAreaContainer}>
+                            <label className={styles.textAreaLabel}>Rövid bemutatkozás *</label>
+                            <textarea
+                                className={styles.textArea}
+                                name="shortDescription"
+                                value={formData.shortDescription}
+                                onChange={handleChange}
+                                rows={4}
+                                required
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                <div className={styles.footer}>
+                    <div className={styles.terms}>
+                        <Checkbox
+                            label="Elfogadom a"
+                            checked={formData.termsAccepted}
+                            onChange={handleCheckboxChange}
+                        />
+                        <a href="/terms" className={styles.link} target="_blank" rel="noreferrer">
+                            felhasználási feltételeket
+                        </a>
+                    </div>
+
+                    <div className={styles.actions}>
+                        <Button type="submit" isLoading={isLoading} variant="primary">
+                            Regisztráció
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={() => navigate("/CompanyLoginPage")}
+                        >
+                            Vissza a bejelentkezéshez
+                        </Button>
+                    </div>
+                </div>
+            </form>
+        </div>
     );
 };
 
