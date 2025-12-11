@@ -34,7 +34,6 @@ const EditAdvertisement = () => {
 
 
     useEffect(() => {
-        // 4. Függvény neve átírva "fetchAdvertisement"-re
         const fetchAdvertisement = async () => {
             try {
                 // 5. API végpont ellenőrzése és megerősítése
@@ -46,8 +45,6 @@ const EditAdvertisement = () => {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    // 6. Az API válasz feltételezett mezőjének átnevezése
-                    // Feltételezem, hogy az API most már `advertisement` mezőben küldi vissza az adatot, nem `company`-ban.
                     setAdvertisement(data.advertisement);
                 }
             } catch (err) {
