@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 const UserRegisterPage: React.FC = () => {
     const [formData, setFormData] = useState({
+        fname: "",
+        lname: "",
         email: "",
         password: "",
         confirmPassword: "",
@@ -56,6 +58,8 @@ const UserRegisterPage: React.FC = () => {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                    lname: formData.lname,
+                    fname: formData.fname,
                     email: formData.email,
                     phone_number: formData.phoneNumber,
                     birth_place: formData.birthPlace,
@@ -124,6 +128,29 @@ const UserRegisterPage: React.FC = () => {
     return (
         <form onSubmit={handleRegister}>
             <h1>Felhasználó regisztráció</h1>
+            <div>
+                <label htmlFor="lname">vezeték név</label>
+                <input
+                    id="lname"
+                    name="lname"
+                    type="text"
+                    placeholder="vezeték név"
+                    value={formData.lname}
+                    onChange={handleInputChange}
+                />
+            </div>
+
+            <div>
+                <label htmlFor="fname">kereszt név</label>
+                <input
+                    id="fname"
+                    name="fname"
+                    type="text"
+                    placeholder="vezeték név"
+                    value={formData.fname}
+                    onChange={handleInputChange}
+                />
+            </div>
 
             <div>
                 <label htmlFor="email">Email cím *</label>

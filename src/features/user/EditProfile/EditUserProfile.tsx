@@ -12,6 +12,8 @@ interface User {
     nationality: string;
     short_bio: string;
     qualifications: string;
+    lname: string;
+    fname: string;
 }
 
 interface Documents {
@@ -125,6 +127,26 @@ const EditUserProfile: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-6 text-center">Profil adatok</h2>
 
             <form className="grid grid-cols-1 gap-4">
+                <label>
+                    <span className="block font-medium">vezetéknév</span>
+                    <input
+                        type="text"
+                        value={user.lname}
+                        readOnly={!editMode}
+                        onChange={(e) => setUser({ ...user, lname: e.target.value })}
+                        className="w-full p-2 border rounded-md"
+                    />
+                </label>
+                <label>
+                    <span className="block font-medium">keresztnév</span>
+                    <input
+                        type="text"
+                        value={user.fname}
+                        readOnly={!editMode}
+                        onChange={(e) => setUser({ ...user, fname: e.target.value })}
+                        className="w-full p-2 border rounded-md"
+                    />
+                </label>
                 <label>
                     <span className="block font-medium">Email:</span>
                     <input
