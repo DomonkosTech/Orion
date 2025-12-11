@@ -11,9 +11,13 @@ type Advertisement = {
 
 const CompanyHomePage: React.FC = () => {
     const navigate = useNavigate();
-
-// Hirdetések tárolása típusosan
     const [ads, setAds] = useState<Advertisement[]>([]);
+
+    const handleshowClick = (adId: number) => {
+        console.log("Kiválasztott hirdetés ID:", adId);
+        navigate(`/company/ATS/${adId}`);
+    };
+
 
 // Hirdetések lekérése
     useEffect(() => {
@@ -95,6 +99,7 @@ const CompanyHomePage: React.FC = () => {
                     <div
                         key={ad.id}
                         className="p-4 border rounded-2xl shadow-md flex justify-between items-center bg-white"
+                        onClick={() => handleshowClick(ad.id)}
                     >
                         <div style={{ display: "flex", flexDirection: "column", padding: "10px", borderRadius: "8px", border: "1px solid #ddd"}}>
                         <div >
