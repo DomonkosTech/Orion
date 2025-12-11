@@ -87,6 +87,30 @@ export const ApplicantTrackingSystem: React.FC = () => {
         }
     };
 
+    const handleDownloadResume = async (applicationId: number) => {
+        try {
+            const res = await fetch("http://localhost:4000/api/ATS/download_resume", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+                body: JSON.stringify({ id: applicationId }),
+            });
+
+            const data = await res.json();
+
+            if (data.success) {
+                window.open(data.url, '_blank');
+            } else {
+                alert(data.message || data.error || "Hiba az önéletrajz letöltésekor.");
+            }
+        } catch (err) {
+            alert("Hálózati hiba vagy a szerver nem elérhető.");
+            console.error("Download resume error:", err);
+        }
+    };
+
     const handleReject = async (applicationId: number) => {
         try {
             const res = await fetch("http://localhost:4000/api/ATS/reject_application", {
@@ -148,6 +172,12 @@ export const ApplicantTrackingSystem: React.FC = () => {
                                     <td className="px-6 py-4 whitespace-nowrap">{applicant.users.birth_place}</td>
                                     <td className="px-6 py-4 whitespace-nowrap">{new Date(applicant.last_updated).toLocaleString()}</td>
                                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <button
+                                            onClick={() => handleDownloadResume(applicant.id)}
+                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+                                        >
+                                            Önéletrajz
+                                        </button>
                                         <button
                                             onClick={() => handleAccept(applicant.id)}
                                             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"

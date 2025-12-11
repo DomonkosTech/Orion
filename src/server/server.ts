@@ -1111,6 +1111,81 @@ app.post("/api/ATS/reject_application", async (req, res) => {
 })
 
 
+//download resume endpoint
+app.post("/api/ATS/download_resume", async (req, res) => {
+    const token = req.cookies.auth_token;
+    const { id } = req.body;
+    if (!token)
+        return res.status(401).json({ error: "Missing token" });
+
+    if (!JWT_SECRET)
+        return res.status(500).json({ error: "JWT secret not configured" });
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
+        const company_id = decoded.companyId;
+
+        const { data: company } = await supabase
+            .from("companies")
+            .select("id")
+            .eq("id", company_id)
+            .maybeSingle();
+
+        if (!company)
+            return res.status(403).json({ error: "please login" });
+
+
+
+
+        interface ApplicantData {
+            user_id: number;
+            advertisement_id: {
+                company_id: number;
+            };
+        }
+
+
+        const { data: applicant } = await supabase
+            .from("job_applications")
+            .select("user_id, advertisement_id( company_id )")
+            .eq("id", id)
+            .maybeSingle<ApplicantData>();
+        if (applicant?.advertisement_id.company_id !== company_id)
+            return res.status(403).json({ error: "nincs jogod lekérni" });
+
+        const userId = applicant.user_id;
+        const BUCKET = "resumes";
+        const { data: files, error: listError } = await supabase
+            .storage
+            .from(BUCKET)
+            .list(`${userId}/`);
+
+         if (listError) throw listError;
+        const resumeFile = files.find(f => f.metadata && f.metadata.size > 0);
+
+         if (!resumeFile) {
+             return res.status(404).json({ success: false, message: "Nincs feltöltött önéletrajz." });
+         }
+        const filePath = `${userId}/${resumeFile.name}`;
+
+        // Generate a signed URL valid for 60 minutes (3600 seconds)
+        const { data, error: urlError } = await supabase
+            .storage
+            .from(BUCKET)
+            .createSignedUrl(filePath, 3600);
+
+         if (urlError) throw urlError;
+
+         res.json({ success: true, url: data.signedUrl });
+    }
+
+    catch (err) {
+            console.error("get-company-info error:", err);
+            res.status(401).json({ error: "Invalid or expired token" });
+        }
+});
+
+
 //accept application endpoint
 app.post("/api/ATS/accept_application", async (req, res) => {
     const token = req.cookies.auth_token;
