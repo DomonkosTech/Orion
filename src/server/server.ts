@@ -1000,7 +1000,7 @@ app.post("/api/addadvertisment/getallsubmit", async (req, res) => {
 });
 
 
-//Applicant tracking endpoint
+//Applicant tracking endpointa
 app.post("/api/ATS/getinfo", async (req, res) => {
     const token = req.cookies.auth_token;
     const { id } = req.body;
