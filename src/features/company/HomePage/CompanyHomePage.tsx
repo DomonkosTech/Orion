@@ -56,8 +56,9 @@ const CompanyHomePage: React.FC = () => {
             });
             const data = await res.json();
             if (data.success) {
-                alert("Sikeresen kijelentkeztél!");
-                navigate("/");
+                window.dispatchEvent(new Event("auth-changed"));
+
+                navigate("/CompanyLoginPage", { replace: true });
             }
         } catch (err) {
             console.error("Logout error:", err);
