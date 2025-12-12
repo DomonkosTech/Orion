@@ -5,12 +5,12 @@ import dotenv from "dotenv";
 dotenv.config();
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
-import type { CookieOptions } from "express";
+import type { CookieOptions, Request, Response, NextFunction } from "express";
 import multer from "multer";
 
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 5 * 1024 * 1024 } // opcionális (5 MB limit)
+    limits: { fileSize: 5 * 1024 * 1024 }// max 5 MB limit
 });
 
 
@@ -33,7 +33,91 @@ app.use(cors({
 }));
 
 
+///////////////////////////////////////////////////
+//              MIDDLEWARE FUNCTIONS             //
+///////////////////////////////////////////////////
 
+// Extend Express Request type to include user/company data
+interface AuthRequest extends Request {
+    userId?: number;
+    companyId?: number;
+    userType?: 'user' | 'company';
+}
+
+// Middleware: Verify JWT token
+const verifyToken = (req: AuthRequest, res: Response, next: NextFunction) => {
+    const token = req.cookies.auth_token;
+
+    if (!token) {
+        return res.status(401).json({ error: "Missing token" });
+    }
+
+    if (!JWT_SECRET) {
+        return res.status(500).json({ error: "JWT secret not configured" });
+    }
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET) as {
+            userId?: number;
+            companyId?: number;
+            userType: 'user' | 'company'
+        };
+
+        req.userId = decoded.userId;
+        req.companyId = decoded.companyId;
+        req.userType = decoded.userType;
+
+        next();
+    } catch {
+        return res.status(401).json({ error: "Invalid or expired token" });
+    }
+};
+
+// Middleware: Verify user exists in database
+const verifyUser = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.userId) {
+        return res.status(401).json({ error: "User ID not found in token" });
+    }
+
+    try {
+        const { data: user } = await supabase
+            .from("users")
+            .select("id")
+            .eq("id", req.userId)
+            .maybeSingle();
+
+        if (!user) {
+            return res.status(403).json({ error: "Please login" });
+        }
+
+        next();
+    } catch {
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
+
+// Middleware: Verify company exists in database
+const verifyCompany = async (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.companyId) {
+        return res.status(401).json({ error: "Company ID not found in token" });
+    }
+
+    try {
+        const { data: company } = await supabase
+            .from("companies")
+            .select("id")
+            .eq("id", req.companyId)
+            .maybeSingle();
+
+        if (!company) {
+            return res.status(403).json({ error: "Please login" });
+        }
+
+        next();
+    } catch {
+        return res.status(500).json({ error: "Internal server error" });
+    }
+};
 
 
 
@@ -95,25 +179,15 @@ app.post("/api/user/login", async (req, res) => {
 
 
 //get user info endpoint
-app.get("/api/user/getinfo", async (req, res) => {
-    const token = req.cookies.auth_token;
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET)
-        return res.status(500).json({ error: "JWT secret not configured" });
-
+app.get("/api/user/getinfo", verifyToken, async (req: AuthRequest, res) => {
     if (!ENCRYPTION_KEY)
         return res.status(500).json({ error: "Encryption key not configured" });
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
-        const user_id = decoded.userId;
-
         const { data: user, error: userError } = await supabase
             .from("users")
             .select("*")
-            .eq("id", user_id)
+            .eq("id", req.userId!)
             .single();
 
         if (userError) throw userError;
@@ -121,7 +195,7 @@ app.get("/api/user/getinfo", async (req, res) => {
         const { data: documents, error: decryptError } = await supabase.rpc(
             "get_decrypted_documents",
             {
-                p_user_id: user_id,
+                p_user_id: req.userId!,
                 p_encryption_key: ENCRYPTION_KEY,
             }
         );
@@ -132,7 +206,7 @@ app.get("/api/user/getinfo", async (req, res) => {
         const { data: existingFiles, error: listError } = await supabase
             .storage
             .from(BUCKET)
-            .list(`${user_id}/`);
+            .list(`${req.userId}/`);
 
         if (listError) {
             console.error("Storage list error:", listError);
@@ -141,19 +215,10 @@ app.get("/api/user/getinfo", async (req, res) => {
 
         const realFiles = (existingFiles || []).filter(f => f.metadata && f.metadata.size > 0);
 
-        let resume: boolean;
-        if (realFiles.length > 0) {
-            resume = true;
-        }
-        else
-        {
-            resume = false;
-        }
-
+        const resume = realFiles.length > 0;
 
         if (decryptError) throw decryptError;
         console.log("Decrypted documents:", documents);
-        // 🔹 Válasz összeállítása
         res.json({
             success: true,
             user,
@@ -168,15 +233,8 @@ app.get("/api/user/getinfo", async (req, res) => {
 
 
 //update user info endpoint
-app.post("/api/user/updateinfo", async (req, res) => {
-    const token = req.cookies.auth_token;
-    if (!token) return res.status(401).json({ error: "Missing token" });
-    if (!JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
-
+app.post("/api/user/updateinfo", verifyToken, async (req: AuthRequest, res) => {
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
-        const user_id = decoded.userId;
-
         const data = req.body;
         const documents = data.documents;
 
@@ -195,7 +253,7 @@ app.post("/api/user/updateinfo", async (req, res) => {
                 lname: data.lname,
                 fname: data.fname,
             })
-            .eq("id", user_id)
+            .eq("id", req.userId!)
             .select()
             .single();
 
@@ -205,7 +263,7 @@ app.post("/api/user/updateinfo", async (req, res) => {
             if (!ENCRYPTION_KEY) return res.status(500).json({ error: "Encryption key not configured" });
 
             const { error: docError } = await supabase.rpc("update_encrypted_documents", {
-                p_user_id: user_id,
+                p_user_id: req.userId!,
                 p_personal_id: documents.personal_id,
                 p_address_card_number: documents.address_card_number,
                 p_encryption_key: ENCRYPTION_KEY
@@ -323,16 +381,8 @@ app.post("/api/user/register/documents", async (req, res) => {
 
 
 // upload resume endpoint
-app.post("/api/upload-resume", upload.single("resume"), async (req, res) => {
-    const token = req.cookies.auth_token;
-    if (!token) return res.status(401).json({ error: "Missing token" });
-    if (!process.env.JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
-
+app.post("/api/upload-resume", verifyToken, upload.single("resume"), async (req: AuthRequest, res) => {
     try {
-        // --- JWT DECODE ---
-        const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: number };
-        const uid = decoded.userId;
-
         // --- FILE VALIDATION ---
         const file = req.file;
         if (!file) return res.status(400).json({ error: "Nincs fájl kiválasztva." });
@@ -343,7 +393,7 @@ app.post("/api/upload-resume", upload.single("resume"), async (req, res) => {
         const { data: existingFiles, error: listError } = await supabase
             .storage
             .from(BUCKET)
-            .list(`${uid}/`);
+            .list(`${req.userId}/`);
 
         if (listError) {
             console.error("Storage list error:", listError);
@@ -364,7 +414,7 @@ app.post("/api/upload-resume", upload.single("resume"), async (req, res) => {
             .replace(/[^a-zA-Z0-9._-]/g, "");
 
         // --- FINAL FILE PATH ---
-        const filePath = `${uid}/${Date.now()}_${safeName}`;
+        const filePath = `${req.userId}/${Date.now()}_${safeName}`;
 
         // --- UPLOAD FILE ---
         const { error: uploadError } = await supabase
@@ -392,21 +442,15 @@ app.post("/api/upload-resume", upload.single("resume"), async (req, res) => {
 
 
 // delete resume endpoint
-app.delete("/api/delete-resume", async (req, res) => {
-    const token = req.cookies.auth_token;
-    if (!token) return res.status(401).json({ error: "Missing token" });
-    if (!JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
-
+app.delete("/api/delete-resume", verifyToken, async (req: AuthRequest, res) => {
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
-        const userId = decoded.userId;
         const BUCKET = "resumes";
 
         // --- LIST FILES ---
         const { data: files, error: listError } = await supabase
             .storage
             .from(BUCKET)
-            .list(`${userId}/`);
+            .list(`${req.userId}/`);
 
         if (listError) {
             console.error("Storage list error:", listError);
@@ -425,7 +469,7 @@ app.delete("/api/delete-resume", async (req, res) => {
         }
 
         // --- BUILD PATHS ---
-        const filePaths = realFiles.map(file => `${userId}/${file.name}`);
+        const filePaths = realFiles.map(file => `${req.userId}/${file.name}`);
 
         // --- DELETE ONLY FILES ---
         const { error: removeError } = await supabase
@@ -566,22 +610,12 @@ app.post("/api/company/register/credentials", async (req, res) => {
 
 
 //get company info endpoint
-app.get("/api/company/getinfo", async (req, res) => {
-    const token = req.cookies.auth_token;
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET)
-        return res.status(500).json({ error: "JWT secret not configured" });
-
+app.get("/api/company/getinfo", verifyToken, async (req: AuthRequest, res) => {
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
-        const company_id = decoded.companyId;
-
         const { data: company, error: companyError } = await supabase
             .from("companies")
             .select("*")
-            .eq("id", company_id)
+            .eq("id", req.companyId!)
             .single();
 
         if (companyError) throw companyError;
@@ -599,15 +633,8 @@ app.get("/api/company/getinfo", async (req, res) => {
 
 
 //update company info endpoint
-app.post("/api/company/updateinfo", async (req, res) => {
-    const token = req.cookies.auth_token;
-    if (!token) return res.status(401).json({ error: "Missing token" });
-    if (!JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
-
+app.post("/api/company/updateinfo", verifyToken, async (req: AuthRequest, res) => {
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: string };
-        const company_id = decoded.companyId;
-
         const data = req.body;
 
         const { data: updatedCompany, error: companyError } = await supabase
@@ -623,7 +650,7 @@ app.post("/api/company/updateinfo", async (req, res) => {
                 website: data.website,
                 short_description: data.short_description
             })
-            .eq("id", company_id)
+            .eq("id", req.companyId!)
             .select()
             .single();
 
@@ -648,24 +675,12 @@ app.post("/api/company/updateinfo", async (req, res) => {
 ///////////////////////////////////////////////////
 
 // create advertisment endpoint
-app.post("/api/addadvertisment/create", async (req, res) => {
-    const token = req.cookies.auth_token;
-    if (!token) {
-        return res.status(401).json({ error: "Nincs bejelentkezve, próbálja újra!" });
-    }
-
-    if (!JWT_SECRET) {
-        return res.status(500).json({ error: "JWT secret not configured" });
-    }
-
+app.post("/api/addadvertisment/create", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     try {
-        // JWT token dekódolása a company_id megszerzéséhez
-        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
-        const company_id = decoded.companyId;
         const { count} = await supabase
             .from("advertisement")
             .select("*", { count: "exact", head: true })
-            .eq("company_id", company_id);
+            .eq("company_id", req.companyId!);
         if (count! >= 3) {
             return res.status(400).json({ error: "Elérted a maximum 3 hirdetés limitet, törölj egyet az új létrehozásához." });
         }
@@ -684,7 +699,7 @@ app.post("/api/addadvertisment/create", async (req, res) => {
                     requirements,
                     is_active,
                     search_start,
-                    company_id,
+                    company_id: req.companyId!,
                     job_description,
                 }
             ])
@@ -701,24 +716,12 @@ app.post("/api/addadvertisment/create", async (req, res) => {
 });
 
 // get advertisments by company id endpoint
-app.get("/api/advertisements/by-company", async (req, res) => {
-    const token = req.cookies.auth_token;
-    if (!token) {
-        return res.status(401).json({ error: "Nincs bejelentkezve, próbálja újra!" });
-    }
-
-    if (!JWT_SECRET) {
-        return res.status(500).json({ error: "JWT secret not configured" });
-    }
-
+app.get("/api/advertisements/by-company", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
-        const company_id = decoded.companyId;
-
         const { data, error } = await supabase
             .from("advertisement")
             .select("id, title, position")
-            .eq("company_id", company_id)
+            .eq("company_id", req.companyId!)
             .order("id", { ascending: true });
 
         if (error) throw error;
@@ -736,24 +739,15 @@ app.get("/api/advertisements/by-company", async (req, res) => {
 
 
 // get advertisment info endpoint
-app.post("/api/addadvertisment/getinfo", async (req, res) => {
-    const token = req.cookies.auth_token;
+app.post("/api/addadvertisment/getinfo", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const { id } = req.body;
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET)
-        return res.status(500).json({ error: "JWT secret not configured" });
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
-        const company_id = decoded.companyId;
-
         const { data: advertisement, error: companyError } = await supabase
             .from("advertisement")
             .select("*")
             .eq("id", id)
-            .eq("company_id", company_id)
+            .eq("company_id", req.companyId!)
             .single();
 
         if (companyError) throw companyError;
@@ -772,25 +766,10 @@ app.post("/api/addadvertisment/getinfo", async (req, res) => {
 
 
 
-app.post("/api/addadvertisment/user/getinfo", async (req, res) => {
-    const token = req.cookies.auth_token;
+app.post("/api/addadvertisment/user/getinfo", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     const { id } = req.body;
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET)
-        return res.status(500).json({ error: "JWT secret not configured" });
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
-        const uid = decoded.userId;
-        const { data: user } = await supabase
-            .from("users")
-            .select("id")
-            .eq("id", uid)
-            .maybeSingle();
-        if (user == null) return res.status(403).json({ error: "please login" });
-
         const { data: advertisement, error: companyError } = await supabase
             .from("advertisement")
             .select("*")
@@ -812,15 +791,8 @@ app.post("/api/addadvertisment/user/getinfo", async (req, res) => {
 
 
 //update advertisment info endpoint
-app.post("/api/advertisement/updateinfo", async (req, res) => {
-    const token = req.cookies.auth_token;
-    if (!token) return res.status(401).json({ error: "Missing token" });
-    if (!JWT_SECRET) return res.status(500).json({ error: "JWT secret not configured" });
-
+app.post("/api/advertisement/updateinfo", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: string };
-        const company_id = decoded.companyId;
-
         const data = req.body;
         const id = data.id;
 
@@ -836,7 +808,7 @@ app.post("/api/advertisement/updateinfo", async (req, res) => {
                 job_description: data.job_description,
             })
             .eq("id", id)
-            .eq("company_id", company_id)
+            .eq("company_id", req.companyId!)
             .select()
             .single();
 
@@ -855,25 +827,10 @@ app.post("/api/advertisement/updateinfo", async (req, res) => {
 
 
 
+
 //get all advertisments
-app.get("/api/addadvertisment/getall", async (req, res) => {
-    const token = req.cookies.auth_token;
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET)
-        return res.status(500).json({ error: "JWT secret not configured" });
-
+app.get("/api/addadvertisment/getall", verifyToken, verifyUser, async (_req, res) => {
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
-        const id = decoded.userId;
-        const { data: user } = await supabase
-            .from("users")
-            .select("id")
-            .eq("id", id)
-            .maybeSingle();
-        if (user == null) return res.status(403).json({ error: "please login" });
-
         const { data: advertisement, error: companyError } = await supabase
             .from("advertisement")
             .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
@@ -893,33 +850,14 @@ app.get("/api/addadvertisment/getall", async (req, res) => {
 
 
 //submit application endpoint
-app.post("/api/addadvertisment/submitApplication", async (req, res) => {
-    const token = req.cookies.auth_token;
+app.post("/api/addadvertisment/submitApplication", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     const { id } = req.body;
 
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET)
-        return res.status(500).json({ error: "JWT secret not configured" });
-
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
-        const uid = decoded.userId;
-
-        const { data: user } = await supabase
-            .from("users")
-            .select("id")
-            .eq("id", uid)
-            .maybeSingle();
-
-        if (!user)
-            return res.status(403).json({ error: "please login" });
-
         const { data: application } = await supabase
             .from("job_applications")
             .select("id")
-            .eq("user_id", uid)
+            .eq("user_id", req.userId!)
             .eq("advertisement_id", id)
             .maybeSingle();
 
@@ -930,7 +868,7 @@ app.post("/api/addadvertisment/submitApplication", async (req, res) => {
             .from("job_applications")
             .insert([
                 {
-                    user_id: uid,
+                    user_id: req.userId!,
                     advertisement_id: id,
                     last_updated: new Date().toISOString()
                 }
@@ -942,11 +880,6 @@ app.post("/api/addadvertisment/submitApplication", async (req, res) => {
 
     } catch (err) {
         console.error("submitApplication error:", err);
-
-        if (err instanceof jwt.JsonWebTokenError) {
-            return res.status(401).json({ error: "Invalid or expired token" });
-        }
-
         return res.status(500).json({ error: "Internal server error" });
     }
 
@@ -954,36 +887,16 @@ app.post("/api/addadvertisment/submitApplication", async (req, res) => {
 
 
 
-app.post("/api/addadvertisment/getallsubmit", async (req, res) => {
-    const token = req.cookies.auth_token;
-
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET)
-        return res.status(500).json({ error: "JWT secret not configured" });
-
+app.post("/api/addadvertisment/getallsubmit", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { userId: number };
-        const uid = decoded.userId;
-
-        const { data: user } = await supabase
-            .from("users")
-            .select("id")
-            .eq("id", uid)
-            .maybeSingle();
-
-        if (!user)
-            return res.status(403).json({ error: "please login" });
-
         const { data: submit} = await supabase
             .from("job_applications")
             .select("id, status, last_updated, advertisement_id, advertisment:advertisement(title)")
-            .eq("user_id", uid)
+            .eq("user_id", req.userId!)
         const { data: work} = await supabase
             .from("employees")
             .select("id, position, job_title, hourly_wage, hire_date, company:companies(name)")
-            .eq("user_id", uid)
+            .eq("user_id", req.userId!)
 
         console.log(work);
         if (submit == null && work == null) return res.status(403).json({ error: "no data found" });
@@ -994,40 +907,17 @@ app.post("/api/addadvertisment/getallsubmit", async (req, res) => {
         });
     }
     catch (err) {
-            console.error("submitApplication error:", err);
-
-            if (err instanceof jwt.JsonWebTokenError) {
-                return res.status(401).json({ error: "Invalid or expired token" });
-            }
-
-            return res.status(500).json({ error: "Internal server error" });
+        console.error("submitApplication error:", err);
+        return res.status(500).json({ error: "Internal server error" });
     }
 });
 
 
 //Applicant tracking endpointa
-app.post("/api/ATS/getinfo", async (req, res) => {
-    const token = req.cookies.auth_token;
+app.post("/api/ATS/getinfo", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const { id } = req.body;
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET)
-        return res.status(500).json({ error: "JWT secret not configured" });
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
-        const company_id = decoded.companyId;
-
-        const { data: company } = await supabase
-            .from("companies")
-            .select("id")
-            .eq("id", company_id)
-            .maybeSingle();
-
-        if (!company)
-            return res.status(403).json({ error: "please login" });
-
         const { data: applicants, error } = await supabase
             .from("job_applications")
             .select(`
@@ -1044,7 +934,7 @@ app.post("/api/ATS/getinfo", async (req, res) => {
                     qualifications,
                     lname,
                     fname
-                    
+                
                 )
             `)
             .eq("advertisement_id", id)
@@ -1066,29 +956,10 @@ app.post("/api/ATS/getinfo", async (req, res) => {
 
 
 //reject application endpoint
-app.post("/api/ATS/reject_application", async (req, res) => {
-
-    const token = req.cookies.auth_token;
+app.post("/api/ATS/reject_application", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const { id } = req.body;
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET)
-        return res.status(500).json({ error: "JWT secret not configured" });
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
-        const company_id = decoded.companyId;
-
-        const { data: company } = await supabase
-            .from("companies")
-            .select("id")
-            .eq("id", company_id)
-            .maybeSingle();
-
-        if (!company)
-            return res.status(403).json({ error: "please login" });
-
         const { error } = await supabase
             .from("job_applications")
             .update({
@@ -1099,9 +970,7 @@ app.post("/api/ATS/reject_application", async (req, res) => {
 
         if (error) throw error;
 
-
         res.json({success: true});
-
 
     } catch (err) {
         console.error("get-company-info error:", err);
@@ -1112,31 +981,10 @@ app.post("/api/ATS/reject_application", async (req, res) => {
 
 
 //download resume endpoint
-app.post("/api/ATS/download_resume", async (req, res) => {
-    const token = req.cookies.auth_token;
+app.post("/api/ATS/download_resume", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const { id } = req.body;
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET)
-        return res.status(500).json({ error: "JWT secret not configured" });
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
-        const company_id = decoded.companyId;
-
-        const { data: company } = await supabase
-            .from("companies")
-            .select("id")
-            .eq("id", company_id)
-            .maybeSingle();
-
-        if (!company)
-            return res.status(403).json({ error: "please login" });
-
-
-
-
         interface ApplicantData {
             user_id: number;
             advertisement_id: {
@@ -1150,7 +998,7 @@ app.post("/api/ATS/download_resume", async (req, res) => {
             .select("user_id, advertisement_id( company_id )")
             .eq("id", id)
             .maybeSingle<ApplicantData>();
-        if (applicant?.advertisement_id.company_id !== company_id)
+        if (applicant?.advertisement_id.company_id !== req.companyId!)
             return res.status(403).json({ error: "nincs jogod lekérni" });
 
         const userId = applicant.user_id;
@@ -1160,12 +1008,12 @@ app.post("/api/ATS/download_resume", async (req, res) => {
             .from(BUCKET)
             .list(`${userId}/`);
 
-         if (listError) throw listError;
+        if (listError) throw listError;
         const resumeFile = files.find(f => f.metadata && f.metadata.size > 0);
 
-         if (!resumeFile) {
-             return res.status(404).json({ success: false, message: "Nincs feltöltött önéletrajz." });
-         }
+        if (!resumeFile) {
+            return res.status(404).json({ success: false, message: "Nincs feltöltött önéletrajz." });
+        }
         const filePath = `${userId}/${resumeFile.name}`;
 
         // Generate a signed URL valid for 60 minutes (3600 seconds)
@@ -1174,42 +1022,23 @@ app.post("/api/ATS/download_resume", async (req, res) => {
             .from(BUCKET)
             .createSignedUrl(filePath, 3600);
 
-         if (urlError) throw urlError;
+        if (urlError) throw urlError;
 
-         res.json({ success: true, url: data.signedUrl });
+        res.json({ success: true, url: data.signedUrl });
     }
 
     catch (err) {
-            console.error("get-company-info error:", err);
-            res.status(401).json({ error: "Invalid or expired token" });
-        }
+        console.error("get-company-info error:", err);
+        res.status(401).json({ error: "Invalid or expired token" });
+    }
 });
 
 
 //accept application endpoint
-app.post("/api/ATS/accept_application", async (req, res) => {
-    const token = req.cookies.auth_token;
+app.post("/api/ATS/accept_application", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const { id } = req.body;
-    if (!token)
-        return res.status(401).json({ error: "Missing token" });
-
-    if (!JWT_SECRET)
-        return res.status(500).json({ error: "JWT secret not configured" });
 
     try {
-        const decoded = jwt.verify(token, JWT_SECRET) as { companyId: number };
-        const company_id = decoded.companyId;
-
-        const { data: company } = await supabase
-            .from("companies")
-            .select("id")
-            .eq("id", company_id)
-            .maybeSingle();
-
-        if (!company)
-            return res.status(403).json({ error: "please login" });
-
-
         interface Advertisement {
             company_id: number;
             position: string;
@@ -1322,8 +1151,8 @@ app.get("/auth/check", (req, res) => {
 
     try {
         const decoded = jwt.verify(token, JWT_SECRET!) as jwt.JwtPayload;
-        return res.json({ 
-            loggedIn: true, 
+        return res.json({
+            loggedIn: true,
             user: decoded,
             userType: decoded.userType
         });
@@ -1336,8 +1165,6 @@ app.get("/auth/check", (req, res) => {
 
 
 // ... existing code ...
-
-
 
 
 // Start server
