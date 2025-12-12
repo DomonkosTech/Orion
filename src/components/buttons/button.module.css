@@ -11,12 +11,11 @@
     justify-content: center;
 }
 
-/* Primary: Black box, white text */
 .primary {
     background-color: #1a1a1a;
     color: white;
     padding: 0.75rem 1.5rem;
-    width: 100%; /* Full width for main actions */
+    width: 100%;
     font-weight: 600;
 }
 
@@ -24,7 +23,6 @@
     background-color: #333;
 }
 
-/* Secondary: White box, black border (optional, good for "Register") */
 .secondary {
     background-color: transparent;
     color: #1a1a1a;
@@ -38,7 +36,6 @@
     background-color: #f5f5f5;
 }
 
-/* Link: Looks like text, NO box */
 .link {
     background: none;
     color: #1a1a1a;

@@ -7,6 +7,7 @@ import styles from "./UserRegisterPage.module.css";
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/buttons/button";
+import TextArea from "../../../components/TextArea/TextArea";
 
 const UserRegisterPage: React.FC = () => {
     const navigate = useNavigate();
@@ -231,18 +232,14 @@ const UserRegisterPage: React.FC = () => {
                             onChange={handleChange}
                         />
 
-                        {/* Manual Textarea implementation matching InputField style */}
-                        <div className={styles.textAreaContainer}>
-                            <label className={styles.textAreaLabel}>Rövid bemutatkozás</label>
-                            <textarea
-                                className={styles.textArea}
-                                name="short_bio"
-                                value={formData.short_bio}
-                                onChange={handleChange}
-                                rows={5}
-                                placeholder="Írjon magáról pár mondatot..."
-                            />
-                        </div>
+                        <TextArea
+                            label="Rövid bemutatkozás"
+                            name="short_bio"
+                            value={formData.short_bio}
+                            onChange={handleChange}
+                            rows={5}
+                            placeholder="Írjon magáról pár mondatot..."
+                        />
                     </div>
                 </div>
 

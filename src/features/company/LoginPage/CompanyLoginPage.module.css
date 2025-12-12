@@ -4,7 +4,7 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f0f2f5; /* Light grey background outside card */
+    background-color: #f0f2f5;
     padding: 1rem;
 }
 
@@ -17,7 +17,7 @@
     max-width: 400px;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem; /* Consistent spacing between all elements */
+    gap: 1.5rem;
 }
 
 .form h1 {
@@ -30,10 +30,10 @@
 .fieldsContainer {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem; /* Space between Email and Password inputs */
+    gap: 1.25rem;
 }
 
-/* The row with Checkbox and Forgot Password */
+
 .optionsRow {
     display: flex;
     justify-content: space-between;
@@ -44,7 +44,7 @@
 .actions {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem; /* Space between Login and Register buttons */
+    gap: 0.75rem;
     margin-top: 0.5rem;
 }
 
