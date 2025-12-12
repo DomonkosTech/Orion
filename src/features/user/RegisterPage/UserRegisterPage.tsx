@@ -12,18 +12,25 @@ const UserRegisterPage: React.FC = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
-    // Form state - Simplified for standard User
+    // Updated state to match backend requirements
     const [formData, setFormData] = useState({
         email: "",
         password: "",
         confirmPassword: "",
-        name: "",
+        lname: "",
+        fname: "",
+        birth_place: "",
+        birth_date: "",
         address: "",
-        phoneNumber: "",
+        phone_number: "",
+        tax_number: "",
+        nationality: "",
+        qualifications: "",
+        short_bio: "",
         termsAccepted: false
     });
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
@@ -35,8 +42,8 @@ const UserRegisterPage: React.FC = () => {
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // 1. Validation
-        if (!formData.email.trim() || !formData.password.trim() || !formData.name.trim()) {
+        // 1. Basic Validation
+        if (!formData.email || !formData.password || !formData.lname || !formData.fname) {
             toast.error("Kérlek, töltsd ki a kötelező mezőket!");
             return;
         }
@@ -52,14 +59,22 @@ const UserRegisterPage: React.FC = () => {
         setIsLoading(true);
 
         try {
+            // 2. Register User Data
             const userResponse = await fetch("http://localhost:4000/api/user/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     email: formData.email,
-                    name: formData.name,
+                    lname: formData.lname,
+                    fname: formData.fname,
+                    phone_number: formData.phone_number,
+                    birth_place: formData.birth_place,
+                    birth_date: formData.birth_date,
                     address: formData.address,
-                    phone_number: formData.phoneNumber,
+                    tax_number: formData.tax_number,
+                    nationality: formData.nationality,
+                    short_bio: formData.short_bio,
+                    qualifications: formData.qualifications,
                     terms_accepted: formData.termsAccepted
                 }),
             });
@@ -70,6 +85,7 @@ const UserRegisterPage: React.FC = () => {
                 throw new Error(userData.error || "Hiba a felhasználói regisztráció során");
             }
 
+            // 3. Save Credentials
             const credentialsResponse = await fetch("http://localhost:4000/api/user/register/credentials", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -106,12 +122,53 @@ const UserRegisterPage: React.FC = () => {
             <form onSubmit={handleRegister} className={styles.form}>
                 <div className={styles.header}>
                     <h1>Felhasználó regisztráció</h1>
-                    <p>Készítse el profilját a jelentkezéshez</p>
+                    <p>Töltse ki adatait a csatlakozáshoz</p>
                 </div>
 
                 <div className={styles.grid}>
+                    {/* Left Column: Identity & Account */}
                     <div className={styles.section}>
-                        <h3>Fiók adatok</h3>
+                        <h3>Fiók & Személyes adatok</h3>
+
+                        <InputField
+                            label="Vezetéknév *"
+                            name="lname"
+                            value={formData.lname}
+                            onChange={handleChange}
+                            required
+                        />
+                        <InputField
+                            label="Keresztnév *"
+                            name="fname"
+                            value={formData.fname}
+                            onChange={handleChange}
+                            required
+                        />
+                        <div className={styles.row}>
+                            <InputField
+                                label="Születési hely"
+                                name="birth_place"
+                                value={formData.birth_place}
+                                onChange={handleChange}
+                            />
+                            <InputField
+                                label="Születési idő"
+                                name="birth_date"
+                                type="date"
+                                value={formData.birth_date}
+                                onChange={handleChange}
+                            />
+                        </div>
+                        <InputField
+                            label="Állampolgárság"
+                            name="nationality"
+                            value={formData.nationality}
+                            onChange={handleChange}
+                        />
+
+                        {/* Account credentials moved here to keep context together */}
+                        <div className={styles.divider} />
+
                         <InputField
                             label="Email cím *"
                             name="email"
@@ -138,28 +195,54 @@ const UserRegisterPage: React.FC = () => {
                         />
                     </div>
 
+                    {/* Right Column: Contact & Professional */}
                     <div className={styles.section}>
-                        <h3>Személyes adatok</h3>
-                        <InputField
-                            label="Teljes név *"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            required
-                        />
-                        <InputField
-                            label="Telefonszám"
-                            name="phoneNumber"
-                            type="tel"
-                            value={formData.phoneNumber}
-                            onChange={handleChange}
-                        />
+                        <h3>Elérhetőség & Profil</h3>
+
                         <InputField
                             label="Lakcím"
                             name="address"
                             value={formData.address}
                             onChange={handleChange}
                         />
+                        <div className={styles.row}>
+                            <InputField
+                                label="Telefonszám"
+                                name="phone_number"
+                                type="tel"
+                                value={formData.phone_number}
+                                onChange={handleChange}
+                            />
+                            <InputField
+                                label="Adószám"
+                                name="tax_number"
+                                value={formData.tax_number}
+                                onChange={handleChange}
+                            />
+                        </div>
+
+                        <div className={styles.divider} />
+
+                        <InputField
+                            label="Végzettségek / Képesítések"
+                            name="qualifications"
+                            placeholder="pl. Egyetem, Tanfolyam..."
+                            value={formData.qualifications}
+                            onChange={handleChange}
+                        />
+
+                        {/* Manual Textarea implementation matching InputField style */}
+                        <div className={styles.textAreaContainer}>
+                            <label className={styles.textAreaLabel}>Rövid bemutatkozás</label>
+                            <textarea
+                                className={styles.textArea}
+                                name="short_bio"
+                                value={formData.short_bio}
+                                onChange={handleChange}
+                                rows={5}
+                                placeholder="Írjon magáról pár mondatot..."
+                            />
+                        </div>
                     </div>
                 </div>
 

@@ -13,7 +13,7 @@
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     width: 100%;
-    max-width: 800px;
+    max-width: 900px; /* Wider to accommodate more data */
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -34,24 +34,25 @@
     color: #666;
 }
 
-/* 2-Column Grid */
+/* Grid Layout */
 .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 2.5rem;
+    align-items: start;
 }
 
 @media (max-width: 768px) {
     .grid {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
+        gap: 2rem;
     }
 }
 
 .section {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
 .section h3 {
@@ -64,6 +65,54 @@
     margin-bottom: 0.5rem;
 }
 
+/* Helper for side-by-side inputs within a column (e.g. Birth Place + Date) */
+.row {
+    display: flex;
+    gap: 1rem;
+}
+.row > div {
+    flex: 1; /* Makes input fields take equal width */
+}
+
+.divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 0.5rem 0;
+}
+
+/* Textarea Styling */
+.textAreaContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.textAreaLabel {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #333;
+}
+
+.textArea {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    width: 100%;
+    font-family: inherit;
+    box-sizing: border-box;
+    background-color: #fff;
+    resize: vertical;
+    transition: border-color 0.2s;
+}
+
+.textArea:focus {
+    outline: none;
+    border-color: #000;
+}
+
+/* Footer & Actions */
 .footer {
     display: flex;
     flex-direction: column;
@@ -78,12 +127,12 @@
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    font-size: 0.95rem;
 }
 
 .link {
     color: #1a1a1a;
     text-decoration: underline;
-    font-size: 0.9rem;
 }
 
 .actions {
@@ -95,6 +144,9 @@
 
 @media (max-width: 480px) {
     .actions {
+        flex-direction: column;
+    }
+    .row {
         flex-direction: column;
     }
 }
