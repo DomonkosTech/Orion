@@ -126,55 +126,76 @@ const verifyCompany = async (req: AuthRequest, res: Response, next: NextFunction
 ///////////////////////////////////////////////////
 
 
-//login endpoint
+// user Login endpoint fix!!!
 app.post("/api/user/login", async (req, res) => {
-    const { email, password, rememberMe } = req.body;
+    try {
+        const { email, password, rememberMe } = req.body;
 
-    if (!email || !password)
-        return res.status(400).json({ error: "Missing fields" });
+        // Basic request validation
+        if (!email || !password) {
+            return res.status(400).json({ error: "Missing required fields" });
+        }
 
-    const { data: user } = await supabase
-        .from("users")
-        .select("id")
-        .eq("email", email)
-        .maybeSingle();
+        interface data {
+            id: number;
+            user_credentials: {
+                password_hash: string;
+            };
+        }
 
-    if (!user)
-        return res.status(404).json({ error: "No user found" });
+        // Fetch user and password hash (joined query for performance)
+        const { data: userData, error: fetchError } = await supabase
+            .from("users")
+            .select("id, user_credentials(password_hash)")
+            .eq("email", email)
+            .maybeSingle<data>();
 
-    const { data: credentials } = await supabase
-        .from("user_credentials")
-        .select("password_hash")
-        .eq("user_id", user.id)
-        .maybeSingle();
+        if (fetchError) throw fetchError;
 
-    if (!credentials)
-        return res.status(404).json({ error: "No password set" });
+        // If user not found or no stored password hash → invalid login
+        if (!userData || !userData.user_credentials || userData.user_credentials.password_hash.length === 0) {
+            return res.status(401).json({ error: "Invalid credentials" });
+        }
 
-    const match = await bcrypt.compare(password, credentials.password_hash);
-    if (!match)
-        return res.status(401).json({ error: "Invalid password" });
+        const passwordHash = userData.user_credentials.password_hash;
 
-    if (!JWT_SECRET) {
-        return res.status(500).json({ error: "JWT secret not configured" });
+        // Compare provided password with stored hash
+        const match = await bcrypt.compare(password, passwordHash);
+
+        if (!match) {
+            return res.status(401).json({ error: "Invalid credentials" });
+        }
+
+        // Ensure server JWT secret is configured
+        if (!JWT_SECRET) {
+            console.error("Critical error: JWT secret not configured.");
+            return res.status(500).json({ error: "Internal server configuration error" });
+        }
+
+        // Generate JWT (short or long expiry based on rememberMe)
+        const expiresIn = rememberMe ? "7d" : "15m";
+        const token = jwt.sign({ userId: userData.id, userType: 'user' }, JWT_SECRET, { expiresIn });
+
+        // Secure auth cookie settings
+        const cookieOptions: CookieOptions = {
+            httpOnly: true,
+            secure: false, // set to true in production
+            sameSite: "strict" as const
+        };
+
+        // Extend cookie lifetime if "remember me" is enabled
+        if (rememberMe) {
+            cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000;
+        }
+
+        // Send cookie + success response
+        res.cookie("auth_token", token, cookieOptions);
+        res.json({ success: true, message: "Login successful" });
+
+    } catch (error) {
+        console.error("Error during login processing:", error);
+        return res.status(500).json({ error: "Internal server error during login processing" });
     }
-
-    const expiresIn = rememberMe ? "7d" : "15m";
-    const token = jwt.sign({ userId: user.id, userType: 'user' }, JWT_SECRET, { expiresIn }, );
-
-    const cookieOptions: CookieOptions = {
-        httpOnly: true,
-        secure: false,//process.env.NODE_ENV === "production"
-        sameSite: "strict" as const
-    };
-
-    if (rememberMe) {
-        console.log("Remember me enabled");
-        cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 hét
-    }
-
-    res.cookie("auth_token", token, cookieOptions);
-    res.json({ success: true, message: "Login successful" });
 });
 
 
@@ -496,55 +517,77 @@ app.delete("/api/delete-resume", verifyToken, async (req: AuthRequest, res) => {
 ///////////////////////////////////////////////////
 
 
-//login endpoint
+//company login endpoint fix!!!
 app.post("/api/company/login", async (req, res) => {
-    const { email, password, rememberMe } = req.body;
+    try {
+        const { email, password, rememberMe } = req.body;
 
-    if (!email || !password)
-        return res.status(400).json({ error: "Missing fields" });
+        // Basic request validation
+        if (!email || !password) {
+            return res.status(400).json({ error: "Missing required fields" });
+        }
 
-    const { data: company } = await supabase
-        .from("companies")
-        .select("id")
-        .eq("email", email)
-        .maybeSingle();
+        interface data {
+            id: number;
+            company_credentials: {
+                password_hash: string;
+            };
+        }
 
-    if (!company)
-        return res.status(404).json({ error: "No user found" });
+        // Fetch company and password hash (joined query for performance)
+        const { data: companyData, error: fetchError } = await supabase
+            .from("companies")
+            .select("id, company_credentials(password_hash)")
+            .eq("email", email)
+            .maybeSingle<data>();
 
-    const { data: credentials } = await supabase
-        .from("company_credentials")
-        .select("password_hash")
-        .eq("company_id", company.id)
-        .maybeSingle();
+        if (fetchError) throw fetchError;
 
-    if (!credentials)
-        return res.status(404).json({ error: "No password set" });
+        // If company not found or no stored password hash → invalid login
+        if (!companyData || !companyData.company_credentials || companyData.company_credentials.password_hash.length === 0){
+            return res.status(401).json({ error: "Invalid credentials" });
+        }
 
-    const match = await bcrypt.compare(password, credentials.password_hash);
-    if (!match)
-        return res.status(401).json({ error: "Invalid password" });
+        const passwordHash = companyData.company_credentials.password_hash
 
-    if (!JWT_SECRET) {
-        return res.status(500).json({ error: "JWT secret not configured" });
+        // Compare provided password with stored hash
+        const match = await bcrypt.compare(password, passwordHash);
+
+        if (!match) {
+            return res.status(401).json({ error: "Invalid credentials" });
+        }
+
+        // Ensure server JWT secret is configured
+        if (!JWT_SECRET) {
+            console.error("Critical error: JWT secret not configured.");
+            return res.status(500).json({ error: "Internal server configuration error" });
+        }
+
+        // Generate JWT (short or long expiry based on rememberMe)
+        const expiresIn = rememberMe ? "7d" : "15m";
+        const token = jwt.sign({ companyId: companyData.id, userType: 'company' }, JWT_SECRET, { expiresIn });
+
+        // Secure auth cookie settings
+        const cookieOptions: CookieOptions = {
+            httpOnly: true,
+            secure: false,//process.env.NODE_ENV === "production"
+            sameSite: "strict" as const
+        };
+
+
+        // Extend cookie lifetime if "remember me" is enabled
+        if (rememberMe) {
+            cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 hét
+        }
+
+        // Send cookie + success response
+        res.cookie("auth_token", token, cookieOptions);
+        res.json({ success: true, message: "Login successful" });
     }
-
-    const expiresIn = rememberMe ? "7d" : "15m";
-    const token = jwt.sign({ companyId: company.id, userType: 'company' }, JWT_SECRET, { expiresIn });
-
-    const cookieOptions: CookieOptions = {
-        httpOnly: true,
-        secure: false,//process.env.NODE_ENV === "production"
-        sameSite: "strict" as const
-    };
-
-    if (rememberMe) {
-        console.log("Remember me enabled");
-        cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 hét
+    catch (error) {
+        console.error("Error during login processing:", error);
+        return res.status(500).json({ error: "Internal server error during login processing" });
     }
-
-    res.cookie("auth_token", token, cookieOptions);
-    res.json({ success: true, message: "Login successful" });
 });
 
 
