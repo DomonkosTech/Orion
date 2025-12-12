@@ -13,7 +13,7 @@
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     width: 100%;
-    max-width: 900px; /* Wider container for grid layout */
+    max-width: 900px;
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -43,7 +43,7 @@
 
 @media (max-width: 768px) {
     .grid {
-        grid-template-columns: 1fr; /* Stack on mobile */
+        grid-template-columns: 1fr;
         gap: 1.5rem;
     }
 }
@@ -123,10 +123,9 @@
     display: flex;
     gap: 1rem;
     width: 100%;
-    max-width: 400px; /* Limit button width */
+    max-width: 400px;
 }
 
-/* On mobile, stack buttons */
 @media (max-width: 480px) {
     .actions {
         flex-direction: column;
