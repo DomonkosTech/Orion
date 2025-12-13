@@ -22,22 +22,37 @@
     box-sizing: border-box;
     background-color: #fff;
     color: #333;
-    transition: border-color 0.2s;
-    resize: vertical; /* Allow vertical resizing */
+    transition: all 0.2s ease-in-out;
     font-family: inherit;
+
+    resize: none;
+    height: 136px;
 }
 
 .textarea:focus {
     outline: none;
     border-color: #000;
+    background-color: #fafafa;
 }
 
 .inputError {
     border-color: #d32f2f;
 }
 
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
 .errorMessage {
     color: #d32f2f;
     font-size: 0.8rem;
-    margin-top: 0.25rem;
+}
+
+/* New style for the counter */
+.charCount {
+    font-size: 0.75rem;
+    color: #888;
+    margin-left: auto;
 }

@@ -1,9 +1,13 @@
+// CompanyLoginPage.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "./CompanyLoginPage.module.css";
 
-// Import your new components
+// Services
+import { loginCompany, checkAuth, ServiceError } from "../../../services/companyService"; // Adjust path as needed
+
+// Components
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/buttons/button";
@@ -26,74 +30,40 @@ const CompanyLoginPage: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const res = await fetch("http://localhost:4000/api/company/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ email, password, rememberMe }),
-            });
+            // 1. Attempt Login using the Service
+            await loginCompany(email, password, rememberMe);
 
-            interface LoginResponse {
-                success: boolean;
-                error?: string;
-            }
+            toast.success("Sikeres bejelentkezés!");
 
-            const contentType = res.headers.get("content-type") || "";
-            let data: LoginResponse | null = null;
-
-            if (contentType.includes("application/json")) {
-                data = await res.json();
-            } else {
-                const text = await res.text();
-                // Give a clearer error when server returns HTML (e.g., proxy or 404)
-                throw new Error(
-                    `A szerver nem JSON választ adott: ${text.substring(0, 180)}...`
-                );
-            }
-
-            if (!res.ok) {
-                toast.error(data?.error || `Szerver hiba (${res.status})`);
-                return;
-            }
-
-            if (data?.success) {
-                toast.success("Sikeres bejelentkezés!");
-
-                // Confirm that the session cookie is active before navigating
-                try {
-                    // Retry a few times in case the Set-Cookie propagation is slightly delayed
-                    let confirmed = false;
-                    for (let i = 0; i < 5; i++) {
-                        const checkRes = await fetch("http://localhost:4000/auth/check", {
-                            method: "GET",
-                            credentials: "include",
-                            cache: "no-store",
-                        });
-                        const checkData = await checkRes.json();
-                        if (checkData?.loggedIn && checkData?.userType === "company") {
-                            confirmed = true;
-                            break;
-                        }
-                        await new Promise((r) => setTimeout(r, 100));
+            // 2. Session Confirmation Loop (Optional but safer for race conditions)
+            try {
+                let confirmed = false;
+                for (let i = 0; i < 5; i++) {
+                    const checkData = await checkAuth();
+                    if (checkData?.loggedIn && checkData?.userType === "company") {
+                        confirmed = true;
+                        break;
                     }
-                    if (!confirmed) {
-                        // Even if not confirmed, proceed — the guard will handle it soon after
-                        console.warn("Login session not confirmed immediately; proceeding to navigate.");
-                    }
-                } catch (e) {
-                    console.warn("Auth check after login failed", e);
+                    await new Promise((r) => setTimeout(r, 100));
                 }
-
-                // Inform guards to re-evaluate authentication
-                try { window.dispatchEvent(new Event("auth-changed")); } catch { /* empty */ }
-                navigate("/company");
-            } else {
-                toast.error(data?.error || "Hibás bejelentkezési adatok");
+                if (!confirmed) {
+                    console.warn("Session not confirmed immediately, navigating anyway.");
+                }
+            } catch (e) {
+                console.warn("Auth check failed", e);
             }
+
+            // 3. Trigger Global Event & Navigate
+            try { window.dispatchEvent(new Event("auth-changed")); } catch { /* empty */ }
+            navigate("/company");
+
         } catch (err: unknown) {
             console.error(err);
-            const message = err instanceof Error ? err.message : "Hálózati hiba történt";
-            toast.error(message);
+            if (err instanceof ServiceError) {
+                toast.error(err.message);
+            } else {
+                toast.error("Váratlan hiba történt. Kérjük próbálja később.");
+            }
         } finally {
             setIsLoading(false);
         }
@@ -102,7 +72,7 @@ const CompanyLoginPage: React.FC = () => {
     return (
         <div className={styles.container}>
             <Toaster />
-            <form onSubmit={handleLogin} className={styles.form}>
+            <form onSubmit={handleLogin} className={styles.form} noValidate>
                 <h1>Cég bejelentkezés</h1>
 
                 <div className={styles.fieldsContainer}>
@@ -143,18 +113,9 @@ const CompanyLoginPage: React.FC = () => {
                     </Button>
                 </div>
 
-                {/* Button Group */}
                 <div className={styles.actions}>
                     <Button type="submit" isLoading={isLoading} variant="primary">
                         Bejelentkezés
-                    </Button>
-
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        onClick={() => navigate("/CompanyRegisterPage")}
-                    >
-                        Regisztráció
                     </Button>
                 </div>
 

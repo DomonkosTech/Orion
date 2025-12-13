@@ -72,3 +72,10 @@
     height: 1px;
     background-color: #eee;
 }
+
+@media (max-width: 480px) {
+    .form {
+        padding: 1.5rem;
+        width: 100%;
+    }
+}
