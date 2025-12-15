@@ -7,14 +7,14 @@ import EditUserProfile from "./features/user/EditProfile/EditUserProfile.tsx";
 import CompanyRegisterPage from "./features/company/RegisterPage/CompanyRegisterPage.tsx";
 import CompanyLoginPage from "./features/company/LoginPage/CompanyLoginPage.tsx";
 import EditCompanyProfile from "./features/company/EditProfile/EditCompanyProfile.tsx";
-import AddJob from "./features/job/AddJob.tsx";
+import AddJob from "./features/company/CompanyJobs/AddJob.tsx";
 import CompanyHomePage from "./features/company/HomePage/CompanyHomePage.tsx";
-import EditJob from "./features/job/EditJob.tsx";
-import ListJobs from "./features/job/list_jobs.tsx";
-import ShowJob from "./features/job/ShowJob.tsx";
+import EditJob from "./features/company/CompanyJobs/EditJob.tsx";
+import ListJobs from "./features/user/UserJobs/list_jobs.tsx";
+import ShowJob from "./features/user/UserJobs/ShowJob.tsx";
 import JobApplication from "./features/user/JobApplications/JobApplication.tsx";
 import UploadResume from "./features/user/UploadResume/UploadResume.tsx";
-import ApplicantTrackingSystem from "./features/job/ApplicantTrackingSystem.tsx";
+import ApplicantTrackingSystem from "./features/company/CompanyJobs/ApplicantTrackingSystem.tsx";
 
 function App() {
     return (
