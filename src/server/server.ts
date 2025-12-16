@@ -306,99 +306,70 @@ app.post("/api/user/updateinfo", verifyToken, async (req: AuthRequest, res) => {
 });
 
 
-// register endpoint
+//user register endpoint
 app.post("/api/user/register", async (req, res) => {
-    const { email, phone_number, birth_place, birth_date, address, tax_number, nationality, terms_accepted, short_bio, qualifications, lname, fname } = req.body;
-
-    if (!email || !terms_accepted) {
-        return res.status(400).json({ error: "Email and terms acceptance are required" });
-    }
-
     try {
-        const { data: user, error } = await supabase
-            .from("users")
-            .insert([
-                {
-                    email,
-                    phone_number,
-                    birth_place,
-                    birth_date,
-                    address,
-                    tax_number,
-                    nationality,
-                    terms_accepted,
-                    short_bio,
-                    qualifications,
-                    activated: true,
-                    join_date: new Date().toISOString(),
-                    lname: lname,
-                    fname: fname
+        const {
+            email, password, lname, fname, phone_number,
+            birth_place, birth_date, address, nationality,
+            short_bio, qualifications, tax_number,
+            personal_id, address_card_number, terms_accepted
+        } = req.body;
 
-                }
-            ])
-            .select()
-            .single();
+        // basic request validation
+        if (!email || !password || !terms_accepted) {
+            return res.status(400).json({ error: "Email, password and terms required" });
+        }
 
-        if (error) throw error;
-        res.json({ success: true, userId: user.id });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Registration failed" });
-    }
-});
+        if (!personal_id || !address_card_number) {
+            return res.status(400).json({ error: "Personal ID and address card required" });
+        }
 
+        //check if encryption key is configured
+        if (!ENCRYPTION_KEY) {
+            return res.status(500).json({ error: "Server config error" });
+        }
 
-// register credentials endpoint
-app.post("/api/user/register/credentials", async (req, res) => {
-    const { user_id, password } = req.body;
-
-    if (!user_id || !password) {
-        return res.status(400).json({ error: "User ID and password are required" });
-    }
-
-    try {
+        // hash password
         const password_hash = await bcrypt.hash(password, 12);
 
-        const { error } = await supabase
-            .from("user_credentials")
-            .insert([{ user_id, password_hash }]);
-
-        if (error) throw error;
-        res.json({ success: true });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Password setup failed" });
-    }
-});
-
-
-// register documents endpoint
-app.post("/api/user/register/documents", async (req, res) => {
-    const { user_id, personal_id, address_card_number } = req.body;
-    if (!user_id || !personal_id || !address_card_number) {
-        return res.status(400).json({ error: "personal_id and address_card_number are required" });
-    }
-
-    if (!ENCRYPTION_KEY) {
-        return res.status(500).json({ error: "Encryption key not configured" });
-    }
-
-    try {
-        const { error } = await supabase.rpc('insert_encrypted_documents', {
-            p_user_id: user_id,
+        // Call RPC to insert user securely
+        const {error} = await supabase.rpc('register_user_v1', {
+            p_email: email,
+            p_password_hash: password_hash,
+            p_lname: lname,
+            p_fname: fname,
+            p_phone_number: phone_number,
+            p_birth_place: birth_place,
+            p_birth_date: birth_date,
+            p_address: address,
+            p_nationality: nationality,
+            p_short_bio: short_bio,
+            p_qualifications: qualifications,
+            p_tax_number: tax_number,
+            p_terms_accepted: terms_accepted,
             p_personal_id: personal_id,
             p_address_card_number: address_card_number,
             p_encryption_key: ENCRYPTION_KEY
         });
 
-        if (error) throw error;
-        res.json({ success: true });
+        if (error) {
+            console.error("RPC error:", error);
+            return res.status(400).json({ error: "Registration failed" });
+        }
+
+        // send success response
+        res.json({
+            success: true,
+            message: "Registration successful"
+        });
+
+    } catch {
+        res.status(500).json({ error: "Unexpected server error" });
     }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "user documents setup failed" });
-    }
-})
+});
+
+
 
 
 // upload resume endpoint
