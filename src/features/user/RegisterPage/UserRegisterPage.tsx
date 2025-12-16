@@ -9,12 +9,15 @@ import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/buttons/button";
 import TextArea from "../../../components/TextArea/TextArea";
 
+// Import the service
+import { registerUser, type UserRegistrationData } from "../../../services/userServise";
+
 const UserRegisterPage: React.FC = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
-    // Updated state to match backend requirements
-    const [formData, setFormData] = useState({
+    // Form state remains the same
+    const [formData, setFormData] = useState<UserRegistrationData & { confirmPassword: "" }>({
         email: "",
         password: "",
         confirmPassword: "",
@@ -45,7 +48,7 @@ const UserRegisterPage: React.FC = () => {
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // 1. Basic Validation
+        // Basic Validation remains the same
         if (!formData.email || !formData.password || !formData.lname || !formData.fname || !formData.personal_id || !formData.address_card_number) {
             toast.error("Kérlek, töltsd ki a kötelező mezőket!");
             return;
@@ -62,34 +65,8 @@ const UserRegisterPage: React.FC = () => {
         setIsLoading(true);
 
         try {
-            // 2. Register User Data
-            const userResponse = await fetch("http://localhost:4000/api/user/register", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    email: formData.email,
-                    password: formData.password,
-                    lname: formData.lname,
-                    fname: formData.fname,
-                    phone_number: formData.phone_number,
-                    birth_place: formData.birth_place,
-                    birth_date: formData.birth_date,
-                    address: formData.address,
-                    tax_number: formData.tax_number,
-                    nationality: formData.nationality,
-                    short_bio: formData.short_bio,
-                    qualifications: formData.qualifications,
-                    terms_accepted: formData.terms_accepted,
-                    personal_id: formData.personal_id,
-                    address_card_number: formData.address_card_number
-                }),
-            });
-
-            const userData = await userResponse.json();
-
-            if (!userResponse.ok) {
-                throw new Error(userData.error || "Hiba a felhasználói regisztráció során");
-            }
+            // Use the registerUser service
+            await registerUser(formData);
 
             toast.success("Sikeres regisztráció! Bejelentkezés...");
             setTimeout(() => navigate("/UserLoginPage"), 1500);
