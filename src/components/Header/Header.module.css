@@ -1,0 +1,100 @@
+/* src/components/Header/Header.module.css */
+
+.header {
+    background: white;
+    /* Matches the .form box-shadow but adjusted for a top bar */
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    padding: 0.75rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    width: 100%;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    /* Matches .form h1 color and weight */
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* For standard navigation links */
+.navLink {
+    /* Matches .Footer color */
+    color: #666;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.navLink:hover {
+    color: #1a1a1a;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* A subtle profile or settings button */
+.iconButton {
+    background: #f0f2f5; /* Matches .container bg from your snippet */
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Circular for contrast with the rounded form */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #1a1a1a;
+    transition: background 0.2s;
+}
+
+.iconButton:hover {
+    background: #e4e6eb;
+}
+
+/* A primary button style consistent with the form vibe */
+.logoutButton {
+    background: transparent;
+    border: 1px solid #eee; /* Matches .divider color */
+    padding: 0.5rem 1rem;
+    border-radius: 8px; /* Slightly smaller radius than the form (12px) */
+    color: #1a1a1a;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logoutButton:hover {
+    background: #f0f2f5;
+    border-color: #d0d0d0;
+}
+
+@media (max-width: 768px) {
+    .nav {
+        display: none; /* In a real app, you'd swap this for a hamburger menu */
+    }
+}

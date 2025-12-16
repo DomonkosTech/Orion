@@ -1,0 +1,307 @@
+/* ListJobs.module.css */
+
+/* --- 1. GLOBAL LAYOUT --- */
+.pageWrapper {
+    background-color: #f9fafb;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 80px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #111827;
+}
+
+/* --- 2. HERO SECTION --- */
+.hero {
+    text-align: center;
+    padding: 80px 20px 50px 20px;
+}
+
+.heroTitle {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.02em;
+    color: #111827;
+}
+
+.heroSubtitle {
+    font-size: 1.1rem;
+    color: #6b7280;
+    max-width: 500px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-weight: 400;
+}
+
+/* --- 3. SEARCH BAR --- */
+.searchContainer {
+    max-width: 1000px; /* Slightly wider search bar */
+    margin: -30px auto 60px auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 10;
+}
+
+.searchForm {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.searchInput {
+    width: 100%;
+    padding: 16px;
+    font-size: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #f9fafb;
+    color: #111827;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.searchInput:focus {
+    background: #fff;
+    border-color: #000;
+    box-shadow: 0 0 0 1px #000;
+}
+
+.filtersBar {
+    display: grid;
+    grid-template-columns: 1.5fr 1.5fr 1fr auto;
+    gap: 12px;
+}
+
+.filterControl {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 0.95rem;
+    color: #374151;
+    cursor: pointer;
+    outline: none;
+}
+.filterControl:focus { border-color: #000; }
+
+.actions { display: flex; gap: 8px; }
+
+.searchBtn {
+    background: #111827;
+    color: #ffffff;
+    border: 1px solid #111827;
+    padding: 0 28px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.searchBtn:hover {
+    background: #000000;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.clearBtn {
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid transparent;
+    border-radius: 10px;
+    width: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+.clearBtn:hover { background: #f3f4f6; color: #111827; }
+
+/* --- 4. GRID LAYOUT (The "Big & Wide" Fix) --- */
+.contentContainer {
+    /* INCREASED: Allows the 3 columns to spread out massively */
+    max-width: 1650px;
+    margin: 0 auto;
+    padding: 0 30px; /* More side padding */
+}
+
+.resultsCount {
+    color: #6b7280;
+    font-size: 0.95rem;
+    margin-bottom: 24px;
+    font-weight: 500;
+}
+
+.gridContainer {
+    display: grid;
+    gap: 32px; /* Large gap between cards */
+    grid-template-columns: 1fr; /* Mobile: 1 Column */
+}
+
+/* Tablet: 2 Columns */
+@media (min-width: 800px) {
+    .gridContainer {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Desktop: 3 Columns (Triggering earlier at 1200px) */
+@media (min-width: 1200px) {
+    .gridContainer {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* --- 5. JOB CARD (Big & Premium) --- */
+.card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 20px; /* Rounder corners */
+    padding: 36px; /* Massive internal padding */
+    display: flex;
+    flex-direction: column;
+    min-height: 420px; /* Taller cards */
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.card:hover {
+    border-color: #d1d5db;
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+.cardTopRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.logoPlaceholder {
+    width: 72px; /* Big Logo */
+    height: 72px;
+    background: #f3f4f6;
+    color: #111827;
+    border: 1px solid #e5e7eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.6rem;
+}
+
+.bookmarkIcon {
+    color: #d1d5db;
+    font-size: 1.5rem;
+    padding: 8px;
+    margin: -8px; /* Increase hit area */
+}
+.card:hover .bookmarkIcon { color: #9ca3af; }
+.bookmarkIcon:hover { color: #111827 !important; }
+
+.title {
+    color: #111827;
+    font-size: 1.5rem; /* Very Big Title */
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    line-height: 1.3;
+}
+
+.companyName {
+    font-size: 1rem;
+    color: #6b7280;
+    margin-bottom: 28px;
+    font-weight: 500;
+}
+
+.badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 32px;
+}
+
+.badge {
+    font-size: 0.85rem;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 600;
+    border: 1px solid #f3f4f6;
+}
+
+.badgePosition { background: #f9fafb; color: #374151; border-color: #e5e7eb; }
+.badgeLocation { background: #ffffff; color: #6b7280; border-color: #e5e7eb; }
+.badgeNew { background: #111827; color: #ffffff; border-color: #111827; }
+
+.description {
+    color: #4b5563;
+    font-size: 1.05rem; /* Readable body text */
+    line-height: 1.6;
+    margin-bottom: 36px;
+    flex-grow: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cardFooter {
+    padding-top: 28px;
+    border-top: 1px solid #f3f4f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wageLabel {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #9ca3af;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    margin-right: 5px;
+}
+
+.wageValue {
+    color: #111827;
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin-right: 20px;
+}
+
+.applyBtn {
+    background: transparent;
+    color: #111827;
+    border: 1px solid #e5e7eb;
+    padding: 12px 28px; /* Big Click Area */
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.card:hover .applyBtn { border-color: #111827; }
+
+.applyBtn:hover {
+    background: #111827;
+    color: #ffffff;
+    border-color: #111827;
+    transform: translateY(-1px);
+}
+
+/* Response for Mobile */
+@media (max-width: 800px) { .filtersBar { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 550px) { .filtersBar { grid-template-columns: 1fr; } }
