@@ -28,7 +28,9 @@ const UserRegisterPage: React.FC = () => {
         nationality: "",
         qualifications: "",
         short_bio: "",
-        termsAccepted: false
+        personal_id: "",
+        address_card_number: "",
+        terms_accepted: false
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -37,14 +39,14 @@ const UserRegisterPage: React.FC = () => {
     };
 
     const handleCheckboxChange = (checked: boolean) => {
-        setFormData(prev => ({ ...prev, termsAccepted: checked }));
+        setFormData(prev => ({ ...prev, terms_accepted: checked }));
     };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
         // 1. Basic Validation
-        if (!formData.email || !formData.password || !formData.lname || !formData.fname) {
+        if (!formData.email || !formData.password || !formData.lname || !formData.fname || !formData.personal_id || !formData.address_card_number) {
             toast.error("Kérlek, töltsd ki a kötelező mezőket!");
             return;
         }
@@ -52,7 +54,7 @@ const UserRegisterPage: React.FC = () => {
             toast.error("A jelszavak nem egyeznek!");
             return;
         }
-        if (!formData.termsAccepted) {
+        if (!formData.terms_accepted) {
             toast.error("El kell fogadnia a felhasználási feltételeket!");
             return;
         }
@@ -66,6 +68,7 @@ const UserRegisterPage: React.FC = () => {
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     email: formData.email,
+                    password: formData.password,
                     lname: formData.lname,
                     fname: formData.fname,
                     phone_number: formData.phone_number,
@@ -76,7 +79,9 @@ const UserRegisterPage: React.FC = () => {
                     nationality: formData.nationality,
                     short_bio: formData.short_bio,
                     qualifications: formData.qualifications,
-                    terms_accepted: formData.termsAccepted
+                    terms_accepted: formData.terms_accepted,
+                    personal_id: formData.personal_id,
+                    address_card_number: formData.address_card_number
                 }),
             });
 
@@ -84,22 +89,6 @@ const UserRegisterPage: React.FC = () => {
 
             if (!userResponse.ok) {
                 throw new Error(userData.error || "Hiba a felhasználói regisztráció során");
-            }
-
-            // 3. Save Credentials
-            const credentialsResponse = await fetch("http://localhost:4000/api/user/register/credentials", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    user_id: userData.userId,
-                    password: formData.password
-                }),
-            });
-
-            const credentialsData = await credentialsResponse.json();
-
-            if (!credentialsResponse.ok) {
-                throw new Error(credentialsData.error || "Hiba a jelszó mentése során");
             }
 
             toast.success("Sikeres regisztráció! Bejelentkezés...");
@@ -165,6 +154,24 @@ const UserRegisterPage: React.FC = () => {
                             name="nationality"
                             value={formData.nationality}
                             onChange={handleChange}
+                        />
+
+                        <div className={styles.divider} />
+
+                        <InputField
+                            label="Személyi igazolvány szám *"
+                            name="personal_id"
+                            value={formData.personal_id}
+                            onChange={handleChange}
+                            required
+                        />
+
+                        <InputField
+                            label="Lakcímkártya szám *"
+                            name="address_card_number"
+                            value={formData.address_card_number}
+                            onChange={handleChange}
+                            required
                         />
 
                         {/* Account credentials moved here to keep context together */}
@@ -247,7 +254,7 @@ const UserRegisterPage: React.FC = () => {
                     <div className={styles.terms}>
                         <Checkbox
                             label="Elfogadom a"
-                            checked={formData.termsAccepted}
+                            checked={formData.terms_accepted}
                             onChange={handleCheckboxChange}
                         />
                         <a href="/terms" className={styles.link} target="_blank" rel="noreferrer">
