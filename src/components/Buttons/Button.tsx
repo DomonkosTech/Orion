@@ -1,6 +1,6 @@
 import React from 'react';
-// Assuming the file is named button.module.css in reality, though your screenshot said .tsx.css
-import styles from './button.module.css';
+// Assuming the file is named Button.module.css in reality, though your screenshot said .tsx.css
+import styles from './Button.module.css';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'link';

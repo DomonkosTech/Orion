@@ -6,7 +6,7 @@ import styles from "./UserRegisterPage.module.css";
 // Shared Components
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
-import Button from "../../../components/buttons/button";
+import Button from "../../../components/Buttons/Button.tsx";
 import TextArea from "../../../components/TextArea/TextArea";
 
 // Import the service

@@ -10,7 +10,7 @@ import { loginCompany, checkAuth, ServiceError } from "../../../services/company
 // Components
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
-import Button from "../../../components/buttons/button";
+import Button from "../../../components/Buttons/Button.tsx";
 
 const CompanyLoginPage: React.FC = () => {
     const [email, setEmail] = useState("");

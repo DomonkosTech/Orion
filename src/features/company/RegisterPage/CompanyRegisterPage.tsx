@@ -5,7 +5,7 @@ import styles from "./CompanyRegisterPage.module.css";
 
 // Shared Components
 import Checkbox from "../../../components/Checkbox/Checkbox";
-import Button from "../../../components/buttons/button";
+import Button from "../../../components/Buttons/Button.tsx";
 import { registerCompany, registerCompanyCredentials, ServiceError } from "../../../services/companyService";
 import { companyRegisterSchema, type CompanyRegisterForm } from "./validation";
 import AccountSection from "./components/AccountSection";

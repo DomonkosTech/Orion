@@ -10,8 +10,8 @@ import EditCompanyProfile from "./features/company/EditProfile/EditCompanyProfil
 import AddJob from "./features/company/CompanyJobs/AddJob.tsx";
 import CompanyHomePage from "./features/company/HomePage/CompanyHomePage.tsx";
 import EditJob from "./features/company/CompanyJobs/EditJob.tsx";
-import ListJobs from "./features/user/UserJobs/list_jobs.tsx";
-import ShowJob from "./features/user/UserJobs/ShowJob.tsx";
+import ListJobs from "./features/user/UserJobs/ListAllJobs/ListJobs.tsx";
+import ShowJob from "./features/user/UserJobs/ShowSelectedJob/ShowJob.tsx";
 import JobApplication from "./features/user/JobApplications/JobApplication.tsx";
 import UploadResume from "./features/user/UploadResume/UploadResume.tsx";
 import ApplicantTrackingSystem from "./features/company/CompanyJobs/ApplicantTrackingSystem.tsx";
