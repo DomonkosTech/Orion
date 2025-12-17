@@ -1,54 +1,27 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-
-
-interface company {
-    name?: string;
-}
-interface advertisment {
-    title?: string;
-}
-
-interface JobApplicationData {
-    id: number;
-    user_id: number;
-    advertisement_id?: number;
-    status?: string;
-    last_updated?: string;
-    company_id?: number;
-    position?: string;
-    job_title?: string;
-    hourly_wage?: number;
-    hire_date?: string;
-    company?: company;
-    advertisment?: advertisment;
-}
+import { getJobApplications, type JobApplicationData } from "../../../services/userServise.ts";
 
 const JobApplication = () => {
+    // State for job applications, current works, loading status, and errors
     const [submits, setSubmits] = useState<JobApplicationData[]>([]);
     const [works, setWorks] = useState<JobApplicationData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
+        // Fetches job applications and work data from the service
         const fetchData = async () => {
             try {
-                const res = await fetch("http://localhost:4000/api/addadvertisment/getallsubmit", {
-                    method: "POST",
-                    credentials: "include", // hogy a cookie átmenjen
-                });
-                const data = await res.json();
-
-                if (!res.ok) {
-                    setError(data.error || "Hiba történt az adatlekéréskor");
-                } else {
-                    setSubmits(data.submit || []);
-                    setWorks(data.work || []);
-                }
+                const data = await getJobApplications();
+                setSubmits(data.submit || []);
+                setWorks(data.work || []);
             } catch (err) {
+                // Set error message on failure
                 console.error(err);
-                setError("Hálózati hiba történt");
+                setError(err instanceof Error ? err.message : "Hálózati hiba történt");
             } finally {
+                // Stop loading indicator
                 setLoading(false);
             }
         };
@@ -56,7 +29,9 @@ const JobApplication = () => {
         fetchData();
     }, []);
 
+    // Show loading message
     if (loading) return <p>Betöltés...</p>;
+    // Show error message
     if (error) return <p style={{ color: "red" }}>{error}</p>;
 
     return (
