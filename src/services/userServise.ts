@@ -63,6 +63,19 @@ const handleResponse = async (response: Response) => {
     return data;
 };
 
+export const uploadResume = async (file: File) => {
+    const formData = new FormData();
+    formData.append("resume", file);
+
+    const response = await fetch(`${API_BASE_URL}/upload-resume`, {
+        method: "POST",
+        body: formData,
+        credentials: "include",
+    });
+
+    return handleResponse(response);
+};
+
 export const loginUser = async (loginData: UserLoginData) => {
     const response = await fetch(`${API_BASE_URL}/user/login`, {
         method: "POST",
