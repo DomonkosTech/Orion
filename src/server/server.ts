@@ -333,7 +333,7 @@ app.get("/api/user/profile", verifyToken, async (req: AuthRequest, res) => {
 });
 
 
-// update user profile endpoint
+// update user profile endpoint fix!!!
 app.patch("/api/user/profile", verifyToken, async (req: AuthRequest, res) => {
     try {
         if (!req.userId) {
