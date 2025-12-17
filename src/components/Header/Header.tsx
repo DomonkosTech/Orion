@@ -1,50 +1,97 @@
-import React from 'react';
-import styles from './Header.module.css';
+import React from "react";
+import styles from "./Header.module.css";
 
-//Components
+// Components
 import Button from "../Buttons/Button";
 
-//server components
+// Server / hooks
 import { useLogout } from "../../services/BazdmegPetiNincsGlobálisLogoutTeCsicskaCsináljEggyet";
 
+interface NavItem {
+    label: string;
+    href: string;
+}
 
 interface HeaderProps {
     companyName?: string;
     userInitials?: string;
+    logoColor?: string;
+    navItems?: NavItem[];
+    actions?: React.ReactNode;
 }
 
-export const Header: React.FC<HeaderProps> = ({
-                                                  companyName = "Orion",
-                                                  userInitials = "PP",
-                                              }) => {
+export function Header({
+                           companyName = "Orion",
+                           userInitials = "KYS",
+                           logoColor = "#1a1a1a",
+                           navItems = [
+                               { label: "Dashboard", href: "/dashboard" },
+                               { label: "Projects", href: "/projects" },
+                               { label: "Team", href: "/team" },
+                           ],
+                           actions,
+                       }: HeaderProps) {
     const handleLogout = useLogout();
 
     return (
         <header className={styles.header}>
             <div className={styles.container}>
-                {/* Left: Logo/Brand */}
+                {/* Left: Logo / Brand */}
                 <a href="/" className={styles.logo}>
-                    {/* Simple colored square to act as logo icon */}
-                    <div style={{ width: 20, height: 20, background: '#1a1a1a', borderRadius: 4 }} />
+                    <div
+                        style={{
+                            width: 20,
+                            height: 20,
+                            background: logoColor,
+                            borderRadius: 4,
+                            display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                    >
+                        <div
+                            style={{
+                                width: 8,
+                                height: 8,
+                                background: "#ffffff",
+                                borderRadius: 2,
+                            }}
+                        />
+                    </div>
+
                     {companyName}
                 </a>
 
                 {/* Center: Navigation */}
                 <nav className={styles.nav}>
-                    <a href="/dashboard" className={styles.navLink}>Dashboard</a>
-                    <a href="/projects" className={styles.navLink}>Projects</a>
-                    <a href="/team" className={styles.navLink}>Team</a>
-                    <a href="/reports" className={styles.navLink}>Reports</a>
+                    {navItems.map((item) => (
+                        <a
+                            key={item.href}
+                            href={item.href}
+                            className={styles.navLink}
+                        >
+                            {item.label}
+                        </a>
+                    ))}
                 </nav>
 
-                {/* Right: User Actions */}
+                {/* Right: Actions */}
                 <div className={styles.actions}>
                     <button
                         className={styles.iconButton}
                         aria-label="User Profile"
                     >
-                        <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{userInitials}</span>
+                        <span
+                            style={{
+                                fontSize: "0.85rem",
+                                fontWeight: 600,
+                            }}
+                        >
+                            {userInitials}
+                        </span>
                     </button>
+
+                    {actions}
 
                     <Button
                         className={styles.logoutButton}
@@ -56,4 +103,4 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
         </header>
     );
-};
+}

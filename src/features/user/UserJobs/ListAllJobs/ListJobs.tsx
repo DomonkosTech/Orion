@@ -22,14 +22,12 @@ interface Job {
 
 // Helper for formatting currency
 const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('hu-HU', {
-        style: 'currency',
-        currency: 'HUF',
+    return new Intl.NumberFormat("hu-HU", {
+        style: "currency",
+        currency: "HUF",
         maximumFractionDigits: 0,
     }).format(amount);
 };
-
-// NOTE: skeleton moved to components/SkeletonCard
 
 const ListJobs: React.FC = () => {
     const [jobs, setJobs] = useState<Job[]>([]);
@@ -47,7 +45,6 @@ const ListJobs: React.FC = () => {
     const handleshowClick = (adId: number) => {
         navigate(`/job/show/${adId}`);
     };
-
 
     useEffect(() => {
         const fetchJobs = async () => {
@@ -75,8 +72,8 @@ const ListJobs: React.FC = () => {
     }, []);
 
     // Derived lists
-    const uniqueLocations = Array.from(new Set(jobs.map(j => j.location).filter(Boolean)));
-    const uniquePositions = Array.from(new Set(jobs.map(j => j.position).filter(Boolean)));
+    const uniqueLocations = Array.from(new Set(jobs.map((j) => j.location).filter(Boolean)));
+    const uniquePositions = Array.from(new Set(jobs.map((j) => j.position).filter(Boolean)));
 
     const filteredJobs = jobs.filter((job) => {
         const term = searchTerm.trim().toLowerCase();
@@ -106,49 +103,96 @@ const ListJobs: React.FC = () => {
             <Header />
 
             <div className={styles.pageWrapper}>
+                {/* HERO / BANNER */}
+                <section className={styles.banner}>
+                    <div className={styles.bannerInner}>
+                        <div className={styles.bannerKicker}>Orion • Álláskeresés</div>
 
-                {/* HERO */}
-                <div className={styles.hero}>
-                    <h1 className={styles.heroTitle}>Találja meg a jövőjét</h1>
-                    <h2 className={styles.heroSubtitle}>
-                        Fedezzen fel {jobs.length > 0 ? jobs.length : 'több száz'} nyitott pozíciót vezető cégeknél.
-                    </h2>
-                </div>
+                        <h1 className={styles.bannerTitle}>Találja meg a jövőjét</h1>
 
-                {/* SEARCH FORM */}
-                <div className={styles.searchContainer}>
-                    <FilterBar
-                        searchTerm={searchTerm}
-                        onSearchChange={setSearchTerm}
-                        locations={uniqueLocations}
-                        locationFilter={locationFilter}
-                        onLocationChange={setLocationFilter}
-                        positions={uniquePositions}
-                        positionFilter={positionFilter}
-                        onPositionChange={setPositionFilter}
-                        minWage={minWage}
-                        onMinWageChange={setMinWage}
-                        onClear={clearFilters}
-                    />
-                </div>
+                        <p className={styles.bannerSubtitle}>
+                            Fedezzen fel{" "}
+                            <strong>{jobs.length > 0 ? jobs.length : "több száz"}</strong> nyitott pozíciót
+                            vezető cégeknél — gyors szűrés, letisztult felület.
+                        </p>
+
+                        <div className={styles.bannerStats}>
+                            <div className={styles.stat}>
+                                <div className={styles.statLabel}>Elérhető hirdetések</div>
+                                <div className={styles.statValue}>{jobs.length || "—"}</div>
+                            </div>
+                            <div className={styles.statDivider} />
+                            <div className={styles.stat}>
+                                <div className={styles.statLabel}>Találatok</div>
+                                <div className={styles.statValue}>
+                                    {loading ? "…" : error ? "—" : filteredJobs.length}
+                                </div>
+                            </div>
+                            <div className={styles.statDivider} />
+                            <div className={styles.stat}>
+                                <div className={styles.statLabel}>Tipp</div>
+                                <div className={styles.statValueSm}>Használjon pozíció kulcsszót</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                {/* SEARCH PANEL */}
+                <section className={styles.searchSection}>
+                    <div className={styles.searchShell}>
+                        <div className={styles.searchHeader}>
+                            <div>
+                                <h2 className={styles.searchTitle}>Keresés és szűrés</h2>
+                                <p className={styles.searchHint}>Válasszon helyszínt, pozíciót és minimálbért.</p>
+                            </div>
+
+                            <div className={styles.searchChip}>
+                                <span className={styles.searchChipDot} />
+                                Élő szűrés
+                            </div>
+                        </div>
+
+                        <FilterBar
+                            searchTerm={searchTerm}
+                            onSearchChange={setSearchTerm}
+                            locations={uniqueLocations}
+                            locationFilter={locationFilter}
+                            onLocationChange={setLocationFilter}
+                            positions={uniquePositions}
+                            positionFilter={positionFilter}
+                            onPositionChange={setPositionFilter}
+                            minWage={minWage}
+                            onMinWageChange={setMinWage}
+                            onClear={clearFilters}
+                        />
+                    </div>
+                </section>
 
                 {/* MAIN CONTENT */}
-                <div className={styles.contentContainer}>
-
+                <main className={styles.contentContainer}>
                     {/* Error State */}
                     {error && (
                         <div className={styles.emptyState}>
-                            <span style={{color: 'red'}}>⚠ Hiba történt: {error}</span>
+                            <span className={styles.emptyStateIcon}>⚠</span>
+                            <h3>Hiba történt</h3>
+                            <p className={styles.muted}>Nem sikerült betölteni az állásokat: {error}</p>
                         </div>
                     )}
 
                     {/* Loading State */}
                     {loading && (
-                        <div className={styles.gridContainer}>
-                            {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                                <SkeletonCard key={n} />
-                            ))}
-                        </div>
+                        <>
+                            <div className={styles.resultsHeader}>
+                                <div className={styles.resultsTitle}>Betöltés…</div>
+                                <div className={styles.resultsMeta}>Kérjük várjon</div>
+                            </div>
+
+                            <div className={styles.gridContainer}>
+                                {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
+                                    <SkeletonCard key={n} />
+                                ))}
+                            </div>
+                        </>
                     )}
 
                     {/* Results State */}
@@ -156,9 +200,22 @@ const ListJobs: React.FC = () => {
                         <>
                             {filteredJobs.length > 0 ? (
                                 <>
-                                    <p className={styles.resultsCount}>
-                                        {filteredJobs.length} találat az Ön keresésére
-                                    </p>
+                                    <div className={styles.resultsHeader}>
+                                        <div>
+                                            <div className={styles.resultsTitle}>Találatok</div>
+                                            <div className={styles.resultsMeta}>
+                                                {filteredJobs.length} találat az Ön keresésére
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.resultsPill}>
+                                            Szűrés aktív:{" "}
+                                            {(searchTerm || locationFilter || positionFilter || minWage)
+                                                ? "igen"
+                                                : "nem"}
+                                        </div>
+                                    </div>
+
                                     <div className={styles.gridContainer}>
                                         {filteredJobs.map((job) => (
                                             <JobCard
@@ -175,7 +232,7 @@ const ListJobs: React.FC = () => {
                             )}
                         </>
                     )}
-                </div>
+                </main>
             </div>
         </>
     );
