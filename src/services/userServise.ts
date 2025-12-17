@@ -1,12 +1,7 @@
 // src/services/userServise.ts
 
-// A UserRegistrationData interfész definiálása a regisztrációs adatok típusának meghatározására.
-// Ez biztosítja a típusbiztonságot a komponens és a szolgáltatás között.
-export interface UserRegistrationData {
+export interface UserProfileData {
     email: string;
-    password: string;
-    lname: string;
-    fname: string;
     phone_number: string;
     birth_place: string;
     birth_date: string;
@@ -15,28 +10,67 @@ export interface UserRegistrationData {
     nationality: string;
     short_bio: string;
     qualifications: string;
-    terms_accepted: boolean;
+    lname: string;
+    fname: string;
+}
+
+export interface Documents {
     personal_id: string;
     address_card_number: string;
 }
 
-const API_BASE_URL = "http://localhost:4000/api/user";
+export interface UserRegistrationData extends UserProfileData, Documents {
+    password: string;
+    terms_accepted: boolean;
+}
+
+
+const API_BASE_URL = "http://localhost:4000/api";
+
+const handleResponse = async (response: Response) => {
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+    }
+    return data;
+};
 
 export const registerUser = async (userData: UserRegistrationData) => {
-    const response = await fetch(`${API_BASE_URL}/register`, {
+    const response = await fetch(`${API_BASE_URL}/user/register`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
     });
+    return handleResponse(response);
+};
 
-    const responseData = await response.json();
+export const getUserProfile = async () => {
+    const response = await fetch(`${API_BASE_URL}/user/profile`, {
+        method: "GET",
+        credentials: "include",
+    });
+    return handleResponse(response);
+};
 
-    if (!response.ok) {
-        // A szerver által küldött hibaüzenetet használjuk, ha van, egyébként egy általános hibaüzenetet.
-        throw new Error(responseData.error || "Hiba történt a regisztráció során.");
-    }
+export const updateUserProfile = async (profileData: { user: UserProfileData, documents: Documents | null }) => {
+    const payload = {
+        ...profileData.user,
+        documents: profileData.documents,
+    };
 
-    return responseData;
+    const response = await fetch(`${API_BASE_URL}/user/profile`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(payload),
+    });
+    return handleResponse(response);
+};
+
+export const deleteResume = async () => {
+    const response = await fetch(`${API_BASE_URL}/delete-resume`, {
+        method: "DELETE",
+        credentials: "include",
+    });
+    return handleResponse(response);
 };

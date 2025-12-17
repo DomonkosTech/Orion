@@ -1,29 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-
-interface User {
-    email: string;
-    phone_number: string;
-    birth_place: string;
-    birth_date: string;
-    address: string;
-    tax_number: string;
-    nationality: string;
-    short_bio: string;
-    qualifications: string;
-    lname: string;
-    fname: string;
-}
-
-interface Documents {
-    personal_id: string;
-    address_card_number: string;
-}
-
+import {
+    getUserProfile,
+    updateUserProfile,
+    deleteResume,
+    type UserProfileData,
+    type Documents,
+} from "../../../services/userServise";
 
 const EditUserProfile: React.FC = () => {
-    const [user, setUser] = useState<User | null>(null);
+    const [user, setUser] = useState<UserProfileData | null>(null);
     const [documents, setDocuments] = useState<Documents | null>(null);
     const [resume, setResume] = useState<boolean>(false);
     const [loading, setLoading] = useState(true);
@@ -35,11 +21,7 @@ const EditUserProfile: React.FC = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch("http://localhost:4000/api/user/profile", {
-                    credentials: "include",
-                    method: "GET",
-                });
-                const data = await res.json();
+                const data = await getUserProfile();
                 if (data.success) {
                     setUser(data.user);
                     setDocuments(data.documents?.[0] || null);
@@ -56,11 +38,7 @@ const EditUserProfile: React.FC = () => {
 
     const handleDeleteResume = async () => {
         try {
-            const res = await fetch("http://localhost:4000/api/delete-resume", {
-                method: "DELETE",
-                credentials: "include",
-            });
-            const data = await res.json();
+            const data = await deleteResume();
             if (data.success) {
                 setResume(false);
                 alert("Önéletrajz sikeresen törölve!");
@@ -78,25 +56,12 @@ const EditUserProfile: React.FC = () => {
 
     // 🆕 Mentés gomb kezelő
     const handleSave = async () => {
+        if (!user) return;
         try {
-            const payload = {
-                ...user,
-                documents,
-            };
-
-            const res = await fetch("http://localhost:4000/api/user/profile", {
-                method: "PATCH",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify(payload),
-            });
-
-            const data = await res.json();
+            const data = await updateUserProfile({ user, documents });
             if (data.success) {
-                setUser(data.user);
-                setDocuments(data.documents?.[0] || null);
-                setEditMode(false);
                 alert("Sikeres mentés!");
+                window.location.reload();
             } else {
                 alert("Mentés sikertelen!");
             }
@@ -283,7 +248,6 @@ const EditUserProfile: React.FC = () => {
                     )}
                 </div>
 
-                {/* 🆕 Szerkesztés / Mentés gombok */}
                 <div className="flex gap-4 mt-4">
                     {!editMode ? (
                         <button

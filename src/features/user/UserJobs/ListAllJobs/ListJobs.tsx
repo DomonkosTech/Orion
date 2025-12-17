@@ -48,10 +48,6 @@ const ListJobs: React.FC = () => {
         navigate(`/job/show/${adId}`);
     };
 
-    const handleLogout = () => {
-        console.log("Logging out...");
-        navigate("/login");
-    };
 
     useEffect(() => {
         const fetchJobs = async () => {
@@ -107,7 +103,7 @@ const ListJobs: React.FC = () => {
 
     return (
         <>
-            <Header onLogout={handleLogout} />
+            <Header />
 
             <div className={styles.pageWrapper}>
 
