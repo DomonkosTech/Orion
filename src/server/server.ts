@@ -333,39 +333,59 @@ app.get("/api/user/profile", verifyToken, async (req: AuthRequest, res) => {
 });
 
 
-
-//update user info endpoint
-app.post("/api/user/updateinfo", verifyToken, async (req: AuthRequest, res) => {
+// update user profile endpoint
+app.patch("/api/user/profile", verifyToken, async (req: AuthRequest, res) => {
     try {
-        const data = req.body;
-        const documents = data.documents;
+        if (!req.userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
 
+        const {
+            email,
+            phone_number,
+            birth_place,
+            birth_date,
+            address,
+            tax_number,
+            nationality,
+            short_bio,
+            qualifications,
+            lname,
+            fname,
+            documents
+        } = req.body;
+
+        // Update basic user fields
         const { data: updatedUser, error: userError } = await supabase
             .from("users")
             .update({
-                email: data.email,
-                phone_number: data.phone_number,
-                birth_place: data.birth_place,
-                birth_date: data.birth_date,
-                address: data.address,
-                tax_number: data.tax_number,
-                nationality: data.nationality,
-                short_bio: data.short_bio,
-                qualifications: data.qualifications,
-                lname: data.lname,
-                fname: data.fname,
+                email,
+                phone_number,
+                birth_place,
+                birth_date,
+                address,
+                tax_number,
+                nationality,
+                short_bio,
+                qualifications,
+                lname,
+                fname
             })
-            .eq("id", req.userId!)
-            .select()
+            .eq("id", req.userId)
+            .select("id, email, lname, fname, phone_number")
             .single();
 
         if (userError) throw userError;
 
+        // Update encrypted documents if provided
         if (documents) {
-            if (!ENCRYPTION_KEY) return res.status(500).json({ error: "Encryption key not configured" });
+            if (!ENCRYPTION_KEY) {
+                console.error("Encryption key missing");
+                return res.status(500).json({ error: "Server configuration error" });
+            }
 
             const { error: docError } = await supabase.rpc("update_encrypted_documents", {
-                p_user_id: req.userId!,
+                p_user_id: req.userId,
                 p_personal_id: documents.personal_id,
                 p_address_card_number: documents.address_card_number,
                 p_encryption_key: ENCRYPTION_KEY
@@ -378,18 +398,14 @@ app.post("/api/user/updateinfo", verifyToken, async (req: AuthRequest, res) => {
             success: true,
             user: updatedUser,
             documents: documents ? [documents] : []
+
         });
 
-    } catch (err) {
-        console.error("Update user info error:", err);
-        res.status(500).json({ error: "Update failed" });
+    } catch (error) {
+        console.error("Update profile error:", error);
+        res.status(500).json({ error: "Failed to update profile" });
     }
 });
-
-
-
-
-
 
 
 // upload resume endpoint
