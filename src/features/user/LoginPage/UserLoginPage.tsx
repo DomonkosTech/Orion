@@ -3,22 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "./UserLoginPage.module.css";
 
-// Import Shared Components
+// Import Shared Components and Services
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Buttons/Button.tsx";
 import { loginUser } from "../../../services/userServise.ts";
 
 const UserLoginPage: React.FC = () => {
+    // State for form inputs, loading status, and navigation
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
+    // Handles the user login process
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Basic form validation
         if (!email.trim() || !password.trim()) {
             toast.error("Kérlek, töltsd ki mindkét mezőt!");
             return;
@@ -27,21 +30,25 @@ const UserLoginPage: React.FC = () => {
         setIsLoading(true);
 
         try {
+            // Attempt to log in using the user service
             const data = await loginUser({ email, password, rememberMe });
 
             if (data.success) {
                 toast.success("Sikeres bejelentkezés!");
-                // Dispatch auth event so the navbar/app knows we logged in
+                // Dispatch a global event to notify other parts of the app (e.g., navbar)
                 try { window.dispatchEvent(new Event("auth-changed")); } catch { /* empty */ }
+                // Navigate to the home page on successful login
                 navigate("/");
             } else {
                 toast.error(data.error || "Hiba történt");
             }
         } catch (err: unknown) {
+            // Handle and display errors from the service or network
             console.error(err);
             const message = err instanceof Error ? err.message : "Hálózati hiba történt";
             toast.error(message);
         } finally {
+            // Stop the loading indicator
             setIsLoading(false);
         }
     };

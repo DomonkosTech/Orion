@@ -9,14 +9,14 @@ import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Buttons/Button.tsx";
 import TextArea from "../../../components/TextArea/TextArea";
 
-// Import the service
+// Import the service and type for user registration
 import { registerUser, type UserRegistrationData } from "../../../services/userServise";
 
 const UserRegisterPage: React.FC = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
 
-    // Form state remains the same
+    // State to hold all form data for the registration process
     const [formData, setFormData] = useState<UserRegistrationData & { confirmPassword: "" }>({
         email: "",
         password: "",
@@ -36,19 +36,22 @@ const UserRegisterPage: React.FC = () => {
         terms_accepted: false
     });
 
+    // Handles changes for standard input and textarea fields
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
+    // Handles changes for the terms and conditions checkbox
     const handleCheckboxChange = (checked: boolean) => {
         setFormData(prev => ({ ...prev, terms_accepted: checked }));
     };
 
+    // Handles the user registration submission
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Basic Validation remains the same
+        // Basic form validation
         if (!formData.email || !formData.password || !formData.lname || !formData.fname || !formData.personal_id || !formData.address_card_number) {
             toast.error("Kérlek, töltsd ki a kötelező mezőket!");
             return;
@@ -65,13 +68,15 @@ const UserRegisterPage: React.FC = () => {
         setIsLoading(true);
 
         try {
-            // Use the registerUser service
+            // Use the registration service to create the user
             await registerUser(formData);
 
             toast.success("Sikeres regisztráció! Bejelentkezés...");
+            // Redirect to login page after a short delay
             setTimeout(() => navigate("/UserLoginPage"), 1500);
 
         } catch (err: unknown) {
+            // Handle and display errors from the service or network
             console.error(err);
             if (err instanceof Error) {
                 toast.error(err.message);
@@ -79,6 +84,7 @@ const UserRegisterPage: React.FC = () => {
                 toast.error("Hálózati hiba történt");
             }
         } finally {
+            // Stop the loading indicator
             setIsLoading(false);
         }
     };

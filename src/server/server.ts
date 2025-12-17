@@ -941,17 +941,23 @@ app.post("/api/addadvertisment/submitApplication", verifyToken, verifyUser, asyn
 
 app.post("/api/addadvertisment/getallsubmit", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
+        const userid = req.userId;
+
+        //get all submitted applications
         const { data: submit} = await supabase
             .from("job_applications")
             .select("id, status, last_updated, advertisement_id, advertisment:advertisement(title)")
-            .eq("user_id", req.userId!)
+            .eq("user_id", userid)
+
+        //get all work
         const { data: work} = await supabase
             .from("employees")
             .select("id, position, job_title, hourly_wage, hire_date, company:companies(name)")
-            .eq("user_id", req.userId!)
+            .eq("user_id", userid)
 
-        console.log(work);
-        if (submit == null && work == null) return res.status(403).json({ error: "no data found" });
+        if ((!submit || submit.length === 0) && (!work || work.length === 0))
+            return res.status(404).json({ error: "no data found" });
+
         res.json({
             success: true,
             submit,

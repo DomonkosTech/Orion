@@ -9,6 +9,7 @@ import {
 } from "../../../services/userServise";
 
 const EditUserProfile: React.FC = () => {
+    // State for user profile data, documents, resume status, loading, and edit mode
     const [user, setUser] = useState<UserProfileData | null>(null);
     const [documents, setDocuments] = useState<Documents | null>(null);
     const [resume, setResume] = useState<boolean>(false);
@@ -16,8 +17,7 @@ const EditUserProfile: React.FC = () => {
     const [editMode, setEditMode] = useState(false);
     const navigate = useNavigate();
 
-
-
+    // Fetch user profile data when the component mounts
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -36,6 +36,7 @@ const EditUserProfile: React.FC = () => {
         fetchUser();
     }, []);
 
+    // Handle resume deletion
     const handleDeleteResume = async () => {
         try {
             const data = await deleteResume();
@@ -54,14 +55,14 @@ const EditUserProfile: React.FC = () => {
     if (loading) return <p>Betöltés...</p>;
     if (!user) return <p>Nem található felhasználói adat.</p>;
 
-    // 🆕 Mentés gomb kezelő
+    // Handle saving updated user profile data
     const handleSave = async () => {
         if (!user) return;
         try {
             const data = await updateUserProfile({ user, documents });
             if (data.success) {
                 alert("Sikeres mentés!");
-                window.location.reload();
+                window.location.reload(); // Reload to reflect changes
             } else {
                 alert("Mentés sikertelen!");
             }
@@ -70,6 +71,11 @@ const EditUserProfile: React.FC = () => {
             alert("Hiba történt a mentés során!");
         }
     };
+
+    // Display loading message while fetching data
+    if (loading) return <p>Betöltés...</p>;
+    // Display message if no user data is found
+    if (!user) return <p>Nem található felhasználói adat.</p>;
 
     return (
         <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
