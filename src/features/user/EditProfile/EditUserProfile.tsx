@@ -84,8 +84,8 @@ const EditUserProfile: React.FC = () => {
                 documents,
             };
 
-            const res = await fetch("http://localhost:4000/api/user/updateinfo", {
-                method: "POST",
+            const res = await fetch("http://localhost:4000/api/user/profile", {
+                method: "PATCH",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify(payload),
