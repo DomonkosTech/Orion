@@ -411,40 +411,43 @@ app.patch("/api/user/profile", verifyToken, async (req: AuthRequest, res) => {
 // upload resume endpoint
 app.post("/api/upload-resume", verifyToken, upload.single("resume"), async (req: AuthRequest, res) => {
     try {
-        // --- FILE VALIDATION ---
+        const userid = req.userId;
+
+        // Get the uploaded file from the request.
         const file = req.file;
         if (!file) return res.status(400).json({ error: "Nincs fájl kiválasztva." });
 
         const BUCKET = "resumes";
 
-        // --- CHECK IF USER ALREADY HAS A REAL FILE ---
+        // List files in the user's directory to see if a resume already exists.
         const { data: existingFiles, error: listError } = await supabase
             .storage
             .from(BUCKET)
-            .list(`${req.userId}/`);
+            .list(`${userid}/`);
 
         if (listError) {
             console.error("Storage list error:", listError);
             return res.status(500).json({ error: "Hiba a mappa ellenőrzésekor" });
         }
 
+        // Filter out empty placeholder files to get a count of actual files.
         const realFiles = (existingFiles || []).filter(f => f.metadata && f.metadata.size > 0);
 
         if (realFiles.length > 0) {
             return res.status(400).json({ error: "Már töltöttél fel önéletrajzot. Csak egy fájl engedélyezett." });
         }
 
-        // --- SAFE FILE NAME ---
+        // Sanitize the original filename to create a URL-safe version.
         const safeName = file.originalname
             .normalize("NFKD")
             .replace(/[\u0300-\u036f]/g, "")
             .replace(/\s+/g, "_")
             .replace(/[^a-zA-Z0-9._-]/g, "");
 
-        // --- FINAL FILE PATH ---
-        const filePath = `${req.userId}/${Date.now()}_${safeName}`;
+        // Create a unique file path using the user's ID and a timestamp to prevent conflicts.
+        const filePath = `${userid}/${Date.now()}_${safeName}`;
 
-        // --- UPLOAD FILE ---
+        // Upload the file buffer to the specified path in Supabase storage.
         const { error: uploadError } = await supabase
             .storage
             .from(BUCKET)

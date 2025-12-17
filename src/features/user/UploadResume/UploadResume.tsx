@@ -1,20 +1,25 @@
 import { useState } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { uploadResume } from "../../../services/userServise";
 
 const UploadResume = () => {
+    // State for the selected file, sending status, and navigation
     const [file, setFile] = useState<File | null>(null);
     const [sending, setSending] = useState(false);
-    const [url, setUrl] = useState<string | null>(null);
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+
+    // Handles file selection and validation
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
         if (!selectedFile) return;
 
+        // Validate file type (only PDF allowed)
         if (selectedFile.type !== "application/pdf") {
             alert("Csak PDF fájlt lehet feltölteni!");
             return;
         }
 
+        // Validate file size (max 5MB)
         if (selectedFile.size > 5 * 1024 * 1024) {
             alert("A fájl mérete nem lehet nagyobb 5MB-nál!");
             return;
@@ -23,6 +28,7 @@ const UploadResume = () => {
         setFile(selectedFile);
     };
 
+    // Handles the file upload submission
     const handleSubmit = async () => {
         if (!file) {
             alert("Válassz ki egy PDF fájlt először!");
@@ -30,34 +36,24 @@ const UploadResume = () => {
         }
 
         setSending(true);
-        setUrl(null);
 
         try {
-            const formData = new FormData();
-            formData.append("resume", file); // Multer ezt várja
-
-            const response = await fetch("http://localhost:4000/api/upload-resume", {
-                method: "POST",
-                body: formData,
-                credentials: "include",
-            });
-
-            if (!response.ok) {
-                const err = await response.json();
-                throw new Error(err.error || "Feltöltési hiba");
-            }
-
+            // Use the uploadResume service to handle the upload
+            await uploadResume(file);
 
             alert("PDF sikeresen feltöltve!");
+            // Navigate to the home page on successful upload
             navigate("/");
 
         } catch (err: unknown) {
+            // Handle and display errors from the service or network
             if (err instanceof Error) {
                 alert("Hiba: " + err.message);
             } else {
                 alert("Ismeretlen hiba történt");
             }
         } finally {
+            // Stop the sending indicator
             setSending(false);
         }
     };
@@ -78,15 +74,6 @@ const UploadResume = () => {
             <button onClick={handleSubmit} disabled={sending || !file}>
                 {sending ? "Elküldés..." : "Elküld"}
             </button>
-
-            {url && (
-                <div>
-                    <p>Ideiglenes letöltési link:</p>
-                    <a href={url} target="_blank" rel="noreferrer">
-                        {url}
-                    </a>
-                </div>
-            )}
         </div>
     );
 };
