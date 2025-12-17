@@ -7,6 +7,7 @@ import styles from "./UserLoginPage.module.css";
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Buttons/Button.tsx";
+import { loginUser } from "../../../services/userServise.ts";
 
 const UserLoginPage: React.FC = () => {
     const [email, setEmail] = useState("");
@@ -26,14 +27,7 @@ const UserLoginPage: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const res = await fetch("http://localhost:4000/api/user/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ email, password, rememberMe }),
-            });
-
-            const data = await res.json();
+            const data = await loginUser({ email, password, rememberMe });
 
             if (data.success) {
                 toast.success("Sikeres bejelentkezés!");

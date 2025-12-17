@@ -24,6 +24,12 @@ export interface UserRegistrationData extends UserProfileData, Documents {
     terms_accepted: boolean;
 }
 
+export interface UserLoginData {
+    email: string;
+    password: string;
+    rememberMe: boolean;
+}
+
 
 const API_BASE_URL = "http://localhost:4000/api";
 
@@ -34,6 +40,16 @@ const handleResponse = async (response: Response) => {
     }
     return data;
 };
+
+export const loginUser = async (loginData: UserLoginData) => {
+    const response = await fetch(`${API_BASE_URL}/user/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(loginData),
+    });
+    return handleResponse(response);
+}
 
 export const registerUser = async (userData: UserRegistrationData) => {
     const response = await fetch(`${API_BASE_URL}/user/register`, {
