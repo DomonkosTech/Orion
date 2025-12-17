@@ -15,7 +15,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({
                                                   companyName = "Orion",
-                                                  userInitials = "SD",
+                                                  userInitials = "PP",
                                               }) => {
     const handleLogout = useLogout();
 

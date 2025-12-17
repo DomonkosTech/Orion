@@ -199,114 +199,7 @@ app.post("/api/user/login", async (req, res) => {
 });
 
 
-//get user info endpoint
-app.get("/api/user/getinfo", verifyToken, async (req: AuthRequest, res) => {
-    if (!ENCRYPTION_KEY)
-        return res.status(500).json({ error: "Encryption key not configured" });
-
-    try {
-        const { data: user, error: userError } = await supabase
-            .from("users")
-            .select("*")
-            .eq("id", req.userId!)
-            .single();
-
-        if (userError) throw userError;
-
-        const { data: documents, error: decryptError } = await supabase.rpc(
-            "get_decrypted_documents",
-            {
-                p_user_id: req.userId!,
-                p_encryption_key: ENCRYPTION_KEY,
-            }
-        );
-
-        const BUCKET = "resumes";
-
-        // --- CHECK IF USER ALREADY HAS A REAL FILE ---
-        const { data: existingFiles, error: listError } = await supabase
-            .storage
-            .from(BUCKET)
-            .list(`${req.userId}/`);
-
-        if (listError) {
-            console.error("Storage list error:", listError);
-            return res.status(500).json({ error: "Hiba a mappa ellenőrzésekor" });
-        }
-
-        const realFiles = (existingFiles || []).filter(f => f.metadata && f.metadata.size > 0);
-
-        const resume = realFiles.length > 0;
-
-        if (decryptError) throw decryptError;
-        console.log("Decrypted documents:", documents);
-        res.json({
-            success: true,
-            user,
-            documents: documents,
-            resume: resume
-        });
-
-    } catch {
-        res.status(401).json({ error: "Invalid or expired token" });
-    }
-});
-
-
-//update user info endpoint
-app.post("/api/user/updateinfo", verifyToken, async (req: AuthRequest, res) => {
-    try {
-        const data = req.body;
-        const documents = data.documents;
-
-        const { data: updatedUser, error: userError } = await supabase
-            .from("users")
-            .update({
-                email: data.email,
-                phone_number: data.phone_number,
-                birth_place: data.birth_place,
-                birth_date: data.birth_date,
-                address: data.address,
-                tax_number: data.tax_number,
-                nationality: data.nationality,
-                short_bio: data.short_bio,
-                qualifications: data.qualifications,
-                lname: data.lname,
-                fname: data.fname,
-            })
-            .eq("id", req.userId!)
-            .select()
-            .single();
-
-        if (userError) throw userError;
-
-        if (documents) {
-            if (!ENCRYPTION_KEY) return res.status(500).json({ error: "Encryption key not configured" });
-
-            const { error: docError } = await supabase.rpc("update_encrypted_documents", {
-                p_user_id: req.userId!,
-                p_personal_id: documents.personal_id,
-                p_address_card_number: documents.address_card_number,
-                p_encryption_key: ENCRYPTION_KEY
-            });
-
-            if (docError) throw docError;
-        }
-
-        res.json({
-            success: true,
-            user: updatedUser,
-            documents: documents ? [documents] : []
-        });
-
-    } catch (err) {
-        console.error("Update user info error:", err);
-        res.status(500).json({ error: "Update failed" });
-    }
-});
-
-
-//user register endpoint
+//user register endpoint fix!!!
 app.post("/api/user/register", async (req, res) => {
     try {
         const {
@@ -368,6 +261,133 @@ app.post("/api/user/register", async (req, res) => {
         res.status(500).json({ error: "Unexpected server error" });
     }
 });
+
+
+// user get info: user profile, decrypted documents, and resume status fix!!!
+app.get("/api/user/profile", verifyToken, async (req: AuthRequest, res) => {
+    try {
+        // Ensure user ID is present from auth middleware
+        if (!req.userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        // Ensure encryption key is configured
+        if (!ENCRYPTION_KEY) {
+            console.error("Critical error: Encryption key not configured.");
+            return res.status(500).json({ error: "Internal server configuration error" });
+        }
+
+        // Fetch basic user data (avoid select *)
+        const { data: user, error: userError } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", req.userId)
+            .maybeSingle();
+
+        if (userError) throw userError;
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Fetch decrypted documents via RPC
+        const { data: documents, error: documentsError } = await supabase.rpc(
+            "get_decrypted_documents",
+            {
+                p_user_id: req.userId,
+                p_encryption_key: ENCRYPTION_KEY
+            }
+        );
+
+        if (documentsError) throw documentsError;
+
+        // Check if user has a real resume file in storage
+        const BUCKET = "resumes";
+
+        const { data: files, error: storageError } = await supabase
+            .storage
+            .from(BUCKET)
+            .list(`${req.userId}/`);
+
+        if (storageError) {
+            console.error("Storage list error:", storageError);
+            return res.status(500).json({ error: "Failed to check resume storage" });
+        }
+
+        const hasResume =
+            Array.isArray(files) &&
+            files.some(file => file.metadata && file.metadata.size > 0);
+
+        // Send successful response
+        res.json({
+            success: true,
+            user,
+            documents,
+            hasResume
+        });
+
+    } catch (error) {
+        console.error("Error while fetching user info:", error);
+        res.status(500).json({ error: "Internal server error while fetching user info" });
+    }
+});
+
+
+
+//update user info endpoint
+app.post("/api/user/updateinfo", verifyToken, async (req: AuthRequest, res) => {
+    try {
+        const data = req.body;
+        const documents = data.documents;
+
+        const { data: updatedUser, error: userError } = await supabase
+            .from("users")
+            .update({
+                email: data.email,
+                phone_number: data.phone_number,
+                birth_place: data.birth_place,
+                birth_date: data.birth_date,
+                address: data.address,
+                tax_number: data.tax_number,
+                nationality: data.nationality,
+                short_bio: data.short_bio,
+                qualifications: data.qualifications,
+                lname: data.lname,
+                fname: data.fname,
+            })
+            .eq("id", req.userId!)
+            .select()
+            .single();
+
+        if (userError) throw userError;
+
+        if (documents) {
+            if (!ENCRYPTION_KEY) return res.status(500).json({ error: "Encryption key not configured" });
+
+            const { error: docError } = await supabase.rpc("update_encrypted_documents", {
+                p_user_id: req.userId!,
+                p_personal_id: documents.personal_id,
+                p_address_card_number: documents.address_card_number,
+                p_encryption_key: ENCRYPTION_KEY
+            });
+
+            if (docError) throw docError;
+        }
+
+        res.json({
+            success: true,
+            user: updatedUser,
+            documents: documents ? [documents] : []
+        });
+
+    } catch (err) {
+        console.error("Update user info error:", err);
+        res.status(500).json({ error: "Update failed" });
+    }
+});
+
+
+
 
 
 
