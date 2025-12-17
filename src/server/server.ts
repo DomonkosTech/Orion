@@ -469,37 +469,38 @@ app.post("/api/upload-resume", verifyToken, upload.single("resume"), async (req:
 });
 
 
-// delete resume endpoint
+// delete resume endpoint fix!!!
 app.delete("/api/delete-resume", verifyToken, async (req: AuthRequest, res) => {
     try {
         const BUCKET = "resumes";
+        const userId = req.userId!;
 
-        // --- LIST FILES ---
+        // List all files in the user's resume folder
         const { data: files, error: listError } = await supabase
             .storage
             .from(BUCKET)
-            .list(`${req.userId}/`);
+            .list(`${userId}/`);
 
         if (listError) {
             console.error("Storage list error:", listError);
-            return res.status(500).json({ error: "Hiba a fájlok listázásakor." });
+            return res.status(500).json({ error: "Failed to list files." });
         }
 
         if (!files || files.length === 0) {
-            return res.status(404).json({ error: "Nincs feltöltött önéletrajz." });
+            return res.status(404).json({ error: "No uploaded resume found." });
         }
 
-        // --- ONLY REAL FILES (metadata exists + size > 0) ---
+        // Filter out empty or invalid files
         const realFiles = files.filter(f => f.metadata && f.metadata.size > 0);
 
         if (realFiles.length === 0) {
-            return res.status(404).json({ error: "Nincs eltávolítható önéletrajz." });
+            return res.status(404).json({ error: "No removable resume found." });
         }
 
-        // --- BUILD PATHS ---
-        const filePaths = realFiles.map(file => `${req.userId}/${file.name}`);
+        // Build full storage paths for deletion
+        const filePaths = realFiles.map(file => `${userId}/${file.name}`);
 
-        // --- DELETE ONLY FILES ---
+        // Remove files from storage
         const { error: removeError } = await supabase
             .storage
             .from(BUCKET)
@@ -507,13 +508,14 @@ app.delete("/api/delete-resume", verifyToken, async (req: AuthRequest, res) => {
 
         if (removeError) {
             console.error("Storage remove error:", removeError);
-            return res.status(500).json({ error: "Hiba az önéletrajz törlésekor." });
+            return res.status(500).json({ error: "Failed to delete resume." });
         }
 
-        return res.json({ success: true, message: "Önéletrajz sikeresen törölve." });
+        return res.json({ success: true, message: "Resume deleted successfully." });
 
     } catch (err) {
-        return res.status(401).json({ error: "Invalid or expired token", err });
+        console.error(err);
+        return res.status(500).json({ error: "Internal server error" });
     }
 });
 
