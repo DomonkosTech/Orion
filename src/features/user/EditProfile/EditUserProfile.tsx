@@ -27,39 +27,23 @@ const EditUserProfile: React.FC = () => {
     const [documents, setDocuments] = useState<Documents | null>(null);
     const [resume, setResume] = useState<boolean>(false);
     const [loading, setLoading] = useState(true);
-    const [editMode, setEditMode] = useState(false); // 🆕 szerkesztés állapot
+    const [editMode, setEditMode] = useState(false);
     const navigate = useNavigate();
 
-
-    const handleLogout = async () => {
-        try {
-            const res = await fetch("http://localhost:4000/api/logout", {
-                method: "POST",
-                credentials: "include",
-            });
-            const data = await res.json();
-            if (data.success) {
-                try { window.dispatchEvent(new Event("auth-changed")); } catch { /* empty */ }
-                alert("Sikeresen kijelentkeztél!");
-                navigate("/UserLoginPage"); // átirányítás login oldalra
-            }
-        } catch (err) {
-            console.error("Logout error:", err);
-            alert("Hiba történt a kijelentkezés során!");
-        }}
 
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const res = await fetch("http://localhost:4000/api/user/getinfo", {
+                const res = await fetch("http://localhost:4000/api/user/profile", {
                     credentials: "include",
+                    method: "GET",
                 });
                 const data = await res.json();
                 if (data.success) {
                     setUser(data.user);
                     setDocuments(data.documents?.[0] || null);
-                    setResume(data.resume);
+                    setResume(data.hasResume);
                 }
             } catch (err) {
                 console.error("Fetch error:", err);
@@ -330,12 +314,6 @@ const EditUserProfile: React.FC = () => {
                 </div>
             </form>
             <br/>
-            <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-500 text-white rounded-md"
-            >
-                Kijelentkezés
-            </button>
         </div>
     );
 };
