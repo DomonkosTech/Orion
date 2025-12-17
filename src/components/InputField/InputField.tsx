@@ -6,13 +6,13 @@ interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     error?: string;
 }
 
-const InputField: React.FC<InputFieldProps> = ({ label, error, id, ...props }) => {
+const InputField: React.FC<InputFieldProps> = ({ label, error, id, className, ...props }) => {
     return (
         <div className={styles.container}>
             <label htmlFor={id} className={styles.label}>{label}</label>
             <input
                 id={id}
-                className={`${styles.input} ${error ? styles.inputError : ''}`}
+                className={`${styles.input} ${error ? styles.inputError : ''} ${className || ''}`}
                 {...props}
             />
             {error && <span className={styles.errorMessage}>{error}</span>}
