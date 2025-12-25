@@ -664,38 +664,47 @@ app.post("/api/company/register/credentials", async (req, res) => {
 });
 
 
-//get company info endpoint
-app.get("/api/company/getinfo", verifyToken, async (req: AuthRequest, res) => {
+// company get info: user profile fix!!!
+app.get("/api/company/profile", verifyToken, async (req: AuthRequest, res) => {
+    const companyId = req.companyId;
+
     try {
-        const { data: company, error: companyError } = await supabase
+        // Fetch basic company data
+        const { data: company, error } = await supabase
             .from("companies")
             .select("*")
-            .eq("id", req.companyId!)
-            .single();
+            .eq("id", companyId)
+            .maybeSingle();
 
-        if (companyError) throw companyError;
+        if (error) throw error;
 
+        if (!company) {
+            return res.status(404).json({ error: "Company not found" });
+        }
+
+        // Send successful response
         res.json({
             success: true,
             company,
         });
 
     } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        console.error("Error while fetching company info:", err);
+        res.status(500).json({ error: "Internal server error while fetching company info" });
     }
 });
 
 
-//update company info endpoint
-app.post("/api/company/updateinfo", verifyToken, async (req: AuthRequest, res) => {
+//update company info endpoint fix!!!
+app.patch("/api/company/profile", verifyToken, async (req: AuthRequest, res) => {
     try {
         const data = req.body;
+        const companyId = req.companyId;
 
-        const { data: updatedCompany, error: companyError } = await supabase
+        // Update basic company fields
+        const { data: updatedCompany, error } = await supabase
             .from("companies")
             .update({
-                email: data.email,
                 name: data.name,
                 phone_number: data.phone_number,
                 address: data.address,
@@ -705,11 +714,11 @@ app.post("/api/company/updateinfo", verifyToken, async (req: AuthRequest, res) =
                 website: data.website,
                 short_description: data.short_description
             })
-            .eq("id", req.companyId!)
+            .eq("id", companyId)
             .select()
             .single();
 
-        if (companyError) throw companyError;
+        if (error) throw error;
 
         res.json({
             success: true,
