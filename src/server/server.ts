@@ -819,28 +819,30 @@ app.post("/api/addadvertisment/getinfo", verifyToken, verifyCompany, async (req:
 });
 
 
-
-
-app.post("/api/addadvertisment/user/getinfo", verifyToken, verifyUser, async (req: AuthRequest, res) => {
-    const { id } = req.body;
-
+// get advertisment info endpoint by user fix!!!
+app.get("/api/advertisements/:id", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+    const { id } = req.params;
     try {
-        const { data: advertisement, error: companyError } = await supabase
+        // Fetch advertisement by ID
+        const { data: advertisement, error } = await supabase
             .from("advertisement")
             .select("*")
             .eq("id", id)
-            .single();
+            .maybeSingle();
 
-        if (companyError) throw companyError;
+        if (error) throw error;
+
+        if (!advertisement) {
+            return res.status(404).json({ error: "not found" });
+        }
 
         res.json({
             success: true,
             advertisement,
         });
 
-    } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+    } catch {
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
@@ -907,26 +909,35 @@ app.get("/api/advertisements", verifyToken, verifyUser, async (_req, res) => {
 });
 
 
-//submit application endpoint
-app.post("/api/addadvertisment/submitApplication", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+//submit application endpoint fix!!!
+app.post("/api/applications", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+
     const { id } = req.body;
+    const userId = req.userId!;
+
+    if (!id) {
+        return res.status(400).json({ error: "missing id" });
+    }
 
     try {
+
+        // check if application already exists
         const { data: application } = await supabase
             .from("job_applications")
             .select("id")
-            .eq("user_id", req.userId!)
+            .eq("user_id", userId)
             .eq("advertisement_id", id)
             .maybeSingle();
 
         if (application)
-            return res.status(409).json({ error: "már jelentkeztél erre a munkára" });
+            return res.status(409).json({ error: "application already exists" });
 
+        // insert application
         const { error: insertError } = await supabase
             .from("job_applications")
             .insert([
                 {
-                    user_id: req.userId!,
+                    user_id: userId,
                     advertisement_id: id,
                     last_updated: new Date().toISOString()
                 }
