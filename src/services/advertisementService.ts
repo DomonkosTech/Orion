@@ -7,6 +7,17 @@ export interface Advertisement {
     title?: string;
 }
 
+export interface Job {
+    id: number;
+    title: string;
+    position: string;
+    location: string;
+    hourly_wage: number;
+    tasks: string;
+    requirements: string;
+    job_description: string;
+}
+
 export interface JobApplicationData {
     id: number;
     user_id: number;
@@ -39,3 +50,12 @@ export const getJobApplications = async () => {
     });
     return handleResponse(response);
 }
+
+export const getAdvertisements = async () => {
+    const response = await fetch(`${API_BASE_URL}/advertisements`, {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+    });
+    return handleResponse(response);
+};

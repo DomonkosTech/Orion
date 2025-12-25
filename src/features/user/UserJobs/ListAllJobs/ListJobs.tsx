@@ -8,17 +8,7 @@ import FilterBar from "./components/FilterBar.tsx";
 import JobCard from "./components/JobCard.tsx";
 import SkeletonCard from "./components/SkeletonCard.tsx";
 import EmptyState from "./components/EmptyState.tsx";
-
-interface Job {
-    id: number;
-    title: string;
-    position: string;
-    location: string;
-    hourly_wage: number;
-    tasks: string;
-    requirements: string;
-    job_description: string;
-}
+import { getAdvertisements, type Job } from "../../../../services/advertisementService.ts";
 
 // Helper for formatting currency
 const formatCurrency = (amount: number) => {
@@ -49,15 +39,9 @@ const ListJobs: React.FC = () => {
     useEffect(() => {
         const fetchJobs = async () => {
             try {
-                const response = await fetch("http://localhost:4000/api/addadvertisment/getall", {
-                    method: "GET",
-                    credentials: "include",
-                    headers: { "Content-Type": "application/json" },
-                });
-                if (!response.ok) throw new Error(`API hiba: ${response.status}`);
-                const data = await response.json();
+                const data = await getAdvertisements();
                 if (data.success) {
-                    setJobs(data.advertisement);
+                    setJobs(data.advertisements);
                 } else {
                     throw new Error(data.error || "Hiba.");
                 }
