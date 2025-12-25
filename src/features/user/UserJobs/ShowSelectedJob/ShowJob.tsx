@@ -1,20 +1,14 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-
-interface Advertisement {
-    title: string;
-    position: string;
-    location: string;
-    hourly_wage: string;
-    tasks: string;
-    requirements: string;
-    job_description: string;
-    is_active: boolean;
-}
+import {
+    getAdvertisementById,
+    submitApplication,
+    type AdvertisementDetails
+} from "../../../../services/advertisementService";
 
 const ShowJob = () => {
     const { id } = useParams();
-    const [advertisement, setAdvertisement] = useState<Advertisement | null>(null);
+    const [advertisement, setAdvertisement] = useState<AdvertisementDetails | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
@@ -22,14 +16,9 @@ const ShowJob = () => {
 
     useEffect(() => {
         const fetchAdvertisement = async () => {
+            if (!id) return;
             try {
-                const res = await fetch("http://localhost:4000/api/addadvertisment/user/getinfo", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    credentials: "include",
-                    body: JSON.stringify({ id }),
-                });
-                const data = await res.json();
+                const data = await getAdvertisementById(id);
                 if (data.success) {
                     setAdvertisement(data.advertisement);
                 } else {
@@ -46,15 +35,10 @@ const ShowJob = () => {
     }, [id]);
 
     const handleSubmitApplication = async () => {
+        if (!id) return;
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:4000/api/addadvertisment/submitApplication", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({ id }),
-            });
-            const data = await res.json();
+            const data = await submitApplication(id);
             if (data.success) {
                 setApplicationStatus("Sikeres jelentkezés!");
             } else {
