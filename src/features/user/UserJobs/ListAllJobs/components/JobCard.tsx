@@ -19,7 +19,7 @@ type Props = {
 
 const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency }) => {
     return (
-        <div className={styles.card} onClick={onOpen}>
+        <div className={styles.card}>
             <div className={styles.cardTopRow}>
                 <div className={styles.logoPlaceholder}>
                     {job.title.charAt(0).toUpperCase()}
@@ -59,7 +59,7 @@ const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency }) => {
                 </div>
 
                 <div onClick={(e) => { e.stopPropagation(); onOpen(); }}>
-                    <Button type="button" variant="secondary">
+                    <Button type="button" variant="secondary" onClick={onOpen}>
                         Jelentkezés
                     </Button>
                 </div>

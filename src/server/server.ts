@@ -883,23 +883,26 @@ app.post("/api/advertisement/updateinfo", verifyToken, verifyCompany, async (req
 
 
 
-//get all advertisments
-app.get("/api/addadvertisment/getall", verifyToken, verifyUser, async (_req, res) => {
+//get all advertisments fix!!!
+app.get("/api/advertisements", verifyToken, verifyUser, async (_req, res) => {
     try {
-        const { data: advertisement, error: companyError } = await supabase
+
+        // Fetch all active advertisements ordered by creation date in descending order
+        const { data: advertisements, error } = await supabase
             .from("advertisement")
             .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
-
-        if (companyError) throw companyError;
+            .eq('is_active', true)
+            .order("created_at", { ascending: false });
+        if (error) throw error;
 
         res.json({
             success: true,
-            advertisement,
+            advertisements,
         });
 
     } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        console.error("get-advertisements-info error:", err);
+        res.status(500).json({ error: "Internal Server Error " });
     }
 });
 
