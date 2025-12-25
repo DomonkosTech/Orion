@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "../ListJobs.module.css";
+// Ensure this path matches where your updated Button component lives
 import Button from "../../../../../components/Buttons/Button.tsx";
 
 type Job = {
@@ -59,7 +60,7 @@ const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency }) => {
                 </div>
 
                 <div onClick={(e) => { e.stopPropagation(); onOpen(); }}>
-                    <Button type="button" variant="secondary">
+                    <Button type="button" color={"orion-blue"}>
                         Jelentkezés
                     </Button>
                 </div>
