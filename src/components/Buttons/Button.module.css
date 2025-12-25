@@ -1,4 +1,11 @@
 /* src/components/Buttons/Button.module.css */
+
+:root {
+    /* A főoldalról hozott színek */
+    --orion-blue-primary: #2c5aa0;
+    --orion-blue-dark: #1e3d6f;
+}
+
 .btn {
     cursor: pointer;
     font-family: inherit;
@@ -9,10 +16,38 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+
+    /* Alapértelmezett (fallback) szín, ha nincs megadva data-color */
+    --btn-main-color: #1a1a1a;
+    --btn-hover-color: #000000;
 }
 
+/* --- Orion Blue variáció --- */
+.btn[data-color="orion-blue"] {
+    --btn-main-color: var(--orion-blue-primary);
+    --btn-hover-color: var(--orion-blue-dark);
+}
+
+/* --- Egyéb variációk --- */
+.btn[data-color="fire-red"] {
+    --btn-main-color: #D32F2F;
+    --btn-hover-color: #B71C1C;
+}
+
+.btn[data-color="leaf-green"] {
+    --btn-main-color: #388E3C;
+    --btn-hover-color: #2E7D32;
+}
+
+.btn[data-color="black"] {
+    --btn-main-color: #1a1a1a;
+    --btn-hover-color: #000000;
+}
+
+/* --- Gomb típusok (Primary, Secondary, Link) --- */
+
 .primary {
-    background-color: #1a1a1a;
+    background-color: var(--btn-main-color);
     color: white;
     padding: 0.75rem 1.5rem;
     width: 100%;
@@ -20,32 +55,35 @@
 }
 
 .primary:hover {
-    background-color: #333;
+    background-color: var(--btn-hover-color);
+    box-shadow: 0 4px 12px rgba(44, 90, 160, 0.2); /* Enyhe kék ragyogás hovernél */
 }
 
 .secondary {
     background-color: transparent;
-    color: #1a1a1a;
-    border: 1px solid #1a1a1a;
+    color: var(--btn-main-color);
+    border: 2px solid var(--btn-main-color);
     padding: 0.75rem 1.5rem;
     width: 100%;
     font-weight: 600;
 }
 
 .secondary:hover {
-    background-color: #f5f5f5;
+    background-color: rgba(44, 90, 160, 0.05); /* Halvány Orion kék háttér */
+    border-color: var(--btn-hover-color);
+    color: var(--btn-hover-color);
 }
 
 .link {
     background: none;
-    color: #1a1a1a;
+    color: var(--btn-main-color);
     padding: 0;
     width: auto;
     font-weight: normal;
-    text-decoration: underline;
+    text-decoration: none;
     font-size: 0.9rem;
 }
 
 .link:hover {
-    color: #555;
+    color: var(--btn-hover-color);
 }

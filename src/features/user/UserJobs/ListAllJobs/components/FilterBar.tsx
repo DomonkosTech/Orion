@@ -66,7 +66,7 @@ const FilterBar: React.FC<Props> = ({
                     ))}
                 </select>
 
-                <input
+                <InputField
                     type="number"
                     min={0}
                     className={styles.filterControl}
@@ -76,7 +76,7 @@ const FilterBar: React.FC<Props> = ({
                 />
 
                 <div className={styles.actions}>
-                    <Button type="submit" variant="primary">
+                    <Button type="submit" color={"orion-blue"}>
                         Keresés
                     </Button>
 
