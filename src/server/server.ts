@@ -770,14 +770,17 @@ app.post("/api/addadvertisment/create", verifyToken, verifyCompany, async (req: 
     }
 });
 
-// get advertisments by company id endpoint
-app.get("/api/advertisements/by-company", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+// get advertisements by company id endpoint
+app.get("/api/company/advertisements", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const companyId = req.companyId;
+
     try {
+        // Fetch advertisements by company ID, ordered by creation date in descending order
         const { data, error } = await supabase
             .from("advertisement")
-            .select("id, title, position")
-            .eq("company_id", req.companyId!)
-            .order("id", { ascending: true });
+            .select("id, title, position, is_active")
+            .eq("company_id", companyId)
+            .order("id", { ascending: false });
 
         if (error) throw error;
 
@@ -788,7 +791,7 @@ app.get("/api/advertisements/by-company", verifyToken, verifyCompany, async (req
 
     } catch (error) {
         console.error("Advertisement fetch error:", error);
-        res.status(500).json({ error: "Hirdetések lekérdezése sikertelen" });
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
