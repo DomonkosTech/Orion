@@ -589,7 +589,7 @@ app.post("/api/company/login", async (req, res) => {
 
         // Extend cookie lifetime if "remember me" is enabled
         if (rememberMe) {
-            cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 hét
+            cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 week
         }
 
         // Send cookie + success response
