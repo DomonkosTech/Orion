@@ -408,7 +408,7 @@ app.patch("/api/user/profile", verifyToken, async (req: AuthRequest, res) => {
 });
 
 
-// upload resume endpoint
+// upload resume endpoint fix!!!
 app.post("/api/upload-resume", verifyToken, upload.single("resume"), async (req: AuthRequest, res) => {
     try {
         const userid = req.userId;
