@@ -5,7 +5,7 @@ import styles from "./Header.module.css";
 import Button from "../Buttons/Button";
 
 // Server / hooks
-import { useLogout } from "../../services/BazdmegPetiNincsGlobálisLogoutTeCsicskaCsináljEggyet";
+import { useLogout } from "../../services/authService";
 
 interface NavItem {
     label: string;
