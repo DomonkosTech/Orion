@@ -738,19 +738,39 @@ app.patch("/api/company/profile", verifyToken, async (req: AuthRequest, res) => 
 //                 advertisment                  //
 ///////////////////////////////////////////////////
 
-// create advertisment endpoint
-app.post("/api/addadvertisment/create", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+// Create advertisement endpoint fix!!!
+app.post("/api/advertisements", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const companyId = req.companyId;
+
     try {
-        const { count} = await supabase
-            .from("advertisement")
-            .select("*", { count: "exact", head: true })
-            .eq("company_id", req.companyId!);
-        if (count! >= 3) {
-            return res.status(400).json({ error: "Elérted a maximum 3 hirdetés limitet, törölj egyet az új létrehozásához." });
+        const { title, position, location, hourly_wage, tasks, requirements, is_active, job_description } = req.body;
+
+        // Required fields check
+        if (!title || !position || !location || !job_description) {
+            return res.status(400).json({ error: "Please fill in all required fields." });
         }
 
-        const { title, position, location, hourly_wage, tasks, requirements, is_active, search_start, job_description } = req.body;
+        // Hourly wage validation
+        if (hourly_wage && hourly_wage < 0) {
+            return res.status(400).json({ error: "Hourly wage cannot be negative." });
+        }
 
+        // Count existing advertisements for the company
+        const { count, error: counterror } = await supabase
+            .from("advertisement")
+            .select("*", { count: "exact", head: true })
+            .eq("company_id", companyId);
+
+        if (counterror) throw counterror;
+
+        // Max advertisement limit check
+        if (count! >= 3) {
+            return res.status(400).json({
+                error: "You have reached the maximum limit of 3 advertisements. Please delete one to create a new one."
+            });
+        }
+
+        // Insert new advertisement
         const { data: advertisement, error } = await supabase
             .from("advertisement")
             .insert([
@@ -761,9 +781,8 @@ app.post("/api/addadvertisment/create", verifyToken, verifyCompany, async (req: 
                     hourly_wage,
                     tasks,
                     requirements,
-                    is_active,
-                    search_start,
-                    company_id: req.companyId!,
+                    is_active: is_active ?? true,
+                    company_id: companyId,
                     job_description,
                 }
             ])
@@ -774,12 +793,13 @@ app.post("/api/addadvertisment/create", verifyToken, verifyCompany, async (req: 
 
         res.json({ success: true, advertisement });
     } catch (error) {
-        console.error("Advertisement creation error:", error);
-        res.status(500).json({ error: "Hirdetés létrehozása sikertelen" });
+        console.error("Advertisement creation error:", error); // Log server-side error
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
-// get advertisements by company id endpoint
+
+// get advertisements by company id endpoint fix!!!
 app.get("/api/company/advertisements", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const companyId = req.companyId;
 
