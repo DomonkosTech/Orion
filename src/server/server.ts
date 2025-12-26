@@ -602,64 +602,50 @@ app.post("/api/company/login", async (req, res) => {
     }
 });
 
-
-//register endpoint
+//register endpoint fix!!!
 app.post("/api/company/register", async (req, res) => {
-    const { email,  name, address, tax_number, contact_person_name, activity_scope, website, short_description, phone_number, terms_accepted } = req.body;
-    if (!email || !terms_accepted) {
-        return res.status(400).json({ error: "Email and terms acceptance are required" });
-    }
     try {
-        const { data: company, error } = await supabase
-            .from("companies")
-            .insert([
-                {
-                    email,
-                    name,
-                    address,
-                    tax_number,
-                    contact_person_name,
-                    activity_scope,
-                    website,
-                    short_description,
-                    terms_accepted,
-                    verified: true,
-                    join_date: new Date().toISOString(),
-                    phone_number,
-                }
-            ])
-            .select()
-            .single();
+        const { email, password,  name, address, tax_number, contact_person_name, activity_scope, website, short_description, phone_number, terms_accepted } = req.body;
 
-        if (error) throw error;
-        res.json({ success: true, companyId: company.id });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Registration failed" });
-    }
-})
+        // basic request validation
+        if (!email || !terms_accepted || !password) {
+            return res.status(400).json({ error: "Email, password and terms required" });
+        }
 
-
-//register credentials endpoint
-app.post("/api/company/register/credentials", async (req, res) => {
-    const { company_id, password } = req.body;
-
-    if (!company_id || !password) {
-        return res.status(400).json({ error: "Company ID and password are required" });
-    }
-
-    try {
+        // hash password
         const password_hash = await bcrypt.hash(password, 12);
 
-        const { error } = await supabase
-            .from("company_credentials")
-            .insert([{ company_id, password_hash }]);
+        // Call RPC to insert company securely
+        const { error } = await supabase.rpc('register_company_v1',
+            {
+                p_email: email,
+                p_password_hash: password_hash,
+                p_name: name,
+                p_address: address,
+                p_tax_number: tax_number,
+                p_contact_person_name: contact_person_name,
+                p_activity_scope: activity_scope,
+                p_website: website,
+                p_short_description: short_description,
+                p_terms_accepted: terms_accepted,
+                p_phone_number: phone_number,
+            });
 
-        if (error) throw error;
-        res.json({ success: true });
+
+        if (error) {
+            console.error("RPC error:", error);
+            return res.status(400).json({ error: "Registration failed" });
+        }
+
+        // Send success response
+        res.json({
+            success: true,
+            message: "Registration successful"
+        });
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Password setup failed" });
+        res.status(500).json({ error: "Unexpected server error" });
     }
 });
 
