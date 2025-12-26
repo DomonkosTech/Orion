@@ -1077,68 +1077,113 @@ app.get("/api/advertisements/:id/applicants", verifyToken, verifyCompany, async 
 });
 
 
-//reject application endpoint
-app.post("/api/ATS/reject_application", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const { id } = req.body;
+// Reject application endpoint
+app.post("/api/applications/:id/reject", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const applicationId = req.params.id;
+    const companyId = req.companyId;
 
     try {
-        const { error } = await supabase
-            .from("job_applications")
-            .update({
-                status: "rejected"
-            })
-            .eq("id", id)
-            .maybeSingle();
-
-        if (error) throw error;
-
-        res.json({success: true});
-
-    } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
-    }
-
-})
-
-
-//download resume endpoint
-app.post("/api/ATS/download_resume", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const { id } = req.body;
-
-    try {
+        // Minimal application data needed for ownership check
         interface ApplicantData {
-            user_id: number;
-            advertisement_id: {
+            status: string;
+            advertisement: {
                 company_id: number;
             };
         }
 
-
-        const { data: applicant } = await supabase
+        // Fetch application with related advertisement
+        const { data: applicant, error: fetchError } = await supabase
             .from("job_applications")
-            .select("user_id, advertisement_id( company_id )")
-            .eq("id", id)
+            .select("status, advertisement:advertisement_id( company_id )")
+            .eq("id", applicationId)
             .maybeSingle<ApplicantData>();
-        if (applicant?.advertisement_id.company_id !== req.companyId!)
-            return res.status(403).json({ error: "nincs jogod lekérni" });
+
+        if (fetchError) throw fetchError;
+
+        if (!applicant || applicant.status !== "submitted") {
+            return res.status(404).json({ error: "Application not found" });
+        }
+
+        // Security check: prevent unauthorized rejection
+        if (applicant.advertisement.company_id !== companyId) {
+            return res.status(403).json({
+                error: "Unauthorized: You do not have permission to reject this application."
+            });
+        }
+
+        // Update application status to rejected
+        const { error: updateError } = await supabase
+            .from("job_applications")
+            .update({ status: "rejected" })
+            .eq("id", applicationId);
+
+        if (updateError) throw updateError;
+
+        res.json({ success: true });
+
+    } catch (err) {
+        console.error("Reject application error:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+// Download resume endpoint fix!!!
+app.get("/api/applications/:id/resume", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const applicationId = req.params.id; // Application ID from URL
+    const companyId = req.companyId;      // Authenticated company ID
+
+    try {
+        // Minimal application data needed for access check
+        interface ApplicantData {
+            user_id: number;
+            advertisement: {
+                company_id: number;
+            };
+        }
+
+        // Fetch application data + ownership validation
+        const { data: applicant, error: fetchError } = await supabase
+            .from("job_applications")
+            .select("user_id, advertisement:advertisement_id( company_id )")
+            .eq("id", applicationId)
+            .maybeSingle<ApplicantData>();
+
+        if (fetchError) throw fetchError;
+
+        // Application not found
+        if (!applicant) {
+            return res.status(404).json({ error: "Application not found" });
+        }
+
+        // Security check: prevent IDOR access
+        if (applicant.advertisement.company_id !== companyId) {
+            return res.status(403).json({
+                error: "Unauthorized: You do not have permission to view this resume."
+            });
+        }
 
         const userId = applicant.user_id;
         const BUCKET = "resumes";
+
+        // List files in user's resume folder
         const { data: files, error: listError } = await supabase
             .storage
             .from(BUCKET)
             .list(`${userId}/`);
 
         if (listError) throw listError;
+
+        // Find the first valid resume file
         const resumeFile = files.find(f => f.metadata && f.metadata.size > 0);
 
         if (!resumeFile) {
-            return res.status(404).json({ success: false, message: "Nincs feltöltött önéletrajz." });
+            return res.status(404).json({ error: "Resume file not found." });
         }
+
         const filePath = `${userId}/${resumeFile.name}`;
 
-        // Generate a signed URL valid for 60 minutes (3600 seconds)
+        // Generate signed URL (valid for 60 minutes)
         const { data, error: urlError } = await supabase
             .storage
             .from(BUCKET)
@@ -1147,11 +1192,10 @@ app.post("/api/ATS/download_resume", verifyToken, verifyCompany, async (req: Aut
         if (urlError) throw urlError;
 
         res.json({ success: true, url: data.signedUrl });
-    }
 
-    catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+    } catch (err) {
+        console.error("Download resume error:", err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 

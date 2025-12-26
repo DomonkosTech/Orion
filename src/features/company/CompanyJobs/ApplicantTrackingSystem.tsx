@@ -87,13 +87,12 @@ export const ApplicantTrackingSystem: React.FC = () => {
 
     const handleDownloadResume = async (applicationId: number) => {
         try {
-            const res = await fetch("http://localhost:4000/api/ATS/download_resume", {
-                method: "POST",
+            const res = await fetch(`http://localhost:4000/api/applications/${applicationId}/resume`, {
+                method: "get",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify({ id: applicationId }),
             });
 
             const data = await res.json();
@@ -111,13 +110,12 @@ export const ApplicantTrackingSystem: React.FC = () => {
 
     const handleReject = async (applicationId: number) => {
         try {
-            const res = await fetch("http://localhost:4000/api/ATS/reject_application", {
+            const res = await fetch(`http://localhost:4000/api/applications/${applicationId}/reject`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify({ id: applicationId }),
             });
 
             const data = await res.json();
