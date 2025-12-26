@@ -47,6 +47,17 @@ export interface CreateAdvertisementData {
     is_active: boolean;
 }
 
+export interface UpdateAdvertisementData {
+    title: string;
+    position: string;
+    location: string;
+    hourly_wage: string;
+    tasks: string;
+    requirements: string;
+    job_description: string;
+    is_active: boolean;
+}
+
 export interface JobApplicationData {
     id: number;
     user_id: number;
@@ -106,9 +117,28 @@ export const getAdvertisementById = async (id: string) => {
     return handleResponse(response);
 };
 
+export const getAdvertisementForEdit = async (id: string) => {
+    const response = await fetch(`${API_BASE_URL}/advertisement/${id}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+    });
+    return handleResponse(response);
+};
+
 export const createAdvertisement = async (adData: CreateAdvertisementData) => {
     const response = await fetch(`${API_BASE_URL}/advertisements`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(adData),
+    });
+    return handleResponse(response);
+};
+
+export const updateAdvertisement = async (id: string, adData: UpdateAdvertisementData) => {
+    const response = await fetch(`${API_BASE_URL}/advertisements/${id}`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify(adData),
