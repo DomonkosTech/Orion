@@ -12,11 +12,9 @@ interface Advertisement {
     is_active: boolean;     // Aktív-e a hirdetés
 }
 
-// 2. A komponens neve is átírva EditAdvertisement-re (logikailag helyesebb)
 const EditAdvertisement = () => {
     const { id } = useParams();
 
-    // 3. Változó neve átírva "company"-ról "advertisement"-re
     const [advertisement, setAdvertisement] = useState<Advertisement>({
         title: "",
         position: "",
@@ -36,12 +34,10 @@ const EditAdvertisement = () => {
     useEffect(() => {
         const fetchAdvertisement = async () => {
             try {
-                // 5. API végpont ellenőrzése és megerősítése
-                const res = await fetch("http://localhost:4000/api/addadvertisment/getinfo", {
-                    method: "POST",
+                const res = await fetch(`http://localhost:4000/api/advertisement/${id}`, {
+                    method: "get",
                     headers: { "Content-Type": "application/json" },
-                    credentials: "include", // Ez fontos a cookie-hoz!
-                    body: JSON.stringify({id}),
+                    credentials: "include",
                 });
                 const data = await res.json();
                 if (data.success) {
@@ -61,23 +57,19 @@ const EditAdvertisement = () => {
     if (!advertisement || !advertisement.title) return <p>Nem található hirdetés adat.</p>;
 
 
-    // 8. Függvény neve átírva "handleSave"-re, a hirdetés mentésére
     const handleSave = async () => {
         try {
-            // 9. API végpont átírva a hirdetés frissítésére
-            const res = await fetch("http://localhost:4000/api/advertisement/updateinfo", {
-                method: "POST",
+            const res = await fetch(`http://localhost:4000/api/advertisements/${id}`, {
+                method: "patch",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify({
-                    id: id,
                     ...advertisement
                 }),
             });
 
             const data = await res.json();
             if (data.success) {
-                // 11. Az új adat beállítása
                 setAdvertisement(data.advertisement);
                 setEditMode(false);
                 alert("Sikeres mentés!");

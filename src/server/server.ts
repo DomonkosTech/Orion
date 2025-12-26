@@ -825,19 +825,22 @@ app.get("/api/company/advertisements", verifyToken, verifyCompany, async (req: A
 });
 
 
-// get advertisment info endpoint
-app.post("/api/addadvertisment/getinfo", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const { id } = req.body;
-
+// get advertisment info endpoint fix!!!
+app.get("/api/advertisement/:id", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const { id } = req.params;
     try {
-        const { data: advertisement, error: companyError } = await supabase
+        // Fetch advertisement by ID
+        const { data: advertisement, error } = await supabase
             .from("advertisement")
             .select("*")
             .eq("id", id)
-            .eq("company_id", req.companyId!)
-            .single();
+            .maybeSingle();
 
-        if (companyError) throw companyError;
+        if (error) throw error;
+
+        if (!advertisement) {
+            return res.status(404).json({ error: "not found" });
+        }
 
         res.json({
             success: true,
@@ -845,8 +848,8 @@ app.post("/api/addadvertisment/getinfo", verifyToken, verifyCompany, async (req:
         });
 
     } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        console.error("Error while fetching advertisement info:", err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
@@ -873,17 +876,20 @@ app.get("/api/advertisements/:id", verifyToken, verifyUser, async (req: AuthRequ
             advertisement,
         });
 
-    } catch {
+    } catch (err) {
+        console.error("Error while fetching advertisement info:", err);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 
 //update advertisment info endpoint
-app.post("/api/advertisement/updateinfo", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+app.patch("/api/advertisements/:id", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const data = req.body;
+    const id = req.params.id;
+    const companyId = req.companyId;
+
     try {
-        const data = req.body;
-        const id = data.id;
 
         const { data: updatedadvertisement, error: advertisementError } = await supabase
             .from("advertisement")
@@ -897,7 +903,7 @@ app.post("/api/advertisement/updateinfo", verifyToken, verifyCompany, async (req
                 job_description: data.job_description,
             })
             .eq("id", id)
-            .eq("company_id", req.companyId!)
+            .eq("company_id", companyId)
             .select()
             .single();
 
@@ -905,12 +911,12 @@ app.post("/api/advertisement/updateinfo", verifyToken, verifyCompany, async (req
 
         res.json({
             success: true,
-            company: updatedadvertisement
+            updatedadvertisement
         });
 
     } catch (err) {
         console.error("Update advertisement info error:", err);
-        res.status(500).json({ error: "Update failed" });
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
@@ -1077,7 +1083,7 @@ app.get("/api/advertisements/:id/applicants", verifyToken, verifyCompany, async 
 });
 
 
-// Reject application endpoint
+// Reject application endpoint fix!!!
 app.post("/api/applications/:id/reject", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const applicationId = req.params.id;
     const companyId = req.companyId;
