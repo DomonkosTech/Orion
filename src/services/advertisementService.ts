@@ -70,7 +70,7 @@ export interface JobApplicationData {
     hourly_wage?: number;
     hire_date?: string;
     company?: Company;
-    advertisment?: Advertisement;
+    advertisement?: Advertisement;
 }
 
 const API_BASE_URL = "http://localhost:4000/api";
@@ -84,8 +84,8 @@ const handleResponse = async (response: Response) => {
 };
 
 export const getJobApplications = async () => {
-    const response = await fetch(`${API_BASE_URL}/addadvertisment/getallsubmit`, {
-        method: "POST",
+    const response = await fetch(`${API_BASE_URL}/user/applications`, {
+        method: "get",
         credentials: "include",
     });
     return handleResponse(response);

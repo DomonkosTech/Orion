@@ -993,34 +993,35 @@ app.post("/api/applications", verifyToken, verifyUser, async (req: AuthRequest, 
 });
 
 
-
-app.post("/api/addadvertisment/getallsubmit", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+// get submitted applications endpoint fix!!!
+app.get("/api/user/applications", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
         const userid = req.userId;
 
         //get all submitted applications
-        const { data: submit} = await supabase
+        const { data: submit, error: submitError } = await supabase
             .from("job_applications")
-            .select("id, status, last_updated, advertisement_id, advertisment:advertisement(title)")
+            .select("id, status, last_updated, advertisement_id, advertisement:advertisement(title)")
             .eq("user_id", userid)
 
+        if (submitError) throw submitError;
+
         //get all work
-        const { data: work} = await supabase
+        const { data: work, error: workError } = await supabase
             .from("employees")
             .select("id, position, job_title, hourly_wage, hire_date, company:companies(name)")
             .eq("user_id", userid)
 
-        if ((!submit || submit.length === 0) && (!work || work.length === 0))
-            return res.status(404).json({ error: "no data found" });
+        if (workError) throw workError;
 
         res.json({
             success: true,
-            submit,
-            work,
+            submit: submit || [],
+            work: work || [],
         });
     }
     catch (err) {
-        console.error("submitApplication error:", err);
+        console.error("get application error:", err);
         return res.status(500).json({ error: "Internal server error" });
     }
 });
