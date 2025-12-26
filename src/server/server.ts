@@ -1020,11 +1020,28 @@ app.post("/api/addadvertisment/getallsubmit", verifyToken, verifyUser, async (re
 });
 
 
-//Applicant tracking endpointa
-app.post("/api/ATS/getinfo", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const { id } = req.body;
+// Applicant tracking endpoint fix!!!
+app.get("/api/advertisements/:id/applicants", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const advertisementId = req.params.id;
+    const companyId = req.companyId;
 
     try {
+        // Check if the advertisement belongs to the company
+        const { data: adCheck, error: adError } = await supabase
+            .from("advertisement")
+            .select("id")
+            .eq("id", advertisementId)
+            .eq("company_id", companyId)
+            .maybeSingle();
+
+        if (adError) throw adError;
+
+        // Block access if ad not found or not owned by company
+        if (!adCheck) {
+            return res.status(403).json({ error: "Access denied or advertisement not found." });
+        }
+
+        // Fetch submitted applicants with user details
         const { data: applicants, error } = await supabase
             .from("job_applications")
             .select(`
@@ -1041,12 +1058,10 @@ app.post("/api/ATS/getinfo", verifyToken, verifyCompany, async (req: AuthRequest
                     qualifications,
                     lname,
                     fname
-                
                 )
             `)
-            .eq("advertisement_id", id)
+            .eq("advertisement_id", advertisementId)
             .eq("status", "submitted");
-
 
         if (error) throw error;
 
@@ -1056,8 +1071,8 @@ app.post("/api/ATS/getinfo", verifyToken, verifyCompany, async (req: AuthRequest
         });
 
     } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        console.error("Error fetching applicants:", err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
@@ -1141,11 +1156,13 @@ app.post("/api/ATS/download_resume", verifyToken, verifyCompany, async (req: Aut
 });
 
 
-//accept application endpoint
-app.post("/api/ATS/accept_application", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const { id } = req.body;
+// Accept application endpoint fix!!!
+app.post("/api/applications/:id/accept", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const applicationId = req.params.id;
+    const companyId = req.companyId;
 
     try {
+        // Advertisement shape needed for employee creation
         interface Advertisement {
             company_id: number;
             position: string;
@@ -1153,78 +1170,80 @@ app.post("/api/ATS/accept_application", verifyToken, verifyCompany, async (req: 
             hourly_wage: number;
         }
 
-        interface User {
-            id: number;
-        }
-
+        // Expected query result structure
         interface ApplicantResult {
             id: number;
             last_updated: string;
+            status: string;
             advertisement: Advertisement;
-            users: User;
+            user_id: number;
         }
 
-        const { data: applicants, error } = await supabase
+        // Fetch application with related advertisement data
+        const { data: application, error: fetchError } = await supabase
             .from("job_applications")
             .select(`
-        id,
-        last_updated,
-        advertisement:advertisement_id (
-            company_id,
-            position,
-            title,
-            hourly_wage
-        ),
-        users:user_id (
-            id
-        )
-    `)
-            .eq("id", id)
+                id,
+                last_updated,
+                status,
+                advertisement:advertisement_id (
+                    company_id,
+                    position,
+                    title,
+                    hourly_wage
+                ),
+                user_id
+            `)
+            .eq("id", applicationId)
             .maybeSingle<ApplicantResult>();
 
+        if (fetchError) throw fetchError;
 
-        if (!applicants || !applicants.users || !applicants.advertisement)
-            return res.status(403).json({ error: "please login" });
+        // Application does not exist
+        if (!application || application.status !== "submitted") {
+            return res.status(404).json({ error: "Application not found" });
+        }
 
+        // Security check: company ownership
+        if (application.advertisement.company_id !== companyId) {
+            return res.status(403).json({
+                error: "Unauthorized: This application belongs to another company."
+            });
+        }
 
+        const advertisement = application.advertisement;
 
-
-        const adat = applicants.users;
-        const adat2 = applicants.advertisement;
-
-
-        const { error: erro } = await supabase
+        // Create employee record from accepted application
+        const { error: insertError } = await supabase
             .from("employees")
             .insert([
                 {
-                    user_id: adat.id,
-                    company_id: adat2.company_id,
-                    position: adat2.position,
-                    job_title: adat2.title,
-                    hourly_wage: adat2.hourly_wage,
+                    user_id: application.user_id,
+                    company_id: advertisement.company_id,
+                    position: advertisement.position,
+                    job_title: advertisement.title,
+                    hourly_wage: advertisement.hourly_wage,
                 }
             ]);
 
-        const { error: er } = await supabase
+        if (insertError) throw insertError;
+
+        // Update application status
+        const { error: updateError } = await supabase
             .from("job_applications")
-            .delete()
-            .eq("id", id)
+            .update({ status: "accepted" })
+            .eq("id", applicationId);
 
-        if (error) throw error;
-        if (erro) throw erro;
-        if (er) throw er;
+        if (updateError) throw updateError;
 
-
-        res.json({
-            success: true,
-
-        });
+        res.json({ success: true });
 
     } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        console.error("Accept application error:", err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 
 
 
