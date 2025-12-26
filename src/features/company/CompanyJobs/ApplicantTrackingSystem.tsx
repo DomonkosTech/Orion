@@ -1,25 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-
-// TypeScript interfaces based on the API response
-interface ApplicantUser {
-    email: string;
-    phone_number: string;
-    birth_place: string;
-    birth_date: string;
-    address: string;
-    nationality: string;
-    short_bio: string;
-    qualifications: string;
-    lname: string;
-    fname: string;
-}
-
-interface Applicant {
-    id: number;
-    last_updated: string;
-    users: ApplicantUser;
-}
+import {toast, Toaster} from "react-hot-toast";
+import {
+    getApplicantsForAdvertisement,
+    acceptApplication,
+    rejectApplication,
+    getResumeUrl,
+    type Applicant
+} from "../../../services/applicationService";
 
 export const ApplicantTrackingSystem: React.FC = () => {
     const [applicants, setApplicants] = useState<Applicant[]>([]);
@@ -36,15 +24,7 @@ export const ApplicantTrackingSystem: React.FC = () => {
             }
 
             try {
-                const res = await fetch(`http://localhost:4000/api/advertisements/${id}/applicants`, {
-                    method: "get",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    credentials: "include",
-                });
-
-                const data = await res.json();
+                const data = await getApplicantsForAdvertisement(id);
 
                 if (data.success) {
                     setApplicants(data.applicants);
@@ -64,69 +44,47 @@ export const ApplicantTrackingSystem: React.FC = () => {
 
     const handleAccept = async (applicationId: number) => {
         try {
-            const res = await fetch(`http://localhost:4000/api/applications/${applicationId}/accept`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-            });
-
-            const data = await res.json();
+            const data = await acceptApplication(applicationId);
 
             if (data.success) {
+                toast.success("sikeresen elfogadva")
                 setApplicants(prev => prev.filter(app => app.id !== applicationId));
             } else {
-                alert(`Hiba a jelentkező elfogadásakor: ${data.error}`);
+                toast.error(`Hiba a jelentkező elfogadásakor`);
             }
         } catch (err) {
-            alert("Hálózati hiba vagy a szerver nem elérhető.");
+            toast.error("Hálózati hiba vagy a szerver nem elérhető.");
             console.error("Accept application error:", err);
         }
     };
 
     const handleDownloadResume = async (applicationId: number) => {
         try {
-            const res = await fetch(`http://localhost:4000/api/applications/${applicationId}/resume`, {
-                method: "get",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-            });
-
-            const data = await res.json();
+            const data = await getResumeUrl(applicationId);
 
             if (data.success) {
                 window.open(data.url, '_blank');
             } else {
-                alert(data.message || data.error || "Hiba az önéletrajz letöltésekor.");
+                toast.error(data.message || data.error || "Hiba az önéletrajz letöltésekor.");
             }
         } catch (err) {
-            alert("Hálózati hiba vagy a szerver nem elérhető.");
+            toast.error("az önéletrajz nem elérhető");
             console.error("Download resume error:", err);
         }
     };
 
     const handleReject = async (applicationId: number) => {
         try {
-            const res = await fetch(`http://localhost:4000/api/applications/${applicationId}/reject`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: "include",
-            });
-
-            const data = await res.json();
+            const data = await rejectApplication(applicationId);
 
             if (data.success) {
+                toast.success("sikeresen elutasítva")
                 setApplicants(prev => prev.filter(app => app.id !== applicationId));
             } else {
-                alert(`Hiba a jelentkező elutasításakor: ${data.error}`);
+                toast.error(`Hiba a jelentkező elutasításakor: ${data.error}`);
             }
         } catch (err) {
-            alert("Hálózati hiba vagy a szerver nem elérhető.");
+            toast.error("Hálózati hiba vagy a szerver nem elérhető.");
             console.error("Reject application error:", err);
         }
     };
@@ -142,6 +100,7 @@ export const ApplicantTrackingSystem: React.FC = () => {
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Jelentkezőkezelő Rendszer</h1>
+            <Toaster />
             {applicants.length === 0 ? (
                 <p>Nincsenek új jelentkezők ehhez a hirdetéshez.</p>
             ) : (
