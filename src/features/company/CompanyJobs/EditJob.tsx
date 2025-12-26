@@ -1,21 +1,16 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useEffect, useState} from "react";
-
-interface Advertisement {
-    title: string;          // Hirdetés címe
-    position: string;       // Pozíció / Munkakör
-    location: string;       // Helyszín
-    hourly_wage: string;    // Órabér
-    tasks: string;          // Feladatok
-    requirements: string;   // Elvárások
-    job_description: string; // Részletes leírás
-    is_active: boolean;     // Aktív-e a hirdetés
-}
+import {toast, Toaster} from "react-hot-toast";
+import {
+    getAdvertisementForEdit,
+    updateAdvertisement,
+    type UpdateAdvertisementData
+} from "../../../services/advertisementService";
 
 const EditAdvertisement = () => {
     const { id } = useParams();
 
-    const [advertisement, setAdvertisement] = useState<Advertisement>({
+    const [advertisement, setAdvertisement] = useState<UpdateAdvertisementData>({
         title: "",
         position: "",
         location: "",
@@ -33,13 +28,9 @@ const EditAdvertisement = () => {
 
     useEffect(() => {
         const fetchAdvertisement = async () => {
+            if (!id) return;
             try {
-                const res = await fetch(`http://localhost:4000/api/advertisement/${id}`, {
-                    method: "get",
-                    headers: { "Content-Type": "application/json" },
-                    credentials: "include",
-                });
-                const data = await res.json();
+                const data = await getAdvertisementForEdit(id);
                 if (data.success) {
                     setAdvertisement(data.advertisement);
                 }
@@ -50,7 +41,7 @@ const EditAdvertisement = () => {
             }
         };
         fetchAdvertisement();
-    }, [id]); // Hozzáadva az 'id'-t dependency-nek, bár a react-router params ritkán változik.
+    }, [id]);
 
     if (loading) return <p>Betöltés...</p>;
     // 7. Hibaüzenet átírva
@@ -58,28 +49,21 @@ const EditAdvertisement = () => {
 
 
     const handleSave = async () => {
+        if (!id) return;
         try {
-            const res = await fetch(`http://localhost:4000/api/advertisements/${id}`, {
-                method: "patch",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({
-                    ...advertisement
-                }),
-            });
+            const data = await updateAdvertisement(id, advertisement);
 
-            const data = await res.json();
             if (data.success) {
-                setAdvertisement(data.advertisement);
+                setAdvertisement(data.updatedadvertisement || data.advertisement); // Kezeljük mindkét lehetséges választ
                 setEditMode(false);
-                alert("Sikeres mentés!");
+                toast.success("Mentés sikeres!");
                 navigate("/company");
             } else {
-                alert("Mentés sikertelen!");
+                toast.error("Mentés sikertelen!");
             }
         } catch (err) {
             console.error("Save error:", err);
-            alert("Hiba történt a mentés során!");
+            toast.error("Hiba történt a mentés során!");
         }
     };
 
@@ -87,6 +71,7 @@ const EditAdvertisement = () => {
 
         <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
             {/* 12. Megjelenített cím átírása */}
+            <Toaster />
             <h2 className="text-2xl font-semibold mb-6 text-center">Hirdetés adatok szerkesztése</h2>
 
             <form className="grid grid-cols-1 gap-4">

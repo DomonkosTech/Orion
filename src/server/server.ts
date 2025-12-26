@@ -883,7 +883,7 @@ app.get("/api/advertisements/:id", verifyToken, verifyUser, async (req: AuthRequ
 });
 
 
-//update advertisment info endpoint
+//update advertisment info endpoint fix!!!
 app.patch("/api/advertisements/:id", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const data = req.body;
     const id = req.params.id;
