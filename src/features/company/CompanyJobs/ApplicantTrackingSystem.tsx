@@ -36,13 +36,12 @@ export const ApplicantTrackingSystem: React.FC = () => {
             }
 
             try {
-                const res = await fetch("http://localhost:4000/api/ATS/getinfo", {
-                    method: "POST",
+                const res = await fetch(`http://localhost:4000/api/advertisements/${id}/applicants`, {
+                    method: "get",
                     headers: {
                         "Content-Type": "application/json",
                     },
                     credentials: "include",
-                    body: JSON.stringify({ id: parseInt(id) }), // Send advertisement ID in the body
                 });
 
                 const data = await res.json();
@@ -65,13 +64,12 @@ export const ApplicantTrackingSystem: React.FC = () => {
 
     const handleAccept = async (applicationId: number) => {
         try {
-            const res = await fetch("http://localhost:4000/api/ATS/accept_application", {
+            const res = await fetch(`http://localhost:4000/api/applications/${applicationId}/accept`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
                 credentials: "include",
-                body: JSON.stringify({ id: applicationId }),
             });
 
             const data = await res.json();
