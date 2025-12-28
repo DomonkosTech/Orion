@@ -1,6 +1,7 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createAdvertisement } from "../../../services/advertisementService";
+import {toast, Toaster} from "react-hot-toast";
 
 const AddJob: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -30,41 +31,28 @@ const AddJob: React.FC = () => {
 
         // Basic validation
         if (!formData.title.trim() || !formData.position.trim() || !formData.location.trim() || !formData.hourly_wage.trim()) {
-            alert("Kérlek, töltsd ki a cím, pozíció, helyszín és órabér mezőket!");
+            toast.error("Kérlek, töltsd ki a cím, pozíció, helyszín és órabér mezőket!", )
             return;
         }
 
         setIsLoading(true);
 
         try {
-            const response = await fetch("http://localhost:4000/api/addadvertisment/create", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify({
-                    title: formData.title,
-                    position: formData.position,
-                    location: formData.location,
-                    hourly_wage: parseFloat(formData.hourly_wage),
-                    tasks: formData.tasks,
-                    requirements: formData.requirements,
-                    job_description: formData.job_description,
-                    is_active: formData.is_active,
-                }),
+            await createAdvertisement({
+                title: formData.title,
+                position: formData.position,
+                location: formData.location,
+                hourly_wage: parseFloat(formData.hourly_wage),
+                tasks: formData.tasks,
+                requirements: formData.requirements,
+                job_description: formData.job_description,
+                is_active: formData.is_active,
             });
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                alert(data.error || "Hiba a hirdetés létrehozása során");
-                return;
-            }
-
-            alert("Sikeres hirdetés létrehozás!");
+            toast.success("Sikeres a hirdetés létrehozása!");
             navigate("/company");
-        } catch (err) {
-            console.error(err);
-            alert("Hálózati hiba történt");
+        } catch  {
+            toast.error("Hiba a hirdetés létrehozása során:");
         } finally {
             setIsLoading(false);
         }
@@ -72,6 +60,7 @@ const AddJob: React.FC = () => {
 
     return (
         <form onSubmit={handleSubmit}>
+            <Toaster></Toaster>
             <h1>Álláshirdetés létrehozása</h1>
 
             <div>

@@ -408,7 +408,7 @@ app.patch("/api/user/profile", verifyToken, async (req: AuthRequest, res) => {
 });
 
 
-// upload resume endpoint
+// upload resume endpoint fix!!!
 app.post("/api/upload-resume", verifyToken, upload.single("resume"), async (req: AuthRequest, res) => {
     try {
         const userid = req.userId;
@@ -589,7 +589,7 @@ app.post("/api/company/login", async (req, res) => {
 
         // Extend cookie lifetime if "remember me" is enabled
         if (rememberMe) {
-            cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 hét
+            cookieOptions.maxAge = 7 * 24 * 60 * 60 * 1000; // 1 week
         }
 
         // Send cookie + success response
@@ -602,100 +602,95 @@ app.post("/api/company/login", async (req, res) => {
     }
 });
 
-
-//register endpoint
+//register endpoint fix!!!
 app.post("/api/company/register", async (req, res) => {
-    const { email,  name, address, tax_number, contact_person_name, activity_scope, website, short_description, phone_number, terms_accepted } = req.body;
-    if (!email || !terms_accepted) {
-        return res.status(400).json({ error: "Email and terms acceptance are required" });
-    }
     try {
-        const { data: company, error } = await supabase
-            .from("companies")
-            .insert([
-                {
-                    email,
-                    name,
-                    address,
-                    tax_number,
-                    contact_person_name,
-                    activity_scope,
-                    website,
-                    short_description,
-                    terms_accepted,
-                    verified: true,
-                    join_date: new Date().toISOString(),
-                    phone_number,
-                }
-            ])
-            .select()
-            .single();
+        const { email, password,  name, address, tax_number, contact_person_name, activity_scope, website, short_description, phone_number, terms_accepted } = req.body;
 
-        if (error) throw error;
-        res.json({ success: true, companyId: company.id });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Registration failed" });
-    }
-})
+        // basic request validation
+        if (!email || !terms_accepted || !password) {
+            return res.status(400).json({ error: "Email, password and terms required" });
+        }
 
-
-//register credentials endpoint
-app.post("/api/company/register/credentials", async (req, res) => {
-    const { company_id, password } = req.body;
-
-    if (!company_id || !password) {
-        return res.status(400).json({ error: "Company ID and password are required" });
-    }
-
-    try {
+        // hash password
         const password_hash = await bcrypt.hash(password, 12);
 
-        const { error } = await supabase
-            .from("company_credentials")
-            .insert([{ company_id, password_hash }]);
+        // Call RPC to insert company securely
+        const { error } = await supabase.rpc('register_company_v1',
+            {
+                p_email: email,
+                p_password_hash: password_hash,
+                p_name: name,
+                p_address: address,
+                p_tax_number: tax_number,
+                p_contact_person_name: contact_person_name,
+                p_activity_scope: activity_scope,
+                p_website: website,
+                p_short_description: short_description,
+                p_terms_accepted: terms_accepted,
+                p_phone_number: phone_number,
+            });
 
-        if (error) throw error;
-        res.json({ success: true });
+
+        if (error) {
+            console.error("RPC error:", error);
+            return res.status(400).json({ error: "Registration failed" });
+        }
+
+        // Send success response
+        res.json({
+            success: true,
+            message: "Registration successful"
+        });
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: "Password setup failed" });
+        res.status(500).json({ error: "Unexpected server error" });
     }
 });
 
 
-//get company info endpoint
-app.get("/api/company/getinfo", verifyToken, async (req: AuthRequest, res) => {
+// company get info: user profile fix!!!
+app.get("/api/company/profile", verifyToken, async (req: AuthRequest, res) => {
+    const companyId = req.companyId;
+
     try {
-        const { data: company, error: companyError } = await supabase
+        // Fetch basic company data
+        const { data: company, error } = await supabase
             .from("companies")
             .select("*")
-            .eq("id", req.companyId!)
-            .single();
+            .eq("id", companyId)
+            .maybeSingle();
 
-        if (companyError) throw companyError;
+        if (error) throw error;
 
+        if (!company) {
+            return res.status(404).json({ error: "Company not found" });
+        }
+
+        // Send successful response
         res.json({
             success: true,
             company,
         });
 
     } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        console.error("Error while fetching company info:", err);
+        res.status(500).json({ error: "Internal server error while fetching company info" });
     }
 });
 
 
-//update company info endpoint
-app.post("/api/company/updateinfo", verifyToken, async (req: AuthRequest, res) => {
+//update company info endpoint fix!!!
+app.patch("/api/company/profile", verifyToken, async (req: AuthRequest, res) => {
     try {
         const data = req.body;
+        const companyId = req.companyId;
 
-        const { data: updatedCompany, error: companyError } = await supabase
+        // Update basic company fields
+        const { data: updatedCompany, error } = await supabase
             .from("companies")
             .update({
-                email: data.email,
                 name: data.name,
                 phone_number: data.phone_number,
                 address: data.address,
@@ -705,11 +700,11 @@ app.post("/api/company/updateinfo", verifyToken, async (req: AuthRequest, res) =
                 website: data.website,
                 short_description: data.short_description
             })
-            .eq("id", req.companyId!)
+            .eq("id", companyId)
             .select()
             .single();
 
-        if (companyError) throw companyError;
+        if (error) throw error;
 
         res.json({
             success: true,
@@ -729,19 +724,39 @@ app.post("/api/company/updateinfo", verifyToken, async (req: AuthRequest, res) =
 //                 advertisment                  //
 ///////////////////////////////////////////////////
 
-// create advertisment endpoint
-app.post("/api/addadvertisment/create", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+// Create advertisement endpoint fix!!!
+app.post("/api/advertisements", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const companyId = req.companyId;
+
     try {
-        const { count} = await supabase
-            .from("advertisement")
-            .select("*", { count: "exact", head: true })
-            .eq("company_id", req.companyId!);
-        if (count! >= 3) {
-            return res.status(400).json({ error: "Elérted a maximum 3 hirdetés limitet, törölj egyet az új létrehozásához." });
+        const { title, position, location, hourly_wage, tasks, requirements, is_active, job_description } = req.body;
+
+        // Required fields check
+        if (!title || !position || !location || !job_description) {
+            return res.status(400).json({ error: "Please fill in all required fields." });
         }
 
-        const { title, position, location, hourly_wage, tasks, requirements, is_active, search_start, job_description } = req.body;
+        // Hourly wage validation
+        if (hourly_wage && hourly_wage < 0) {
+            return res.status(400).json({ error: "Hourly wage cannot be negative." });
+        }
 
+        // Count existing advertisements for the company
+        const { count, error: counterror } = await supabase
+            .from("advertisement")
+            .select("*", { count: "exact", head: true })
+            .eq("company_id", companyId);
+
+        if (counterror) throw counterror;
+
+        // Max advertisement limit check
+        if (count! >= 3) {
+            return res.status(400).json({
+                error: "You have reached the maximum limit of 3 advertisements. Please delete one to create a new one."
+            });
+        }
+
+        // Insert new advertisement
         const { data: advertisement, error } = await supabase
             .from("advertisement")
             .insert([
@@ -752,9 +767,8 @@ app.post("/api/addadvertisment/create", verifyToken, verifyCompany, async (req: 
                     hourly_wage,
                     tasks,
                     requirements,
-                    is_active,
-                    search_start,
-                    company_id: req.companyId!,
+                    is_active: is_active ?? true,
+                    company_id: companyId,
                     job_description,
                 }
             ])
@@ -765,19 +779,23 @@ app.post("/api/addadvertisment/create", verifyToken, verifyCompany, async (req: 
 
         res.json({ success: true, advertisement });
     } catch (error) {
-        console.error("Advertisement creation error:", error);
-        res.status(500).json({ error: "Hirdetés létrehozása sikertelen" });
+        console.error("Advertisement creation error:", error); // Log server-side error
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
-// get advertisments by company id endpoint
-app.get("/api/advertisements/by-company", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+
+// get advertisements by company id endpoint fix!!!
+app.get("/api/company/advertisements", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const companyId = req.companyId;
+
     try {
+        // Fetch advertisements by company ID, ordered by creation date in descending order
         const { data, error } = await supabase
             .from("advertisement")
-            .select("id, title, position")
-            .eq("company_id", req.companyId!)
-            .order("id", { ascending: true });
+            .select("id, title, position, is_active")
+            .eq("company_id", companyId)
+            .order("id", { ascending: false });
 
         if (error) throw error;
 
@@ -788,24 +806,27 @@ app.get("/api/advertisements/by-company", verifyToken, verifyCompany, async (req
 
     } catch (error) {
         console.error("Advertisement fetch error:", error);
-        res.status(500).json({ error: "Hirdetések lekérdezése sikertelen" });
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 
-// get advertisment info endpoint
-app.post("/api/addadvertisment/getinfo", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const { id } = req.body;
-
+// get advertisment info endpoint fix!!!
+app.get("/api/advertisement/:id", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const { id } = req.params;
     try {
-        const { data: advertisement, error: companyError } = await supabase
+        // Fetch advertisement by ID
+        const { data: advertisement, error } = await supabase
             .from("advertisement")
             .select("*")
             .eq("id", id)
-            .eq("company_id", req.companyId!)
-            .single();
+            .maybeSingle();
 
-        if (companyError) throw companyError;
+        if (error) throw error;
+
+        if (!advertisement) {
+            return res.status(404).json({ error: "not found" });
+        }
 
         res.json({
             success: true,
@@ -813,25 +834,28 @@ app.post("/api/addadvertisment/getinfo", verifyToken, verifyCompany, async (req:
         });
 
     } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        console.error("Error while fetching advertisement info:", err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 
-
-
-app.post("/api/addadvertisment/user/getinfo", verifyToken, verifyUser, async (req: AuthRequest, res) => {
-    const { id } = req.body;
-
+// get advertisment info endpoint by user fix!!!
+app.get("/api/advertisements/:id", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+    const { id } = req.params;
     try {
-        const { data: advertisement, error: companyError } = await supabase
+        // Fetch advertisement by ID
+        const { data: advertisement, error } = await supabase
             .from("advertisement")
             .select("*")
             .eq("id", id)
-            .single();
+            .maybeSingle();
 
-        if (companyError) throw companyError;
+        if (error) throw error;
+
+        if (!advertisement) {
+            return res.status(404).json({ error: "not found" });
+        }
 
         res.json({
             success: true,
@@ -839,17 +863,19 @@ app.post("/api/addadvertisment/user/getinfo", verifyToken, verifyUser, async (re
         });
 
     } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        console.error("Error while fetching advertisement info:", err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 
-//update advertisment info endpoint
-app.post("/api/advertisement/updateinfo", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+//update advertisment info endpoint fix!!!
+app.patch("/api/advertisements/:id", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const data = req.body;
+    const id = req.params.id;
+    const companyId = req.companyId;
+
     try {
-        const data = req.body;
-        const id = data.id;
 
         const { data: updatedadvertisement, error: advertisementError } = await supabase
             .from("advertisement")
@@ -863,7 +889,7 @@ app.post("/api/advertisement/updateinfo", verifyToken, verifyCompany, async (req
                 job_description: data.job_description,
             })
             .eq("id", id)
-            .eq("company_id", req.companyId!)
+            .eq("company_id", companyId)
             .select()
             .single();
 
@@ -871,59 +897,71 @@ app.post("/api/advertisement/updateinfo", verifyToken, verifyCompany, async (req
 
         res.json({
             success: true,
-            company: updatedadvertisement
+            updatedadvertisement
         });
 
     } catch (err) {
         console.error("Update advertisement info error:", err);
-        res.status(500).json({ error: "Update failed" });
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 
 
 
-//get all advertisments
-app.get("/api/addadvertisment/getall", verifyToken, verifyUser, async (_req, res) => {
+//get all advertisments fix!!!
+app.get("/api/advertisements", verifyToken, verifyUser, async (_req, res) => {
     try {
-        const { data: advertisement, error: companyError } = await supabase
+
+        // Fetch all active advertisements ordered by creation date in descending order
+        const { data: advertisements, error } = await supabase
             .from("advertisement")
             .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
-
-        if (companyError) throw companyError;
+            .eq('is_active', true)
+            .order("created_at", { ascending: false });
+        if (error) throw error;
 
         res.json({
             success: true,
-            advertisement,
+            advertisements,
         });
 
     } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        console.error("get-advertisements-info error:", err);
+        res.status(500).json({ error: "Internal Server Error " });
     }
 });
 
 
-//submit application endpoint
-app.post("/api/addadvertisment/submitApplication", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+//submit application endpoint fix!!!
+app.post("/api/applications", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+
     const { id } = req.body;
+    const userId = req.userId!;
+
+    if (!id) {
+        return res.status(400).json({ error: "missing id" });
+    }
 
     try {
+
+        // check if application already exists
         const { data: application } = await supabase
             .from("job_applications")
             .select("id")
-            .eq("user_id", req.userId!)
+            .eq("user_id", userId)
             .eq("advertisement_id", id)
             .maybeSingle();
 
         if (application)
-            return res.status(409).json({ error: "már jelentkeztél erre a munkára" });
+            return res.status(409).json({ error: "application already exists" });
 
+        // insert application
         const { error: insertError } = await supabase
             .from("job_applications")
             .insert([
                 {
-                    user_id: req.userId!,
+                    user_id: userId,
                     advertisement_id: id,
                     last_updated: new Date().toISOString()
                 }
@@ -941,44 +979,62 @@ app.post("/api/addadvertisment/submitApplication", verifyToken, verifyUser, asyn
 });
 
 
-
-app.post("/api/addadvertisment/getallsubmit", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+// get submitted applications endpoint fix!!!
+app.get("/api/user/applications", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
         const userid = req.userId;
 
         //get all submitted applications
-        const { data: submit} = await supabase
+        const { data: submit, error: submitError } = await supabase
             .from("job_applications")
-            .select("id, status, last_updated, advertisement_id, advertisment:advertisement(title)")
+            .select("id, status, last_updated, advertisement_id, advertisement:advertisement(title)")
             .eq("user_id", userid)
 
+        if (submitError) throw submitError;
+
         //get all work
-        const { data: work} = await supabase
+        const { data: work, error: workError } = await supabase
             .from("employees")
             .select("id, position, job_title, hourly_wage, hire_date, company:companies(name)")
             .eq("user_id", userid)
 
-        if ((!submit || submit.length === 0) && (!work || work.length === 0))
-            return res.status(404).json({ error: "no data found" });
+        if (workError) throw workError;
 
         res.json({
             success: true,
-            submit,
-            work,
+            submit: submit || [],
+            work: work || [],
         });
     }
     catch (err) {
-        console.error("submitApplication error:", err);
+        console.error("get application error:", err);
         return res.status(500).json({ error: "Internal server error" });
     }
 });
 
 
-//Applicant tracking endpointa
-app.post("/api/ATS/getinfo", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const { id } = req.body;
+// Applicant tracking endpoint fix!!!
+app.get("/api/advertisements/:id/applicants", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const advertisementId = req.params.id;
+    const companyId = req.companyId;
 
     try {
+        // Check if the advertisement belongs to the company
+        const { data: adCheck, error: adError } = await supabase
+            .from("advertisement")
+            .select("id")
+            .eq("id", advertisementId)
+            .eq("company_id", companyId)
+            .maybeSingle();
+
+        if (adError) throw adError;
+
+        // Block access if ad not found or not owned by company
+        if (!adCheck) {
+            return res.status(403).json({ error: "Access denied or advertisement not found." });
+        }
+
+        // Fetch submitted applicants with user details
         const { data: applicants, error } = await supabase
             .from("job_applications")
             .select(`
@@ -995,12 +1051,10 @@ app.post("/api/ATS/getinfo", verifyToken, verifyCompany, async (req: AuthRequest
                     qualifications,
                     lname,
                     fname
-                
                 )
             `)
-            .eq("advertisement_id", id)
+            .eq("advertisement_id", advertisementId)
             .eq("status", "submitted");
-
 
         if (error) throw error;
 
@@ -1010,74 +1064,119 @@ app.post("/api/ATS/getinfo", verifyToken, verifyCompany, async (req: AuthRequest
         });
 
     } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        console.error("Error fetching applicants:", err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 
-//reject application endpoint
-app.post("/api/ATS/reject_application", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const { id } = req.body;
+// Reject application endpoint fix!!!
+app.post("/api/applications/:id/reject", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const applicationId = req.params.id;
+    const companyId = req.companyId;
 
     try {
-        const { error } = await supabase
-            .from("job_applications")
-            .update({
-                status: "rejected"
-            })
-            .eq("id", id)
-            .maybeSingle();
-
-        if (error) throw error;
-
-        res.json({success: true});
-
-    } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
-    }
-
-})
-
-
-//download resume endpoint
-app.post("/api/ATS/download_resume", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const { id } = req.body;
-
-    try {
+        // Minimal application data needed for ownership check
         interface ApplicantData {
-            user_id: number;
-            advertisement_id: {
+            status: string;
+            advertisement: {
                 company_id: number;
             };
         }
 
-
-        const { data: applicant } = await supabase
+        // Fetch application with related advertisement
+        const { data: applicant, error: fetchError } = await supabase
             .from("job_applications")
-            .select("user_id, advertisement_id( company_id )")
-            .eq("id", id)
+            .select("status, advertisement:advertisement_id( company_id )")
+            .eq("id", applicationId)
             .maybeSingle<ApplicantData>();
-        if (applicant?.advertisement_id.company_id !== req.companyId!)
-            return res.status(403).json({ error: "nincs jogod lekérni" });
+
+        if (fetchError) throw fetchError;
+
+        if (!applicant || applicant.status !== "submitted") {
+            return res.status(404).json({ error: "Application not found" });
+        }
+
+        // Security check: prevent unauthorized rejection
+        if (applicant.advertisement.company_id !== companyId) {
+            return res.status(403).json({
+                error: "Unauthorized: You do not have permission to reject this application."
+            });
+        }
+
+        // Update application status to rejected
+        const { error: updateError } = await supabase
+            .from("job_applications")
+            .update({ status: "rejected" })
+            .eq("id", applicationId);
+
+        if (updateError) throw updateError;
+
+        res.json({ success: true });
+
+    } catch (err) {
+        console.error("Reject application error:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+// Download resume endpoint fix!!!
+app.get("/api/applications/:id/resume", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const applicationId = req.params.id; // Application ID from URL
+    const companyId = req.companyId;      // Authenticated company ID
+
+    try {
+        // Minimal application data needed for access check
+        interface ApplicantData {
+            user_id: number;
+            advertisement: {
+                company_id: number;
+            };
+        }
+
+        // Fetch application data + ownership validation
+        const { data: applicant, error: fetchError } = await supabase
+            .from("job_applications")
+            .select("user_id, advertisement:advertisement_id( company_id )")
+            .eq("id", applicationId)
+            .maybeSingle<ApplicantData>();
+
+        if (fetchError) throw fetchError;
+
+        // Application not found
+        if (!applicant) {
+            return res.status(404).json({ error: "Application not found" });
+        }
+
+        // Security check: prevent IDOR access
+        if (applicant.advertisement.company_id !== companyId) {
+            return res.status(403).json({
+                error: "Unauthorized: You do not have permission to view this resume."
+            });
+        }
 
         const userId = applicant.user_id;
         const BUCKET = "resumes";
+
+        // List files in user's resume folder
         const { data: files, error: listError } = await supabase
             .storage
             .from(BUCKET)
             .list(`${userId}/`);
 
         if (listError) throw listError;
+
+        // Find the first valid resume file
         const resumeFile = files.find(f => f.metadata && f.metadata.size > 0);
 
         if (!resumeFile) {
-            return res.status(404).json({ success: false, message: "Nincs feltöltött önéletrajz." });
+            return res.status(404).json({ error: "Resume file not found." });
         }
+
         const filePath = `${userId}/${resumeFile.name}`;
 
-        // Generate a signed URL valid for 60 minutes (3600 seconds)
+        // Generate signed URL (valid for 60 minutes)
         const { data, error: urlError } = await supabase
             .storage
             .from(BUCKET)
@@ -1086,20 +1185,21 @@ app.post("/api/ATS/download_resume", verifyToken, verifyCompany, async (req: Aut
         if (urlError) throw urlError;
 
         res.json({ success: true, url: data.signedUrl });
-    }
 
-    catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+    } catch (err) {
+        console.error("Download resume error:", err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 
-//accept application endpoint
-app.post("/api/ATS/accept_application", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const { id } = req.body;
+// Accept application endpoint fix!!!
+app.post("/api/applications/:id/accept", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    const applicationId = req.params.id;
+    const companyId = req.companyId;
 
     try {
+        // Advertisement shape needed for employee creation
         interface Advertisement {
             company_id: number;
             position: string;
@@ -1107,78 +1207,80 @@ app.post("/api/ATS/accept_application", verifyToken, verifyCompany, async (req: 
             hourly_wage: number;
         }
 
-        interface User {
-            id: number;
-        }
-
+        // Expected query result structure
         interface ApplicantResult {
             id: number;
             last_updated: string;
+            status: string;
             advertisement: Advertisement;
-            users: User;
+            user_id: number;
         }
 
-        const { data: applicants, error } = await supabase
+        // Fetch application with related advertisement data
+        const { data: application, error: fetchError } = await supabase
             .from("job_applications")
             .select(`
-        id,
-        last_updated,
-        advertisement:advertisement_id (
-            company_id,
-            position,
-            title,
-            hourly_wage
-        ),
-        users:user_id (
-            id
-        )
-    `)
-            .eq("id", id)
+                id,
+                last_updated,
+                status,
+                advertisement:advertisement_id (
+                    company_id,
+                    position,
+                    title,
+                    hourly_wage
+                ),
+                user_id
+            `)
+            .eq("id", applicationId)
             .maybeSingle<ApplicantResult>();
 
+        if (fetchError) throw fetchError;
 
-        if (!applicants || !applicants.users || !applicants.advertisement)
-            return res.status(403).json({ error: "please login" });
+        // Application does not exist
+        if (!application || application.status !== "submitted") {
+            return res.status(404).json({ error: "Application not found" });
+        }
 
+        // Security check: company ownership
+        if (application.advertisement.company_id !== companyId) {
+            return res.status(403).json({
+                error: "Unauthorized: This application belongs to another company."
+            });
+        }
 
+        const advertisement = application.advertisement;
 
-
-        const adat = applicants.users;
-        const adat2 = applicants.advertisement;
-
-
-        const { error: erro } = await supabase
+        // Create employee record from accepted application
+        const { error: insertError } = await supabase
             .from("employees")
             .insert([
                 {
-                    user_id: adat.id,
-                    company_id: adat2.company_id,
-                    position: adat2.position,
-                    job_title: adat2.title,
-                    hourly_wage: adat2.hourly_wage,
+                    user_id: application.user_id,
+                    company_id: advertisement.company_id,
+                    position: advertisement.position,
+                    job_title: advertisement.title,
+                    hourly_wage: advertisement.hourly_wage,
                 }
             ]);
 
-        const { error: er } = await supabase
+        if (insertError) throw insertError;
+
+        // Update application status
+        const { error: updateError } = await supabase
             .from("job_applications")
-            .delete()
-            .eq("id", id)
+            .update({ status: "accepted" })
+            .eq("id", applicationId);
 
-        if (error) throw error;
-        if (erro) throw erro;
-        if (er) throw er;
+        if (updateError) throw updateError;
 
-
-        res.json({
-            success: true,
-
-        });
+        res.json({ success: true });
 
     } catch (err) {
-        console.error("get-company-info error:", err);
-        res.status(401).json({ error: "Invalid or expired token" });
+        console.error("Accept application error:", err);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 
 
 
