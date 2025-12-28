@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getJobApplications, type JobApplicationData } from "../../../services/userServise.ts";
+import { getJobApplications, type JobApplicationData } from "../../../services/advertisementService";
 
 const JobApplication = () => {
     // State for job applications, current works, loading status, and errors
@@ -60,7 +60,7 @@ const JobApplication = () => {
                 <ul>
                     {submits.map((submit) => (
                         <li key={submit.id}>
-                            hirdetés: {submit.advertisment?.title}, Status: {submit.status}, Utolsó frissítés: {new Date(submit.last_updated!).toLocaleDateString()}
+                            hirdetés: {submit.advertisement?.title}, Status: {submit.status}, Utolsó frissítés: {new Date(submit.last_updated!).toLocaleDateString()}
                         </li>
                     ))}
                 </ul>

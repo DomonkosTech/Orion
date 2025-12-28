@@ -1,52 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-
-interface Company {
-    email: string;
-    name: string;
-    address: string;
-    tax_number: string;
-    contact_person_name: string;
-    activity_scope: string;
-    website: string;
-    short_description: string;
-    phone_number: string;
-}
-
+import { getCompanyProfile, updateCompanyProfile, type CompanyProfile } from "../../../services/companyService";
+import { toast, Toaster } from "react-hot-toast";
 
 const EditCompanyProfile: React.FC = () => {
-    const [company, setCompany] = useState<Company | null>(null);
+    const [company, setCompany] = useState<CompanyProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
     const navigate = useNavigate();
 
 
-    const handleLogout = async () => {
-        try {
-            const res = await fetch("http://localhost:4000/api/logout", {
-                method: "POST",
-                credentials: "include",
-            });
-            const data = await res.json();
-            if (data.success) {
-                try { window.dispatchEvent(new Event("auth-changed")); } catch { /* empty */ }
-                alert("Sikeresen kijelentkeztél!");
-                navigate("/CompanyLoginPage");
-            }
-        } catch (err) {
-            console.error("Logout error:", err);
-            alert("Hiba történt a kijelentkezés során!");
-        }
-    }
+
 
     useEffect(() => {
         const fetchCompany = async () => {
             try {
-                const res = await fetch("http://localhost:4000/api/company/getinfo", {
-                    credentials: "include",
-                });
-                const data = await res.json();
+                const data = await getCompanyProfile();
                 if (data.success) {
                     setCompany(data.company);
                 }
@@ -64,42 +33,26 @@ const EditCompanyProfile: React.FC = () => {
 
     const handleSave = async () => {
         try {
-            const res = await fetch("http://localhost:4000/api/company/updateinfo", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                credentials: "include",
-                body: JSON.stringify(company),
-            });
-
-            const data = await res.json();
+            const data = await updateCompanyProfile(company);
             if (data.success) {
                 setCompany(data.company);
                 setEditMode(false);
-                alert("Sikeres mentés!");
+                toast.success("Sikeres mentés!");
             } else {
-                alert("Mentés sikertelen!");
+                toast.error("Mentés sikertelen!");
             }
         } catch (err) {
             console.error("Save error:", err);
-            alert("Hiba történt a mentés során!");
+            toast.error("Hiba történt a mentés során!");
         }
     };
 
     return (
         <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
             <h2 className="text-2xl font-semibold mb-6 text-center">Cég profil adatok</h2>
-
+            <Toaster></Toaster>
             <form className="grid grid-cols-1 gap-4">
-                <label>
-                    <span className="block font-medium">Email:</span>
-                    <input
-                        type="email"
-                        value={company.email}
-                        readOnly={!editMode}
-                        onChange={(e) => setCompany({ ...company, email: e.target.value })}
-                        className="w-full p-2 border rounded-md"
-                    />
-                </label>
+
 
                 <label>
                     <span className="block font-medium">Cég neve:</span>
@@ -219,10 +172,7 @@ const EditCompanyProfile: React.FC = () => {
                 </div>
             </form>
             <br/>
-            <button
-                onClick={handleLogout}>
-                Kijelentkezés
-            </button>
+
             <button onClick={() => navigate("/company")}>
                 föoldal
             </button>
