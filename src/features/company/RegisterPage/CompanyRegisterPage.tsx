@@ -6,12 +6,12 @@ import styles from "./CompanyRegisterPage.module.css";
 // Shared Components
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Buttons/Button.tsx";
-import { registerCompany, registerCompanyCredentials, ServiceError } from "../../../services/nemjocompanyService.ts";
-import { companyRegisterSchema, type CompanyRegisterForm } from "./validation";
+import { type CompanyRegisterForm } from "./validation";
 import AccountSection from "./components/AccountSection";
 import CompanyInfoSection from "./components/CompanyInfoSection";
 import ContactSection from "./components/ContactSection";
 import ActivitySection from "./components/ActivitySection";
+import { registerCompany } from "../../../services/companyService.ts";
 
 const CompanyRegisterPage: React.FC = () => {
     const navigate = useNavigate();
@@ -47,51 +47,36 @@ const CompanyRegisterPage: React.FC = () => {
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // 1. Validation with Zod
-        const parsed = companyRegisterSchema.safeParse(formData);
-        if (!parsed.success) {
-            toast.error(parsed.error.issues[0]?.message || "Érvénytelen űrlap adatok");
+        // Basic validation: Check if email and password are provided
+        if (!formData.email || !formData.password) {
+            toast.error("Email and password are required!");
             return;
         }
 
         setIsLoading(true);
 
         try {
-            // 2. Register Company via service (trims strings, handles dates)
-            // `parsed.data` now contains the validated and transformed (trimmed) data
-            const { data: validatedData } = parsed;
-            const companyData = await registerCompany({
-                email: validatedData.email,
-                name: validatedData.name,
-                address: validatedData.address,
-                tax_number: validatedData.taxNumber,
-                contact_person_name: validatedData.contactPersonName,
-                activity_scope: validatedData.activityScope,
-                website: validatedData.website || undefined,
-                short_description: validatedData.shortDescription,
-                phone_number: validatedData.phoneNumber,
-                terms_accepted: validatedData.termsAccepted
+            // Call the registration service
+            await registerCompany({
+                email: formData.email,
+                password: formData.password,
+                name: formData.name,
+                address: formData.address,
+                tax_number: formData.taxNumber,
+                contact_person_name: formData.contactPersonName,
+                activity_scope: formData.activityScope,
+                website: formData.website || "",
+                short_description: formData.shortDescription,
+                phone_number: formData.phoneNumber,
+                terms_accepted: formData.termsAccepted
             });
 
-            // 3. Register Credentials
-            await registerCompanyCredentials(companyData.companyId, validatedData.password);
-
-            toast.success("Sikeres regisztráció! Bejelentkezés...");
+            toast.success("Registration successful! Redirecting...");
             setTimeout(() => navigate("/CompanyLoginPage"), 1500);
 
-        } catch (err: unknown) {
+        } catch (err) {
             console.error(err);
-            if (err instanceof ServiceError) {
-                if (err.status === 409) {
-                    toast.error("E-mail cím már foglalt");
-                } else {
-                    toast.error(err.message);
-                }
-            } else if (err instanceof Error) {
-                toast.error(err.message);
-            } else {
-                toast.error("Hálózati hiba történt");
-            }
+            toast.error("Registration failed");
         } finally {
             setIsLoading(false);
         }
