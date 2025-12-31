@@ -1,6 +1,12 @@
 import type {Request, Response, NextFunction} from "express";
 import jwt from "jsonwebtoken";
 import { supabase } from "../../lib/supabaseClient.ts";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // Extend Express Request type to include user/company data
 export interface AuthRequest extends Request {
@@ -12,7 +18,6 @@ export interface AuthRequest extends Request {
 // Middleware: Verify JWT token
 export const verifyToken = (req: AuthRequest, res: Response, next: NextFunction) => {
     const token = req.cookies.auth_token;
-    const JWT_SECRET = process.env.JWT_SECRET;
 
     if (!token) {
         return res.status(401).json({ error: "Missing token" });
