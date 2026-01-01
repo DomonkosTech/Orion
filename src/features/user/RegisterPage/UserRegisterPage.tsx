@@ -6,7 +6,7 @@ import styles from "./UserRegisterPage.module.css";
 // Shared Components
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
-import Button from "../../../components/Buttons/Button.tsx";
+import Button from "../../../components/Button/Button.tsx";
 import TextArea from "../../../components/TextArea/TextArea";
 
 // Import the service and type for user registration
@@ -228,6 +228,7 @@ const UserRegisterPage: React.FC = () => {
                             value={formData.short_bio}
                             onChange={handleChange}
                             rows={5}
+                            maxLength={250}
                             placeholder="Írjon magáról pár mondatot..."
                         />
                     </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "../ListJobs.module.css";
-import Button from "../../../../../components/Buttons/Button.tsx";
+import Button from "../../../../../components/Button/Button.tsx";
 
 type Props = {
     onClear: () => void;

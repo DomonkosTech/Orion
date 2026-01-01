@@ -1,4 +1,3 @@
-/* src/components/Checkbox/Checkbox.module.css */
 .container {
     display: flex;
     align-items: center;
@@ -10,7 +9,7 @@
 .checkbox {
     width: 16px;
     height: 16px;
-    accent-color: #1a1a1a; /* Makes the checkbox black when checked */
+    accent-color: #1a1a1a;
     cursor: pointer;
 }
 

@@ -10,7 +10,7 @@ import { loginCompany} from "../../../services/companyService";
 // Components
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
-import Button from "../../../components/Buttons/Button.tsx";
+import Button from "../../../components/Button/Button.tsx";
 
 const CompanyLoginPage: React.FC = () => {
     // State for form inputs, loading status, and navigation

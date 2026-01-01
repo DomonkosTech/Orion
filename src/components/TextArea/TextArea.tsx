@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import styles from './TextArea.module.css';
 
 interface TextAreaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
     label: string;
     error?: string;
-    maxLength?: number; // Optional limit
+    maxLength?: number;
 }
 
 const TextArea: React.FC<TextAreaProps> = ({
@@ -16,16 +16,23 @@ const TextArea: React.FC<TextAreaProps> = ({
                                                onChange,
                                                ...props
                                            }) => {
-    // We track length internally to show the counter immediately
     const [currentLength, setCurrentLength] = useState(0);
+    const textAreaRef = useRef<HTMLTextAreaElement>(null); // Ref for height calculation
 
-    // Sync local state if the 'value' prop changes from outside
+    // Function to adjust height dynamically
+    const adjustHeight = () => {
+        const element = textAreaRef.current;
+        if (element) {
+            element.style.height = 'auto'; // Reset height to recalculate
+            element.style.height = `${element.scrollHeight}px`; // Set to scroll height
+        }
+    };
+
     useEffect(() => {
         if (typeof value === 'string') {
             setCurrentLength(value.length);
-        } else if (typeof value === 'number') {
-            setCurrentLength(String(value).length);
         }
+        adjustHeight(); // Adjust height whenever value changes
     }, [value]);
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -33,6 +40,7 @@ const TextArea: React.FC<TextAreaProps> = ({
         if (onChange) {
             onChange(e);
         }
+        adjustHeight(); // Adjust height on user input
     };
 
     return (
@@ -42,18 +50,18 @@ const TextArea: React.FC<TextAreaProps> = ({
             </label>
 
             <textarea
+                ref={textAreaRef}
                 id={id}
                 className={`${styles.textarea} ${error ? styles.inputError : ''}`}
                 maxLength={maxLength}
                 value={value}
                 onChange={handleChange}
+                rows={1} // Start small and grow
                 {...props}
             />
 
-            {/* Footer area for Error and Counter */}
             <div className={styles.footer}>
                 {error && <span className={styles.errorMessage}>{error}</span>}
-
                 {maxLength && (
                     <span className={styles.charCount}>
                         {currentLength} / {maxLength}

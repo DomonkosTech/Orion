@@ -1,7 +1,7 @@
 import React from "react";
 import styles from "../ListJobs.module.css";
 import InputField from "../../../../../components/InputField/InputField.tsx";
-import Button from "../../../../../components/Buttons/Button.tsx";
+import Button from "../../../../../components/Button/Button.tsx";
 
 type Props = {
     searchTerm: string;

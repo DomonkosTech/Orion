@@ -1,0 +1,215 @@
+.pageWrapper {
+    --orion-blue: #2c5aa0;
+    --orion-blue-dark: #1e3d6f;
+    --orion-blue-light: #f1f5f9;
+    --bg: #f8fafc;
+    --panel: #ffffff;
+    --border: #e2e8f0;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
+
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--bg);
+    overflow-x: hidden;
+    width: 100%;
+}
+
+.container {
+    flex: 1;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.profileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 32px;
+    flex-wrap: wrap; /* Allow items to wrap if they are too wide */
+    gap: 20px;
+}
+
+.headerBtn {
+    width: auto !important;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.titleGroup h1 {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: var(--orion-blue-dark);
+    margin-bottom: 4px;
+}
+
+.titleGroup p { color: var(--text-muted); }
+
+.actionGroup { display: flex; gap: 12px; }
+
+/* Grid Layout */
+.formGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.fullWidth { grid-column: span 2; }
+
+.formCard {
+    background: var(--panel);
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+}
+
+.cardTitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--orion-blue-dark);
+}
+
+.inputGroup {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.field, .fieldFull {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.fieldFull { grid-column: span 2; }
+
+.field label, .fieldFull label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 0;
+}
+
+.field input, .fieldFull input, textarea {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: #fcfcfc;
+    transition: all 0.2s;
+    width: 100%;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--orion-blue);
+    box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+}
+
+.field input[readonly], .fieldFull input[readonly], textarea[readonly] {
+    background: #f1f5f9;
+    color: #475569;
+    cursor: default;
+    border-color: transparent;
+}
+
+/* Resume Box */
+.docGrid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 40px;
+    align-items: center;
+}
+
+.docFields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.resumeStatusBox {
+    background: var(--orion-blue-light);
+    padding: 24px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border: 1px dashed var(--orion-blue);
+}
+
+.resumeInfo {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.resumeInfo h3 { font-size: 1rem; margin: 0; }
+.resumeInfo p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+
+.iconActive { color: var(--orion-blue); }
+.iconMuted { color: var(--text-muted); }
+
+/* --- NEW: LOADING STATE STYLES --- */
+.loadingState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: var(--text-muted);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border);
+    border-top: 3px solid var(--orion-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* --- NEW: RESPONSIVE QUERIES --- */
+@media (max-width: 768px) {
+    .profileHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .formGrid, .inputGroup, .docGrid, .docFields {
+        grid-template-columns: 1fr;
+    }
+
+    .fullWidth {
+        grid-column: span 1;
+    }
+
+    .actionGroup {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .headerBtn {
+        width: 100% !important;
+    }
+}
