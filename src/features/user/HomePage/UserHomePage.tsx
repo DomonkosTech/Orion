@@ -44,21 +44,6 @@ function UserHomePage() {
                                 Önéletrajz feltöltése
                             </Link>
                         </div>
-
-                        <div className={styles.heroStats}>
-                            <div className={styles.statCard}>
-                                <div className={styles.statLabel}>Okos szűrés</div>
-                                <div className={styles.statValue}>Másodpercek alatt</div>
-                            </div>
-                            <div className={styles.statCard}>
-                                <div className={styles.statLabel}>Jelentkezés</div>
-                                <div className={styles.statValue}>Egyszerű folyamat</div>
-                            </div>
-                            <div className={styles.statCard}>
-                                <div className={styles.statLabel}>Adatvédelem</div>
-                                <div className={styles.statValue}>Átlátható kezeléssel</div>
-                            </div>
-                        </div>
                     </div>
                 </section>
 

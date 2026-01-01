@@ -9,6 +9,7 @@ import JobCard from "./components/JobCard.tsx";
 import SkeletonCard from "./components/SkeletonCard.tsx";
 import EmptyState from "./components/EmptyState.tsx";
 import { getAdvertisements, type Job } from "../../../../services/advertisementService.ts";
+import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 
 // Helper for formatting currency
 const formatCurrency = (amount: number) => {
@@ -90,7 +91,7 @@ const ListJobs: React.FC = () => {
                 {/* HERO / BANNER */}
                 <section className={styles.banner}>
                     <div className={styles.bannerInner}>
-                        <div className={styles.bannerKicker}>Orion • Álláskeresés</div>
+                        <BannerKicker>Álláskeresés</BannerKicker>
 
                         <h1 className={styles.bannerTitle}>Találja meg a jövőjét</h1>
 
