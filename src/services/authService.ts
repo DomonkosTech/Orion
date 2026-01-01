@@ -3,7 +3,23 @@ import {toast} from "react-hot-toast";
 
 const API_BASE_URL = "http://localhost:4000/api";
 
+export interface AuthStatus {
+    loggedIn: boolean;
+    userType?: "user" | "company" | null;
+    user?: unknown;
+}
 
+export const checkAuthStatus = async (): Promise<AuthStatus> => {
+    const res = await fetch(`${API_BASE_URL}/auth/status`, {
+        method: "GET",
+        credentials: "include",
+        cache: "no-store",
+    });
+    if (!res.ok) {
+        throw new Error("Failed to check auth status");
+    }
+    return res.json();
+};
 
 export const useLogout = () => {
     const navigate = useNavigate();
