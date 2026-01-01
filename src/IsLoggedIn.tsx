@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+import { checkAuthStatus } from "./services/authService";
 
 interface Props {
     children: React.ReactElement;
@@ -16,12 +17,7 @@ function IsLoggedIn({ children, mode = "user" }: Props) {
 
         const check = async () => {
             try {
-                const res = await fetch("http://localhost:4000/auth/check", {
-                    method: "GET",
-                    credentials: "include",
-                    cache: "no-store",
-                });
-                const data = await res.json();
+                const data = await checkAuthStatus();
                 if (!mounted) return;
                 setLoggedIn(Boolean(data.loggedIn));
                 setUserType(data.userType || null);
