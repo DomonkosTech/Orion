@@ -1,6 +1,6 @@
 import express from "express";
-import { supabase } from "../../lib/supabaseClient.ts";
 import { type AuthRequest, verifyToken } from "../middleware/auth.ts";
+import * as companyService from "../services/companyService.ts";
 
 const router = express.Router();
 
@@ -9,14 +9,12 @@ router.get("/company/profile", verifyToken, async (req: AuthRequest, res) => {
     const companyId = req.companyId;
 
     try {
-        // Fetch basic company data
-        const { data: company, error } = await supabase
-            .from("companies")
-            .select("*")
-            .eq("id", companyId)
-            .maybeSingle();
+        // Ensure company ID is present (though verifyToken should handle this context)
+        if (!companyId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
 
-        if (error) throw error;
+        const company = await companyService.getCompanyProfile(companyId);
 
         if (!company) {
             return res.status(404).json({ error: "Company not found" });
@@ -38,27 +36,13 @@ router.get("/company/profile", verifyToken, async (req: AuthRequest, res) => {
 //update company info endpoint fix!!!
 router.patch("/company/profile", verifyToken, async (req: AuthRequest, res) => {
     try {
-        const data = req.body;
         const companyId = req.companyId;
+        // Ensure company ID is present
+        if (!companyId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
 
-        // Update basic company fields
-        const { data: updatedCompany, error } = await supabase
-            .from("companies")
-            .update({
-                name: data.name,
-                phone_number: data.phone_number,
-                address: data.address,
-                tax_number: data.tax_number,
-                contact_person_name: data.contact_person_name,
-                activity_scope: data.activity_scope,
-                website: data.website,
-                short_description: data.short_description
-            })
-            .eq("id", companyId)
-            .select()
-            .single();
-
-        if (error) throw error;
+        const updatedCompany = await companyService.updateCompanyProfile(companyId, req.body);
 
         res.json({
             success: true,
