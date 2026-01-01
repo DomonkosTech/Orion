@@ -59,7 +59,7 @@ const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency }) => {
                 </div>
 
                 <div onClick={(e) => { e.stopPropagation(); onOpen(); }}>
-                    <Button type="button" variant="secondary">
+                    <Button type="button" color={"orion-blue"} variant={"secondary"}>
                         Jelentkezés
                     </Button>
                 </div>

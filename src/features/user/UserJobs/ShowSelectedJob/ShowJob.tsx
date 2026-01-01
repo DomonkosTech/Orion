@@ -1,10 +1,17 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { MapPin, Hash, Wallet, ClipboardList, Target, Briefcase, ChevronLeft } from "lucide-react";
 import {
     getAdvertisementById,
     submitApplication,
     type AdvertisementDetails
 } from "../../../../services/advertisementService";
+import styles from "./ShowJob.module.css";
+
+//components
+import { Header } from "../../../../components/Header/Header.tsx";
+import Button from "../../../../components/Buttons/Button.tsx";
+import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 
 const ShowJob = () => {
     const { id } = useParams();
@@ -53,75 +60,137 @@ const ShowJob = () => {
     };
 
     if (loading) {
-        return <p>Betöltés...</p>;
+        return (
+            <div className={styles.pageWrapper}>
+                <Header />
+                <div style={{ textAlign: 'center', padding: '100px' }}>
+                    <p>Betöltés...</p>
+                </div>
+            </div>
+        );
     }
 
-    if (error) {
-        return <p>Hiba: {error}</p>;
-    }
-
-    if (!advertisement) {
-        return <p>Nem található hirdetés.</p>;
+    if (error || !advertisement) {
+        return (
+            <div className={styles.pageWrapper}>
+                <Header />
+                <div style={{ textAlign: 'center', padding: '100px' }}>
+                    <p>{error || "Nem található hirdetés."}</p>
+                    <Button
+                        type="button"
+                        color="orion-blue"
+                        variant="secondary"
+                        onClick={() => navigate("/listjobs")}
+                    >
+                        Vissza a listához
+                    </Button>
+                </div>
+            </div>
+        );
     }
 
     return (
-        <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
-            <h2 className="text-2xl font-semibold mb-6 text-center">Állás részletei</h2>
+        <div className={styles.pageWrapper}>
+            <Header />
 
-            <div className="space-y-4">
-                <div>
-                    <span className="block font-medium">Hirdetés címe:</span>
-                    <p className="w-full p-2 border rounded-md bg-gray-50">{advertisement.title}</p>
+            <header className={styles.banner}>
+                <div className={styles.bannerInner}>
+                    <button onClick={() => navigate("/listjobs")} className={styles.backButton}>
+                        <ChevronLeft size={16} /> Vissza a böngészéshez
+                    </button>
+                    <BannerKicker>Részletes megtekintés</BannerKicker>
+                    <h1 className={styles.bannerTitle}>{advertisement.title}</h1>
+                    <div className={styles.bannerMeta}>
+                        <Briefcase size={18} />
+                        <span>Munkakör: <strong>{advertisement.position}</strong></span>
+                    </div>
+                </div>
+            </header>
+
+            <main className={styles.contentContainer}>
+                <div className={styles.detailsCard}>
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>
+                            <ClipboardList size={22} className={styles.iconBlue} />
+                            Munkaköri leírás
+                        </h2>
+                        <div className={styles.richText}>
+                            {advertisement.job_description}
+                        </div>
+                    </section>
+
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>
+                            <Target size={22} className={styles.iconBlue} />
+                            Főbb feladatok
+                        </h2>
+                        <div className={styles.richText}>
+                            {advertisement.tasks}
+                        </div>
+                    </section>
+
+                    <section className={styles.section}>
+                        <h2 className={styles.sectionTitle}>
+                            <Briefcase size={22} className={styles.iconBlue} />
+                            Elvárások
+                        </h2>
+                        <div className={styles.tagCloud}>
+                            {advertisement.requirements.split(',').map((req, index) => (
+                                <span key={index} className={styles.tag}>{req.trim()}</span>
+                            ))}
+                        </div>
+                    </section>
                 </div>
 
-                <div>
-                    <span className="block font-medium">Pozíció / Munkakör:</span>
-                    <p className="w-full p-2 border rounded-md bg-gray-50">{advertisement.position}</p>
-                </div>
+                <aside className={styles.sidebar}>
+                    <div className={styles.actionCard}>
+                        <div className={styles.priceHeader}>
+                            <Wallet size={24} className={styles.iconBlue} />
+                            <div>
+                                <div className={styles.priceTag}>{advertisement.hourly_wage} Ft</div>
+                                <span className={styles.mutedSmall}>Bruttó órabér</span>
+                            </div>
+                        </div>
 
-                <div>
-                    <span className="block font-medium">Helyszín:</span>
-                    <p className="w-full p-2 border rounded-md bg-gray-50">{advertisement.location}</p>
-                </div>
+                        <div className={styles.infoGrid}>
+                            <div className={styles.infoRow}>
+                                <div className={styles.infoLabel}>
+                                    <MapPin size={16} /> Helyszín
+                                </div>
+                                <span className={styles.value}>{advertisement.location}</span>
+                            </div>
+                            <div className={styles.infoRow}>
+                                <div className={styles.infoLabel}>
+                                    <Hash size={16} /> Referencia
+                                </div>
+                                <span className={styles.value}>#{id}</span>
+                            </div>
+                        </div>
 
-                <div>
-                    <span className="block font-medium">Órabér:</span>
-                    <p className="w-full p-2 border rounded-md bg-gray-50">{advertisement.hourly_wage} Ft</p>
-                </div>
+                        <div className={styles.buttonGroup}>
+                            <Button
+                                type="button"
+                                color="orion-blue"
+                                variant="primary"
+                                onClick={handleSubmitApplication}
+                                className={styles.applyBtn}
+                            >
+                                Jelentkezés most
+                            </Button>
+                        </div>
 
-                <div>
-                    <span className="block font-medium">Részletes leírás:</span>
-                    <p className="w-full p-2 border rounded-md bg-gray-50 whitespace-pre-wrap">{advertisement.job_description}</p>
-                </div>
+                        {applicationStatus && (
+                            <div className={styles.statusMsg}>
+                                {applicationStatus}
+                            </div>
+                        )}
+                    </div>
 
-                <div>
-                    <span className="block font-medium">Feladatok:</span>
-                    <p className="w-full p-2 border rounded-md bg-gray-50 whitespace-pre-wrap">{advertisement.tasks}</p>
-                </div>
-
-                <div>
-                    <span className="block font-medium">Elvárások:</span>
-                    <p className="w-full p-2 border rounded-md bg-gray-50 whitespace-pre-wrap">{advertisement.requirements}</p>
-                </div>
-            </div>
-
-            <div className="mt-6 text-center">
-                <button
-                    type="button"
-                    onClick={() => navigate("/listjobs")}
-                    className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-                >
-                    Vissza az állások listájához
-                </button>
-                <button
-                    type="button"
-                    onClick={handleSubmitApplication}
-                    className="ml-4 px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50"
-                >
-                    Jelentkezés
-                </button>
-            </div>
-            {applicationStatus && <p className="mt-4 text-center">{applicationStatus}</p>}
+                    <div className={styles.trustCard}>
+                        <p>Kérdése van? Keressen minket bizalommal az Orion ügyfélszolgálatán.</p>
+                    </div>
+                </aside>
+            </main>
         </div>
     );
 };

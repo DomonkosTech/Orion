@@ -3,7 +3,7 @@
     /* Brand Colors */
     --orion-blue: #2c5aa0;
     --orion-blue-dark: #1e3d6f;
-    --orion-blue-light: #eef2f8; /* Soft blue for backgrounds */
+    --orion-blue-light: #eef2f8;
 
     /* Neutral Palette */
     --bg: #f8fafc;
@@ -11,7 +11,7 @@
     --text: #1e293b;
     --muted: #64748b;
     --border: #e2e8f0;
-    --shadow: 0 10px 15px -3px rgba(44, 90, 160, 0.07); /* Tinted shadow */
+    --shadow: 0 10px 15px -3px rgba(44, 90, 160, 0.07);
 
     min-height: 100vh;
     background: var(--bg);
@@ -253,7 +253,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #111827;
+    background: #2050b8;
 }
 
 /* On small screens stack header */
@@ -385,7 +385,6 @@
     width: 58px;
     height: 58px;
     border-radius: 14px;
-    /* Use the light brand blue for the logo box */
     background: var(--orion-blue-light);
     color: var(--orion-blue);
     display: flex;
