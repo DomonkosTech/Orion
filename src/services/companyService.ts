@@ -6,6 +6,20 @@ export interface CompanyLoginData {
     rememberMe: boolean;
 }
 
+export interface CompanyRegistrationData {
+    email: string;
+    password: string;
+    name: string;
+    address: string;
+    tax_number: string;
+    contact_person_name: string;
+    activity_scope: string;
+    website: string;
+    short_description: string;
+    phone_number: string;
+    terms_accepted: boolean;
+}
+
 export interface CompanyProfile {
     name: string;
     address: string;
@@ -25,6 +39,15 @@ const handleResponse = async (response: Response) => {
         throw new Error(data.error || `HTTP error! status: ${response.status}`);
     }
     return data;
+};
+
+export const registerCompany = async (registrationData: CompanyRegistrationData) => {
+    const response = await fetch(`${API_BASE_URL}/company/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(registrationData),
+    });
+    return handleResponse(response);
 };
 
 export const loginCompany = async (loginData: CompanyLoginData) => {
