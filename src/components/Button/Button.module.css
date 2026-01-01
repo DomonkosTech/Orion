@@ -1,5 +1,3 @@
-/* src/components/Buttons/Button.module.css */
-
 :root {
     /* A főoldalról hozott színek */
     --orion-blue-primary: #2c5aa0;
@@ -74,16 +72,37 @@
     color: var(--btn-hover-color);
 }
 
+.underlined {
+    text-decoration: underline;
+}
+
 .link {
     background: none;
     color: var(--btn-main-color);
     padding: 0;
     width: auto;
     font-weight: normal;
-    text-decoration: none;
     font-size: 0.9rem;
+}
+
+.link:not(.underlined) {
+    text-decoration: none;
 }
 
 .link:hover {
     color: var(--btn-hover-color);
+}
+
+.btn:focus {
+    outline: none;
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--orion-blue-primary);
+    outline-offset: 2px;
+}
+
+.link:focus {
+    outline: none;
+    box-shadow: none;
 }

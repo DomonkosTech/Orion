@@ -6,7 +6,7 @@ import styles from "./UserLoginPage.module.css";
 // Import Shared Components and Services
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
-import Button from "../../../components/Buttons/Button.tsx";
+import Button from "../../../components/Button/Button.tsx";
 import { loginUser } from "../../../services/userServise.ts";
 
 const UserLoginPage: React.FC = () => {

@@ -2,10 +2,10 @@ import { Link } from "react-router-dom";
 import styles from "./UserHomePage.module.css";
 
 //components
-
 import { Header } from "../../../components/Header/Header.tsx";
-import Button from "../../../components/Buttons/Button.tsx";
-
+import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
+import Button from "../../../components/Button/Button.tsx";
+import Footer from "../../../components/Footer/Footer.tsx";
 
 function UserHomePage() {
     return (
@@ -25,7 +25,7 @@ function UserHomePage() {
             <main>
                 <section className={styles.hero}>
                     <div className={styles.heroInner}>
-                        <div className={styles.heroKicker}>Gyors • Letisztult • Magyar piac</div>
+                        <BannerKicker>Gyors • Letisztult • Magyar piac</BannerKicker>
 
                         <h1 className={styles.heroTitle}>
                             Professzionális <span className={styles.accent}>karrierélmény</span>, egy helyen.
@@ -161,31 +161,9 @@ function UserHomePage() {
             </main>
 
             {/* Footer */}
-            <footer className={styles.footer}>
-                <div className={styles.footerInner}>
-                    <div className={styles.footerCol}>
-                        <div className={styles.footerBrand}>Orion</div>
-                        <div className={styles.footerMuted}>Letisztult karrierportál élmény.</div>
-                    </div>
 
-                    <div className={styles.footerCol}>
-                        <div className={styles.footerTitle}>Gyors linkek</div>
-                        <Link to="/listjobs" className={styles.footerLink}>Állások</Link>
-                        <Link to="/jobapplication" className={styles.footerLink}>Jelentkezések</Link>
-                        <Link to="/EditUserProfile" className={styles.footerLink}>Profil</Link>
-                    </div>
+            <Footer></Footer>
 
-                    <div className={styles.footerCol}>
-                        <div className={styles.footerTitle}>Kapcsolat</div>
-                        <a className={styles.footerLink} href="mailto:info@orion.hu">info@orion.hu</a>
-                        <div className={styles.footerMuted}>+36 1 234 5678</div>
-                    </div>
-                </div>
-
-                <div className={styles.footerBottom}>
-                    © {new Date().getFullYear()} Orion. Minden jog fenntartva.
-                </div>
-            </footer>
         </div>
     );
 }

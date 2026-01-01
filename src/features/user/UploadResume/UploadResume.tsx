@@ -1,25 +1,34 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { Upload, FileText, X, Info } from "lucide-react";
 import { uploadResume } from "../../../services/userServise";
+import styles from "./UploadResume.module.css";
+
+//components
+import { Header } from "../../../components/Header/Header.tsx";
+import Button from "../../../components/Button/Button.tsx";
+import Footer from "../../../components/Footer/Footer.tsx";
 
 const UploadResume = () => {
-    // State for the selected file, sending status, and navigation
     const [file, setFile] = useState<File | null>(null);
     const [sending, setSending] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
 
-    // Handles file selection and validation
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const selectedFile = e.target.files?.[0];
+        validateAndSetFile(selectedFile);
+    };
+
+    const validateAndSetFile = (selectedFile?: File) => {
         if (!selectedFile) return;
 
-        // Validate file type (only PDF allowed)
         if (selectedFile.type !== "application/pdf") {
             alert("Csak PDF fájlt lehet feltölteni!");
             return;
         }
 
-        // Validate file size (max 5MB)
         if (selectedFile.size > 5 * 1024 * 1024) {
             alert("A fájl mérete nem lehet nagyobb 5MB-nál!");
             return;
@@ -28,52 +37,119 @@ const UploadResume = () => {
         setFile(selectedFile);
     };
 
-    // Handles the file upload submission
+    // Drag and Drop Handlers
+    const onDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const onDragLeave = () => setIsDragging(false);
+
+    const onDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const droppedFile = e.dataTransfer.files?.[0];
+        validateAndSetFile(droppedFile);
+    };
+
     const handleSubmit = async () => {
-        if (!file) {
-            alert("Válassz ki egy PDF fájlt először!");
-            return;
-        }
-
+        if (!file) return;
         setSending(true);
-
         try {
-            // Use the uploadResume service to handle the upload
             await uploadResume(file);
-
-            alert("PDF sikeresen feltöltve!");
-            // Navigate to the home page on successful upload
+            alert("Önéletrajz sikeresen feltöltve!");
             navigate("/");
-
         } catch (err: unknown) {
-            // Handle and display errors from the service or network
-            if (err instanceof Error) {
-                alert("Hiba: " + err.message);
-            } else {
-                alert("Ismeretlen hiba történt");
-            }
+            alert(err instanceof Error ? err.message : "Ismeretlen hiba");
         } finally {
-            // Stop the sending indicator
             setSending(false);
         }
     };
 
     return (
-        <div>
-            <h1>Upload Resume</h1>
+        <div className={styles.pageWrapper}>
+            <Header />
 
-            <ul>
-                <li>Csak PDF fájlt lehet feltölteni.</li>
-                <li>Maximum 5MB lehet a fájl mérete.</li>
-            </ul>
+            <main className={styles.container}>
+                <div className={styles.uploadCard}>
+                    <div className={styles.headerSection}>
+                        <h1 className={styles.title}>Önéletrajz feltöltése</h1>
+                        <p className={styles.subtitle}>Töltsd fel szakmai önéletrajzod PDF formátumban a gyorsabb jelentkezéshez.</p>
+                    </div>
 
-            <input type="file" accept=".pdf" onChange={handleFileChange} />
+                    <div
+                        className={`${styles.dropZone} ${isDragging ? styles.dragging : ""} ${file ? styles.hasFile : ""}`}
+                        onDragOver={onDragOver}
+                        onDragLeave={onDragLeave}
+                        onDrop={onDrop}
+                        onClick={() => fileInputRef.current?.click()}
+                    >
+                        <input
+                            type="file"
+                            accept=".pdf"
+                            onChange={handleFileChange}
+                            ref={fileInputRef}
+                            className={styles.hiddenInput}
+                        />
 
-            {file && <p>Kiválasztott fájl: {file.name}</p>}
+                        {!file ? (
+                            <div className={styles.dropZoneContent}>
+                                <div className={styles.iconCircle}>
+                                    <Upload size={32} />
+                                </div>
+                                <p className={styles.dropText}>
+                                    <strong>Kattints a feltöltéshez</strong> vagy húzd ide a fájlt
+                                </p>
+                                <span className={styles.fileHint}>Csak PDF (Max. 5MB)</span>
+                            </div>
+                        ) : (
+                            <div className={styles.filePreview}>
+                                <FileText size={48} className={styles.fileIcon} />
+                                <div className={styles.fileInfo}>
+                                    <span className={styles.fileName}>{file.name}</span>
+                                    <span className={styles.fileSize}>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                                </div>
+                                <button
+                                    className={styles.removeBtn}
+                                    onClick={(e) => { e.stopPropagation(); setFile(null); }}
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+                        )}
+                    </div>
 
-            <button onClick={handleSubmit} disabled={sending || !file}>
-                {sending ? "Elküldés..." : "Elküld"}
-            </button>
+                    <div className={styles.infoBox}>
+                        <Info size={18} />
+                        <ul>
+                            <li>A feltöltött fájlt profilod részeként tároljuk.</li>
+                            <li>Bármikor frissítheted vagy törölheted.</li>
+                        </ul>
+                    </div>
+
+                    <div className={styles.actions}>
+                        <Button
+                            type="button"
+                            color="orion-blue"
+                            variant="primary"
+                            onClick={handleSubmit}
+                            disabled={sending || !file}
+                            className={styles.submitBtn}
+                        >
+                            {sending ? "Feltöltés folyamatban..." : "Önéletrajz mentése"}
+                        </Button>
+
+                        <Button
+                            variant="link"
+                            underline
+                            onClick={() => navigate("/EditUserProfile")}
+                        >
+                            Mégse
+                        </Button>
+                    </div>
+                </div>
+            </main>
+            <Footer></Footer>
         </div>
     );
 };

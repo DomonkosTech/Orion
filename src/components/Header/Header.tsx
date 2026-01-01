@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./Header.module.css";
 
 // Components
-import Button from "../Buttons/Button";
+import Button from "../Button/Button";
 
 // Server / hooks
 import { useLogout } from "../../services/authService";

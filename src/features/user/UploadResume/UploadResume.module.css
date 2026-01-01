@@ -1,0 +1,186 @@
+.pageWrapper {
+    --orion-blue: #2c5aa0;
+    --orion-blue-dark: #1e3d6f;
+    --orion-blue-light: #f0f4f9;
+    --bg: #f8fafc;
+    --panel: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 20px;
+}
+
+.uploadCard {
+    background: var(--panel);
+    max-width: 550px;
+    width: 100%;
+    padding: 48px;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+}
+
+.headerSection {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--orion-blue-dark);
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+/* Custom Drop Zone */
+.dropZone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #fafafa;
+    position: relative;
+}
+
+.dropZone:hover {
+    border-color: var(--orion-blue);
+    background: var(--orion-blue-light);
+}
+
+.dragging {
+    border-color: var(--orion-blue);
+    background: var(--orion-blue-light);
+    transform: scale(1.02);
+}
+
+.hasFile {
+    border-style: solid;
+    border-color: var(--orion-blue);
+}
+
+.hiddenInput {
+    display: none;
+}
+
+.iconCircle {
+    width: 64px;
+    height: 64px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    color: var(--orion-blue);
+}
+
+.dropText {
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.fileHint {
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+/* File Preview Style */
+.filePreview {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+}
+
+.fileIcon {
+    color: var(--orion-blue);
+}
+
+.fileInfo {
+    flex: 1;
+}
+
+.fileName {
+    display: block;
+    font-weight: 700;
+    color: var(--text);
+    word-break: break-all;
+}
+
+.fileSize {
+    font-size: 0.85rem;
+    color: var(--muted);
+}
+
+.removeBtn {
+    background: #fee2e2;
+    color: #dc2626;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.removeBtn:hover { background: #fecaca; }
+
+/* Info Box */
+.infoBox {
+    margin-top: 24px;
+    background: #fdfaf2;
+    border: 1px solid #fef3c7;
+    padding: 16px;
+    border-radius: 8px;
+    display: flex;
+    gap: 12px;
+    color: #92400e;
+}
+
+.infoBox ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+/* Actions */
+.actions {
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.submitBtn {
+    width: 100%;
+    padding: 16px !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+}
+
+.cancelBtn:hover { color: var(--text); }

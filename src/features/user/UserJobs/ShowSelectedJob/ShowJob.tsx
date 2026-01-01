@@ -10,8 +10,9 @@ import styles from "./ShowJob.module.css";
 
 //components
 import { Header } from "../../../../components/Header/Header.tsx";
-import Button from "../../../../components/Buttons/Button.tsx";
+import Button from "../../../../components/Button/Button.tsx";
 import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
+import Footer from "../../../../components/Footer/Footer.tsx";
 
 const ShowJob = () => {
     const { id } = useParams();
@@ -191,6 +192,7 @@ const ShowJob = () => {
                     </div>
                 </aside>
             </main>
+            <Footer></Footer>
         </div>
     );
 };
