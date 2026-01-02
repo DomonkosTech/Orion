@@ -17,7 +17,8 @@ import Footer from "../../../../components/Footer/Footer.tsx";
 const ShowJob = () => {
     const { id } = useParams();
     const [advertisement, setAdvertisement] = useState<AdvertisementDetails | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true); // Used only for initial page load
+    const [isSubmitting, setIsSubmitting] = useState(false); // Used for application submission
     const [error, setError] = useState<string | null>(null);
     const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -44,19 +45,32 @@ const ShowJob = () => {
 
     const handleSubmitApplication = async () => {
         if (!id) return;
-        setLoading(true);
+
+        setIsSubmitting(true);
+        setApplicationStatus(null);
+
+        const startTime = Date.now();
+        const MIN_DELAY = 1000;
+
+        let finalStatus = "";
+
         try {
             const data = await submitApplication(id);
+
             if (data.success) {
-                setApplicationStatus("Sikeres jelentkezés!");
+                finalStatus = "Sikeres jelentkezés!";
             } else {
-                setApplicationStatus(data.error || "A jelentkezés sikertelen.");
+                finalStatus = data.error || "A jelentkezés sikertelen.";
             }
         } catch (err) {
             console.error("Submit application error:", err);
-            setApplicationStatus("Hiba történt a jelentkezés során.");
+            finalStatus = "Hiba történt a jelentkezés során.";
         } finally {
-            setLoading(false);
+            const elapsedTime = Date.now() - startTime;
+            const remainingTime = Math.max(0, MIN_DELAY - elapsedTime);
+            await new Promise(resolve => setTimeout(resolve, remainingTime));
+            setApplicationStatus(finalStatus);
+            setIsSubmitting(false);
         }
     };
 
@@ -175,8 +189,9 @@ const ShowJob = () => {
                                 variant="primary"
                                 onClick={handleSubmitApplication}
                                 className={styles.applyBtn}
+                                disabled={isSubmitting} // Disable to prevent multiple clicks
                             >
-                                Jelentkezés most
+                                {isSubmitting ? "Jelentkezés..." : "Jelentkezés most"}
                             </Button>
                         </div>
 
