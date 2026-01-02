@@ -1,4 +1,5 @@
 // src/services/companyService.ts
+import { API_BASE_URL } from "./apiConfig";
 
 export interface CompanyLoginData {
     email: string;
@@ -30,8 +31,6 @@ export interface CompanyProfile {
     short_description: string;
     phone_number: string;
 }
-
-const API_BASE_URL = "http://localhost:4000/api";
 
 const handleResponse = async (response: Response) => {
     const data = await response.json();
