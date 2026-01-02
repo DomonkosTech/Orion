@@ -1,4 +1,5 @@
 // src/services/advertisementService.ts
+import { API_BASE_URL } from "./apiConfig";
 
 export interface Company {
     name?: string;
@@ -72,8 +73,6 @@ export interface JobApplicationData {
     company?: Company;
     advertisement?: Advertisement;
 }
-
-const API_BASE_URL = "http://localhost:4000/api";
 
 const handleResponse = async (response: Response) => {
     const data = await response.json();

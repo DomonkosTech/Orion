@@ -1,4 +1,5 @@
 // src/services/applicationService.ts
+import { API_BASE_URL } from "./apiConfig";
 
 export interface ApplicantUser {
     email: string;
@@ -18,8 +19,6 @@ export interface Applicant {
     last_updated: string;
     users: ApplicantUser;
 }
-
-const API_BASE_URL = "http://localhost:4000/api";
 
 const handleResponse = async (response: Response) => {
     const data = await response.json();
