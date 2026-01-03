@@ -122,7 +122,7 @@ const EditUserProfile: React.FC = () => {
                             {!editMode ? (
                                 <div className={styles.actionGroup}>
                                     <Button
-                                        onClick={() => navigate(-1)}
+                                        onClick={() => navigate("/userhomepage")}
                                         variant="secondary"
                                         color="black"
                                         className={styles.headerBtn}

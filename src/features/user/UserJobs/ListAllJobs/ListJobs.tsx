@@ -34,6 +34,7 @@ const ListJobs: React.FC = () => {
 
     const navigate = useNavigate();
 
+    // Navigation handlers
     const handleshowClick = (adId: number) => {
         navigate(`/job/show/${adId}`);
     };
@@ -95,7 +96,6 @@ const ListJobs: React.FC = () => {
                         <BannerKicker>Álláskeresés</BannerKicker>
 
                         <h1 className={styles.bannerTitle}>Találja meg a jövőjét</h1>
-
                         <p className={styles.bannerSubtitle}>
                             Fedezzen fel{" "}
                             <strong>{jobs.length > 0 ? jobs.length : "több száz"}</strong> nyitott pozíciót
@@ -125,6 +125,7 @@ const ListJobs: React.FC = () => {
 
                 {/* SEARCH PANEL */}
                 <section className={styles.searchSection}>
+                    {/* ... (no changes in Search Panel) ... */}
                     <div className={styles.searchShell}>
                         <div className={styles.searchHeader}>
                             <div>
@@ -156,7 +157,6 @@ const ListJobs: React.FC = () => {
 
                 {/* MAIN CONTENT */}
                 <main className={styles.contentContainer}>
-                    {/* Error State */}
                     {error && (
                         <div className={styles.emptyState}>
                             <span className={styles.emptyStateIcon}>⚠</span>
@@ -165,7 +165,6 @@ const ListJobs: React.FC = () => {
                         </div>
                     )}
 
-                    {/* Loading State */}
                     {loading && (
                         <>
                             <div className={styles.resultsHeader}>
@@ -181,7 +180,6 @@ const ListJobs: React.FC = () => {
                         </>
                     )}
 
-                    {/* Results State */}
                     {!loading && !error && (
                         <>
                             {filteredJobs.length > 0 ? (
