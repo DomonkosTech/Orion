@@ -1,27 +1,26 @@
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom"; // 1. Import useNavigate
 import styles from "./UserHomePage.module.css";
 
-//components
+// components
 import { Header } from "../../../components/Header/Header.tsx";
 import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
 
 function UserHomePage() {
+    const navigate = useNavigate(); // 2. Initialize navigate
+
     return (
         <div className={styles.page}>
-            {/* Top bar */}
             <Header
                 navItems={[
                     { label: "Dashboard", href: "/dashboard" },
                     { label: "Projects", href: "/projects" },
                     { label: "Team", href: "/team" },
                 ]}
-                actions={
-                    <Button>Settings</Button>
-                }
+                actions={<Button>Settings</Button>}
             />
-            {/* Hero */}
+
             <main>
                 <section className={styles.hero}>
                     <div className={styles.heroInner}>
@@ -31,22 +30,32 @@ function UserHomePage() {
                             Professzionális <span className={styles.accent}>karrierélmény</span>, egy helyen.
                         </h1>
 
+                        <h1>SZAR MINDEN MAJD VALAKI EGYSZER MEGOLDJA NEKEM NINCS KEDVEM</h1>
+                        <h2>ezért nem szabad felelőtlenül generáltatni kódot mert utána szopsz mint ha muszály lenne</h2>
+
                         <p className={styles.heroSubtitle}>
                             Fedezzen fel friss állásokat, finomhangolja a szűrőket, és jelentkezzen pár kattintással.
-                            A felület a fókuszról szól: a lényeg gyorsan megvan.
                         </p>
 
                         <div className={styles.heroActions}>
-                            <Link to="/listjobs" className={styles.primaryBtn}>
+                            {/* 3. Replace Link with Button and pass existing styles */}
+                            <Button
+                                onClick={() => navigate("/listjobs")}
+                                className={styles.primaryBtn}
+                            >
                                 Állások böngészése
-                            </Link>
-                            <Link to="/cv" className={styles.secondaryBtn}>
+                            </Button>
+
+                            <Button
+                                onClick={() => navigate("/cv")}
+                                className={styles.secondaryBtn}
+                                variant="secondary"
+                            >
                                 Önéletrajz feltöltése
-                            </Link>
+                            </Button>
                         </div>
                     </div>
                 </section>
-
                 {/* Quick actions strip */}
                 <section className={styles.quick}>
                     <div className={styles.container}>

@@ -1,7 +1,10 @@
 .pageWrapper {
+    /* Brand Colors */
     --orion-blue: #2c5aa0;
-    --orion-blue-dark: #1a365d;
-    --orion-blue-light: #eef2ff;
+    --orion-blue-dark: #1e3d6f;
+    --orion-blue-light: #eef2f8;
+
+    /* Neutral Palette */
     --bg: #f1f5f9;
     --panel: #ffffff;
     --text-main: #0f172a;

@@ -15,14 +15,21 @@ import ShowJob from "./features/user/UserJobs/ShowSelectedJob/ShowJob.tsx";
 import JobApplication from "./features/user/JobApplications/JobApplication.tsx";
 import UploadResume from "./features/user/UploadResume/UploadResume.tsx";
 import ApplicantTrackingSystem from "./features/company/CompanyJobs/ApplicantTrackingSystem.tsx";
+import PublicHomePage from "./features/public/PublicHomePage/PublicHomePage.tsx";
 
 function App() {
     return (
         <Router>
             <Routes>
-                {/* 🔒 Csak USER típusú felhasználóknak */}
+                {/* Mindenkinek elérhető oldalak (PUBLIC) */}
                 <Route
                     path="/"
+                    element={<PublicHomePage />}
+                />
+
+                {/* 🔒 Csak USER típusú felhasználóknak */}
+                <Route
+                    path="/userhomepage"
                     element={
                         <IsLoggedIn mode="user">
                             <UserHomePage />
