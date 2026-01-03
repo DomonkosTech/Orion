@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     User, Mail, Phone, MapPin, Calendar, CreditCard,
-    BookOpen, FileText, Trash2, Plus, Edit3, Save, XCircle
+    BookOpen, FileText, Trash2, Plus, Edit3, Save, XCircle,
+    ArrowLeft
 } from "lucide-react";
 import {
     getUserProfile,
@@ -44,13 +45,10 @@ const EditUserProfile: React.FC = () => {
                     const userData = data.user;
                     const docData = data.documents?.[0] || null;
 
-                    // Set both current and backup states
                     setUser(userData);
                     setOriginalUser(userData);
-
                     setDocuments(docData);
                     setOriginalDocuments(docData);
-
                     setResume(data.hasResume);
                 }
             } catch (err) {
@@ -68,7 +66,6 @@ const EditUserProfile: React.FC = () => {
         try {
             const data = await updateUserProfile({ user, documents });
             if (data.success) {
-                // Update backups to the newly saved data
                 setOriginalUser(user);
                 setOriginalDocuments(documents);
                 setEditMode(false);
@@ -81,7 +78,6 @@ const EditUserProfile: React.FC = () => {
     };
 
     const handleCancel = () => {
-        // Revert current state to backup data
         setUser(originalUser);
         setDocuments(originalDocuments);
         setEditMode(false);
@@ -112,7 +108,7 @@ const EditUserProfile: React.FC = () => {
                 ) : !user ? (
                     <div className={styles.loadingState}>
                         <p>Nem található felhasználói adat.</p>
-                        <Button onClick={() => navigate("/")} color="orion-blue">Vissza a főoldalra</Button>
+                        <Button onClick={() => navigate("/userhomepage")} color="orion-blue">Vissza a főoldalra</Button>
                     </div>
                 ) : (
                     <>
@@ -124,14 +120,24 @@ const EditUserProfile: React.FC = () => {
                             </div>
 
                             {!editMode ? (
-                                <Button
-                                    onClick={() => setEditMode(true)}
-                                    color="orion-blue"
-                                    variant="primary"
-                                    className={styles.headerBtn}
-                                >
-                                    <Edit3 size={18} style={{marginRight: '8px'}} /> Szerkesztés
-                                </Button>
+                                <div className={styles.actionGroup}>
+                                    <Button
+                                        onClick={() => navigate(-1)}
+                                        variant="secondary"
+                                        color="black"
+                                        className={styles.headerBtn}
+                                    >
+                                        <ArrowLeft size={18} style={{marginRight: '8px'}} /> Vissza
+                                    </Button>
+                                    <Button
+                                        onClick={() => setEditMode(true)}
+                                        color="orion-blue"
+                                        variant="primary"
+                                        className={styles.headerBtn}
+                                    >
+                                        <Edit3 size={18} style={{marginRight: '8px'}} /> Szerkesztés
+                                    </Button>
+                                </div>
                             ) : (
                                 <div className={styles.actionGroup}>
                                     <Button

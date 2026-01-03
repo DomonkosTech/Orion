@@ -12,7 +12,7 @@ import CompanyHomePage from "./features/company/HomePage/CompanyHomePage.tsx";
 import EditJob from "./features/company/CompanyJobs/EditJob.tsx";
 import ListJobs from "./features/user/UserJobs/ListAllJobs/ListJobs.tsx";
 import ShowJob from "./features/user/UserJobs/ShowSelectedJob/ShowJob.tsx";
-import JobApplication from "./features/user/JobApplications/JobApplication.tsx";
+import JobApplications from "./features/user/JobApplications/JobApplications.tsx";
 import UploadResume from "./features/user/UploadResume/UploadResume.tsx";
 import ApplicantTrackingSystem from "./features/company/CompanyJobs/ApplicantTrackingSystem.tsx";
 import PublicHomePage from "./features/public/PublicHomePage/PublicHomePage.tsx";
@@ -45,10 +45,10 @@ function App() {
                     }
                 />
                 <Route
-                    path="/JobApplication"
+                    path="/JobApplications"
                     element={
                         <IsLoggedIn mode="user">
-                            <JobApplication />
+                            <JobApplications />
                         </IsLoggedIn>
                     }
                 />
