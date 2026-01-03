@@ -22,9 +22,9 @@ function PublicHomePage() {
             <Header
                 navItems={[
                     { label: "Nyitott pozíciók", href: "/listjobs" },
-                    { label: "Rólunk", href: "#about" },
-                    { label: "Kultúra", href: "#culture" },
-                    { label: "Segítség", href: "#faq" },
+                    { label: "peti meleg?", href: "#" },
+                    { label: "peti meleg", href: "#" },
+                    { label: "peti meleg!", href: "#" },
                 ]}
                 actions={
                     <Button variant="link" onClick={() => navigate("/login")} underline>
