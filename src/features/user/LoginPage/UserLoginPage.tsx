@@ -38,7 +38,7 @@ const UserLoginPage: React.FC = () => {
                 // Dispatch a global event to notify other parts of the app (e.g., navbar)
                 try { window.dispatchEvent(new Event("auth-changed")); } catch { /* empty */ }
                 // Navigate to the home page on successful login
-                navigate("/");
+                navigate("/userhomepage");
             } else {
                 toast.error(data.error || "Hiba történt");
             }

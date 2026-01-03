@@ -25,9 +25,9 @@ export function Header({
                            userInitials = "KYS",
                            logoColor = "#1a1a1a",
                            navItems = [
-                               { label: "Dashboard", href: "/dashboard" },
-                               { label: "Projects", href: "/projects" },
-                               { label: "Team", href: "/team" },
+                               { label: "fix header", href: "/dashboard" },
+                               { label: "add initials logic", href: "/projects" },
+                               { label: "add user/company logic", href: "/team" },
                            ],
                            actions,
                        }: HeaderProps) {
@@ -37,7 +37,7 @@ export function Header({
         <header className={styles.header}>
             <div className={styles.container}>
                 {/* Left: Logo / Brand */}
-                <a href="/" className={styles.logo}>
+                <a href="/userhomepage" className={styles.logo}>
                     <div
                         style={{
                             width: 20,

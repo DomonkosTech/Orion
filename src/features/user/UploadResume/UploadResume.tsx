@@ -58,7 +58,7 @@ const UploadResume = () => {
         try {
             await uploadResume(file);
             alert("Önéletrajz sikeresen feltöltve!");
-            navigate("/");
+            navigate("/edituserprofile");
         } catch (err: unknown) {
             alert(err instanceof Error ? err.message : "Ismeretlen hiba");
         } finally {

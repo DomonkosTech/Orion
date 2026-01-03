@@ -1,4 +1,4 @@
-import {Link, useNavigate} from "react-router-dom"; // 1. Import useNavigate
+import { Link, useNavigate } from "react-router-dom";
 import styles from "./UserHomePage.module.css";
 
 // components
@@ -8,20 +8,30 @@ import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
 
 function UserHomePage() {
-    const navigate = useNavigate(); // 2. Initialize navigate
+    const navigate = useNavigate();
+
+    const categories = [
+        "IT & Fejlesztés",
+        "Pénzügy & Számvitel",
+        "Értékesítés & Marketing",
+        "Egészségügy",
+        "Oktatás",
+        "Ügyfélszolgálat"
+    ];
 
     return (
         <div className={styles.page}>
             <Header
-                navItems={[
-                    { label: "Dashboard", href: "/dashboard" },
-                    { label: "Projects", href: "/projects" },
-                    { label: "Team", href: "/team" },
-                ]}
-                actions={<Button>Settings</Button>}
+
+                actions={
+                    <Button variant="link" onClick={() => navigate("/settings")} underline>
+                        Beállítások
+                    </Button>
+                }
             />
 
             <main>
+                {/* Hero Section */}
                 <section className={styles.hero}>
                     <div className={styles.heroInner}>
                         <BannerKicker>Gyors • Letisztult • Magyar piac</BannerKicker>
@@ -30,33 +40,32 @@ function UserHomePage() {
                             Professzionális <span className={styles.accent}>karrierélmény</span>, egy helyen.
                         </h1>
 
-                        <h1>SZAR MINDEN MAJD VALAKI EGYSZER MEGOLDJA NEKEM NINCS KEDVEM</h1>
-                        <h2>ezért nem szabad felelőtlenül generáltatni kódot mert utána szopsz mint ha muszály lenne</h2>
-
                         <p className={styles.heroSubtitle}>
                             Fedezzen fel friss állásokat, finomhangolja a szűrőket, és jelentkezzen pár kattintással.
+                            Az Ön karrierje a mi prioritásunk.
                         </p>
 
                         <div className={styles.heroActions}>
-                            {/* 3. Replace Link with Button and pass existing styles */}
                             <Button
                                 onClick={() => navigate("/listjobs")}
-                                className={styles.primaryBtn}
+                                color="orion-blue"
+                                variant="primary"
                             >
                                 Állások böngészése
                             </Button>
 
                             <Button
                                 onClick={() => navigate("/cv")}
-                                className={styles.secondaryBtn}
                                 variant="secondary"
+                                color="orion-blue"
                             >
                                 Önéletrajz feltöltése
                             </Button>
                         </div>
                     </div>
                 </section>
-                {/* Quick actions strip */}
+
+                {/* Quick Actions Grid */}
                 <section className={styles.quick}>
                     <div className={styles.container}>
                         <div className={styles.quickGrid}>
@@ -69,7 +78,7 @@ function UserHomePage() {
                                 <div className={styles.quickArrow}>→</div>
                             </Link>
 
-                            <Link to="/jobapplication" className={styles.quickCard}>
+                            <Link to="/jobapplications" className={styles.quickCard}>
                                 <div className={styles.quickIcon}>📌</div>
                                 <div className={styles.quickText}>
                                     <div className={styles.quickTitle}>Jelentkezéseim</div>
@@ -90,7 +99,7 @@ function UserHomePage() {
                     </div>
                 </section>
 
-                {/* Features */}
+                {/* Features Section */}
                 <section className={styles.section}>
                     <div className={styles.container}>
                         <div className={styles.sectionHead}>
@@ -119,7 +128,7 @@ function UserHomePage() {
                                 </div>
                                 <h3 className={styles.featureTitle}>Gyors találat</h3>
                                 <p className={styles.featureText}>
-                                    Helyszín, pozíció és minimálbér alapján azonnali szűrés.
+                                    Helyszín, pozíció és bérsáv alapján azonnali, releváns szűrés.
                                 </p>
                             </article>
 
@@ -130,14 +139,14 @@ function UserHomePage() {
                                 </div>
                                 <h3 className={styles.featureTitle}>Adatvédelem</h3>
                                 <p className={styles.featureText}>
-                                    Tiszta folyamatok, átlátható működés, biztonságos alapok.
+                                    Tiszta folyamatok, átlátható működés és biztonságos adatkezelés.
                                 </p>
                             </article>
                         </div>
                     </div>
                 </section>
 
-                {/* Categories */}
+                {/* Categories & Callout Section */}
                 <section className={styles.sectionAlt}>
                     <div className={styles.container}>
                         <div className={styles.sectionHead}>
@@ -146,33 +155,30 @@ function UserHomePage() {
                         </div>
 
                         <div className={styles.pills}>
-                            <span className={styles.pill}>IT & Fejlesztés</span>
-                            <span className={styles.pill}>Pénzügy & Számvitel</span>
-                            <span className={styles.pill}>Értékesítés & Marketing</span>
-                            <span className={styles.pill}>Egészségügy</span>
-                            <span className={styles.pill}>Oktatás</span>
-                            <span className={styles.pill}>Ügyfélszolgálat</span>
+                            {categories.map((cat) => (
+                                <span key={cat} className={styles.pill}>{cat}</span>
+                            ))}
                         </div>
 
                         <div className={styles.callout}>
                             <div className={styles.calloutLeft}>
-                                <div className={styles.calloutTitle}>Készen áll?</div>
+                                <div className={styles.calloutTitle}>Készen áll a következő lépésre?</div>
                                 <div className={styles.calloutText}>
                                     Nézze meg az állásokat, és mentse el a kedvenceket későbbre.
                                 </div>
                             </div>
-                            <Link to="/listjobs" className={styles.calloutBtn}>
+                            <Button
+                                color="orion-blue"
+                                onClick={() => navigate("/listjobs")}
+                            >
                                 Irány az állások
-                            </Link>
+                            </Button>
                         </div>
                     </div>
                 </section>
             </main>
 
-            {/* Footer */}
-
-            <Footer></Footer>
-
+            <Footer />
         </div>
     );
 }
