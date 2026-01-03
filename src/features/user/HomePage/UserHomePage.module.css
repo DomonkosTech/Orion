@@ -1,21 +1,26 @@
 .page {
-    --bg: #f9fafb;
-    --panel: #ffffff;
-    --text: #111827;
-    --muted: #6b7280;
-    --muted2: #9ca3af;
-    --border: #e5e7eb;
-    --border2: #d1d5db;
+    /* Brand Colors */
+    --orion-blue: #2c5aa0;
+    --orion-blue-dark: #1e3d6f;
+    --orion-blue-light: #eef2f8;
 
-    /* Small tasteful accent (works with your existing blue theme) */
-    --accent: #2c5aa0;
-    --accent2: #1e3d6f;
-    --accentSoft: rgba(44, 90, 160, 0.14);
+    /* Neutral Palette */
+    --bg: #f1f5f9;
+    --panel: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --muted2: #94a3b8;
+    --border: #e2e8f0;
+    --border2: #cbd5e1;
+
+    --accent: var(--orion-blue);
+    --accent2: var(--orion-blue-dark);
+    --accentSoft: var(--orion-blue-light);
 
     min-height: 100vh;
     background: var(--bg);
     color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .container {

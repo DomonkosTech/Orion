@@ -1,0 +1,235 @@
+.page {
+    /* Brand Colors inherited from design language */
+    --orion-blue: #2c5aa0;
+    --orion-blue-dark: #1e3d6f;
+    --orion-blue-light: #eef2f8;
+
+    --bg: #f1f5f9;
+    --panel: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --muted2: #94a3b8;
+    --border: #e2e8f0;
+    --border2: #cbd5e1;
+
+    --accent: var(--orion-blue);
+    --accent2: var(--orion-blue-dark);
+    --accentSoft: var(--orion-blue-light);
+
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+    padding: 80px 0 60px 0;
+    border-bottom: 1px solid var(--border);
+    background:
+            radial-gradient(900px 520px at 15% 0%, rgba(44, 90, 160, 0.12), transparent 60%),
+            radial-gradient(820px 520px at 85% 5%, rgba(17, 24, 39, 0.06), transparent 60%),
+            linear-gradient(to bottom, #ffffff, var(--bg));
+    text-align: left;
+}
+
+.heroInner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.heroTitle {
+    margin: 24px 0 16px 0;
+    font-size: clamp(2.5rem, 4vw, 3.8rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-weight: 950;
+}
+
+.accent {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.heroSubtitle {
+    margin: 0;
+    max-width: 60ch;
+    color: var(--muted);
+    font-size: 1.2rem;
+    line-height: 1.6;
+    font-weight: 600;
+}
+
+.heroActions {
+    margin-top: 32px;
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* ---------- Sections ---------- */
+.section {
+    padding: 80px 0;
+}
+
+.sectionAlt {
+    padding: 80px 0;
+    background:
+            radial-gradient(900px 520px at 85% 10%, rgba(44, 90, 160, 0.08), transparent 60%),
+            linear-gradient(to bottom, var(--bg), #ffffff);
+    border-top: 1px solid var(--border);
+}
+
+.sectionHead {
+    margin-bottom: 40px;
+}
+
+.sectionTitle {
+    margin: 0 0 12px 0;
+    font-weight: 950;
+    letter-spacing: -0.02em;
+    font-size: 2rem;
+}
+
+.sectionSubtitle {
+    margin: 0;
+    color: var(--muted);
+    font-weight: 650;
+    line-height: 1.6;
+    max-width: 70ch;
+}
+
+/* ---------- Features Grid ---------- */
+.featuresGrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.feature {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 24px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+}
+
+.featureTop {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.featureIcon {
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    background: var(--accentSoft);
+    font-size: 1.4rem;
+}
+
+.featureBadge {
+    font-weight: 800;
+    font-size: 0.8rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(44, 90, 160, 0.1);
+    color: var(--orion-blue-dark);
+}
+
+.featureTitle {
+    margin: 0 0 10px 0;
+    font-weight: 900;
+}
+
+.featureText {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+/* ---------- Job List ---------- */
+.jobList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 40px;
+}
+
+.jobCard {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.jobCategory {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.jobCardTitle {
+    margin: 4px 0;
+    font-weight: 900;
+    font-size: 1.1rem;
+}
+
+.jobLocation {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+/* ---------- Callout ---------- */
+.callout {
+    border-radius: 24px;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    padding: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+
+.calloutTitle {
+    font-weight: 950;
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+}
+
+.calloutText {
+    color: var(--muted);
+    font-weight: 600;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+    .featuresGrid { grid-template-columns: 1fr; }
+    .jobCard { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .callout { flex-direction: column; text-align: center; }
+}
