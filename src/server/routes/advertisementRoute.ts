@@ -150,7 +150,22 @@ router.get("/advertisements", verifyToken, verifyUser, async (_req, res) => {
     }
 });
 
+//update klick number
+router.patch("/advertisements/:id/views",  async (req , res) => {
+    try {
+        const id = req.params.id;
 
+        if (!id) {
+            return res.status(400).json({ success: false, message: "Missing id" });
+        }
+
+        await advertisementService.incrementClickCount(id)
+        res.json({ success: true });
+    } catch (err) {
+        console.error("Update advertisement counter info error:", err);
+        res.status(500).json({ error: "Internal Server Error " });
+    }
+})
 
 
 

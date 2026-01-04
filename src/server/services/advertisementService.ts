@@ -131,3 +131,13 @@ export const gettopAdvertisements = async () => {
     if (error) throw error;
     return advertisements;
 };
+
+// update the click number
+export const incrementClickCount = async (id: string) => {
+    const { error } = await supabase.rpc("increment_click_count", {
+        ad_id: id
+    });
+
+    if (error) throw error;
+};
+

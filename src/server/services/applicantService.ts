@@ -84,14 +84,21 @@ export const getApplicantsForAdvertisement = async (advertisementId: string, com
                 qualifications,
                 lname,
                 fname
-            )
+            ),
+            advertisement(click_count)
         `)
         .eq("advertisement_id", advertisementId)
         .eq("status", "submitted");
 
     if (error) throw error;
 
-    return { applicants };
+    // Map the result to include click_count directly or nested as expected by frontend
+    const mappedApplicants = applicants?.map(app => ({
+        ...app,
+        click_count: app.advertisement // Supabase returns it as an object because of the join
+    }));
+
+    return { applicants: mappedApplicants };
 };
 
 export const rejectApplication = async (applicationId: string, companyId: number) => {

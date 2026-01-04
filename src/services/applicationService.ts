@@ -13,11 +13,16 @@ export interface ApplicantUser {
     lname: string;
     fname: string;
 }
+export interface click_count
+{
+    click_count: number;
+}
 
 export interface Applicant {
     id: number;
     last_updated: string;
     users: ApplicantUser;
+    click_count: click_count;
 }
 
 const handleResponse = async (response: Response) => {

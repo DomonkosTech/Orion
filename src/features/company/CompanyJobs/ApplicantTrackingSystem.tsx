@@ -100,6 +100,11 @@ export const ApplicantTrackingSystem: React.FC = () => {
     return (
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Jelentkezőkezelő Rendszer</h1>
+            {applicants.length > 0 && (
+                <h2>
+                    Ennyien tekintették meg a hirdetését: {applicants[0].click_count?.click_count ?? 0}
+                </h2>
+            )}
             <Toaster />
             {applicants.length === 0 ? (
                 <p>Nincsenek új jelentkezők ehhez a hirdetéshez.</p>

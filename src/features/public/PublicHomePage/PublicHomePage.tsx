@@ -33,12 +33,12 @@ function PublicHomePage() {
             <Header
                 navItems={[
                     { label: "Nyitott pozíciók", href: "/listjobs" },
-                    { label: "peti meleg?", href: "#" },
-                    { label: "peti meleg", href: "#" },
-                    { label: "peti meleg!", href: "#" },
+                    { label: "GYIK", href: "#" },
+                    { label: "kapcsolat", href: "#Kapcsolat" },
+
                 ]}
                 actions={
-                    <Button variant="link" onClick={() => navigate("/login")} underline>
+                    <Button variant="link" onClick={() => navigate("/UserLoginPage")} underline>
                         Bejelentkezés
                     </Button>
                 }
@@ -162,7 +162,7 @@ function PublicHomePage() {
                             </div>
                             <Button
                                 color="orion-blue"
-                                onClick={() => navigate("/register")}
+                                onClick={() => navigate("/UserLoginPage")}
                             >
                                 Regisztráció
                             </Button>

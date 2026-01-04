@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { MapPin, Hash, Wallet, ClipboardList, Target, Briefcase, ChevronLeft } from "lucide-react";
 import {
+    updateviewcounter,
     getAdvertisementById,
     submitApplication,
     type AdvertisementDetails,
@@ -25,12 +26,23 @@ const ShowJob = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const key = `viewed_ad_${id}`;
         const fetchAdvertisement = async () => {
             if (!id) return;
             try {
                 const data = await getAdvertisementById(id);
                 if (data.success) {
                     setAdvertisement(data.advertisement);
+                    // Update view counter after successful fetch
+                    try {
+                        if (!sessionStorage.getItem(key)) {
+                            sessionStorage.setItem(key, "true");
+                            await updateviewcounter(id);
+                        }
+                    } catch (err) {
+                        console.error("View counter update failed", err);
+                    }
+
                 } else {
                     setError(data.error || "Az állás betöltése sikertelen.");
                 }

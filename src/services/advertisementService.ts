@@ -163,6 +163,14 @@ export const updateAdvertisement = async (id: string, adData: UpdateAdvertisemen
     return handleResponse(response);
 };
 
+export const updateviewcounter = async (id: string) => {
+    const response = await fetch(`${API_BASE_URL}/advertisements/${id}/views`, {
+        method: "PATCH",
+        credentials: "include",
+    });
+    return handleResponse(response);
+};
+
 export const submitApplication = async (id: string) => {
     const response = await fetch(`${API_BASE_URL}/applications`, {
         method: "POST",
