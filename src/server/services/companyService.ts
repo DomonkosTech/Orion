@@ -1,4 +1,5 @@
 import { supabase } from "../../lib/supabaseClient.ts";
+import { companyUpdateProfileSchema } from "../../validation/validation";
 
 interface CompanyProfileData {
     name?: string;
@@ -26,6 +27,12 @@ export const getCompanyProfile = async (companyId: number) => {
 
 // Update company profile data
 export const updateCompanyProfile = async (companyId: number, data: CompanyProfileData) => {
+    // Zod validation
+    const validation = companyUpdateProfileSchema.safeParse(data);
+    if (!validation.success) {
+        throw new Error(validation.error.errors[0].message);
+    }
+
     // Update specific fields in the companies table
     const { data: updatedCompany, error } = await supabase
         .from("companies")

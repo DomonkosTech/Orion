@@ -1,4 +1,5 @@
 import { supabase } from "../../lib/supabaseClient.ts";
+import { userUpdateProfileSchema } from "../../validation/validation";
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 
@@ -65,6 +66,13 @@ export const getUserProfile = async (userId: number) => {
 
 // Update user profile and encrypted documents
 export const updateUserProfile = async (userId: number, data: UserProfileData) => {
+
+    // Zod validation for input data
+    const validation = userUpdateProfileSchema.safeParse(data);
+    if (!validation.success) {
+        throw new Error(validation.error.errors[0].message);
+    }
+
     const {
         email, phone_number, birth_place, birth_date, address,
         tax_number, nationality, short_bio, qualifications,

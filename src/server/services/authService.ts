@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { supabase } from "../../lib/supabaseClient.ts";
 import dotenv from "dotenv";
 import type { CookieOptions } from "express";
+import { userRegisterSchema, companyRegisterSchema, loginSchema } from "../../validation/validation";
 
 dotenv.config();
 
@@ -43,9 +44,13 @@ interface CompanyRegistrationData {
 
 export const authService = {
     async loginUser(email: string, password: string, rememberMe: boolean) {
-        // Validate input
-        if (!email || !password) {
-            throw { status: 400, message: "Missing required fields" };
+        // Validate input using Zod
+        const validation = loginSchema.safeParse({ email, password, rememberMe });
+        if (!validation.success) {
+            throw { 
+                status: 400, 
+                message: validation.error.errors[0].message 
+            };
         }
 
         interface data {
@@ -103,6 +108,15 @@ export const authService = {
     },
 
     async registerUser(data: UserRegistrationData) {
+        // Validate data using Zod
+        const validation = userRegisterSchema.safeParse(data);
+        if (!validation.success) {
+            throw { 
+                status: 400, 
+                message: validation.error.errors[0].message 
+            };
+        }
+
         const {
             email, password, lname, fname, phone_number,
             birth_place, birth_date, address, nationality,
@@ -155,9 +169,13 @@ export const authService = {
     },
 
     async loginCompany(email: string, password: string, rememberMe: boolean) {
-        // Validate input
-        if (!email || !password) {
-            throw { status: 400, message: "Missing required fields" };
+        // Validate input using Zod
+        const validation = loginSchema.safeParse({ email, password, rememberMe });
+        if (!validation.success) {
+            throw { 
+                status: 400, 
+                message: validation.error.errors[0].message 
+            };
         }
 
         interface data {
@@ -215,12 +233,16 @@ export const authService = {
     },
 
     async registerCompany(data: CompanyRegistrationData) {
-        const { email, password,  name, address, tax_number, contact_person_name, activity_scope, website, short_description, phone_number, terms_accepted } = data;
-
-        // Validate input
-        if (!email || !terms_accepted || !password) {
-            throw { status: 400, message: "Email, password and terms required" };
+        // Validate data using Zod
+        const validation = companyRegisterSchema.safeParse(data);
+        if (!validation.success) {
+            throw { 
+                status: 400, 
+                message: validation.error.errors[0].message 
+            };
         }
+
+        const { email, password,  name, address, tax_number, contact_person_name, activity_scope, website, short_description, phone_number, terms_accepted } = data;
 
         // Hash password
         const password_hash = await bcrypt.hash(password, 12);

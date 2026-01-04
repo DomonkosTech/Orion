@@ -6,6 +6,7 @@ import styles from "./CompanyLoginPage.module.css";
 
 // Services
 import { loginCompany} from "../../../services/companyService";
+import { loginSchema } from "../../../validation/validation";
 
 // Components
 import InputField from "../../../components/InputField/InputField";
@@ -24,9 +25,11 @@ const CompanyLoginPage: React.FC = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Basic form validation
-        if (!email.trim() || !password.trim()) {
-            toast.error("Kérlek, töltsd ki mindkét mezőt!");
+        // Zod validáció futtatása
+        const validation = loginSchema.safeParse({ email, password, rememberMe });
+
+        if (!validation.success) {
+            toast.error(validation.error.errors[0].message);
             return;
         }
 

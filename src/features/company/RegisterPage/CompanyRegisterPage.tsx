@@ -12,6 +12,7 @@ import CompanyInfoSection from "./components/CompanyInfoSection";
 import ContactSection from "./components/ContactSection";
 import ActivitySection from "./components/ActivitySection";
 import { registerCompany } from "../../../services/companyService.ts";
+import { companyRegisterSchema } from "../../../validation/validation";
 
 const CompanyRegisterPage: React.FC = () => {
     const navigate = useNavigate();
@@ -47,9 +48,13 @@ const CompanyRegisterPage: React.FC = () => {
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Basic validation: Check if email and password are provided
-        if (!formData.email || !formData.password) {
-            toast.error("Email and password are required!");
+        // Zod validáció futtatása
+        const validation = companyRegisterSchema.safeParse(formData);
+
+        if (!validation.success) {
+            // Az első hibaüzenet megjelenítése
+            const firstError = validation.error.errors[0].message;
+            toast.error(firstError);
             return;
         }
 
