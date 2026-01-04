@@ -4,7 +4,8 @@ import { MapPin, Hash, Wallet, ClipboardList, Target, Briefcase, ChevronLeft } f
 import {
     getAdvertisementById,
     submitApplication,
-    type AdvertisementDetails
+    type AdvertisementDetails,
+    ApiError
 } from "../../../../services/advertisementService";
 import styles from "./ShowJob.module.css";
 
@@ -64,7 +65,11 @@ const ShowJob = () => {
             }
         } catch (err) {
             console.error("Submit application error:", err);
-            finalStatus = "Hiba történt a jelentkezés során.";
+            if (err instanceof ApiError && err.status === 409) {
+                finalStatus = "Már jelentkeztél!";
+            } else {
+                finalStatus = "Hiba történt a jelentkezés során.";
+            }
         } finally {
             const elapsedTime = Date.now() - startTime;
             const remainingTime = Math.max(0, MIN_DELAY - elapsedTime);
