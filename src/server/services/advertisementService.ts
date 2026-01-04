@@ -118,3 +118,16 @@ export const getAllAdvertisements = async () => {
     if (error) throw error;
     return advertisements;
 };
+
+// Get all top active advertisements
+export const gettopAdvertisements = async () => {
+    const { data: advertisements, error } = await supabase
+        .from("advertisement")
+        .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
+        .eq('is_active', true)
+        .order("created_at", { ascending: false })
+        .limit(3);
+
+    if (error) throw error;
+    return advertisements;
+};

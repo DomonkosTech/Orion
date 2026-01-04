@@ -64,9 +64,9 @@ export function Header({
 
                 {/* Center: Navigation */}
                 <nav className={styles.nav}>
-                    {navItems.map((item) => (
+                    {navItems.map((item, index) => (
                         <a
-                            key={item.href}
+                            key={`${item.href}-${index}`}
                             href={item.href}
                             className={styles.navLink}
                         >

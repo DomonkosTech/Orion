@@ -72,6 +72,21 @@ router.get("/advertisement/:id", verifyToken, verifyCompany, async (req: AuthReq
     }
 });
 
+router.get("/advertisements/top3", async (_req, res) => {
+        try {
+            const advertisements = await advertisementService.gettopAdvertisements();
+
+            res.json({
+                success: true,
+                advertisements,
+            });
+
+        } catch (err) {
+            console.error("get-top-advertisements-info error:", err);
+            res.status(500).json({ error: "Internal Server Error " });
+        }
+    }
+);
 
 // get advertisment info endpoint by user fix!!!
 router.get("/advertisements/:id", verifyToken, verifyUser, async (req: AuthRequest, res) => {
@@ -134,5 +149,9 @@ router.get("/advertisements", verifyToken, verifyUser, async (_req, res) => {
         res.status(500).json({ error: "Internal Server Error " });
     }
 });
+
+
+
+
 
 export default router;

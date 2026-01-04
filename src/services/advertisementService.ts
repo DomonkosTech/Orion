@@ -108,6 +108,15 @@ export const getAdvertisements = async () => {
     return handleResponse(response);
 };
 
+export const getTop3Advertisements = async () => {
+    const response = await fetch(`${API_BASE_URL}/advertisements/top3`, {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+    });
+    return handleResponse(response);
+};
+
 export const getCompanyAdvertisements = async () => {
     const response = await fetch(`${API_BASE_URL}/company/advertisements`, {
         method: "GET",
