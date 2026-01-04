@@ -74,10 +74,19 @@ export interface JobApplicationData {
     advertisement?: Advertisement;
 }
 
+export class ApiError extends Error {
+    status: number;
+    constructor(message: string, status: number) {
+        super(message);
+        this.status = status;
+        this.name = "ApiError";
+    }
+}
+
 const handleResponse = async (response: Response) => {
     const data = await response.json();
     if (!response.ok) {
-        throw new Error(data.error || `HTTP error! status: ${response.status}`);
+        throw new ApiError(data.error || `HTTP error! status: ${response.status}`, response.status);
     }
     return data;
 };
