@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import styles from "./PublicHomePage.module.css";
 
 // components
@@ -6,16 +7,26 @@ import { Header } from "../../../components/Header/Header.tsx";
 import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
+import { getTop3Advertisements, type CompanyAdvertisement } from "../../../services/advertisementService.ts";
 
 function PublicHomePage() {
     const navigate = useNavigate();
+    const [featuredJobs, setFeaturedJobs] = useState<CompanyAdvertisement[]>([]);
 
+    useEffect(() => {
+        const fetchTopJobs = async () => {
+            try {
+                const data = await getTop3Advertisements();
+                if (data.success) {
+                    setFeaturedJobs(data.advertisements);
+                }
+            } catch (error) {
+                console.error("Failed to fetch top jobs:", error);
+            }
+        };
 
-    const featuredJobs = [
-        { title: "Senior Frontend Developer", category: "IT", location: "Budapest / Remote" },
-        { title: "Marketing Manager", category: "Marketing", location: "Budapest" },
-        { title: "Ügyfélszolgálati Csoportvezető", category: "Support", location: "Debrecen" },
-    ];
+        fetchTopJobs();
+    }, []);
 
     return (
         <div className={styles.page}>
@@ -124,17 +135,17 @@ function PublicHomePage() {
                         </div>
 
                         <div className={styles.jobList}>
-                            {featuredJobs.map((job, index) => (
-                                <div key={index} className={styles.jobCard}>
+                            {featuredJobs.map((job) => (
+                                <div key={job.id} className={styles.jobCard}>
                                     <div className={styles.jobInfo}>
-                                        <span className={styles.jobCategory}>{job.category}</span>
+                                        <span className={styles.jobCategory}>{job.position}</span>
                                         <h4 className={styles.jobCardTitle}>{job.title}</h4>
                                         <p className={styles.jobLocation}>{job.location}</p>
                                     </div>
                                     <Button
                                         variant="secondary"
                                         color="orion-blue"
-                                        onClick={() => navigate("/listjobs")}
+                                        onClick={() => navigate(`/job/show/${job.id}`)}
                                     >
                                         Részletek
                                     </Button>
