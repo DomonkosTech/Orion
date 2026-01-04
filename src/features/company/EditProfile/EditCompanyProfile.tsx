@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getCompanyProfile, updateCompanyProfile, type CompanyProfile } from "../../../services/companyService";
 import { toast, Toaster } from "react-hot-toast";
+import { companyUpdateProfileSchema } from "../../../validation/validation";
 
 const EditCompanyProfile: React.FC = () => {
     const [company, setCompany] = useState<CompanyProfile | null>(null);
@@ -32,6 +33,15 @@ const EditCompanyProfile: React.FC = () => {
     if (!company) return <p>Nem található cég adat.</p>;
 
     const handleSave = async () => {
+        if (!company) return;
+
+        // Zod validáció futtatása a mentés előtt
+        const validation = companyUpdateProfileSchema.safeParse(company);
+        if (!validation.success) {
+            toast.error(validation.error.errors[0].message);
+            return;
+        }
+
         try {
             const data = await updateCompanyProfile(company);
             if (data.success) {

@@ -13,6 +13,8 @@ import {
     type Documents,
 } from "../../../services/userServise";
 import styles from "./EditUserProfile.module.css";
+import { toast, Toaster } from "react-hot-toast";
+import { userUpdateProfileSchema } from "../../../validation/validation";
 
 // Components
 import { Header } from "../../../components/Header/Header.tsx";
@@ -62,16 +64,27 @@ const EditUserProfile: React.FC = () => {
 
     const handleSave = async () => {
         if (!user) return;
+
+        // Zod validáció futtatása
+        const validationData = { ...user, documents };
+        const validation = userUpdateProfileSchema.safeParse(validationData);
+
+        if (!validation.success) {
+            toast.error(validation.error.errors[0].message);
+            return;
+        }
+
         setIsSaving(true);
         try {
             const data = await updateUserProfile({ user, documents });
             if (data.success) {
+                toast.success("Profil sikeresen frissítve!");
                 setOriginalUser(user);
                 setOriginalDocuments(documents);
                 setEditMode(false);
             }
         } catch {
-            alert("Hiba történt a mentés során!");
+            toast.error("Hiba történt a mentés során!");
         } finally {
             setIsSaving(false);
         }
@@ -98,6 +111,7 @@ const EditUserProfile: React.FC = () => {
     return (
         <div className={styles.pageWrapper}>
             <Header />
+            <Toaster />
 
             <main className={styles.container}>
                 {loading ? (

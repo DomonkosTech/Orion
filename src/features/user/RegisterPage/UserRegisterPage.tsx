@@ -11,6 +11,7 @@ import TextArea from "../../../components/TextArea/TextArea";
 
 // Import the service and type for user registration
 import { registerUser, type UserRegistrationData } from "../../../services/userServise";
+import { userRegisterSchema } from "../../../validation/validation";
 
 const UserRegisterPage: React.FC = () => {
     const navigate = useNavigate();
@@ -51,17 +52,13 @@ const UserRegisterPage: React.FC = () => {
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Basic form validation
-        if (!formData.email || !formData.password || !formData.lname || !formData.fname || !formData.personal_id || !formData.address_card_number) {
-            toast.error("Kérlek, töltsd ki a kötelező mezőket!");
-            return;
-        }
-        if (formData.password !== formData.confirmPassword) {
-            toast.error("A jelszavak nem egyeznek!");
-            return;
-        }
-        if (!formData.terms_accepted) {
-            toast.error("El kell fogadnia a felhasználási feltételeket!");
+        // Zod validáció futtatása
+        const validation = userRegisterSchema.safeParse(formData);
+
+        if (!validation.success) {
+            // Az első hibaüzenet megjelenítése
+            const firstError = validation.error.errors[0].message;
+            toast.error(firstError);
             return;
         }
 

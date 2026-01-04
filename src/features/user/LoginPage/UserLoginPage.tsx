@@ -8,6 +8,7 @@ import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Button/Button.tsx";
 import { loginUser } from "../../../services/userServise.ts";
+import { loginSchema } from "../../../validation/validation";
 
 const UserLoginPage: React.FC = () => {
     // State for form inputs, loading status, and navigation
@@ -21,15 +22,17 @@ const UserLoginPage: React.FC = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Basic form validation
-        if (!email.trim() || !password.trim()) {
-            toast.error("Kérlek, töltsd ki mindkét mezőt!");
-            return;
-        }
+            // Zod validáció futtatása
+            const validation = loginSchema.safeParse({ email, password, rememberMe });
 
-        setIsLoading(true);
+            if (!validation.success) {
+                toast.error(validation.error.errors[0].message);
+                return;
+            }
 
-        try {
+            setIsLoading(true);
+
+            try {
             // Attempt to log in using the user service
             const data = await loginUser({ email, password, rememberMe });
 
