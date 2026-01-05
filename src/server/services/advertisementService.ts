@@ -79,6 +79,7 @@ export const getAdvertisementById = async (id: string) => {
         .from("advertisement")
         .select("*")
         .eq("id", id)
+        .eq("is_active", true)
         .maybeSingle();
 
     if (error) throw error;
@@ -140,4 +141,16 @@ export const incrementClickCount = async (id: string) => {
 
     if (error) throw error;
 };
+
+// update advertisement status
+export const updateAdvertisementStatus = async (id: string, status: boolean, companyId: number) => {
+    const { error } = await supabase
+        .from("advertisement")
+        .update({ is_active: status })
+        .eq("id", id)
+        .eq("company_id", companyId);
+
+    if (error) throw error;
+}
+
 

@@ -167,6 +167,28 @@ router.patch("/advertisements/:id/views",  async (req , res) => {
     }
 })
 
+//update advertisement status
+router.patch("/advertisements/:id/status", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+
+    const id = req.params.id;
+    const companyId = req.companyId;
+
+
+    if (!id || req.body.status === undefined || !companyId) {
+        return res.status(400).json({ success: false, message: "Missing id or status" });
+    }
+
+    try {
+
+        await advertisementService.updateAdvertisementStatus(id, req.body.status, companyId);
+        res.json({
+            success: true})
+    }
+    catch (err) {
+        console.error("Update advertisement status error:", err);
+        res.status(500).json({ error: "Internal Server Error " });
+    }
+})
 
 
 export default router;
