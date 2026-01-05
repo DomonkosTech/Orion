@@ -163,5 +163,22 @@ export const getEmployees = async (companyId: number) => {
 
     if (error) throw error;
     return employees;
+}
 
+// delete employee
+export const deleteEmployee = async (employeeId: number, companyId: number) => {
+    const { data, error } = await supabase
+        .from("employees")
+        .delete()
+        .eq("id", employeeId)
+        .eq("company_id", companyId)
+        .select()
+
+    if (error) throw error
+
+    if (!data || data.length === 0) {
+        throw new Error("Employee not found")
+    }
+
+    return { success: true, deletedEmployee: data[0] }
 }

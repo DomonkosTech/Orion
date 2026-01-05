@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { getEmployees } from "../../../services/advertisementService.ts";
+import { getEmployees, deleteEmployee } from "../../../services/advertisementService.ts";
+import { toast , Toaster } from "react-hot-toast";
+
 
 interface User {
     email: string;
@@ -39,10 +41,27 @@ const ShowEmployees = () => {
         fetchEmployees();
     }, []);
 
+    const handleDelete = async (id: number) => {
+        try {
+            const response = await deleteEmployee(id);
+            if (response.success) {
+                setEmployees(employees.filter(employee => employee.id !== id));
+                toast.success("Sikeresen kirúgva");
+            } else {
+                toast.error("Sikertelen kirúgás");
+                console.error("Failed to delete employee");
+            }
+        } catch (error) {
+            toast.error("Hiba történt a törlés során");
+            console.error("Error deleting employee:", error);
+        }
+    };
+
     if (loading) return <div>Loading...</div>;
 
     return (
         <div>
+            <Toaster/>
             <h1>Employees List</h1>
             <table border={1}>
                 <thead>
@@ -54,6 +73,7 @@ const ShowEmployees = () => {
                     <th>munka cime</th>
                     <th>munkabér</th>
                     <th>munka kezdete</th>
+                    <th> kirugás </th>
                 </tr>
                 </thead>
                 <tbody>
@@ -66,6 +86,9 @@ const ShowEmployees = () => {
                         <td>{employee.job_title}</td>
                         <td>{employee.hourly_wage}</td>
                         <td>{employee.hire_date}</td>
+                        <td>
+                            <button onClick={() => handleDelete(employee.id)}>kirugás</button>
+                        </td>
                     </tr>
                 ))}
                 </tbody>
