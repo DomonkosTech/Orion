@@ -6,6 +6,7 @@ import Button from "../Button/Button";
 
 // Server / hooks
 import { useLogout } from "../../services/authService";
+import { useAuth } from "../../hooks/useAuth";
 
 interface NavItem {
     label: string;
@@ -14,7 +15,6 @@ interface NavItem {
 
 interface HeaderProps {
     companyName?: string;
-    userInitials?: string;
     logoColor?: string;
     navItems?: NavItem[];
     actions?: React.ReactNode;
@@ -22,22 +22,59 @@ interface HeaderProps {
 
 export function Header({
                            companyName = "Orion",
-                           userInitials = "KYS",
                            logoColor = "#1a1a1a",
-                           navItems = [
-                               { label: "fix header", href: "/dashboard" },
-                               { label: "add initials logic", href: "/projects" },
-                               { label: "add user/company logic", href: "/team" },
-                           ],
+                           navItems = [],
                            actions,
                        }: HeaderProps) {
     const handleLogout = useLogout();
+    const { loggedIn, userType, loading } = useAuth();
+
+    // Ha még töltődik az auth status, nem jelenítünk meg semmit, vagy egy loadert
+    if (loading) {
+        return null; // Vagy <header className={styles.header}>Loading...</header>
+    }
+
+    // Dinamikus tartalom a userType alapján
+    let displayInitials = "V"; // Alapértelmezett: Vendég
+    let dynamicNavItems = navItems;
+
+    if (loggedIn) {
+        if (userType === "user") {
+            displayInitials = "U";
+            // Itt felülírhatjuk a navItems-et user specifikus linkekkel, ha a props üres
+            if (dynamicNavItems.length === 0) {
+                dynamicNavItems = [
+                    { label: "Kezdőlap", href: "/userhomepage" },
+                    { label: "Állások", href: "/listjobs" },
+                    { label: "Jelentkezéseim", href: "/JobApplications" },
+                ];
+            }
+        } else if (userType === "company") {
+            displayInitials = "C";
+            if (dynamicNavItems.length === 0) {
+                dynamicNavItems = [
+                    { label: "Vezérlőpult", href: "/company" },
+                    { label: "Hirdetés feladása", href: "/AddJob" },
+                    { label: "Alkalmazottak", href: "/employees" },
+                ];
+            }
+        }
+    } else {
+        // Vendég menü
+        if (dynamicNavItems.length === 0) {
+            dynamicNavItems = [
+                { label: "Kezdőlap", href: "/" },
+                { label: "Bejelentkezés", href: "/UserLoginPage" },
+                { label: "Cégeknek", href: "/CompanyLoginPage" },
+            ];
+        }
+    }
 
     return (
         <header className={styles.header}>
             <div className={styles.container}>
                 {/* Left: Logo / Brand */}
-                <a href="/userhomepage" className={styles.logo}>
+                <a href={loggedIn ? (userType === "company" ? "/company" : "/userhomepage") : "/"} className={styles.logo}>
                     <div
                         style={{
                             width: 20,
@@ -64,7 +101,7 @@ export function Header({
 
                 {/* Center: Navigation */}
                 <nav className={styles.nav}>
-                    {navItems.map((item, index) => (
+                    {dynamicNavItems.map((item, index) => (
                         <a
                             key={`${item.href}-${index}`}
                             href={item.href}
@@ -80,6 +117,7 @@ export function Header({
                     <button
                         className={styles.iconButton}
                         aria-label="User Profile"
+                        title={loggedIn ? (userType === "user" ? "Felhasználó" : "Cég") : "Vendég"}
                     >
                         <span
                             style={{
@@ -87,18 +125,27 @@ export function Header({
                                 fontWeight: 600,
                             }}
                         >
-                            {userInitials}
+                            {displayInitials}
                         </span>
                     </button>
 
                     {actions}
 
-                    <Button
-                        className={styles.logoutButton}
-                        onClick={handleLogout}
-                    >
-                        Log out
-                    </Button>
+                    {loggedIn && (
+                        <Button
+                            className={styles.logoutButton}
+                            onClick={handleLogout}
+                        >
+                            Log out
+                        </Button>
+                    )}
+                    {!loggedIn && (
+                         <a href="/UserLoginPage" style={{ textDecoration: 'none' }}>
+                            <Button className={styles.logoutButton}>
+                                Log in
+                            </Button>
+                        </a>
+                    )}
                 </div>
             </div>
         </header>

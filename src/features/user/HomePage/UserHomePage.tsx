@@ -23,11 +23,6 @@ function UserHomePage() {
         <div className={styles.page}>
             <Header
 
-                actions={
-                    <Button variant="link" onClick={() => navigate("/settings")} underline>
-                        Beállítások
-                    </Button>
-                }
             />
 
             <main>

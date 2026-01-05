@@ -31,17 +31,7 @@ function PublicHomePage() {
     return (
         <div className={styles.page}>
             <Header
-                navItems={[
-                    { label: "Nyitott pozíciók", href: "/listjobs" },
-                    { label: "GYIK", href: "#" },
-                    { label: "kapcsolat", href: "#Kapcsolat" },
 
-                ]}
-                actions={
-                    <Button variant="link" onClick={() => navigate("/UserLoginPage")} underline>
-                        Bejelentkezés
-                    </Button>
-                }
             />
 
             <main>
