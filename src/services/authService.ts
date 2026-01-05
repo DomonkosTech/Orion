@@ -6,6 +6,9 @@ export interface AuthStatus {
     loggedIn: boolean;
     userType?: "user" | "company" | null;
     user?: unknown;
+    fname?: string;
+    lname?: string;
+    companyName?: string;
 }
 
 export const checkAuthStatus = async (): Promise<AuthStatus> => {
