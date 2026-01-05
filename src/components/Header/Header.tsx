@@ -20,6 +20,10 @@ interface HeaderProps {
     actions?: React.ReactNode;
 }
 
+/**
+ * Responsive header component that manages navigation and user actions based on authentication state.
+ * Dynamically renders menu items for guests, users, and companies.
+ */
 export function Header({
                            companyName = "Orion",
                            logoColor = "#1a1a1a",
@@ -27,21 +31,19 @@ export function Header({
                            actions,
                        }: HeaderProps) {
     const handleLogout = useLogout();
-    const { loggedIn, userType, loading } = useAuth();
+    const { loggedIn, userType, loading, initials } = useAuth();
 
-    // Ha még töltődik az auth status, nem jelenítünk meg semmit, vagy egy loadert
+    // Show nothing or a loader while auth status is loading
     if (loading) {
-        return null; // Vagy <header className={styles.header}>Loading...</header>
+        return null; // Or <header className={styles.header}>Loading...</header>
     }
 
-    // Dinamikus tartalom a userType alapján
-    let displayInitials = ""; // Alapértelmezett: üres
+    // Determine navigation items based on user type
     let dynamicNavItems = navItems;
 
     if (loggedIn) {
         if (userType === "user") {
-            displayInitials = "U";
-            // Itt felülírhatjuk a navItems-et user specifikus linkekkel, ha a props üres
+            // Override navItems with user-specific links if props are empty
             if (dynamicNavItems.length === 0) {
                 dynamicNavItems = [
                     { label: "Kezdőlap", href: "/userhomepage" },
@@ -50,7 +52,6 @@ export function Header({
                 ];
             }
         } else if (userType === "company") {
-            displayInitials = "C";
             if (dynamicNavItems.length === 0) {
                 dynamicNavItems = [
                     { label: "Vezérlőpult", href: "/company" },
@@ -60,7 +61,7 @@ export function Header({
             }
         }
     } else {
-        // Vendég menü
+        // Default menu for guests
         if (dynamicNavItems.length === 0) {
             dynamicNavItems = [
                 { label: "Kezdőlap", href: "/" },
@@ -121,12 +122,13 @@ export function Header({
                             title={userType === "user" ? "Felhasználó" : "Cég"}
                         >
                             <span
+
                                 style={{
                                     fontSize: "0.85rem",
                                     fontWeight: 600,
                                 }}
                             >
-                                {displayInitials}
+                                {initials}
                             </span>
                         </button>
                     )}

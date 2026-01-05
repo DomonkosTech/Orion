@@ -93,9 +93,9 @@ router.post("/logout", (_req, res) => {
 
 
 // Check auth endpoint
-router.get("/auth/status", (req, res) => {
+router.get("/auth/status", async (req, res) => {
     const token = req.cookies.auth_token;
-    const result = authService.verifyToken(token);
+    const result = await authService.verifyToken(token);
     res.json(result);
 });
 

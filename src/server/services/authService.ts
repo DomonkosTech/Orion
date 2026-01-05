@@ -42,6 +42,10 @@ interface CompanyRegistrationData {
     terms_accepted: boolean;
 }
 
+/**
+ * Service handling authentication logic for both Users and Companies.
+ * Includes login, registration, and token verification.
+ */
 export const authService = {
     async loginUser(email: string, password: string, rememberMe: boolean) {
         // Validate input using Zod
@@ -60,7 +64,7 @@ export const authService = {
             };
         }
 
-        // Fetch user data
+        // Fetch user data from DB
         const { data: userData, error: fetchError } = await supabase
             .from("users")
             .select("id, user_credentials(password_hash)")
@@ -140,7 +144,7 @@ export const authService = {
         // Hash password
         const password_hash = await bcrypt.hash(password, 12);
 
-        // Call database RPC
+        // Call database RPC to register user
         const { error } = await supabase.rpc('register_user_v1', {
             p_email: email,
             p_password_hash: password_hash,
@@ -185,7 +189,7 @@ export const authService = {
             };
         }
 
-        // Fetch company data
+        // Fetch company data from DB
         const { data: companyData, error: fetchError } = await supabase
             .from("companies")
             .select("id, company_credentials(password_hash)")
@@ -247,7 +251,7 @@ export const authService = {
         // Hash password
         const password_hash = await bcrypt.hash(password, 12);
 
-        // Call database RPC
+        // Call database RPC to register company
         const { error } = await supabase.rpc('register_company_v1',
             {
                 p_email: email,
@@ -271,16 +275,43 @@ export const authService = {
         return { success: true, message: "Registration successful" };
     },
 
-    verifyToken(token: string | undefined) {
+    async verifyToken(token: string | undefined) {
         if (!token) return { loggedIn: false };
 
         try {
-            // Verify JWT
+            // Verify JWT signature
             const decoded = jwt.verify(token, JWT_SECRET!) as jwt.JwtPayload;
+            
+            let nameInfo = {};
+            
+            // Fetch additional user/company info based on token type
+            if (decoded.userType === 'user' && decoded.userId) {
+                const { data } = await supabase
+                    .from('users')
+                    .select('fname, lname')
+                    .eq('id', decoded.userId)
+                    .single();
+                
+                if (data) {
+                    nameInfo = { fname: data.fname, lname: data.lname };
+                }
+            } else if (decoded.userType === 'company' && decoded.companyId) {
+                const { data } = await supabase
+                    .from('companies')
+                    .select('name')
+                    .eq('id', decoded.companyId)
+                    .single();
+                
+                if (data) {
+                    nameInfo = { companyName: data.name };
+                }
+            }
+
             return {
                 loggedIn: true,
                 user: decoded,
-                userType: decoded.userType
+                userType: decoded.userType,
+                ...nameInfo
             };
         } catch {
             return { loggedIn: false };
