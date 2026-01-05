@@ -212,6 +212,25 @@ router.get("/employees", verifyToken, verifyCompany, async (req: AuthRequest, re
     }
 });
 
+//delete employee
+router.delete("/employees/:id", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    try {
+        const employeeId = parseInt(req.params.id);
+        const companyId = req.companyId;
+        if (!companyId) {
+            return res.status(403).json({ error: "Company access denied" });
+        }
+        const { success, deletedEmployee } = await advertisementService.deleteEmployee(employeeId, companyId);
+
+        if (!deletedEmployee) {
+            return res.status(404).json({ error: "Employee not found" });
+        }
+        res.json({ success });
+    } catch (error) {
+        console.error("Delete employees failed:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 
 
 

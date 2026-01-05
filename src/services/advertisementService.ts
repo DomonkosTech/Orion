@@ -198,3 +198,11 @@ export const getEmployees = async () => {
     });
     return handleResponse(response);
 }
+
+export const deleteEmployee = async (id: number) => {
+    const response = await fetch(`${API_BASE_URL}/employees/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+    });
+    return handleResponse(response);
+}
