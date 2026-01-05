@@ -33,7 +33,7 @@ export const useLogout = () => {
             if (data.success) {
                 try { window.dispatchEvent(new Event("auth-changed")); } catch { /* empty */ }
                 toast.success("Sikeresen kijelentkeztél!");
-                navigate("/CompanyLoginPage");
+                navigate("/");
             }
         } catch (err) {
             console.error("Logout error:", err);
