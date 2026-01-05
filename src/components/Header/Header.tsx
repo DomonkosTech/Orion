@@ -35,7 +35,7 @@ export function Header({
     }
 
     // Dinamikus tartalom a userType alapján
-    let displayInitials = "V"; // Alapértelmezett: Vendég
+    let displayInitials = ""; // Alapértelmezett: üres
     let dynamicNavItems = navItems;
 
     if (loggedIn) {
@@ -114,20 +114,22 @@ export function Header({
 
                 {/* Right: Actions */}
                 <div className={styles.actions}>
-                    <button
-                        className={styles.iconButton}
-                        aria-label="User Profile"
-                        title={loggedIn ? (userType === "user" ? "Felhasználó" : "Cég") : "Vendég"}
-                    >
-                        <span
-                            style={{
-                                fontSize: "0.85rem",
-                                fontWeight: 600,
-                            }}
+                    {loggedIn && (
+                        <button
+                            className={styles.iconButton}
+                            aria-label="User Profile"
+                            title={userType === "user" ? "Felhasználó" : "Cég"}
                         >
-                            {displayInitials}
-                        </span>
-                    </button>
+                            <span
+                                style={{
+                                    fontSize: "0.85rem",
+                                    fontWeight: 600,
+                                }}
+                            >
+                                {displayInitials}
+                            </span>
+                        </button>
+                    )}
 
                     {actions}
 
