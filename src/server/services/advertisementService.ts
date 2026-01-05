@@ -153,4 +153,15 @@ export const updateAdvertisementStatus = async (id: string, status: boolean, com
     if (error) throw error;
 }
 
+// show employees
+export const getEmployees = async (companyId: number) => {
+    const { data: employees, error: error } = await supabase
+        .from("employees")
+        .select("*, users( email, lname, fname)")
+        .eq("company_id", companyId)
+        .order("hire_date", { ascending: false });
 
+    if (error) throw error;
+    return employees;
+
+}
