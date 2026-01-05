@@ -180,3 +180,12 @@ export const submitApplication = async (id: string) => {
     });
     return handleResponse(response);
 };
+export const updateAdvertisementStatus = async (id: string, status: boolean)=> {
+    const response = await fetch(`${API_BASE_URL}/advertisements/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status: status }),
+    });
+    return handleResponse(response);
+};

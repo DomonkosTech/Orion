@@ -4,6 +4,7 @@ import {toast, Toaster} from "react-hot-toast";
 import {
     getAdvertisementForEdit,
     updateAdvertisement,
+    updateAdvertisementStatus,
     type UpdateAdvertisementData
 } from "../../../services/advertisementService";
 
@@ -67,11 +68,92 @@ const EditAdvertisement = () => {
         }
     };
 
+    const handleStatusChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!id) return;
+        const newStatus = e.target.checked;
+        try {
+            const data = await updateAdvertisementStatus(id, newStatus);
+            if (data.success) {
+                setAdvertisement(prev => ({ ...prev, is_active: newStatus }));
+                toast.success(`Hirdetés ${newStatus ? "aktiválva" : "deaktiválva"}!`);
+            } else {
+                toast.error("Státusz módosítása sikertelen!");
+            }
+        } catch (err) {
+            console.error("Status update error:", err);
+            toast.error("Hiba történt a státusz módosítása során!");
+        }
+    };
+
     return (
 
         <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
+            <style>{`
+                /* The switch - the box around the slider */
+                .switch {
+                  position: relative;
+                  display: inline-block;
+                  width: 60px;
+                  height: 34px;
+                }
+
+                /* Hide default HTML checkbox */
+                .switch input {
+                  opacity: 0;
+                  width: 0;
+                  height: 0;
+                }
+
+                /* The slider */
+                .slider {
+                  position: absolute;
+                  cursor: pointer;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  background-color: #ccc;
+                  -webkit-transition: .4s;
+                  transition: .4s;
+                }
+
+                .slider:before {
+                  position: absolute;
+                  content: "";
+                  height: 26px;
+                  width: 26px;
+                  left: 4px;
+                  bottom: 4px;
+                  background-color: white;
+                  -webkit-transition: .4s;
+                  transition: .4s;
+                }
+
+                input:checked + .slider {
+                  background-color: #2196F3;
+                }
+
+                input:focus + .slider {
+                  box-shadow: 0 0 1px #2196F3;
+                }
+
+                input:checked + .slider:before {
+                  -webkit-transform: translateX(26px);
+                  -ms-transform: translateX(26px);
+                  transform: translateX(26px);
+                }
+
+                /* Rounded sliders */
+                .slider.round {
+                  border-radius: 34px;
+                }
+
+                .slider.round:before {
+                  border-radius: 50%;
+                }
+            `}</style>
             {/* 12. Megjelenített cím átírása */}
-            <Toaster />
+            <Toaster/>
             <h2 className="text-2xl font-semibold mb-6 text-center">Hirdetés adatok szerkesztése</h2>
 
             <form className="grid grid-cols-1 gap-4">
@@ -82,7 +164,7 @@ const EditAdvertisement = () => {
                         type="text"
                         value={advertisement.title}
                         readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({ ...advertisement, title: e.target.value })}
+                        onChange={(e) => setAdvertisement({...advertisement, title: e.target.value})}
                         className="w-full p-2 border rounded-md"
                     />
                 </label>
@@ -93,7 +175,7 @@ const EditAdvertisement = () => {
                         type="text"
                         value={advertisement.position}
                         readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({ ...advertisement, position: e.target.value })}
+                        onChange={(e) => setAdvertisement({...advertisement, position: e.target.value})}
                         className="w-full p-2 border rounded-md"
                     />
                 </label>
@@ -104,7 +186,7 @@ const EditAdvertisement = () => {
                         type="text"
                         value={advertisement.location}
                         readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({ ...advertisement, location: e.target.value })}
+                        onChange={(e) => setAdvertisement({...advertisement, location: e.target.value})}
                         className="w-full p-2 border rounded-md"
                     />
                 </label>
@@ -115,7 +197,7 @@ const EditAdvertisement = () => {
                         type="text"
                         value={advertisement.hourly_wage}
                         readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({ ...advertisement, hourly_wage: e.target.value })}
+                        onChange={(e) => setAdvertisement({...advertisement, hourly_wage: e.target.value})}
                         className="w-full p-2 border rounded-md"
                     />
                 </label>
@@ -125,7 +207,7 @@ const EditAdvertisement = () => {
                     <textarea // Textarea használata, mivel a job_description valószínűleg hosszabb szöveg
                         value={advertisement.job_description}
                         readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({ ...advertisement, job_description: e.target.value })}
+                        onChange={(e) => setAdvertisement({...advertisement, job_description: e.target.value})}
                         className="w-full p-2 border rounded-md h-32"
                     />
                 </label>
@@ -135,7 +217,7 @@ const EditAdvertisement = () => {
                     <textarea
                         value={advertisement.tasks}
                         readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({ ...advertisement, tasks: e.target.value })}
+                        onChange={(e) => setAdvertisement({...advertisement, tasks: e.target.value})}
                         className="w-full p-2 border rounded-md"
                     />
                 </label>
@@ -145,7 +227,7 @@ const EditAdvertisement = () => {
                     <textarea
                         value={advertisement.requirements}
                         readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({ ...advertisement, requirements: e.target.value })}
+                        onChange={(e) => setAdvertisement({...advertisement, requirements: e.target.value})}
                         className="w-full p-2 border rounded-md"
                     />
                 </label>
@@ -186,6 +268,18 @@ const EditAdvertisement = () => {
             <button onClick={() => navigate("/company")}>
                 Vissza a föoldalra
             </button>
+
+            <div className="mt-4 flex items-center gap-2">
+                <span className="font-medium">Hirdetés státusza: {advertisement.is_active ? "Aktív" : "Inaktív"}</span>
+                <label className="switch">
+                    <input
+                        type="checkbox"
+                        checked={advertisement.is_active}
+                        onChange={handleStatusChange}
+                    />
+                    <span className="slider round"></span>
+                </label>
+            </div>
         </div>
     );
 };
