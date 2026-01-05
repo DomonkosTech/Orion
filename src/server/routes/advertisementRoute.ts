@@ -190,5 +190,29 @@ router.patch("/advertisements/:id/status", verifyToken, verifyCompany, async (re
     }
 })
 
+//get all employees endpoint for company
+router.get("/employees", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+
+    try {
+        const companyId = req.companyId;
+        if (!companyId) {
+            return res.status(403).json({ error: "Company access denied" });
+        }
+
+        const employees = await advertisementService.getEmployees(companyId);
+
+        res.json({
+            success: true,
+            employees
+        });
+
+    } catch (error) {
+        console.error("Get employees failed:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+
 
 export default router;

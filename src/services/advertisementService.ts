@@ -180,6 +180,7 @@ export const submitApplication = async (id: string) => {
     });
     return handleResponse(response);
 };
+
 export const updateAdvertisementStatus = async (id: string, status: boolean)=> {
     const response = await fetch(`${API_BASE_URL}/advertisements/${id}/status`, {
         method: "PATCH",
@@ -189,3 +190,11 @@ export const updateAdvertisementStatus = async (id: string, status: boolean)=> {
     });
     return handleResponse(response);
 };
+
+export const getEmployees = async () => {
+    const response = await fetch(`${API_BASE_URL}/employees`, {
+        method: "GET",
+        credentials: "include",
+    });
+    return handleResponse(response);
+}
