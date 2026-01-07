@@ -16,6 +16,7 @@ import userRoutes from "./routes/userRoute.ts";
 import companyRoutes from "./routes/companyRoute.ts";
 import advertisementRoutes from "./routes/advertisementRoute.ts";
 import applicantRoutes from "./routes/applicantRoute.ts";
+import emailRoute from "./routes/emailRoute.ts";
 
 // Initialize Express app
 const app = express();
@@ -31,7 +32,6 @@ app.use(cors({
 // Auth Routes (Login, Register, Logout, Check Auth)
 app.use("/api", authRoutes);
 
-
 // User Routes (Profile, Resume)
 app.use("/api", userRoutes);
 
@@ -43,6 +43,9 @@ app.use("/api", advertisementRoutes);
 
 // Applicant Routes (Submit, Track, Accept/Reject)
 app.use("/api", applicantRoutes);
+
+// Email Routes (Send Email)
+app.use("/api/email", emailRoute);
 
 // Start server
 app.listen(4000, () => console.log("Server running on http://localhost:4000"));

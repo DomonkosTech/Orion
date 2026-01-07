@@ -17,8 +17,8 @@ import UploadResume from "./features/user/UploadResume/UploadResume.tsx";
 import ApplicantTrackingSystem from "./features/company/CompanyJobs/ApplicantTrackingSystem.tsx";
 import PublicHomePage from "./features/public/PublicHomePage/PublicHomePage.tsx";
 import ShowEmployees from "./features/company/ShowEmployees/ShowEmployees.tsx";
-
-
+import UserVerify from "./features/user/RegisterPage/userVerify.tsx";
+import UserSendVerify from "./features/user/RegisterPage/userSendVerify.tsx";
 
 
 function App() {
@@ -30,6 +30,16 @@ function App() {
                     path="/"
                     element={<PublicHomePage />}
                 />
+                <Route
+                    path="/user/verify"
+                    element={<UserVerify />}
+                />
+                <Route
+                    path="/user/sendverify"
+                    element={<UserSendVerify />}
+                />
+
+
 
                 {/* 🔒 Csak USER típusú felhasználóknak */}
                 <Route

@@ -59,6 +59,7 @@ export const authService = {
 
         interface data {
             id: number;
+            activated: boolean;
             user_credentials: {
                 password_hash: string;
             };
@@ -67,7 +68,7 @@ export const authService = {
         // Fetch user data from DB
         const { data: userData, error: fetchError } = await supabase
             .from("users")
-            .select("id, user_credentials(password_hash)")
+            .select("id, activated, user_credentials(password_hash)")
             .eq("email", email)
             .maybeSingle<data>();
 
@@ -85,6 +86,10 @@ export const authService = {
 
         if (!match) {
             throw { status: 401, message: "Invalid credentials" };
+        }
+
+        if (!userData.activated) {
+            throw { status: 403, message: "Account not activated" };
         }
 
         // Check server config
