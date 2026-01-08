@@ -582,7 +582,7 @@
 .searchChipDot {
     width: 8px;
     height: 8px;
-    background: #10b981; /* Green color for "Live" status */
+    background: #10b981;
     border-radius: 50%;
     display: inline-block;
     animation: pulse 2s infinite;

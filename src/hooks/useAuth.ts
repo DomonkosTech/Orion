@@ -10,6 +10,12 @@ export function useAuth() {
     const [userType, setUserType] = useState<"user" | "company" | null>(null);
     const [loading, setLoading] = useState(true);
     const [initials, setInitials] = useState<string>("");
+    const [name, setName] = useState<string>(""); //bocsi peti
+    // /\
+    // ||
+    // majd te megoldod csáááá
+    // kellet holnapra név a UserHomePage re
+    // max majd kitörlöd
 
     useEffect(() => {
         // Track mounted state to avoid memory leaks
@@ -24,9 +30,11 @@ export function useAuth() {
                 setLoggedIn(Boolean(data.loggedIn));
                 setUserType(data.userType || null);
 
+
                 if (data.loggedIn) {
                     // Generate initials based on user type (User vs Company)
                     if (data.userType === 'user' && data.fname && data.lname) {
+                        setName(`${data.fname}`)
                         setInitials(`${data.lname.charAt(0)}${data.fname.charAt(0)}`.toUpperCase());
                     } else if (data.userType === 'company' && data.companyName) {
                         setInitials(data.companyName.substring(0, 2).toUpperCase());
@@ -65,5 +73,5 @@ export function useAuth() {
         };
     }, []);
 
-    return { loggedIn, userType, loading, initials };
+    return { loggedIn, userType, loading, initials, name };
 }
