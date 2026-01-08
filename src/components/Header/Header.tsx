@@ -35,15 +35,13 @@ export function Header({
 
     // Show nothing or a loader while auth status is loading
     if (loading) {
-        return null; // Or <header className={styles.header}>Loading...</header>
+        return null;
     }
 
-    // Determine navigation items based on user type
     let dynamicNavItems = navItems;
 
     if (loggedIn) {
         if (userType === "user") {
-            // Override navItems with user-specific links if props are empty
             if (dynamicNavItems.length === 0) {
                 dynamicNavItems = [
                     { label: "Kezdőlap", href: "/userhomepage" },

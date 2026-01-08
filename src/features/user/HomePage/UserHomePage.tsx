@@ -6,9 +6,13 @@ import { Header } from "../../../components/Header/Header.tsx";
 import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
+import { useAuth } from "../../../hooks/useAuth";
 
 function UserHomePage() {
     const navigate = useNavigate();
+    const {name} = useAuth();
+
+
 
     const categories = [
         "IT & Fejlesztés",
@@ -21,23 +25,21 @@ function UserHomePage() {
 
     return (
         <div className={styles.page}>
-            <Header
-
-            />
+            <Header />
 
             <main>
-                {/* Hero Section */}
+                {/* Hero Section - Personalized Welcome */}
                 <section className={styles.hero}>
                     <div className={styles.heroInner}>
-                        <BannerKicker>Gyors • Letisztult • Magyar piac</BannerKicker>
+                        <BannerKicker>Személyes Vezérlőpult</BannerKicker>
 
                         <h1 className={styles.heroTitle}>
-                            Professzionális <span className={styles.accent}>karrierélmény</span>, egy helyen.
+                            Szia, <span className={styles.accent}>{name}</span>! 👋
                         </h1>
 
                         <p className={styles.heroSubtitle}>
-                            Fedezzen fel friss állásokat, finomhangolja a szűrőket, és jelentkezzen pár kattintással.
-                            Az Ön karrierje a mi prioritásunk.
+                            Örülünk, hogy újra itt vagy. Nézzük, hol tartasz ma a karrierutadon,
+                            és találjuk meg a következő nagy lehetőségedet!
                         </p>
 
                         <div className={styles.heroActions}>
@@ -46,47 +48,47 @@ function UserHomePage() {
                                 color="orion-blue"
                                 variant="primary"
                             >
-                                Állások böngészése
+                                Böngészés folytatása
                             </Button>
 
                             <Button
-                                onClick={() => navigate("/cv")}
+                                onClick={() => navigate("/EditUserProfile")}
                                 variant="secondary"
                                 color="orion-blue"
                             >
-                                Önéletrajz feltöltése
+                                Profil szerkesztése
                             </Button>
                         </div>
                     </div>
                 </section>
 
-                {/* Quick Actions Grid */}
+                {/* Quick Actions Grid - Action Oriented */}
                 <section className={styles.quick}>
                     <div className={styles.container}>
                         <div className={styles.quickGrid}>
                             <Link to="/listjobs" className={styles.quickCard}>
-                                <div className={styles.quickIcon}>🔎</div>
+                                <div className={styles.quickIcon}>🔍</div>
                                 <div className={styles.quickText}>
-                                    <div className={styles.quickTitle}>Keresés indítása</div>
-                                    <div className={styles.quickSub}>Pozíció, helyszín, bér</div>
+                                    <div className={styles.quickTitle}>Új állások keresése</div>
+                                    <div className={styles.quickSub}>Találja meg az ideális pozíciót</div>
                                 </div>
                                 <div className={styles.quickArrow}>→</div>
                             </Link>
 
                             <Link to="/jobapplications" className={styles.quickCard}>
-                                <div className={styles.quickIcon}>📌</div>
+                                <div className={styles.quickIcon}>📈</div>
                                 <div className={styles.quickText}>
-                                    <div className={styles.quickTitle}>Jelentkezéseim</div>
-                                    <div className={styles.quickSub}>Státuszok áttekintése</div>
+                                    <div className={styles.quickTitle}>Aktív jelentkezések</div>
+                                    <div className={styles.quickSub}>Kövesse nyomon a folyamatait</div>
                                 </div>
                                 <div className={styles.quickArrow}>→</div>
                             </Link>
 
-                            <Link to="/EditUserProfile" className={styles.quickCard}>
-                                <div className={styles.quickIcon}>👤</div>
+                            <Link to="/cv" className={styles.quickCard}>
+                                <div className={styles.quickIcon}>📄</div>
                                 <div className={styles.quickText}>
-                                    <div className={styles.quickTitle}>Profil frissítése</div>
-                                    <div className={styles.quickSub}>Legyen naprakész</div>
+                                    <div className={styles.quickTitle}>Dokumentumaim</div>
+                                    <div className={styles.quickSub}>Önéletrajzok és motivációs levelek</div>
                                 </div>
                                 <div className={styles.quickArrow}>→</div>
                             </Link>
@@ -94,59 +96,59 @@ function UserHomePage() {
                     </div>
                 </section>
 
-                {/* Features Section */}
+                {/* Redesigned "Why Us" -> "Personalized Support" Section */}
                 <section className={styles.section}>
                     <div className={styles.container}>
                         <div className={styles.sectionHead}>
-                            <h2 className={styles.sectionTitle}>Miért ezt a felületet?</h2>
+                            <h2 className={styles.sectionTitle}>Miben segíthetünk ma?</h2>
                             <p className={styles.sectionSubtitle}>
-                                Minimalista stílus, hatékony keresés, prémium érzet — felesleges zaj nélkül.
+                                Használja eszközeinket a hatékonyabb munkakereséshez és a szakmai fejlődéshez.
                             </p>
                         </div>
 
                         <div className={styles.featuresGrid}>
                             <article className={styles.feature}>
                                 <div className={styles.featureTop}>
-                                    <div className={styles.featureIcon}>💼</div>
-                                    <div className={styles.featureBadge}>Minőség</div>
+                                    <div className={styles.featureIcon}>🎯</div>
+                                    <div className={styles.featureBadge}>Tipp</div>
                                 </div>
-                                <h3 className={styles.featureTitle}>Minőségi állások</h3>
+                                <h3 className={styles.featureTitle}>Személyre szabott találatok</h3>
                                 <p className={styles.featureText}>
-                                    Fókusz a releváns hirdetéseken, könnyen áttekinthető kártyákkal.
+                                    Frissítse szakmai készségeit, hogy algoritmusunk pontosabb ajánlatokat mutasson.
                                 </p>
                             </article>
 
                             <article className={styles.feature}>
                                 <div className={styles.featureTop}>
-                                    <div className={styles.featureIcon}>⚡</div>
-                                    <div className={styles.featureBadge}>Gyorsaság</div>
+                                    <div className={styles.featureIcon}>💌</div>
+                                    <div className={styles.featureBadge}>Értesítő</div>
                                 </div>
-                                <h3 className={styles.featureTitle}>Gyors találat</h3>
+                                <h3 className={styles.featureTitle}>Legyen az első</h3>
                                 <p className={styles.featureText}>
-                                    Helyszín, pozíció és bérsáv alapján azonnali, releváns szűrés.
+                                    Mentse el kereséseit, és küldünk egy üzenetet, amint releváns állást találunk.
                                 </p>
                             </article>
 
                             <article className={styles.feature}>
                                 <div className={styles.featureTop}>
-                                    <div className={styles.featureIcon}>🛡️</div>
-                                    <div className={styles.featureBadge}>Biztonság</div>
+                                    <div className={styles.featureIcon}>💡</div>
+                                    <div className={styles.featureBadge}>Útmutató</div>
                                 </div>
-                                <h3 className={styles.featureTitle}>Adatvédelem</h3>
+                                <h3 className={styles.featureTitle}>Interjú felkészülés</h3>
                                 <p className={styles.featureText}>
-                                    Tiszta folyamatok, átlátható működés és biztonságos adatkezelés.
+                                    Olvassa el szakmai tanácsainkat, hogy magabiztosan álljon a munkáltatók elé.
                                 </p>
                             </article>
                         </div>
                     </div>
                 </section>
 
-                {/* Categories & Callout Section */}
+                {/* Categories & Final Callout */}
                 <section className={styles.sectionAlt}>
                     <div className={styles.container}>
                         <div className={styles.sectionHead}>
-                            <h2 className={styles.sectionTitle}>Népszerű kategóriák</h2>
-                            <p className={styles.sectionSubtitle}>Induljon egy kategóriával, aztán finomítson szűrőkkel.</p>
+                            <h2 className={styles.sectionTitle}>Kiemelt szektorok</h2>
+                            <p className={styles.sectionSubtitle}>Válasszon egy kategóriát, és fedezze fel a legfrissebb lehetőségeket.</p>
                         </div>
 
                         <div className={styles.pills}>
@@ -157,16 +159,16 @@ function UserHomePage() {
 
                         <div className={styles.callout}>
                             <div className={styles.calloutLeft}>
-                                <div className={styles.calloutTitle}>Készen áll a következő lépésre?</div>
+                                <div className={styles.calloutTitle}>Készen áll a következő fejezetre?</div>
                                 <div className={styles.calloutText}>
-                                    Nézze meg az állásokat, és mentse el a kedvenceket későbbre.
+                                    Nézze meg a legújabb 24 órában feladott hirdetéseket!
                                 </div>
                             </div>
                             <Button
                                 color="orion-blue"
                                 onClick={() => navigate("/listjobs")}
                             >
-                                Irány az állások
+                                Mai ajánlatok megtekintése
                             </Button>
                         </div>
                     </div>
