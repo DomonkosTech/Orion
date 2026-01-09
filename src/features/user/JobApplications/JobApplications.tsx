@@ -3,8 +3,6 @@ import {useNavigate} from "react-router-dom";
 import {
     Briefcase,
     Clock,
-    Building2,
-    DollarSign,
     Calendar,
     ArrowLeft,
     ClipboardCheck,
@@ -96,14 +94,12 @@ const JobApplications = () => {
                                             <div className={styles.infoBlock}>
                                                 <span className={styles.infoLabel}>Cég</span>
                                                 <span className={styles.infoValue}>
-                                                    <Building2 size={14} style={{display: 'inline', marginRight: '4px'}} />
                                                     {work.company?.name}
                                                 </span>
                                             </div>
                                             <div className={styles.infoBlock}>
                                                 <span className={styles.infoLabel}>Órabér</span>
                                                 <span className={styles.infoValue}>
-                                                    <DollarSign size={14} style={{display: 'inline', marginRight: '2px'}} />
                                                     {work.hourly_wage} Ft
                                                 </span>
                                             </div>
@@ -131,27 +127,37 @@ const JobApplications = () => {
                                 </div>
                             ) : (
                                 <div className={styles.listContainer}>
-                                    {submits.map((submit) => (
-                                        <div key={submit.id} className={styles.itemRow}>
-                                            <div className={styles.infoBlock}>
-                                                <span className={styles.infoLabel}>Hirdetés</span>
-                                                <span className={styles.infoValue}>{submit.advertisement?.title}</span>
+
+                                    {submits.map((submit) => {
+                                        const statusClass = submit.status?.toLowerCase() === 'rejected'
+                                            ? styles.statusRejected
+                                            : styles.statusDefault;
+
+                                        return (
+                                            <div key={submit.id} className={styles.itemRow}>
+                                                <div className={styles.infoBlock}>
+                                                    <span className={styles.infoLabel}>Hirdetés</span>
+                                                    <span className={styles.infoValue}>{submit.advertisement?.title}</span>
+                                                </div>
+
+                                                <div className={`${styles.infoBlock} ${styles.centeredInfo}`}>
+                                                    <span className={styles.infoLabel}>Státusz</span>
+                                                    <span className={`${styles.statusBadge} ${statusClass}`}>
+                                                        {submit.status}
+                                                    </span>
+                                                </div>
+
+                                                <div className={styles.infoBlock} style={{gridColumn: 'span 2'}}>
+                                                    <span className={styles.infoLabel}>Utolsó frissítés</span>
+                                                    <span className={styles.infoValue}>
+                                                        <Clock size={14} style={{display: 'inline', marginRight: '4px'}} />
+                                                        {new Date(submit.last_updated!).toLocaleDateString()}
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <div className={styles.infoBlock}>
-                                                <span className={styles.infoLabel}>Státusz</span>
-                                                <span className={`${styles.statusBadge} ${styles.statusDefault}`}>
-                                                    {submit.status}
-                                                </span>
-                                            </div>
-                                            <div className={styles.infoBlock} style={{gridColumn: 'span 2'}}>
-                                                <span className={styles.infoLabel}>Utolsó frissítés</span>
-                                                <span className={styles.infoValue}>
-                                                    <Clock size={14} style={{display: 'inline', marginRight: '4px'}} />
-                                                    {new Date(submit.last_updated!).toLocaleDateString()}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    ))}
+                                        );
+                                    })}
+
                                 </div>
                             )}
                         </section>
