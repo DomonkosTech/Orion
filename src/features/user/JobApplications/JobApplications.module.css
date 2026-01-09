@@ -94,6 +94,26 @@
     gap: 4px;
 }
 
+.centeredInfo {
+    align-items: center;
+}
+
+.statusBadge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+    width: fit-content;
+}
+
+.statusDefault { background: #e2e8f0; color: #475569; }
+
+.statusRejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
 .infoLabel {
     font-size: 0.75rem;
     text-transform: uppercase;
@@ -108,15 +128,6 @@
     color: var(--text-main);
 }
 
-/* Status Badges */
-.statusBadge {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-align: center;
-    width: fit-content;
-}
 
 .statusDefault { background: #e2e8f0; color: #475569; }
 
