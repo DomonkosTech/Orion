@@ -50,6 +50,15 @@ const CompanyLoginPage: React.FC = () => {
         } catch (err: unknown) {
             // Handle and display errors from the service or network
             console.error(err);
+
+            const errorObj = err as { status?: number; message?: string };
+
+            if (errorObj.status === 403 || errorObj.message === "Account not activated") {
+                toast.error("A fiók nincs aktiválva. Kérjük hitelesítse email címét!");
+                navigate("/company/sendverify");
+                return;
+            }
+
             const message = err instanceof Error ? err.message : "Hálózati hiba történt";
             toast.error(message);
         } finally {

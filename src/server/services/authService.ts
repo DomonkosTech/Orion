@@ -189,6 +189,7 @@ export const authService = {
 
         interface data {
             id: number;
+            verified: boolean;
             company_credentials: {
                 password_hash: string;
             };
@@ -197,7 +198,7 @@ export const authService = {
         // Fetch company data from DB
         const { data: companyData, error: fetchError } = await supabase
             .from("companies")
-            .select("id, company_credentials(password_hash)")
+            .select("id, verified, company_credentials(password_hash)")
             .eq("email", email)
             .maybeSingle<data>();
 
@@ -206,6 +207,10 @@ export const authService = {
         // Check credentials
         if (!companyData || !companyData.company_credentials || companyData.company_credentials.password_hash.length === 0){
             throw { status: 401, message: "Invalid credentials" };
+        }
+
+        if (!companyData.verified) {
+            throw { status: 403, message: "Account not activated" };
         }
 
         const passwordHash = companyData.company_credentials.password_hash

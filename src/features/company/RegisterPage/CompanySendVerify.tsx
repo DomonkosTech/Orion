@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import { sendUserVerificationEmail } from "../../../services/emailService";
-import styles from "./UserRegisterPage.module.css"; // Reusing your styles
+import { sendCompanyVerificationEmail } from "../../../services/emailService";
+import styles from "../../user/RegisterPage/UserRegisterPage.module.css";
 
 //components
 import InputField from "../../../components/InputField/InputField";
 import Button from "../../../components/Button/Button.tsx";
 
-const UserSendVerify: React.FC = () => {
+const CompanySendVerify: React.FC = () => {
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
@@ -20,11 +20,11 @@ const UserSendVerify: React.FC = () => {
 
         setIsLoading(true);
         try {
-            await sendUserVerificationEmail(email);
+            await sendCompanyVerificationEmail(email);
             toast.success("Hitelesítő link elküldve az email címére!");
             setEmail("");
         } catch (error) {
-            console.error(error); // töröld ki ezt a sort és meglátod mi lesz (TEDD MEG!)
+            console.error(error);
             toast.error("Hiba történt a küldés során!");
         } finally {
             setIsLoading(false);
@@ -71,4 +71,4 @@ const UserSendVerify: React.FC = () => {
     );
 };
 
-export default UserSendVerify;
+export default CompanySendVerify;
