@@ -104,7 +104,7 @@ const UserLoginPage: React.FC = () => {
                     <Button
                         type="button"
                         variant="link"
-                        onClick={() => toast("Elfelejtett jelszó funkció hamarosan!")}
+                        onClick={() => navigate("/user/password/reset")}
                     >
                         Elfelejtette jelszavát?
                     </Button>
