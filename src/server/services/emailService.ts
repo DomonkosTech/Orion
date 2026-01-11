@@ -15,7 +15,15 @@ const transporter = nodemailer.createTransport({
 });
 const api_url = process.env.FRONTEND_API_URL
 
-
+// Új segédfüggvény az email küldéshez
+export const sendEmail = async (to: string, subject: string, text: string) => {
+    await transporter.sendMail({
+        from: `"Orion" <${process.env.GMAIL_USER}>`,
+        to,
+        subject,
+        text,
+    });
+};
 
 
 export const sendUserEmail = async (email: string) => {
@@ -41,12 +49,11 @@ export const sendUserEmail = async (email: string) => {
     if (upsertError) throw upsertError;
 
 
-    await transporter.sendMail({
-        from: `"Feladó" <${process.env.GMAIL_USER}>`,
-        to: `${email}`,
-        subject: "Email verifikáció",
-        text: `\nszia kérlek azonosítsd az emailedet az alábbi linkre kattintva:\n\n ${verificationUrl}\n\n üdvözlettel Orion csapata!`,
-    });
+    await sendEmail(
+        email,
+        "Email verifikáció",
+        `\nszia kérlek azonosítsd az emailedet az alábbi linkre kattintva:\n\n ${verificationUrl}\n\n üdvözlettel Orion csapata!`
+    );
 }
 
 export const sendCompanyEmail = async (email: string) => {
@@ -74,18 +81,17 @@ export const sendCompanyEmail = async (email: string) => {
     if (upsertError) throw upsertError;
 
 
-    await transporter.sendMail({
-        from: `"Feladó" <${process.env.GMAIL_USER}>`,
-        to: `${email}`,
-        subject: "Email verifikáció",
-        text: `\nszia kérlek azonosítsd a céges email-t az alábbi linkre kattintva:\n\n ${verificationUrl}\n\n üdvözlettel Orion csapata!`,
-    });
+    await sendEmail(
+        email,
+        "Email verifikáció",
+        `\nszia kérlek azonosítsd a céges email-t az alábbi linkre kattintva:\n\n ${verificationUrl}\n\n üdvözlettel Orion csapata!`
+    );
 }
 
 
-
 interface ActivationPayload {
-    userId: string;
+    userId?: string;
+    companyId?: string;
     type: string;
 }
 
