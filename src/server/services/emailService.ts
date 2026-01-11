@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 dotenv.config();
 import {supabase} from "../../lib/supabaseClient.ts";
+import bcrypt from "bcryptjs";
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -145,4 +146,64 @@ export const activateCompanyEmail = async (token: string) => {
         .eq('id', data.company_id);
 
     if(updateError) throw updateError;
+}
+
+export const sendResetUserPassword = async (email: string) => {
+    const {data, error} = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle();
+    if(data === null || error) throw new Error("User not found");
+
+    const token = jwt.sign({userId: data.id, type: "reset"}, JWT_SECRET!, {expiresIn: '1h'});
+
+    const resetUrl = `${api_url}/user/password/?token=${token}`;
+
+    const { error: upsertError } = await supabase
+        .from('user_email_tokens')
+        .upsert({
+            user_id: data.id,
+            token: token,
+            expires_at: new Date(Date.now() + 3600 * 1000)
+        },{ onConflict: 'user_id' });
+
+    if (upsertError) throw upsertError;
+
+    await sendEmail(
+        email,
+        "Email verifikáció",
+        `\nszia jelszód megváltozatását az alábbi linkre kattintva tudod megtenni:\n\n ${resetUrl}\n\n üdvözlettel Orion csapata!`
+    );
+}
+
+export const saveNewUserPassword = async (token: string, password: string) => {
+    const payload = jwt.verify(
+        token,
+        process.env.JWT_SECRET!
+    ) as ActivationPayload;
+
+    if (payload.type !== "reset") {
+        throw new Error("Invalid token type");
+    }
+    const {data, error} = await supabase
+        .from('user_email_tokens')
+        .select('user_id')
+        .eq('token', token)
+        .maybeSingle();
+
+    if(data === null || error) throw new Error("Invalid token or expired");
+    const password_hash = await bcrypt.hash(password, 12);
+    const {error: updateError} = await supabase
+        .from('user_credentials')
+        .update({password_hash: password_hash})
+        .eq('user_id', data.user_id);
+
+    if(updateError) throw updateError;
+    const {error: deleteError} = await supabase
+        .from('user_email_tokens')
+        .delete()
+        .eq('token', token);
+
+    if(deleteError) throw deleteError;
 }

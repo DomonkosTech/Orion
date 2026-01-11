@@ -1,5 +1,8 @@
 import express from "express";
-import {sendUserEmail, activateUserEmail, sendCompanyEmail, activateCompanyEmail} from "../services/emailService.ts"
+import {
+    sendUserEmail, activateUserEmail, sendCompanyEmail, activateCompanyEmail, sendResetUserPassword,
+    saveNewUserPassword
+} from "../services/emailService.ts"
 
 const router = express.Router();
 
@@ -42,6 +45,46 @@ router.post("/company/verification", async (req, res) => {
         res.status(500).json({ error: err.message || "Internal server error" });
     }
 });
+
+router.post("/user/password/reset", async (req, res) => {
+    try {
+        const { email } = req.body;
+        if (!email) {
+            res.status(400).json({error: "Missing email"});
+            return;
+        }
+
+        await sendResetUserPassword(email);
+        res.json({success: true});
+
+    }
+    catch (err) {
+        console.error("Error while resetting user password:", err);
+        res.status(500).json("Internal server error");
+    }
+})
+
+router.patch("/user/password/reset", async (req, res) =>{
+    try {
+
+        const {token, password} = req.body;
+        if (!token || !password) {
+            res.status(400).json({error: "Missing token or password"});
+            return;
+        }
+
+        await saveNewUserPassword(token, password);
+        res.json({success: true});
+
+    }
+    catch (err) {
+        console.error("Error while resetting user password:", err);
+        res.status(500).json("Internal server error");
+    }
+})
+
+
+
 
 
 router.patch("/user/verification", async (req, res) => {
