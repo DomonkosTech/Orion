@@ -18,7 +18,7 @@ const api_url = process.env.FRONTEND_API_URL
 
 
 
-export const sendEmail = async (email: string) => {
+export const sendUserEmail = async (email: string) => {
     const {data, error} = await supabase
         .from('users')
         .select('id')
@@ -49,12 +49,47 @@ export const sendEmail = async (email: string) => {
     });
 }
 
+export const sendCompanyEmail = async (email: string) => {
+    const {data, error} = await supabase
+        .from('companies')
+        .select('id')
+        .eq('email', email)
+        .eq('verified', false)
+        .maybeSingle();
+
+    if(data === null || error){
+        throw new Error("User not found or already activated");
+    }
+
+    const token = jwt.sign({companyId: data.id, type: "activation"}, JWT_SECRET!, {expiresIn: '1h'});
+    const verificationUrl = `${api_url}/company/verify?token=${token}`;
+    const { error: upsertError } = await supabase
+        .from('company_email_tokens')
+        .upsert({
+            company_id: data.id,
+            token: token,
+            expires_at: new Date(Date.now() + 3600 * 1000)
+        },{ onConflict: 'company_id' });
+
+    if (upsertError) throw upsertError;
+
+
+    await transporter.sendMail({
+        from: `"Feladó" <${process.env.GMAIL_USER}>`,
+        to: `${email}`,
+        subject: "Email verifikáció",
+        text: `\nszia kérlek azonosítsd a céges email-t az alábbi linkre kattintva:\n\n ${verificationUrl}\n\n üdvözlettel Orion csapata!`,
+    });
+}
+
+
+
 interface ActivationPayload {
     userId: string;
     type: string;
 }
 
-export const activateEmail = async (token: string) => {
+export const activateUserEmail = async (token: string) => {
     const payload = jwt.verify(
         token,
         process.env.JWT_SECRET!
@@ -76,6 +111,32 @@ export const activateEmail = async (token: string) => {
         .from('users')
         .update({activated: true})
         .eq('id', data.user_id);
+
+    if(updateError) throw updateError;
+}
+
+export const activateCompanyEmail = async (token: string) => {
+    const payload = jwt.verify(
+        token,
+        process.env.JWT_SECRET!
+    ) as ActivationPayload;
+
+    if (payload.type !== "activation") {
+        throw new Error("Invalid token type");
+    }
+    const {data, error} = await supabase
+        .from('company_email_tokens')
+        .select('company_id')
+        .eq('token', token)
+        .maybeSingle();
+
+    if(data === null || error) throw new Error("Invalid token or expired");
+
+
+    const {error: updateError} = await supabase
+        .from('companies')
+        .update({verified: true})
+        .eq('id', data.company_id);
 
     if(updateError) throw updateError;
 }

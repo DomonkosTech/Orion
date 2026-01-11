@@ -19,6 +19,10 @@ import PublicHomePage from "./features/public/PublicHomePage/PublicHomePage.tsx"
 import ShowEmployees from "./features/company/ShowEmployees/ShowEmployees.tsx";
 import UserVerify from "./features/user/RegisterPage/UserVerify.tsx";
 import UserSendVerify from "./features/user/RegisterPage/UserSendVerify.tsx";
+import CompanyVerify from "./features/company/RegisterPage/CompanyVerify.tsx";
+import CompanySendVerify from "./features/company/RegisterPage/CompanySendVerify.tsx";
+
+
 
 
 function App() {
@@ -37,6 +41,14 @@ function App() {
                 <Route
                     path="/user/sendverify"
                     element={<UserSendVerify />}
+                />
+                <Route
+                    path="/company/sendverify"
+                    element={<CompanySendVerify />}
+                />
+                <Route
+                    path="/company/verify"
+                    element={<CompanyVerify />}
                 />
 
 

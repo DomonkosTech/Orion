@@ -1,10 +1,10 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { verifyUserEmail } from "../../../services/emailService";
+import { verifyCompanyEmail } from "../../../services/emailService";
 import { toast, Toaster } from "react-hot-toast";
-import styles from "./UserRegisterPage.module.css";
+import styles from "../../user/RegisterPage/UserRegisterPage.module.css";
 
-const UserVerify = () => {
+const CompanyVerify = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const isVerifying = useRef(false);
@@ -15,10 +15,10 @@ const UserVerify = () => {
         if (token && !isVerifying.current) {
             isVerifying.current = true;
 
-            verifyUserEmail(token)
+            verifyCompanyEmail(token)
                 .then(() => {
                     toast.success("Sikeres e-mail igazolás!");
-                    setTimeout(() => navigate("/UserLoginPage"), 2000);
+                    setTimeout(() => navigate("/CompanyLoginPage"), 2000);
                 })
                 .catch((error) => {
                     toast.error("Hiba történt: " + error.message);
@@ -47,4 +47,4 @@ const UserVerify = () => {
     );
 };
 
-export default UserVerify;
+export default CompanyVerify;
