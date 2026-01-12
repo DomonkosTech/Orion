@@ -23,7 +23,8 @@ import CompanyVerify from "./features/company/RegisterPage/CompanyVerify.tsx";
 import CompanySendVerify from "./features/company/RegisterPage/CompanySendVerify.tsx";
 import UserPasswordResetRequest from "./features/user/EditProfile/UserPasswordResetRequest.tsx";
 import UserPasswordResetSave from "./features/user/EditProfile/UserPasswordResetSave.tsx";
-
+import CompanyPasswordResetRequest from "./features/company/EditProfile/CompanyPasswordResetRequest.tsx";
+import CompanyPasswordResetSave from "./features/company/EditProfile/CompanyPasswordResetSave.tsx";
 
 
 function App() {
@@ -59,7 +60,14 @@ function App() {
                     path="/user/password/"
                     element={<UserPasswordResetSave />}
                 />
-
+                <Route
+                    path="/company/password/reset"
+                    element={<CompanyPasswordResetRequest />}
+                />
+                <Route
+                    path="/company/password/"
+                    element={<CompanyPasswordResetSave />}
+                />
 
 
 
