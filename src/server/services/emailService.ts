@@ -172,10 +172,44 @@ export const sendResetUserPassword = async (email: string) => {
 
     await sendEmail(
         email,
-        "Email verifikáció",
+        "jelszó visszaállítás",
         `\nszia jelszód megváltozatását az alábbi linkre kattintva tudod megtenni:\n\n ${resetUrl}\n\n üdvözlettel Orion csapata!`
     );
 }
+
+
+export const sendResetCompanyPassword = async (email: string) => {
+    const {data, error} = await supabase
+        .from('companies')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle();
+
+    if(data === null || error) throw new Error("company not found");
+
+    const token = jwt.sign({companyId: data.id, type: "reset"}, JWT_SECRET!, {expiresIn: '1h'});
+
+    const resetUrl = `${api_url}/company/password/?token=${token}`;
+
+    const { error: upsertError } = await supabase
+        .from('company_email_tokens')
+        .upsert({
+            company_id: data.id,
+            token: token,
+            expires_at: new Date(Date.now() + 3600 * 1000)
+        },{ onConflict: 'company_id' });
+
+    if (upsertError) throw upsertError;
+
+    await sendEmail(
+        email,
+        "jelszó visszaállítás",
+        `\nszia jelszód megváltozatását az alábbi linkre kattintva tudod megtenni:\n\n ${resetUrl}\n\n üdvözlettel Orion csapata!`
+    );
+}
+
+
+
 
 export const saveNewUserPassword = async (token: string, password: string) => {
     const payload = jwt.verify(
@@ -202,6 +236,38 @@ export const saveNewUserPassword = async (token: string, password: string) => {
     if(updateError) throw updateError;
     const {error: deleteError} = await supabase
         .from('user_email_tokens')
+        .delete()
+        .eq('token', token);
+
+    if(deleteError) throw deleteError;
+}
+
+
+export const saveNewCompanyPassword = async (token: string, password: string) => {
+    const payload = jwt.verify(
+        token,
+        process.env.JWT_SECRET!
+    ) as ActivationPayload;
+
+    if (payload.type !== "reset") {
+        throw new Error("Invalid token type");
+    }
+    const {data, error} = await supabase
+        .from('company_email_tokens')
+        .select('company_id')
+        .eq('token', token)
+        .maybeSingle();
+
+    if(data === null || error) throw new Error("Invalid token or expired");
+    const password_hash = await bcrypt.hash(password, 12);
+    const {error: updateError} = await supabase
+        .from('company_credentials')
+        .update({password_hash: password_hash})
+        .eq('company_id', data.company_id);
+
+    if(updateError) throw updateError;
+    const {error: deleteError} = await supabase
+        .from('company_email_tokens')
         .delete()
         .eq('token', token);
 
