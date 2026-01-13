@@ -7,7 +7,7 @@ import { Header } from "../../../components/Header/Header.tsx";
 import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
-import { getTop3Advertisements, type CompanyAdvertisement } from "../../../services/advertisementService.ts";
+import { getTop3Advertisements, type CompanyAdvertisement } from "../../../Api/advertisementApi.ts";
 
 function PublicHomePage() {
     const navigate = useNavigate();

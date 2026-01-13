@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Upload, FileText, X, Info } from "lucide-react";
-import { uploadResume } from "../../../services/userServise";
+import { uploadResume } from "../../../Api/userApi";
 import styles from "./UploadResume.module.css";
 
 //components

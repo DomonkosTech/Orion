@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import { sendCompanyVerificationEmail } from "../../../services/emailService";
+import { sendCompanyVerificationEmail } from "../../../Api/emailApi.ts";
 import styles from "../../user/RegisterPage/UserRegisterPage.module.css";
 
 //components

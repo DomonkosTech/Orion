@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { saveNewUserPassword } from "../../../services/emailService";
+import { saveNewUserPassword } from "../../../Api/emailApi.ts";
 import { toast, Toaster } from "react-hot-toast";
 
 const UserPasswordResetSave = () => {

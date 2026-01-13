@@ -5,7 +5,7 @@ import styles from "./Header.module.css";
 import Button from "../Button/Button";
 
 // Server / hooks
-import { useLogout } from "../../services/authService";
+import { useLogout } from "../../Api/authApi.ts";
 import { useAuth } from "../../hooks/useAuth";
 
 interface NavItem {

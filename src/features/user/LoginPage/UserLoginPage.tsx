@@ -7,7 +7,7 @@ import styles from "./UserLoginPage.module.css";
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Button/Button.tsx";
-import { loginUser } from "../../../services/userServise.ts";
+import { loginUser } from "../../../Api/userApi.ts";
 import { loginSchema } from "../../../validation/validation";
 
 const UserLoginPage: React.FC = () => {

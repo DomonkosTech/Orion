@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { getCompanyAdvertisements, type CompanyAdvertisement } from "../../../services/advertisementService";
+import { getCompanyAdvertisements, type CompanyAdvertisement } from "../../../Api/advertisementApi";
 
 const CompanyHomePage: React.FC = () => {
     const navigate = useNavigate();

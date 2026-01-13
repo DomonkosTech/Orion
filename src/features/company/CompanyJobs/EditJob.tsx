@@ -6,7 +6,7 @@ import {
     updateAdvertisement,
     updateAdvertisementStatus,
     type UpdateAdvertisementData
-} from "../../../services/advertisementService";
+} from "../../../Api/advertisementApi.ts";
 
 const EditAdvertisement = () => {
     const { id } = useParams();

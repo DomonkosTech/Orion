@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCompanyProfile, updateCompanyProfile, type CompanyProfile } from "../../../services/companyService";
+import { getCompanyProfile, updateCompanyProfile, type CompanyProfile } from "../../../Api/companyApi.ts";
 import { toast, Toaster } from "react-hot-toast";
 import { companyUpdateProfileSchema } from "../../../validation/validation";
 

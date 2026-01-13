@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import { sendUserPasswordResetEmail } from "../../../services/emailService";
+import { sendUserPasswordResetEmail } from "../../../Api/emailApi.ts";
 import styles from "../RegisterPage/UserRegisterPage.module.css";
 
 //components

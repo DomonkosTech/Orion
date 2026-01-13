@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getEmployees, deleteEmployee } from "../../../services/advertisementService.ts";
+import { getEmployees, deleteEmployee } from "../../../Api/advertisementApi.ts";
 import { toast , Toaster } from "react-hot-toast";
 
 

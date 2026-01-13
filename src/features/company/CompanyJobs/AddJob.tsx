@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createAdvertisement } from "../../../services/advertisementService";
+import { createAdvertisement } from "../../../Api/advertisementApi";
 import {toast, Toaster} from "react-hot-toast";
 
 const AddJob: React.FC = () => {
