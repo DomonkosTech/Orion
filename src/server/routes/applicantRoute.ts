@@ -7,7 +7,7 @@ import {
     rejectApplication,
     getResumeUrl,
     acceptApplication
-} from "../services/applicantService.ts";
+} from "../Controller/applicantController.ts";
 
 const router = express.Router();
 
