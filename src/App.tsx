@@ -8,7 +8,7 @@ import CompanyRegisterPage from "./features/company/RegisterPage/CompanyRegister
 import CompanyLoginPage from "./features/company/LoginPage/CompanyLoginPage.tsx";
 import EditCompanyProfile from "./features/company/EditProfile/EditCompanyProfile.tsx";
 import AddJob from "./features/company/CompanyJobs/AddJob.tsx";
-import CompanyHomePage from "./features/company/HomePage/CompanyHomePage.tsx";
+import ShowListedJobs from "./features/company/ShowListedJobs/ShowListedJobs.tsx";
 import EditJob from "./features/company/CompanyJobs/EditJob.tsx";
 import ListJobs from "./features/user/UserJobs/ListAllJobs/ListJobs.tsx";
 import ShowJob from "./features/user/UserJobs/ShowSelectedJob/ShowJob.tsx";
@@ -128,7 +128,7 @@ function App() {
                     path="/company"
                     element={
                         <IsLoggedIn mode="company">
-                            <CompanyHomePage/>
+                            <ShowListedJobs/>
                         </IsLoggedIn>
                     }
                 />

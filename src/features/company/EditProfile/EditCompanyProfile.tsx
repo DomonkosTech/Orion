@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getCompanyProfile, updateCompanyProfile, type CompanyProfile } from "../../../Api/companyApi.ts";
+import { getCompanyProfile, updateCompanyProfile, type CompanyProfile } from "../../../api/companyApi.ts";
 import { toast, Toaster } from "react-hot-toast";
-import { companyUpdateProfileSchema } from "../../../validation/validation";
+import { companyUpdateProfileSchema } from "../../../validation/Validation.ts";
 
 const EditCompanyProfile: React.FC = () => {
     const [company, setCompany] = useState<CompanyProfile | null>(null);

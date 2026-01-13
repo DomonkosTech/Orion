@@ -24,7 +24,7 @@ const authBase = z.object({
 });
 
 // --- User Registration ---
-export const userRegisterSchema = authBase.extend({
+export const userRegisterObject = authBase.extend({
     lname: z.string().min(2, "Vezetéknév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
     fname: z.string().min(2, "Keresztnév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
     birth_place: z.string().min(2, "Születési hely legalább 2 karakter"),
@@ -38,10 +38,12 @@ export const userRegisterSchema = authBase.extend({
     personal_id: z.string().length(8, "A személyi igazolvány számnak pontosan 8 karakternek kell lennie").regex(/^\d{6}[A-Z]{2}$/, "Érvénytelen formátum"),
     address_card_number: z.string().length(8, "A lakcímkártya számnak pontosan 8 karakternek kell lennie").regex(/^\d{6}[A-Z]{2}$/, "Érvénytelen formátum"),
     terms_accepted: z.literal(true, { errorMap: () => ({ message: "El kell fogadnia a feltételeket" }) }),
-}).superRefine(passwordConfirmRefinement);
+});
+
+export const userRegisterSchema = userRegisterObject.superRefine(passwordConfirmRefinement);
 
 // --- Company Registration ---
-export const companyRegisterSchema = authBase.extend({
+    export const companyRegisterObject = authBase.extend({
     name: z.string().min(2, "A cégnév legalább 2 karakter"),
     address: z.string().min(5, "A cím legalább 5 karakter"),
     taxNumber: z.string().length(13, "Az adószám pontosan 13 karakter").regex(/^\d{8}-\d{1}-\d{2}$/, "Helyes alak: 12345678-X-YY"),
@@ -51,7 +53,9 @@ export const companyRegisterSchema = authBase.extend({
     shortDescription: z.string().min(10, "A leírás legalább 10 karakter").max(500, "Maximum 500 karakter"),
     phoneNumber: z.string().regex(/^[0-9+\s-]{7,20}$/, "Érvénytelen telefonszám"),
     termsAccepted: z.literal(true, { errorMap: () => ({ message: "El kell fogadnia a feltételeket" }) }),
-}).superRefine(passwordConfirmRefinement);
+});
+
+export const companyRegisterSchema = companyRegisterObject.superRefine(passwordConfirmRefinement);
 
 // --- Login Validation ---
 export const loginSchema = z.object({

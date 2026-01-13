@@ -5,8 +5,8 @@ import { toast, Toaster } from "react-hot-toast";
 import styles from "./CompanyLoginPage.module.css";
 
 // Services
-import { loginCompany} from "../../../Api/companyApi.ts";
-import { loginSchema } from "../../../validation/validation";
+import { loginCompany} from "../../../api/companyApi.ts";
+import { loginSchema } from "../../../validation/Validation.ts";
 
 // Components
 import InputField from "../../../components/InputField/InputField";

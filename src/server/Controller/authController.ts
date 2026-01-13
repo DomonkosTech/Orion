@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { supabase } from "../../lib/supabaseClient.ts";
 import dotenv from "dotenv";
 import type { CookieOptions } from "express";
-import { userRegisterSchema, companyRegisterSchema, loginSchema } from "../../validation/validation";
+import { userRegisterSchema, companyRegisterSchema, loginSchema } from "../../validation/Validation.ts";
 
 dotenv.config();
 

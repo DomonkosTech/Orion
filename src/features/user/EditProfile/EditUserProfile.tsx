@@ -11,10 +11,10 @@ import {
     deleteResume,
     type UserProfileData,
     type Documents,
-} from "../../../Api/userApi.ts";
+} from "../../../api/userApi.ts";
 import styles from "./EditUserProfile.module.css";
 import { toast, Toaster } from "react-hot-toast";
-import { userUpdateProfileSchema } from "../../../validation/validation";
+import { userUpdateProfileSchema } from "../../../validation/Validation.ts";
 
 // Components
 import { Header } from "../../../components/Header/Header.tsx";
@@ -279,6 +279,15 @@ const EditUserProfile: React.FC = () => {
                                                 value={documents.personal_id}
                                                 readOnly={!editMode}
                                                 onChange={(e) => setDocuments({ ...documents, personal_id: e.target.value })}
+                                                containerClassName={styles.field}
+                                            />
+                                        )}
+                                        {documents && (
+                                            <InputField
+                                                label="Lakcímkártya"
+                                                value={documents.address_card_number}
+                                                readOnly={!editMode}
+                                                onChange={(e) => setDocuments({ ...documents, address_card_number: e.target.value })}
                                                 containerClassName={styles.field}
                                             />
                                         )}
