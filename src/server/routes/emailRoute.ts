@@ -2,7 +2,7 @@ import express from "express";
 import {
     sendUserEmail, activateUserEmail, sendCompanyEmail, activateCompanyEmail, sendResetUserPassword,
     saveNewUserPassword, sendResetCompanyPassword, saveNewCompanyPassword
-} from "../services/emailService.ts"
+} from "../Controller/emailController.ts"
 
 const router = express.Router();
 
