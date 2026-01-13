@@ -10,7 +10,7 @@ import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Button/Button.tsx";
 import TextArea from "../../../components/TextArea/TextArea";
 
-import { registerUser, type UserRegistrationData } from "../../../services/userServise";
+import { registerUser, type UserRegistrationData } from "../../../Api/userApi.ts";
 import { baseSchema } from "../../../validation/validation";
 
 const stepSchemas = [

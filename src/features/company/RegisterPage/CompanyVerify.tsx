@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { verifyCompanyEmail } from "../../../services/emailService";
+import { verifyCompanyEmail } from "../../../Api/emailApi.ts";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "../../user/RegisterPage/UserRegisterPage.module.css";
 

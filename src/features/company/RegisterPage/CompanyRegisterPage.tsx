@@ -11,7 +11,7 @@ import AccountSection from "./components/AccountSection";
 import CompanyInfoSection from "./components/CompanyInfoSection";
 import ContactSection from "./components/ContactSection";
 import ActivitySection from "./components/ActivitySection";
-import { registerCompany } from "../../../services/companyService.ts";
+import { registerCompany } from "../../../Api/companyApi.ts";
 import { companyRegisterSchema } from "../../../validation/validation";
 
 const CompanyRegisterPage: React.FC = () => {

@@ -11,7 +11,7 @@ import {
     deleteResume,
     type UserProfileData,
     type Documents,
-} from "../../../services/userServise";
+} from "../../../Api/userApi.ts";
 import styles from "./EditUserProfile.module.css";
 import { toast, Toaster } from "react-hot-toast";
 import { userUpdateProfileSchema } from "../../../validation/validation";

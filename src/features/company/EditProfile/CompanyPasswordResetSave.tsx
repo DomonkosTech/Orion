@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { saveNewCompanyPassword } from "../../../services/emailService";
+import { saveNewCompanyPassword } from "../../../Api/emailApi.ts";
 import { toast, Toaster } from "react-hot-toast";
 
 const CompanyPasswordResetSave = () => {

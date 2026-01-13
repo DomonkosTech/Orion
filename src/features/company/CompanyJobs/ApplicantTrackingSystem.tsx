@@ -7,7 +7,7 @@ import {
     rejectApplication,
     getResumeUrl,
     type Applicant
-} from "../../../services/applicationService";
+} from "../../../Api/applicationApi.ts";
 
 export const ApplicantTrackingSystem: React.FC = () => {
     const [applicants, setApplicants] = useState<Applicant[]>([]);

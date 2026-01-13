@@ -7,7 +7,7 @@ import {
     submitApplication,
     type AdvertisementDetails,
     ApiError
-} from "../../../../services/advertisementService";
+} from "../../../../Api/advertisementApi";
 import styles from "./ShowJob.module.css";
 
 //components

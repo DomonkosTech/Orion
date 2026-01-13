@@ -5,7 +5,7 @@ import { toast, Toaster } from "react-hot-toast";
 import styles from "./CompanyLoginPage.module.css";
 
 // Services
-import { loginCompany} from "../../../services/companyService";
+import { loginCompany} from "../../../Api/companyApi.ts";
 import { loginSchema } from "../../../validation/validation";
 
 // Components
