@@ -8,6 +8,7 @@ import CompanyRegisterPage from "./features/company/RegisterPage/CompanyRegister
 import CompanyLoginPage from "./features/company/LoginPage/CompanyLoginPage.tsx";
 import EditCompanyProfile from "./features/company/EditProfile/EditCompanyProfile.tsx";
 import AddJob from "./features/company/CompanyJobs/AddJob.tsx";
+import CompanyHomePage from "./features/company/HomePage/CompanyHomePage.tsx";
 import ShowListedJobs from "./features/company/ShowListedJobs/ShowListedJobs.tsx";
 import EditJob from "./features/company/CompanyJobs/EditJob.tsx";
 import ListJobs from "./features/user/UserJobs/ListAllJobs/ListJobs.tsx";
@@ -126,6 +127,14 @@ function App() {
                 {/* 🏢 Csak COMPANY típusú felhasználóknak */}
                 <Route
                     path="/company"
+                    element={
+                        <IsLoggedIn mode="company">
+                            <CompanyHomePage/>
+                        </IsLoggedIn>
+                    }
+                />
+                <Route
+                    path="/ShowListedJobs"
                     element={
                         <IsLoggedIn mode="company">
                             <ShowListedJobs/>
