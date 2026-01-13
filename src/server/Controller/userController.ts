@@ -1,5 +1,5 @@
 import { supabase } from "../../lib/supabaseClient.ts";
-import { userUpdateProfileSchema } from "../../validation/validation";
+import { userUpdateProfileSchema } from "../../validation/Validation.ts";
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 

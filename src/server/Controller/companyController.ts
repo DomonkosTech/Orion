@@ -1,5 +1,5 @@
 import { supabase } from "../../lib/supabaseClient.ts";
-import { companyUpdateProfileSchema } from "../../validation/validation";
+import { companyUpdateProfileSchema } from "../../validation/Validation.ts";
 
 interface CompanyProfileData {
     name?: string;

@@ -4,27 +4,19 @@ import { toast, Toaster } from "react-hot-toast";
 import { z } from "zod";
 import styles from "./UserRegisterPage.module.css";
 
-//components
+// components
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import Button from "../../../components/Button/Button.tsx";
 import TextArea from "../../../components/TextArea/TextArea";
 
-import { registerUser, type UserRegistrationData } from "../../../Api/userApi.ts";
-import { baseSchema } from "../../../validation/validation";
+import { registerUser } from "../../../api/userApi.ts";
+import { userRegisterObject, userRegisterSchema } from "../../../validation/Validation.ts";
 
 const stepSchemas = [
-    baseSchema.pick({ email: true, password: true, confirmPassword: true }).superRefine(({ confirmPassword, password }, ctx) => {
-        if (confirmPassword !== password) {
-            ctx.addIssue({
-                code: "custom",
-                message: "A jelszavak nem egyeznek",
-                path: ["confirmPassword"],
-            });
-        }
-    }),
-    baseSchema.pick({ lname: true, fname: true, birth_place: true, birth_date: true, personal_id: true, address_card_number: true, nationality: true }),
-    baseSchema.pick({ address: true, phone_number: true, tax_number: true, qualifications: true, short_bio: true, terms_accepted: true })
+    userRegisterObject.pick({ email: true, password: true, confirmPassword: true }),
+    userRegisterObject.pick({ lname: true, fname: true, birth_place: true, birth_date: true, personal_id: true, address_card_number: true, nationality: true }),
+    userRegisterObject.pick({ address: true, phone_number: true, tax_number: true, qualifications: true, short_bio: true, terms_accepted: true })
 ];
 
 const UserRegisterPage: React.FC = () => {
@@ -33,7 +25,7 @@ const UserRegisterPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    const [formData, setFormData] = useState<UserRegistrationData & { confirmPassword: "" }>({
+    const [formData, setFormData] = useState({
         email: "",
         password: "",
         confirmPassword: "",
@@ -97,15 +89,27 @@ const UserRegisterPage: React.FC = () => {
     };
 
     const prevStep = () => {
-        setErrors({}); // Clear errors when going back
+        setErrors({});
         setStep(s => s - 1);
     };
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        const isValid = validateStep(3);
-        if (!isValid) return;
+        // Final validation against the FULL schema (catches password mismatch)
+        const result = userRegisterSchema.safeParse(formData);
+
+        if (!result.success) {
+            const formattedErrors: Record<string, string> = {};
+            result.error.errors.forEach((error) => {
+                if (error.path[0]) {
+                    formattedErrors[error.path[0] as string] = error.message;
+                }
+            });
+            setErrors(formattedErrors);
+            toast.error("Ellenőrizze az adatokat!");
+            return;
+        }
 
         setIsLoading(true);
         try {
@@ -137,22 +141,10 @@ const UserRegisterPage: React.FC = () => {
                     <form onSubmit={handleRegister} className={styles.form}>
                         {step === 1 && (
                             <section className={styles.section}>
-                                <InputField
-                                    label="Email cím *" name="email" type="email"
-                                    value={formData.email} onChange={handleChange}
-                                    error={errors.email}
-                                />
+                                <InputField label="Email cím *" name="email" type="email" value={formData.email} onChange={handleChange} error={errors.email} />
                                 <div className={styles.row}>
-                                    <InputField
-                                        label="Jelszó *" name="password" type="password"
-                                        value={formData.password} onChange={handleChange}
-                                        error={errors.password}
-                                    />
-                                    <InputField
-                                        label="Megerősítés *" name="confirmPassword" type="password"
-                                        value={formData.confirmPassword} onChange={handleChange}
-                                        error={errors.confirmPassword}
-                                    />
+                                    <InputField label="Jelszó *" name="password" type="password" value={formData.password} onChange={handleChange} error={errors.password} />
+                                    <InputField label="Megerősítés *" name="confirmPassword" type="password" value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
                                 </div>
                             </section>
                         )}
@@ -191,13 +183,11 @@ const UserRegisterPage: React.FC = () => {
                         )}
 
                         <div className={styles.footer}>
-                            {step > 1 && (
-                                <Button type="button" variant="secondary" color={"orion-blue"} onClick={prevStep}>Vissza</Button>
-                            )}
+                            {step > 1 && <Button type="button" variant="secondary" color="orion-blue" onClick={prevStep}>Vissza</Button>}
                             {step < 3 ? (
-                                <Button type="button" variant="primary" color={"orion-blue"} onClick={nextStep}>Folytatás</Button>
+                                <Button type="button" variant="primary" color="orion-blue" onClick={nextStep}>Folytatás</Button>
                             ) : (
-                                <Button type="submit" isLoading={isLoading} variant="primary" color={"orion-blue"}>Regisztráció befejezése</Button>
+                                <Button type="submit" isLoading={isLoading} variant="primary" color="orion-blue">Regisztráció befejezése</Button>
                             )}
                         </div>
                     </form>
