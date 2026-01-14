@@ -1,0 +1,124 @@
+.page {
+    --orion-blue: #2c5aa0;
+    --orion-blue-dark: #1e3d6f;
+    --bg: #f8fafc;
+    --panel: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+}
+
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.title {
+    font-size: 2rem;
+    font-weight: 950;
+    letter-spacing: -0.02em;
+    margin: 8px 0 4px 0;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* List Layout */
+.jobList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.jobCard {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.jobCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    border-color: var(--orion-blue);
+}
+
+.jobMainInfo h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 850;
+    color: var(--text);
+}
+
+.jobSubInfo {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-top: 4px;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.editButton {
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--orion-blue);
+}
+
+.editButton:hover {
+    background: var(--orion-blue);
+    color: white;
+    border-color: var(--orion-blue-dark);
+}
+
+.editButton svg {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px;
+    display: block;
+    flex-shrink: 0;
+}
+
+.statusBadge {
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    background: #eef2f8;
+    color: var(--orion-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
