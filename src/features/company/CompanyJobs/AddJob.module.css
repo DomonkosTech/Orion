@@ -1,0 +1,237 @@
+.page {
+    --orion-blue: #2c5aa0;
+    --orion-blue-dark: #1e3d6f;
+    --bg: #f1f5f9;
+    --panel: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #cbd5e1;
+
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.header {
+    margin-bottom: 32px;
+    border-left: 4px solid var(--orion-blue);
+    padding-left: 20px;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 4px 0;
+    color: #0f172a;
+}
+
+/* Layout Structure */
+.layout {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 32px;
+    align-items: flex-start;
+}
+
+.mainContent {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Card Styling */
+.card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.cardTitle {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: #334155;
+}
+
+.cardTitle span {
+    background: var(--orion-blue);
+    color: white;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.9rem;
+}
+
+/* Grid Logic */
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.fullWidth {
+    grid-column: span 2;
+}
+
+.stackedInputs {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* Interactive Benefit Tags */
+.benefitsGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.benefitTag {
+    padding: 10px 18px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+    background: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.benefitTag:hover {
+    border-color: var(--orion-blue);
+    color: var(--orion-blue);
+}
+
+.activeBenefit {
+    background: var(--orion-blue);
+    color: white !important;
+    border-color: var(--orion-blue);
+}
+
+/* Sidebar Styling */
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.stickyCard {
+    position: sticky;
+    top: 20px;
+}
+
+.sidebarTitle {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sidebarInputGroup {
+    margin-bottom: 20px;
+}
+
+.sidebarInputGroup label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--muted);
+}
+
+.sidebarInput, .sidebarSelect {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    font-weight: 600;
+}
+
+.statusBox {
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.checkboxLabel {
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+}
+
+.checkboxLabel strong {
+    display: block;
+    font-size: 0.9rem;
+}
+
+.checkboxLabel span {
+    font-size: 0.75rem;
+    color: var(--muted);
+}
+
+.sidebarActions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.submitBtn {
+    width: 100%;
+    padding: 16px !important;
+    font-size: 1rem !important;
+}
+
+.cancelLink {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.tipCard {
+    background: #fff9c4;
+    padding: 20px;
+    border-radius: 16px;
+    border: 1px solid #fbc02d;
+}
+
+.tipCard h4 {
+    margin: 0 0 8px 0;
+    font-size: 0.9rem;
+}
+
+.tipCard p {
+    font-size: 0.85rem;
+    margin: 0;
+    line-height: 1.4;
+}
+
+@media (max-width: 1024px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+    .sidebar {
+        order: -1;
+    }
+}

@@ -6,27 +6,43 @@
 }
 
 .label {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #333;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     text-align: left;
 }
 
 .input {
     padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
     font-size: 1rem;
     width: 100%;
     box-sizing: border-box;
-    background-color: #fff;
-    color: #333;
-    transition: border-color 0.2s;
+    background-color: #fcfcfc;
+    color: #0f172a;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
 }
 
 .input:focus {
     outline: none;
-    border-color: #000;
+    border-color: #2c5aa0;
+    box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+}
+
+.input:read-only {
+    background-color: #f1f5f9;
+    color: #475569;
+    border-color: transparent;
+    cursor: default;
+}
+
+.input:read-only:focus {
+    border-color: transparent;
+    box-shadow: none;
 }
 
 .errorMessage {

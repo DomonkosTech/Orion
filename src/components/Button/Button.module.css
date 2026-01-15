@@ -33,8 +33,8 @@
 }
 
 .btn[data-color="leaf-green"] {
-    --btn-main-color: #388E3C;
-    --btn-hover-color: #2E7D32;
+    --btn-main-color: #2ab32f;
+    --btn-hover-color: #22a527;
 }
 
 .btn[data-color="black"] {

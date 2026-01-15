@@ -1,162 +1,161 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import {toast, Toaster} from "react-hot-toast";
+import { useParams, useNavigate } from 'react-router-dom';
+import { toast, Toaster } from "react-hot-toast";
+import styles from "./ApplicantTrackingSystem.module.css";
+
+// Icons
+import { FileText, Check, X, ArrowLeft, Mail, Calendar, MapPin } from "lucide-react";
+
+// Shared Components
+import { Header } from "../../../components/Header/Header.tsx";
+import Button from "../../../components/Button/Button.tsx";
+import Footer from "../../../components/Footer/Footer.tsx";
+import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
+
 import {
     getApplicantsForAdvertisement,
     acceptApplication,
     rejectApplication,
     getResumeUrl,
     type Applicant
-} from "../../../Api/applicationApi.ts";
+} from "../../../api/applicationApi.ts";
 
 export const ApplicantTrackingSystem: React.FC = () => {
+    const navigate = useNavigate();
     const [applicants, setApplicants] = useState<Applicant[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const { id } = useParams<{ id: string }>(); // Get advertisement ID from URL
+    const { id } = useParams<{ id: string }>();
 
     useEffect(() => {
         const fetchApplicants = async () => {
             if (!id) {
                 setLoading(false);
                 setError("Nincs hirdetés azonosító megadva.");
+                console.error(error)
                 return;
             }
-
             try {
                 const data = await getApplicantsForAdvertisement(id);
-
                 if (data.success) {
                     setApplicants(data.applicants);
                 } else {
                     setError(data.error || "Hiba a jelentkezők lekérésekor.");
                 }
             } catch (err) {
+                console.error(err)
                 setError("Hálózati hiba vagy a szerver nem elérhető.");
-                console.error("Fetch applicants error:", err);
             } finally {
                 setLoading(false);
             }
         };
-
         fetchApplicants();
     }, [id]);
 
     const handleAccept = async (applicationId: number) => {
         try {
             const data = await acceptApplication(applicationId);
-
             if (data.success) {
-                toast.success("sikeresen elfogadva")
+                toast.success("Sikeresen elfogadva");
                 setApplicants(prev => prev.filter(app => app.id !== applicationId));
-            } else {
-                toast.error(`Hiba a jelentkező elfogadásakor`);
             }
         } catch (err) {
-            toast.error("Hálózati hiba vagy a szerver nem elérhető.");
-            console.error("Accept application error:", err);
+            console.error(err)
+            toast.error("Hiba történt.");
         }
     };
 
     const handleDownloadResume = async (applicationId: number) => {
         try {
             const data = await getResumeUrl(applicationId);
-
             if (data.success) {
                 window.open(data.url, '_blank');
-            } else {
-                toast.error(data.message || data.error || "Hiba az önéletrajz letöltésekor.");
             }
         } catch (err) {
-            toast.error("az önéletrajz nem elérhető");
-            console.error("Download resume error:", err);
+            console.error(err)
+            toast.error("Az önéletrajz nem elérhető");
         }
     };
 
     const handleReject = async (applicationId: number) => {
         try {
             const data = await rejectApplication(applicationId);
-
             if (data.success) {
-                toast.success("sikeresen elutasítva")
+                toast.success("Sikeresen elutasítva");
                 setApplicants(prev => prev.filter(app => app.id !== applicationId));
-            } else {
-                toast.error(`Hiba a jelentkező elutasításakor: ${data.error}`);
             }
         } catch (err) {
-            toast.error("Hálózati hiba vagy a szerver nem elérhető.");
-            console.error("Reject application error:", err);
+            console.error(err)
+            toast.error("Hiba történt.");
         }
     };
 
-    if (loading) {
-        return <p className="text-center mt-8">Jelentkezők betöltése...</p>;
-    }
-
-    if (error) {
-        return <p className="text-center mt-8 text-red-500">{error}</p>;
-    }
+    if (loading) return <div className={styles.page}><Header /><p className={styles.emptyState}>Betöltés...</p></div>;
 
     return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Jelentkezőkezelő Rendszer</h1>
-            {applicants.length > 0 && (
-                <h2>
-                    Ennyien tekintették meg a hirdetését: {applicants[0].click_count?.click_count ?? 0}
-                </h2>
-            )}
-            <Toaster />
-            {applicants.length === 0 ? (
-                <p>Nincsenek új jelentkezők ehhez a hirdetéshez.</p>
-            ) : (
-                <div className="overflow-x-auto shadow-md rounded-lg">
-                    <table className="min-w-full bg-white">
-                        <thead className="bg-gray-200">
-                            <tr>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Vezetéknév</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Keresztnév</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Születési Dátum</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Születési Hely</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jelentkezés Dátuma</th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Műveletek</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-200">
-                            {applicants.map((applicant) => (
-                                <tr key={applicant.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap">{applicant.users.lname}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{applicant.users.fname}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{applicant.users.email}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{new Date(applicant.users.birth_date).toLocaleDateString()}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{applicant.users.birth_place}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap">{new Date(applicant.last_updated).toLocaleString()}</td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                        <button
-                                            onClick={() => handleDownloadResume(applicant.id)}
-                                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
-                                        >
-                                            Önéletrajz
-                                        </button>
-                                        <button
-                                            onClick={() => handleAccept(applicant.id)}
-                                            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2"
-                                        >
-                                            Felvesz
-                                        </button>
-                                        <button
-                                            onClick={() => handleReject(applicant.id)}
-                                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-                                        >
-                                            Elutasít
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+        <div className={styles.page}>
+            <Header />
+            <main className={styles.container}>
+                <header className={styles.header}>
+                    <div>
+                        <BannerKicker>Toborzás</BannerKicker>
+                        <h1 className={styles.title}>Jelentkezők kezelése</h1>
+                        {applicants.length > 0 && (
+                            <div className={styles.statsCounter}>
+                                Megtekintések száma: {applicants[0].click_count?.click_count ?? 0}
+                            </div>
+                        )}
+                    </div>
+                    <Button variant="secondary" onClick={() => navigate(-1)}>
+                        <ArrowLeft size={18} /> Vissza
+                    </Button>
+                </header>
+
+                <Toaster />
+
+                <div className={styles.applicantList}>
+                    {applicants.length === 0 ? (
+                        <div className={styles.emptyState}>
+                            <p>Nincsenek új jelentkezők ehhez a hirdetéshez.</p>
+                        </div>
+                    ) : (
+                        applicants.map((applicant) => (
+                            <div key={applicant.id} className={styles.applicantCard}>
+                                <div className={styles.infoGroup}>
+                                    <h2 className={styles.name}>{applicant.users.lname} {applicant.users.fname}</h2>
+                                    <div className={styles.details}>
+                                        <span className={styles.detailItem}><Mail size={14} /> {applicant.users.email}</span>
+                                        <span className={styles.detailItem}><Calendar size={14} /> {new Date(applicant.users.birth_date).toLocaleDateString()}</span>
+                                        <span className={styles.detailItem}><MapPin size={14} /> {applicant.users.birth_place}</span>
+                                    </div>
+                                </div>
+
+                                <div className={styles.actions}>
+                                    <button
+                                        onClick={() => handleDownloadResume(applicant.id)}
+                                        className={`${styles.btn} ${styles.btnDownload}`}
+                                    >
+                                        <FileText size={16} /> CV
+                                    </button>
+                                    <Button
+                                        color={"leaf-green"}
+                                        onClick={() => handleAccept(applicant.id)}
+                                    >
+                                        <Check size={16} /> Felvétel
+                                    </Button>
+                                    <Button
+                                        color={"fire-red"}
+                                        onClick={() => handleReject(applicant.id)}
+                                    >
+                                        <X size={16} /> Elutasítás
+                                    </Button>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
-            )}
+            </main>
+            <Footer />
         </div>
     );
 };

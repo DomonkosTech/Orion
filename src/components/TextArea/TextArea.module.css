@@ -8,7 +8,7 @@
 .label {
     font-size: 0.8rem;
     font-weight: 600;
-    color: #64748b; /* Matching EditUserProfile muted text color */
+    color: #64748b;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     text-align: left;
@@ -25,9 +25,9 @@
     color: #0f172a;
     transition: border-color 0.2s, box-shadow 0.2s;
     font-family: inherit;
-    resize: none; /* User cannot manually resize */
-    min-height: 45px; /* Initial height for a single line */
-    overflow: hidden; /* Hide scrollbar as it grows */
+    resize: none;
+    min-height: 45px;
+    overflow: hidden;
 }
 
 .textarea:focus {
