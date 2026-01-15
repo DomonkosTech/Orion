@@ -1,31 +1,37 @@
-import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
-import {toast, Toaster} from "react-hot-toast";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+    Briefcase, MapPin, AlignLeft,
+    CheckCircle, AlertCircle, Save, XCircle, Edit3, ArrowLeft
+} from "lucide-react";
+import { toast, Toaster } from "react-hot-toast";
 import {
     getAdvertisementForEdit,
     updateAdvertisement,
     updateAdvertisementStatus,
     type UpdateAdvertisementData
-} from "../../../Api/advertisementApi.ts";
+} from "../../../api/advertisementApi.ts";
 
-const EditAdvertisement = () => {
+import styles from "./EditJob.module.css";
+
+// Shared Components
+import { Header } from "../../../components/Header/Header.tsx";
+import Button from "../../../components/Button/Button.tsx";
+import Footer from "../../../components/Footer/Footer.tsx";
+import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
+import InputField from "../../../components/InputField/InputField.tsx";
+import TextArea from "../../../components/TextArea/TextArea.tsx";
+
+const EditJob: React.FC = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
 
-    const [advertisement, setAdvertisement] = useState<UpdateAdvertisementData>({
-        title: "",
-        position: "",
-        location: "",
-        hourly_wage: "",
-        tasks: "",
-        requirements: "",
-        job_description: "",
-        is_active: true,
-    });
+    const [advertisement, setAdvertisement] = useState<UpdateAdvertisementData | null>(null);
+    const [originalData, setOriginalData] = useState<UpdateAdvertisementData | null>(null);
 
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
-    const navigate = useNavigate();
-
+    const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         const fetchAdvertisement = async () => {
@@ -34,9 +40,11 @@ const EditAdvertisement = () => {
                 const data = await getAdvertisementForEdit(id);
                 if (data.success) {
                     setAdvertisement(data.advertisement);
+                    setOriginalData(data.advertisement);
                 }
             } catch (err) {
                 console.error("Fetch error:", err);
+                toast.error("Nem sikerült betölteni a hirdetést.");
             } finally {
                 setLoading(false);
             }
@@ -44,244 +52,208 @@ const EditAdvertisement = () => {
         fetchAdvertisement();
     }, [id]);
 
-    if (loading) return <p>Betöltés...</p>;
-    // 7. Hibaüzenet átírva
-    if (!advertisement || !advertisement.title) return <p>Nem található hirdetés adat.</p>;
-
-
     const handleSave = async () => {
-        if (!id) return;
+        if (!id || !advertisement) return;
+        setIsSaving(true);
         try {
             const data = await updateAdvertisement(id, advertisement);
-
             if (data.success) {
-                setAdvertisement(data.updatedadvertisement || data.advertisement); // Kezeljük mindkét lehetséges választ
+                setOriginalData(advertisement);
                 setEditMode(false);
-                toast.success("Mentés sikeres!");
+                toast.success("Hirdetés sikeresen frissítve!");
                 navigate("/company");
-            } else {
-                toast.error("Mentés sikertelen!");
             }
         } catch (err) {
-            console.error("Save error:", err);
+            console.error(err);
             toast.error("Hiba történt a mentés során!");
+        } finally {
+            setIsSaving(false);
         }
     };
 
+    const handleCancel = () => {
+        setAdvertisement(originalData);
+        setEditMode(false);
+    };
+
     const handleStatusChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!id) return;
+        if (!id || !advertisement) return;
         const newStatus = e.target.checked;
         try {
             const data = await updateAdvertisementStatus(id, newStatus);
             if (data.success) {
-                setAdvertisement(prev => ({ ...prev, is_active: newStatus }));
-                toast.success(`Hirdetés ${newStatus ? "aktiválva" : "deaktiválva"}!`);
-            } else {
-                toast.error("Státusz módosítása sikertelen!");
+                setAdvertisement({ ...advertisement, is_active: newStatus });
+                setOriginalData(prev => prev ? { ...prev, is_active: newStatus } : null);
+                toast.success(`Hirdetés ${newStatus ? "aktiválva" : "deaktiválva"}`);
             }
         } catch (err) {
-            console.error("Status update error:", err);
-            toast.error("Hiba történt a státusz módosítása során!");
+            console.error(err);
+            toast.error("Státusz módosítása sikertelen!");
         }
     };
 
-    return (
-
-        <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow-md rounded-xl">
-            <style>{`
-                /* The switch - the box around the slider */
-                .switch {
-                  position: relative;
-                  display: inline-block;
-                  width: 60px;
-                  height: 34px;
-                }
-
-                /* Hide default HTML checkbox */
-                .switch input {
-                  opacity: 0;
-                  width: 0;
-                  height: 0;
-                }
-
-                /* The slider */
-                .slider {
-                  position: absolute;
-                  cursor: pointer;
-                  top: 0;
-                  left: 0;
-                  right: 0;
-                  bottom: 0;
-                  background-color: #ccc;
-                  -webkit-transition: .4s;
-                  transition: .4s;
-                }
-
-                .slider:before {
-                  position: absolute;
-                  content: "";
-                  height: 26px;
-                  width: 26px;
-                  left: 4px;
-                  bottom: 4px;
-                  background-color: white;
-                  -webkit-transition: .4s;
-                  transition: .4s;
-                }
-
-                input:checked + .slider {
-                  background-color: #2196F3;
-                }
-
-                input:focus + .slider {
-                  box-shadow: 0 0 1px #2196F3;
-                }
-
-                input:checked + .slider:before {
-                  -webkit-transform: translateX(26px);
-                  -ms-transform: translateX(26px);
-                  transform: translateX(26px);
-                }
-
-                /* Rounded sliders */
-                .slider.round {
-                  border-radius: 34px;
-                }
-
-                .slider.round:before {
-                  border-radius: 50%;
-                }
-            `}</style>
-            {/* 12. Megjelenített cím átírása */}
-            <Toaster/>
-            <h2 className="text-2xl font-semibold mb-6 text-center">Hirdetés adatok szerkesztése</h2>
-
-            <form className="grid grid-cols-1 gap-4">
-                <label>
-                    {/* A címkéket a hirdetés mezőinek megfelelően kell átírni */}
-                    <span className="block font-medium">Hirdetés címe:</span>
-                    <input
-                        type="text"
-                        value={advertisement.title}
-                        readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({...advertisement, title: e.target.value})}
-                        className="w-full p-2 border rounded-md"
-                    />
-                </label>
-
-                <label>
-                    <span className="block font-medium">Pozíció / Munkakör:</span>
-                    <input
-                        type="text"
-                        value={advertisement.position}
-                        readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({...advertisement, position: e.target.value})}
-                        className="w-full p-2 border rounded-md"
-                    />
-                </label>
-
-                <label>
-                    <span className="block font-medium">Helyszín:</span>
-                    <input
-                        type="text"
-                        value={advertisement.location}
-                        readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({...advertisement, location: e.target.value})}
-                        className="w-full p-2 border rounded-md"
-                    />
-                </label>
-
-                <label>
-                    <span className="block font-medium">Órabér:</span>
-                    <input
-                        type="text"
-                        value={advertisement.hourly_wage}
-                        readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({...advertisement, hourly_wage: e.target.value})}
-                        className="w-full p-2 border rounded-md"
-                    />
-                </label>
-
-                <label>
-                    <span className="block font-medium">Részletes leírás:</span>
-                    <textarea // Textarea használata, mivel a job_description valószínűleg hosszabb szöveg
-                        value={advertisement.job_description}
-                        readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({...advertisement, job_description: e.target.value})}
-                        className="w-full p-2 border rounded-md h-32"
-                    />
-                </label>
-
-                <label>
-                    <span className="block font-medium">Feladatok:</span>
-                    <textarea
-                        value={advertisement.tasks}
-                        readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({...advertisement, tasks: e.target.value})}
-                        className="w-full p-2 border rounded-md"
-                    />
-                </label>
-
-                <label>
-                    <span className="block font-medium">Elvárások:</span>
-                    <textarea
-                        value={advertisement.requirements}
-                        readOnly={!editMode}
-                        onChange={(e) => setAdvertisement({...advertisement, requirements: e.target.value})}
-                        className="w-full p-2 border rounded-md"
-                    />
-                </label>
-
-
-                <div className="flex gap-4 mt-4">
-                    {!editMode ? (
-                        <button
-                            type="button"
-                            onClick={() => setEditMode(true)}
-                            className="px-4 py-2 bg-blue-500 text-white rounded-md"
-                        >
-                            Szerkesztés
-                        </button>
-                    ) : (
-                        <>
-                            <button
-                                type="button"
-                                onClick={handleSave}
-                                className="px-4 py-2 bg-green-500 text-white rounded-md"
-                            >
-                                Mentés
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setEditMode(false)}
-                                className="px-4 py-2 bg-gray-400 text-white rounded-md"
-                            >
-                                Mégse
-                            </button>
-                        </>
-                    )}
-                </div>
-            </form>
-            <br/>
-
-            {/* 13. Visszajelző gomb módosítása */}
-            <button onClick={() => navigate("/company")}>
-                Vissza a föoldalra
-            </button>
-
-            <div className="mt-4 flex items-center gap-2">
-                <span className="font-medium">Hirdetés státusza: {advertisement.is_active ? "Aktív" : "Inaktív"}</span>
-                <label className="switch">
-                    <input
-                        type="checkbox"
-                        checked={advertisement.is_active}
-                        onChange={handleStatusChange}
-                    />
-                    <span className="slider round"></span>
-                </label>
+    if (loading) return (
+        <div className={styles.pageWrapper}>
+            <div className={styles.loadingState}>
+                <div className={styles.spinner}></div>
+                <p>Hirdetés betöltése...</p>
             </div>
+        </div>
+    );
+
+    if (!advertisement) return <p>Hirdetés nem található.</p>;
+
+    return (
+        <div className={styles.pageWrapper}>
+            <Header />
+            <Toaster />
+
+            <main className={styles.container}>
+                <header className={styles.header}>
+                    <div className={styles.titleGroup}>
+                        <BannerKicker>Kezelés</BannerKicker>
+                        <h1>Hirdetés Szerkesztése</h1>
+                        <p>Kezelje és optimalizálja álláshirdetését a legjobb jelöltek eléréséhez.</p>
+                    </div>
+
+                    <div className={styles.actionGroup}>
+                        {!editMode ? (
+                            <>
+                                <Button onClick={() => navigate("/company")} variant="secondary">
+                                    <ArrowLeft size={18} style={{marginRight: '8px'}} /> Vissza
+                                </Button>
+                                <Button onClick={() => setEditMode(true)} color="orion-blue">
+                                    <Edit3 size={18} style={{marginRight: '8px'}} /> Szerkesztés
+                                </Button>
+                            </>
+                        ) : (
+                            <>
+                                <Button onClick={handleCancel} variant="secondary">
+                                    <XCircle size={18} style={{marginRight: '8px'}} /> Mégse
+                                </Button>
+                                <Button onClick={handleSave} color="orion-blue" isLoading={isSaving}>
+                                    <Save size={18} style={{marginRight: '8px'}} /> Mentés
+                                </Button>
+                            </>
+                        )}
+                    </div>
+                </header>
+
+                <form className={styles.mainLayout}>
+                    <div className={styles.contentArea}>
+                        {/* Basic Info Card */}
+                        <section className={styles.card}>
+                            <h2 className={styles.cardTitle}><Briefcase size={22} /> Pozíció adatai</h2>
+                            <div className={styles.inputGrid}>
+                                <InputField
+                                    label="Hirdetés megnevezése"
+                                    value={advertisement.title}
+                                    readOnly={!editMode}
+                                    onChange={(e) => setAdvertisement({...advertisement, title: e.target.value})}
+                                    containerClassName={styles.fullWidth}
+                                    placeholder="pl. Senior Frontend Fejlesztő"
+                                />
+                                <InputField
+                                    label="Munkakör / Pozíció"
+                                    value={advertisement.position}
+                                    readOnly={!editMode}
+                                    onChange={(e) => setAdvertisement({...advertisement, position: e.target.value})}
+                                    placeholder="pl. Szoftverfejlesztés"
+                                />
+                                <InputField
+                                    label={<>Kínált órabér (Bruttó)</>}
+                                    value={advertisement.hourly_wage}
+                                    readOnly={!editMode}
+                                    onChange={(e) => setAdvertisement({...advertisement, hourly_wage: e.target.value})}
+                                    placeholder="pl. 2500"
+                                />
+                                <InputField
+                                    label={<><MapPin size={14} style={{marginRight: '4px'}}/> Munkavégzés helye</>}
+                                    value={advertisement.location}
+                                    readOnly={!editMode}
+                                    onChange={(e) => setAdvertisement({...advertisement, location: e.target.value})}
+                                    containerClassName={styles.fullWidth}
+                                    placeholder="pl. Budapest, Remote"
+                                />
+
+                            </div>
+                        </section>
+
+                        {/* Description Card */}
+                        <section className={styles.card}>
+                            <h2 className={styles.cardTitle}><AlignLeft size={22} /> Tartalmi részletek</h2>
+                            <div className={styles.contentGrid}>
+                                <TextArea
+                                    label="Pozíció leírása"
+                                    value={advertisement.job_description}
+                                    readOnly={!editMode}
+                                    onChange={(e) => setAdvertisement({...advertisement, job_description: e.target.value})}
+                                    placeholder="Mutassa be a pozíciót röviden..."
+                                    rows={3} // Reduced height
+                                />
+
+                                {/* New nested grid for side-by-side text areas */}
+                                <div className={styles.textAreaSecondaryGrid}>
+                                    <TextArea
+                                        label="Főbb feladatok"
+                                        value={advertisement.tasks}
+                                        readOnly={!editMode}
+                                        onChange={(e) => setAdvertisement({...advertisement, tasks: e.target.value})}
+                                        rows={4} // Reduced from 6
+                                        placeholder="Sorolja fel a napi feladatokat..."
+                                    />
+                                    <TextArea
+                                        label="Elvárások a jelölttel szemben"
+                                        value={advertisement.requirements}
+                                        readOnly={!editMode}
+                                        onChange={(e) => setAdvertisement({...advertisement, requirements: e.target.value})}
+                                        rows={4} // Reduced from 6
+                                        placeholder="Milyen készségekkel kell rendelkeznie?"
+                                    />
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <aside className={styles.sidebar}>
+                        {/* Status Card */}
+                        <section className={styles.card}>
+                            <h2 className={styles.cardTitle}><AlertCircle size={22} /> Státusz</h2>
+                            <div className={styles.statusCard}>
+                                <div className={`${styles.statusBadge} ${advertisement.is_active ? styles.statusActive : styles.statusInactive}`}>
+                                    {advertisement.is_active ? <CheckCircle size={16} /> : <XCircle size={16} />}
+                                    {advertisement.is_active ? "Aktív" : "Inaktív"}
+                                </div>
+                                
+                                <div className={styles.statusToggle}>
+                                    <div className={styles.statusInfo}>
+                                        <h3>Láthatóság</h3>
+                                        <p>{advertisement.is_active ? "A hirdetés publikus." : "A hirdetés rejtett."}</p>
+                                    </div>
+                                    <label className={styles.switch}>
+                                        <input
+                                            type="checkbox"
+                                            checked={advertisement.is_active}
+                                            onChange={handleStatusChange}
+                                        />
+                                        <span className={styles.slider}></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className={styles.card}>
+                            <h3 style={{fontSize: '1rem', marginBottom: '12px', color: 'var(--text-main)'}}>Információ</h3>
+                            <p style={{fontSize: '0.875rem', color: 'var(--text-muted)', lineHeight: '1.5'}}>
+                                A módosítások mentés után azonnal életbe lépnek. Az inaktív hirdetésekre nem érkezhet új jelentkezés.
+                            </p>
+                        </section>
+                    </aside>
+                </form>
+            </main>
+            <Footer />
         </div>
     );
 };
 
-export default EditAdvertisement;
+export default EditJob;

@@ -1,7 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createAdvertisement } from "../../../Api/advertisementApi";
-import {toast, Toaster} from "react-hot-toast";
+import { createAdvertisement } from "../../../api/advertisementApi";
+import { toast, Toaster } from "react-hot-toast";
+import styles from "./AddJob.module.css";
+
+// Components
+import { Header } from "../../../components/Header/Header.tsx";
+import Footer from "../../../components/Footer/Footer.tsx";
+import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
+import Button from "../../../components/Button/Button.tsx";
+import TextArea from "../../../components/TextArea/TextArea.tsx";
+import InputField from "../../../components/InputField/InputField.tsx";
+
+const BENEFITS_OPTIONS = ["Home Office", "Cafeteria", "Bónusz", "Céges autó", "Rugalmas munkaidő", "Modern eszközök"];
 
 const AddJob: React.FC = () => {
     const [formData, setFormData] = useState({
@@ -12,13 +23,26 @@ const AddJob: React.FC = () => {
         tasks: "",
         requirements: "",
         job_description: "",
+        job_type: "Full-time",
+        category: "Physical Work",
+        benefits: [] as string[],
         is_active: true,
     });
+
+    //
+    //
+    //saknasfjiewhjie2ndjdjfekbfie2fdnejfheifne3n
+    //      NEM MŰKÖDIK!!!!!!!!!
+    //      Kell hozzá még több BACKEND
+    //923u4ö92hejifnwcmfsdjfsddnfksadnoskdsqidjwq
+    //
+    //
+    //
 
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -26,153 +50,198 @@ const AddJob: React.FC = () => {
         }));
     };
 
+    const toggleBenefit = (benefit: string) => {
+        setFormData(prev => ({
+            ...prev,
+            benefits: prev.benefits.includes(benefit)
+                ? prev.benefits.filter(b => b !== benefit)
+                : [...prev.benefits, benefit]
+        }));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        // Basic validation
         if (!formData.title.trim() || !formData.position.trim() || !formData.location.trim() || !formData.hourly_wage.trim()) {
-            toast.error("Kérlek, töltsd ki a cím, pozíció, helyszín és órabér mezőket!", )
+            toast.error("Kérlek, töltsd ki a kötelező mezőket!");
             return;
         }
 
         setIsLoading(true);
-
         try {
             await createAdvertisement({
-                title: formData.title,
-                position: formData.position,
-                location: formData.location,
+                ...formData,
                 hourly_wage: parseFloat(formData.hourly_wage),
-                tasks: formData.tasks,
-                requirements: formData.requirements,
-                job_description: formData.job_description,
-                is_active: formData.is_active,
             });
-
             toast.success("Sikeres a hirdetés létrehozása!");
             navigate("/company");
-        } catch  {
-            toast.error("Hiba a hirdetés létrehozása során:");
+        } catch {
+            toast.error("Hiba a hirdetés létrehozása során.");
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <Toaster></Toaster>
-            <h1>Álláshirdetés létrehozása</h1>
+        <div className={styles.page}>
+            <Header />
+            <Toaster position="top-center" />
 
-            <div>
-                <label htmlFor="title">Hirdetés címe *</label>
-                <input
-                    id="title"
-                    name="title"
-                    type="text"
-                    placeholder="pl. Raktáros munkatárs kerestetik"
-                    value={formData.title}
-                    onChange={handleInputChange}
-                    required
-                />
-            </div>
+            <main className={styles.container}>
+                <header className={styles.header}>
+                    <BannerKicker>Adminisztráció</BannerKicker>
+                    <h1 className={styles.title}>Új hirdetés közzététele</h1>
+                    <p className={styles.subtitle}>Készítsen profi álláshirdetést percek alatt.</p>
+                </header>
 
-            <div>
-                <label htmlFor="position">Pozíció *</label>
-                <input
-                    id="position"
-                    name="position"
-                    type="text"
-                    placeholder="pl. Raktáros"
-                    value={formData.position}
-                    onChange={handleInputChange}
-                    required
-                />
-            </div>
+                <form onSubmit={handleSubmit} className={styles.layout}>
+                    {/* Main Content Area */}
+                    <div className={styles.mainContent}>
 
-            <div>
-                <label htmlFor="location">Munkavégzés helye *</label>
-                <input
-                    id="location"
-                    name="location"
-                    type="text"
-                    placeholder="pl. Budapest, XIII. kerület"
-                    value={formData.location}
-                    onChange={handleInputChange}
-                    required
-                />
-            </div>
+                        {/* Section 1: Alapadatok */}
+                        <section className={styles.card}>
+                            <h2 className={styles.cardTitle}><span>1</span> Alapadatok</h2>
+                            <div className={styles.formGrid}>
+                                <div className={styles.fullWidth}>
+                                    <InputField
+                                        label="Hirdetés címe *"
+                                        name="title"
+                                        placeholder="pl. Senior Logisztikai Menedzser"
+                                        value={formData.title}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <InputField
+                                    label="Pozíció *"
+                                    name="position"
+                                    placeholder="pl. Raktáros"
+                                    value={formData.position}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                                <InputField
+                                    label="Munkavégzés helye *"
+                                    name="location"
+                                    placeholder="Budapest, XIII. kerület"
+                                    value={formData.location}
+                                    onChange={handleInputChange}
+                                    required
+                                />
+                            </div>
+                        </section>
 
-            <div>
-                <label htmlFor="hourly_wage">Órabér (Ft) *</label>
-                <input
-                    id="hourly_wage"
-                    name="hourly_wage"
-                    type="number"
-                    placeholder="2000"
-                    value={formData.hourly_wage}
-                    onChange={handleInputChange}
-                    required
-                />
-            </div>
+                        {/* Section 2: Részletek & Leírás */}
+                        <section className={styles.card}>
+                            <h2 className={styles.cardTitle}><span>2</span> Feladatok & Elvárások</h2>
+                            <div className={styles.stackedInputs}>
+                                <TextArea
+                                    label="Munka Leírása"
+                                    name="job_description"
+                                    placeholder="Mutassa be a céget és a lehetőséget..."
+                                    rows={5}
+                                    value={formData.job_description}
+                                    onChange={handleInputChange}
+                                />
+                                <div className={styles.formGrid}>
+                                    <TextArea
+                                        label="Feladatok"
+                                        name="tasks"
+                                        placeholder="Napi teendők listája..."
+                                        rows={4}
+                                        value={formData.tasks}
+                                        onChange={handleInputChange}
+                                    />
+                                    <TextArea
+                                        label="Követelmények"
+                                        name="requirements"
+                                        placeholder="Tapasztalat, nyelvtudás..."
+                                        rows={4}
+                                        value={formData.requirements}
+                                        onChange={handleInputChange}
+                                    />
+                                </div>
+                            </div>
+                        </section>
 
-            <div>
-                <label htmlFor="job_description">Munka leírása</label>
-                <textarea
-                    id="job_description"
-                    name="job_description"
-                    placeholder="Részletes leírás a munkáról..."
-                    rows={4}
-                    value={formData.job_description}
-                    onChange={handleInputChange}
-                />
-            </div>
+                        {/* Section 3: Extra Juttatások (Interactive Tags) */}
+                        <section className={styles.card}>
+                            <h2 className={styles.cardTitle}><span>3</span> Extra Juttatások</h2>
+                            <p className={styles.hint}>Válassza ki, mit kínál a jelentkezőknek:</p>
+                            <div className={styles.benefitsGrid}>
+                                {BENEFITS_OPTIONS.map(benefit => (
+                                    <button
+                                        key={benefit}
+                                        type="button"
+                                        className={`${styles.benefitTag} ${formData.benefits.includes(benefit) ? styles.activeBenefit : ""}`}
+                                        onClick={() => toggleBenefit(benefit)}
+                                    >
+                                        {benefit}
+                                    </button>
+                                ))}
+                            </div>
+                        </section>
+                    </div>
 
-            <div>
-                <label htmlFor="tasks">Feladatok</label>
-                <textarea
-                    id="tasks"
-                    name="tasks"
-                    placeholder="A munka feladatai..."
-                    rows={3}
-                    value={formData.tasks}
-                    onChange={handleInputChange}
-                />
-            </div>
+                    {/* Sidebar Area */}
+                    <aside className={styles.sidebar}>
+                        <div className={`${styles.card} ${styles.stickyCard}`}>
+                            <h3 className={styles.sidebarTitle}>Beállítások</h3>
 
-            <div>
-                <label htmlFor="requirements">Követelmények(feltételek)</label>
-                <textarea
-                    id="requirements"
-                    name="requirements"
-                    placeholder="Elvárások a jelentkezőkkel szemben..."
-                    rows={3}
-                    value={formData.requirements}
-                    onChange={handleInputChange}
-                />
-            </div>
+                            <div className={styles.sidebarInputGroup}>
+                                <label>Órabér (HUF)</label>
+                                <InputField
+                                    type="number"
+                                    name="hourly_wage"
+                                    className={styles.sidebarInput}
+                                    value={formData.hourly_wage}
+                                    onChange={handleInputChange}
+                                    placeholder="2000"
+                                />
+                            </div>
 
+                            <div className={styles.sidebarInputGroup}>
+                                <label>Foglalkoztatás típusa</label>
+                                <select name="job_type" className={styles.sidebarSelect} onChange={handleInputChange}>
+                                    <option value="Full-time">Teljes munkaidő</option>
+                                    <option value="Part-time">Részmunkaidő</option>
+                                    <option value="Freelance">Projektmunka</option>
+                                </select>
+                            </div>
 
+                            <div className={styles.statusBox}>
+                                <label className={styles.checkboxLabel}>
+                                    <input
+                                        type="checkbox"
+                                        name="is_active"
+                                        checked={formData.is_active}
+                                        onChange={handleInputChange}
+                                    />
+                                    <div>
+                                        <strong>Azonnali aktiválás</strong>
+                                        <span>A hirdetés rögtön látható lesz</span>
+                                    </div>
+                                </label>
+                            </div>
 
-            <div>
-                <label>
-                    <input
-                        type="checkbox"
-                        name="is_active"
-                        checked={formData.is_active}
-                        onChange={handleInputChange}
-                    />
-                    Aktív hirdetés
-                </label>
-            </div>
+                            <div className={styles.sidebarActions}>
+                                <Button type="submit" color="orion-blue" disabled={isLoading} className={styles.submitBtn}>
+                                    {isLoading ? "Mentés..." : "Hirdetés közzététele"}
+                                </Button>
+                                <button type="button" className={styles.cancelLink} onClick={() => navigate("/company")}>
+                                    Mégsem és visszalépés
+                                </button>
+                            </div>
+                        </div>
 
-            <button type="submit" disabled={isLoading}>
-                {isLoading ? "Létrehozás..." : "Hirdetés létrehozása"}
-            </button>
-
-            <button type="button" onClick={() => navigate("/company")}>
-                Vissza a főoldalra
-            </button>
-        </form>
+                        <div className={styles.tipCard}>
+                            <h4>💡 Tipp a sikerhez</h4>
+                            <p>A részletesen kitöltött "Feladatok" szekció 40%-kal növeli a jelentkezési kedvet!</p>
+                        </div>
+                    </aside>
+                </form>
+            </main>
+            <Footer />
+        </div>
     );
 };
 
