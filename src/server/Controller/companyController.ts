@@ -53,3 +53,28 @@ export const updateCompanyProfile = async (companyId: number, data: CompanyProfi
     if (error) throw error;
     return updatedCompany;
 };
+
+// Get company stats
+export const getCompanystat = async (companyId: number) => {
+
+    // get company stats from the database using the RPC function
+    const { data: stats, error } = await supabase
+        .rpc('get_company_dashboard_stats', { target_company_id: companyId });
+
+    if (error) {
+        console.error("error getting company stats:", error);
+    }
+
+    // get last 4 job applications from the database
+    const { data: lastApplications, error: err } = await supabase
+        .from("job_applications")
+        .select(`last_updated, users (fname, lname), advertisement!inner (title,company_id)`)
+        .eq("advertisement.company_id", companyId)
+        .order("last_updated", { ascending: false })
+        .limit(4);
+
+    if (err) throw err;
+
+    return { stats, lastApplications };
+
+}

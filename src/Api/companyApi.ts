@@ -32,6 +32,24 @@ export interface CompanyProfile {
     phone_number: string;
 }
 
+export interface DashboardStats {
+    views?: number;
+    applicants?: number;
+    employees?: number;
+    conversion?: number;
+}
+
+export interface LastApplication {
+    last_updated: string;
+    users: {
+        fname: string;
+        lname: string;
+    };
+    advertisement: {
+        title: string;
+    };
+}
+
 const handleResponse = async (response: Response) => {
     const data = await response.json();
     if (!response.ok) {
@@ -76,3 +94,11 @@ export const updateCompanyProfile = async (companyData: CompanyProfile) => {
     });
     return handleResponse(response);
 };
+
+export const getCompanystat = async () => {
+    const response = await fetch(`${API_BASE_URL}/company/stat`, {
+        method: "GET",
+        credentials: "include",
+    });
+    return handleResponse(response);
+}
