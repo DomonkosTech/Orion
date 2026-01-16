@@ -1,13 +1,14 @@
 import React from 'react';
 import styles from './Button.module.css';
 
-export type ButtonColor = 'orion-blue' | 'fire-red' | 'leaf-green' | 'black';
+// Added 'danger' and 'gray' to match the site's action palette
+export type ButtonColor = 'orion-blue' | 'fire-red' | 'leaf-green' | 'black' | 'danger' | 'gray';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     variant?: 'primary' | 'secondary' | 'link';
     color?: ButtonColor;
     isLoading?: boolean;
-    underline?: boolean; // Add this line
+    underline?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -15,11 +16,10 @@ const Button: React.FC<ButtonProps> = ({
                                            variant = 'primary',
                                            color = 'black',
                                            isLoading = false,
-                                           underline = false, // Default to false
+                                           underline = false,
                                            className,
                                            ...props
                                        }) => {
-    // Add the underline class conditionally
     const buttonClass = [
         styles.btn,
         styles[variant],
