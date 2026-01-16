@@ -1,6 +1,7 @@
 import express from "express";
 import { type AuthRequest, verifyToken } from "../middleware/auth.ts";
 import * as companyService from "../Controller/companyController.ts";
+import {getCompanystat} from "../Controller/companyController.ts";
 
 const router = express.Router();
 
@@ -52,6 +53,25 @@ router.patch("/company/profile", verifyToken, async (req: AuthRequest, res) => {
     } catch (err) {
         console.error("Update company info error:", err);
         res.status(500).json({ error: "Update failed" });
+    }
+});
+
+
+// get company stats
+router.get("/company/stat",verifyToken, async (req: AuthRequest, res) => {
+    const companyId = req.companyId;
+
+    try {
+        if (!companyId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        const data = await getCompanystat(companyId)
+        return res.json({success: true, data})
+    }
+    catch (err) {
+        console.error("Error while fetching company info:", err);
+        res.status(500).json({ error: "Internal server error while fetching company info" });
     }
 });
 
