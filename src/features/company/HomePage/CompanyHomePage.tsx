@@ -9,32 +9,43 @@ import Footer from "../../../components/Footer/Footer.tsx";
 import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 
 // API
-import { getCompanyAdvertisements, type CompanyAdvertisement } from "../../../Api/advertisementApi";
+import { getCompanyAdvertisements, type CompanyAdvertisement } from "../../../api/advertisementApi";
+import { getCompanystat, type DashboardStats, type LastApplication } from "../../../api/companyApi";
+
+
 
 const CompanyHomePage: React.FC = () => {
     const navigate = useNavigate();
     const [ads, setAds] = useState<CompanyAdvertisement[]>([]);
-
-    // Mock adatok az extra "adatéhség" kielégítésére
-    const stats = {
-        totalViews: "12,402",
-        activeApplicants: "148",
-        avgTimeToFill: "18 nap",
-        conversionRate: "4.2%"
-    };
+    const [stats, setStats] = useState<DashboardStats>({});
+    const [lastActivities, setLastActivities] = useState<LastApplication[]>([]);
 
     useEffect(() => {
-        const fetchAds = async () => {
+        const fetchData = async () => {
             try {
-                const data = await getCompanyAdvertisements();
-                if (data.success) {
-                    setAds(data.advertisements);
+                const [adsData, statsData] = await Promise.all([
+                    getCompanyAdvertisements(),
+                    getCompanystat()
+                ]);
+
+                if (adsData.success) {
+                    setAds(adsData.advertisements);
+                }
+                
+                // A backend válasz struktúrája: { success: true, data: { stats: {...}, lastApplications: [...] } }
+                if (statsData.success && statsData.data) {
+                    setStats(statsData.data.stats || {});
+                    setLastActivities(statsData.data.lastApplications || []);
+                } else if (statsData.success && !statsData.data) {
+                    // Fallback, ha esetleg a régi struktúra jönne vissza (közvetlenül a root-ban)
+                    setStats(statsData.stats || {});
+                    setLastActivities(statsData.lastApplications || []);
                 }
             } catch (err) {
                 console.error("Hiba az adatok lekérésekor:", err);
             }
         };
-        fetchAds();
+        fetchData();
     }, []);
 
     return (
@@ -57,19 +68,19 @@ const CompanyHomePage: React.FC = () => {
                 <section className={styles.statsGrid}>
                     <div className={styles.statCard}>
                         <div className={styles.statLabel}>Összes megtekintés</div>
-                        <div className={styles.statValue}>{stats.totalViews}</div>
+                        <div className={styles.statValue}>{stats.views || 0}</div>
                     </div>
                     <div className={styles.statCard}>
                         <div className={styles.statLabel}>Aktív jelentkezők</div>
-                        <div className={styles.statValue}>{stats.activeApplicants}</div>
+                        <div className={styles.statValue}>{stats.applicants || 0}</div>
                     </div>
                     <div className={styles.statCard}>
-                        <div className={styles.statLabel}>Betöltési idő</div>
-                        <div className={styles.statValue}>{stats.avgTimeToFill}</div>
+                        <div className={styles.statLabel}>Alkalmazottak</div>
+                        <div className={styles.statValue}>{stats.employees || "-"}</div>
                     </div>
                     <div className={styles.statCard}>
                         <div className={styles.statLabel}>Konverzió</div>
-                        <div className={styles.statValue}>{stats.conversionRate}</div>
+                        <div className={styles.statValue}>{stats.conversion ? stats.conversion + "%" : "-"}</div>
                     </div>
                 </section>
 
@@ -87,7 +98,7 @@ const CompanyHomePage: React.FC = () => {
                                         <h4>{ad.title}</h4>
                                         <div className={styles.jobMeta}>{ad.position} • Aktív</div>
                                     </div>
-                                    <div className={styles.badge}>12 új jelentkező</div>
+                                    <div className={styles.badge}>Megtekintés</div>
                                 </div>
                             ))}
                         </div>
@@ -99,12 +110,19 @@ const CompanyHomePage: React.FC = () => {
                             <h2 className={styles.sectionTitle}>Legutóbbi aktivitás</h2>
                         </div>
                         <div className={styles.jobList}>
-                            <div className={styles.jobItem}>
-                                <div className={styles.jobMeta}><strong>Kovács János</strong> jelentkezett: <i>Senior React Dev</i></div>
-                            </div>
-                            <div className={styles.jobItem}>
-                                <div className={styles.jobMeta}>Hirdetés lejár: <i>Marketing Manager</i> (2 nap múlva)</div>
-                            </div>
+                            {lastActivities.length > 0 ? (
+                                lastActivities.map((activity, index) => (
+                                    <div key={index} className={styles.jobItem}>
+                                        <div className={styles.jobMeta}>
+                                            <strong>{activity.users?.fname} {activity.users?.lname}</strong> jelentkezett: <i>{activity.advertisement?.title}</i>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className={styles.jobItem}>
+                                    <div className={styles.jobMeta}>Nincs legutóbbi aktivitás.</div>
+                                </div>
+                            )}
                         </div>
                     </aside>
                 </div>
