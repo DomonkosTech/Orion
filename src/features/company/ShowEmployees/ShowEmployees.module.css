@@ -1,0 +1,125 @@
+/* ShowEmployees.module.css */
+.page {
+    --orion-blue: #2c5aa0;
+    --orion-blue-dark: #1e3d6f;
+    --bg: #f1f5f9;
+    --panel: #ffffff;
+    --text: #1e293b;
+    --muted: #64748b;
+    --border: #cbd5e1;
+    --danger: #ef4444;
+    --danger-hover: #dc2626;
+
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.header {
+    margin-bottom: 32px;
+    border-left: 4px solid var(--orion-blue);
+    padding-left: 20px;
+}
+
+.title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 4px 0;
+    color: #0f172a;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 1.1rem;
+}
+
+/* Table Card Styling */
+.card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden; /* Ensures table corners match card radius */
+}
+
+.tableWrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.employeeTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.employeeTable th {
+    background: #f8fafc;
+    padding: 16px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    border-bottom: 2px solid var(--border);
+}
+
+.employeeTable td {
+    padding: 16px;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
+}
+
+.employeeTable tr:hover {
+    background-color: #f1f5f9;
+}
+
+/* Specific Cell Styling */
+.nameCell {
+    font-weight: 700;
+    color: var(--orion-blue);
+}
+
+.emailCell {
+    color: var(--muted);
+    font-size: 0.85rem;
+}
+
+.wageCell {
+    font-family: 'Courier New', monospace;
+    font-weight: 600;
+}
+
+/* Button Styling */
+.deleteBtn {
+    background: #fee2e2;
+    color: var(--danger);
+    border: 1px solid #fecaca;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.deleteBtn:hover {
+    background: var(--danger);
+    color: white;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-weight: 600;
+    color: var(--orion-blue);
+}

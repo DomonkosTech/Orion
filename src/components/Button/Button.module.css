@@ -1,32 +1,56 @@
+/* ===============================
+   Design Tokens
+================================ */
 :root {
-    /* A főoldalról hozott színek */
     --orion-blue-primary: #2c5aa0;
     --orion-blue-dark: #1e3d6f;
+    --danger-red: #ef4444;
+    --danger-dark: #dc2626;
+    --slate-gray: #64748b;
+    --slate-dark: #475569;
 }
 
+/* ===============================
+   Base Button
+================================ */
 .btn {
     cursor: pointer;
     font-family: inherit;
     font-size: 1rem;
     border: none;
-    border-radius: 6px;
-    transition: all 0.2s ease;
+    border-radius: 8px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
-    /* Alapértelmezett (fallback) szín, ha nincs megadva data-color */
     --btn-main-color: #1a1a1a;
     --btn-hover-color: #000000;
+
+    transition:
+            background-color 0.2s ease,
+            color 0.2s ease,
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
 }
 
-/* --- Orion Blue variáció --- */
+/* ===============================
+   Color Variants (Theme Layer)
+================================ */
 .btn[data-color="orion-blue"] {
     --btn-main-color: var(--orion-blue-primary);
     --btn-hover-color: var(--orion-blue-dark);
 }
 
-/* --- Egyéb variációk --- */
+.btn[data-color="danger"] {
+    --btn-main-color: var(--danger-red);
+    --btn-hover-color: var(--danger-dark);
+}
+
+.btn[data-color="gray"] {
+    --btn-main-color: var(--slate-gray);
+    --btn-hover-color: var(--slate-dark);
+}
+
 .btn[data-color="fire-red"] {
     --btn-main-color: #D32F2F;
     --btn-hover-color: #B71C1C;
@@ -42,56 +66,60 @@
     --btn-hover-color: #000000;
 }
 
-/* --- Gomb típusok (Primary, Secondary, Link) --- */
-
-.primary {
+/* ===============================
+   Button Variants
+================================ */
+.btn.primary {
     background-color: var(--btn-main-color);
-    color: white;
+    color: #fff;
     padding: 0.75rem 1.5rem;
     font-weight: 600;
 }
 
-
-
-.primary:hover {
+.btn.primary:hover {
     background-color: var(--btn-hover-color);
-    box-shadow: 0 4px 12px rgba(44, 90, 160, 0.2); /* Enyhe kék ragyogás hovernél */
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.secondary {
+.btn.secondary {
     background-color: transparent;
     color: var(--btn-main-color);
-    border: 2px solid var(--btn-main-color);
+    border: 1px solid var(--btn-main-color);
     padding: 0.75rem 1.5rem;
     font-weight: 600;
 }
 
-.secondary:hover {
-    background-color: rgba(44, 90, 160, 0.05); /* Halvány Orion kék háttér */
+.btn.secondary:hover {
+    background-color: color-mix(in srgb, var(--btn-main-color), transparent 92%);
     border-color: var(--btn-hover-color);
     color: var(--btn-hover-color);
+}
+
+/* ===============================
+   Link Variant
+================================ */
+.btn.link {
+    background: none;
+    padding: 0;
+    width: auto;
+    font-weight: normal;
+    font-size: 0.9rem;
+    color: var(--btn-main-color);
+}
+
+.btn.link:hover {
+    color: var(--btn-hover-color);
+}
+
+.btn.link:not(.underlined) {
+    text-decoration: none;
 }
 
 .underlined {
     text-decoration: underline;
 }
 
-.link {
-    background: none;
-    color: var(--btn-main-color);
-    padding: 0;
-    width: auto;
-    font-weight: normal;
-    font-size: 0.9rem;
-}
-
-.link:not(.underlined) {
-    text-decoration: none;
-}
-
-.link:hover {
-    color: var(--btn-hover-color);
-}
 
 .btn:focus {
     outline: none;
@@ -100,9 +128,4 @@
 .btn:focus-visible {
     outline: 2px solid var(--orion-blue-primary);
     outline-offset: 2px;
-}
-
-.link:focus {
-    outline: none;
-    box-shadow: none;
 }

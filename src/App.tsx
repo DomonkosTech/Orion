@@ -6,7 +6,7 @@ import IsLoggedIn from "./IsLoggedIn.tsx";
 import EditUserProfile from "./features/user/EditProfile/EditUserProfile.tsx";
 import CompanyRegisterPage from "./features/company/RegisterPage/CompanyRegisterPage.tsx";
 import CompanyLoginPage from "./features/company/LoginPage/CompanyLoginPage.tsx";
-import EditCompanyProfile from "./features/company/EditProfile/EditCompanyProfile.tsx";
+import CompanyEditProfile from "./features/company/EditProfile/CompanyEditProfile.tsx";
 import AddJob from "./features/company/CompanyJobs/AddJob.tsx";
 import CompanyHomePage from "./features/company/HomePage/CompanyHomePage.tsx";
 import ShowListedJobs from "./features/company/ShowListedJobs/ShowListedJobs.tsx";
@@ -158,10 +158,10 @@ function App() {
                     }
                 />
                 <Route
-                    path="/EditCompanyProfile"
+                    path="/CompanyEditProfile"
                     element={
                         <IsLoggedIn mode="company">
-                            <EditCompanyProfile />
+                            <CompanyEditProfile />
                         </IsLoggedIn>
                     }
                 />
