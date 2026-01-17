@@ -182,3 +182,33 @@ export const deleteEmployee = async (employeeId: number, companyId: number) => {
 
     return { success: true, deletedEmployee: data[0] }
 }
+
+
+// Get all active advertisements (for users)
+export const getAllAdvertisements2 = async (q: string, location: string, position: string, hourly_wage: number, page: number, limit: number) => {
+    let query = supabase
+        .from("advertisement")
+        .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
+        .order("created_at", { ascending: false })
+        .eq('is_active', true)
+
+    if (q) {
+        query = query.ilike("title", `%${q}%`)
+    }
+    if (location) {
+        query = query.eq("location", location)
+    }
+    if (position) {
+        query = query.eq("position", position)
+    }
+    if (hourly_wage) {
+        query = query.gte("hourly_wage", hourly_wage)
+    }
+    const from = (page - 1) * limit
+    const to = from + limit - 1
+
+    const { data: advertisements, error } = await query.range(from, to)
+
+    if (error) throw error;
+    return advertisements;
+};
