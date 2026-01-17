@@ -17,6 +17,7 @@ import companyRoutes from "./routes/companyRoute.ts";
 import advertisementRoutes from "./routes/advertisementRoute.ts";
 import applicantRoutes from "./routes/applicantRoute.ts";
 import emailRoute from "./routes/emailRoute.ts";
+import messageRoute from "./routes/messageRoutes.ts"
 
 // Initialize Express app
 const app = express();
@@ -43,6 +44,8 @@ app.use("/api", advertisementRoutes);
 
 // Applicant Routes (Submit, Track, Accept/Reject)
 app.use("/api", applicantRoutes);
+
+app.use("/api", messageRoute);
 
 // Email Routes (Send Email)
 app.use("/api/email", emailRoute);
