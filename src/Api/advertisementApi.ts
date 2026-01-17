@@ -108,6 +108,30 @@ export const getAdvertisements = async () => {
     return handleResponse(response);
 };
 
+export const getAdvertisements2 = async (
+    q: string = "",
+    location: string = "",
+    position: string = "",
+    hourly_wage: number | string = "",
+    page: number = 1,
+    limit: number = 10
+) => {
+    const params = new URLSearchParams();
+    if (q) params.append("q", q);
+    if (location) params.append("location", location);
+    if (position) params.append("position", position);
+    if (hourly_wage) params.append("hourly_wage", String(hourly_wage));
+    params.append("page", String(page));
+    params.append("limit", String(limit));
+
+    const response = await fetch(`${API_BASE_URL}/advertisements2?${params.toString()}`, {
+        method: "GET",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+    });
+    return handleResponse(response);
+};
+
 export const getTop3Advertisements = async () => {
     const response = await fetch(`${API_BASE_URL}/advertisements/top3`, {
         method: "GET",
