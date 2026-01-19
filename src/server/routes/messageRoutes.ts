@@ -1,7 +1,7 @@
 import express from "express";
 import {type AuthRequest, verifyCompany, verifyToken, verifyUser,} from "../middleware/auth.ts";
 const router = express.Router();
-import {getcompanysystemmessages, getusersystemmessages} from "../Controller/messageController.ts";
+import {getcompanysystemmessages, getusersystemmessages, readsystemmessage} from "../Controller/messageController.ts";
 
 
 router.get("/company/messages",verifyToken, verifyCompany, async (req: AuthRequest, res) => {
@@ -33,6 +33,48 @@ router.get("/user/messages",verifyToken, verifyUser, async (req: AuthRequest, re
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+
+router.patch("/user/messages/read/:id", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+    try {
+        const targetId = req.userId;
+        const messageId = Number(req.params.id);
+        const targetType = "USER";
+        if (!targetId || !messageId || !targetType) {
+            return res.status(400).json({ error: "Missing required fields" });
+        }
+
+        await readsystemmessage(targetId, messageId, targetType)
+        res.json({ success: true });
+
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+router.patch("/company/messages/read/:id", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+    try {
+        const targetId = req.companyId;
+        const messageId = Number(req.params.id);
+        const targetType = "COMPANY";
+        if (!targetId || !messageId || !targetType) {
+            return res.status(400).json({ error: "Missing required fields" });
+        }
+
+        await readsystemmessage(targetId, messageId, targetType)
+        res.json({ success: true });
+
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
 
 export default router;
 

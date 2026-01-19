@@ -1,6 +1,12 @@
 import { supabase } from "../../lib/supabaseClient.ts";
 
 
+
+
+////////////////////////////////////
+//             company            //
+////////////////////////////////////
+
 // get system messages for the company
 export const getcompanysystemmessages = async (companyId: number) => {
     const { data: readMessages, error: readError } = await supabase
@@ -26,6 +32,16 @@ export const getcompanysystemmessages = async (companyId: number) => {
 };
 
 
+
+
+
+
+
+
+////////////////////////////////////
+//              user              //
+////////////////////////////////////
+
 // get system messages for the user
 export const getusersystemmessages = async (userId: number) => {
     const { data: readMessages, error: readError } = await supabase
@@ -49,3 +65,18 @@ export const getusersystemmessages = async (userId: number) => {
 
     return filtered.sort((a, b) => (new Date(b.created_at).getTime() - new Date(a.created_at).getTime()));
 };
+
+
+// read system message
+export const readsystemmessage = async (targetId: number, messageId: number, targetType: string) => {
+    const { error } = await supabase
+        .from("system_message_reads")
+        .insert({
+            message_id: messageId,
+            target_type: targetType,
+            target_id: targetId
+            });
+
+    if (error) throw error;
+    return true;
+}
