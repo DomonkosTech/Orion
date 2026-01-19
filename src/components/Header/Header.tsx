@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./Header.module.css";
 
 // Components
-import Button from "../Button/Button";
+import NotificationDropdown from "../MessageDropDown/NotificationDropDown.tsx";
 
 // Server / hooks
-import { useLogout } from "../../Api/authApi.ts";
+import { useLogout } from "../../api/authApi.ts";
 import { useAuth } from "../../hooks/useAuth";
 
 interface NavItem {
@@ -20,10 +20,6 @@ interface HeaderProps {
     actions?: React.ReactNode;
 }
 
-/**
- * Responsive header component that manages navigation and user actions based on authentication state.
- * Dynamically renders menu items for guests, users, and companies.
- */
 export function Header({
                            companyName = "Orion",
                            logoColor = "#1a1a1a",
@@ -33,79 +29,63 @@ export function Header({
     const handleLogout = useLogout();
     const { loggedIn, userType, loading, initials } = useAuth();
 
-    // Show nothing or a loader while auth status is loading
-    if (loading) {
-        return null;
-    }
+    // Dropdown state logic
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const menuRef = useRef<HTMLDivElement>(null);
+
+    // Close on outside click
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsMenuOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    if (loading) return null;
 
     let dynamicNavItems = navItems;
 
     if (loggedIn) {
-        if (userType === "user") {
-            if (dynamicNavItems.length === 0) {
-                dynamicNavItems = [
-                    { label: "Kezdőlap", href: "/userhomepage" },
-                    { label: "Állások", href: "/listjobs" },
-                    { label: "Jelentkezéseim", href: "/JobApplications" },
-                ];
-            }
-        } else if (userType === "company") {
-            if (dynamicNavItems.length === 0) {
-                dynamicNavItems = [
-                    { label: "Vezérlőpult", href: "/company" },
-                    { label: "Hirdetés feladása", href: "/AddJob" },
-                    { label: "Alkalmazottak", href: "/employees" },
-                ];
-            }
-        }
-    } else {
-        // Default menu for guests
-        if (dynamicNavItems.length === 0) {
+        if (userType === "user" && dynamicNavItems.length === 0) {
             dynamicNavItems = [
-                { label: "Kezdőlap", href: "/" },
-                { label: "Bejelentkezés", href: "/UserLoginPage" },
-                { label: "Cégeknek", href: "/CompanyLoginPage" },
+                { label: "Kezdőlap", href: "/userhomepage" },
+                { label: "Állások", href: "/listjobs" },
+                { label: "Jelentkezéseim", href: "/JobApplications" },
+            ];
+        } else if (userType === "company" && dynamicNavItems.length === 0) {
+            dynamicNavItems = [
+                { label: "Vezérlőpult", href: "/company" },
+                { label: "Hirdetés feladása", href: "/AddJob" },
+                { label: "Alkalmazottak", href: "/employees" },
             ];
         }
+    } else if (dynamicNavItems.length === 0) {
+        dynamicNavItems = [
+            {label: "Kezdőlap", href: "/" },
+            {label: "Bejelentkezés", href: "/UserLoginPage"},
+            {label: "Cégeknek", href: "/CompanyLoginPage"}
+
+        ];
     }
 
     return (
         <header className={styles.header}>
             <div className={styles.container}>
-                {/* Left: Logo / Brand */}
+                {/* Left: Logo */}
                 <a href={loggedIn ? (userType === "company" ? "/company" : "/userhomepage") : "/"} className={styles.logo}>
-                    <div
-                        style={{
-                            width: 20,
-                            height: 20,
-                            background: logoColor,
-                            borderRadius: 4,
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                    >
-                        <div
-                            style={{
-                                width: 8,
-                                height: 8,
-                                background: "#ffffff",
-                                borderRadius: 2,
-                            }}
-                        />
+                    <div className={styles.logoBox} style={{ background: logoColor }}>
+                        <div className={styles.logoInner} />
                     </div>
-
                     {companyName}
                 </a>
 
                 {/* Center: Navigation */}
                 <nav className={styles.nav}>
                     {dynamicNavItems.map((item, index) => (
-                        <a
-                            key={`${item.href}-${index}`}
-                            href={item.href}
-                            className={styles.navLink}
-                        >
+                        <a key={`${item.href}-${index}`} href={item.href} className={styles.navLink}>
                             {item.label}
                         </a>
                     ))}
@@ -113,41 +93,53 @@ export function Header({
 
                 {/* Right: Actions */}
                 <div className={styles.actions}>
-                    {loggedIn && (
+                    <NotificationDropdown />
+
+                    <div className={styles.profileWrapper} ref={menuRef}>
                         <button
                             className={styles.iconButton}
-                            aria-label="User Profile"
-                            title={userType === "user" ? "Felhasználó" : "Cég"}
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            aria-label="Profile Menu"
                         >
-                            <span
-
-                                style={{
-                                    fontSize: "0.85rem",
-                                    fontWeight: 600,
-                                }}
-                            >
-                                {initials}
+                            <span className={styles.initialsText}>
+                                {loggedIn ? initials : "?"}
                             </span>
+                            <span className={styles.arrow}>▼</span>
                         </button>
-                    )}
 
+                        {isMenuOpen && (
+                            <div className={styles.dropdown}>
+                                <div className={styles.dropdownHeader}>
+                                    {loggedIn ? (userType === "user" ? "Szia, Domonkos!" : "Céges Fiók") : "Vendég"}
+                                </div>
+
+                                {loggedIn ? (
+                                    <>
+                                        <a href="/profile" className={styles.item}>
+                                            <div>
+                                                <span className={styles.itemTitle}>Profilom</span>
+                                                <span className={styles.itemDescription}>Személyes adatok kezelése</span>
+                                            </div>
+                                        </a>
+                                        <button onClick={handleLogout} className={`${styles.item} ${styles.logoutAction}`}>
+                                            <div>
+                                                <span className={styles.itemTitle}>Kijelentkezés</span>
+                                                <span className={styles.itemDescription}>Viszlát legközelebb!</span>
+                                            </div>
+                                        </button>
+                                    </>
+                                ) : (
+                                    <a href="/UserLoginPage" className={styles.item}>
+                                        <div>
+                                            <span className={styles.itemTitle}>Bejelentkezés</span>
+                                            <span className={styles.itemDescription}>Lépjen be a fiókjába</span>
+                                        </div>
+                                    </a>
+                                )}
+                            </div>
+                        )}
+                    </div>
                     {actions}
-
-                    {loggedIn && (
-                        <Button
-                            className={styles.logoutButton}
-                            onClick={handleLogout}
-                        >
-                            Log out
-                        </Button>
-                    )}
-                    {!loggedIn && (
-                         <a href="/UserLoginPage" style={{ textDecoration: 'none' }}>
-                            <Button className={styles.logoutButton}>
-                                Log in
-                            </Button>
-                        </a>
-                    )}
                 </div>
             </div>
         </header>

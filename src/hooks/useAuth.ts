@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { checkAuthStatus } from '../Api/authApi.ts';
+import { checkAuthStatus } from '../api/authApi.ts';
 
 /**
  * Custom hook to manage authentication state and user details.
@@ -11,11 +11,7 @@ export function useAuth() {
     const [loading, setLoading] = useState(true);
     const [initials, setInitials] = useState<string>("");
     const [name, setName] = useState<string>(""); //bocsi peti
-    // /\
-    // ||
-    // majd te megoldod csáááá
-    // kellet holnapra név a UserHomePage re
-    // max majd kitörlöd
+
 
     useEffect(() => {
         // Track mounted state to avoid memory leaks
