@@ -17,3 +17,11 @@ export const getCompanyMessages = async () => {
     });
     return handleResponse(response);
 };
+
+export const getUserMessages = async () => {
+    const response = await fetch(`${API_BASE_URL}/user/messages`, {
+        method: "GET",
+        credentials: "include",
+    });
+    return handleResponse(response);
+};
