@@ -1,91 +1,154 @@
 .header {
-    background: white;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-    padding: 0.75rem 1.5rem;
     position: sticky;
     top: 0;
     z-index: 100;
+    padding: 0.75rem 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    isolation: isolate;
+}
+
+.header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    z-index: -1;
 }
 
 .container {
-    max-width: 1300px;
+    max-width: 95vw;
     margin: 0 auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.logo {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #1a1a1a;
-    text-decoration: none;
+.iconButton {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    justify-content: center;
+    gap: 8px;
+    height: 40px;
+    padding: 0 16px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 50px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    position: relative;
+    background: transparent;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.iconButton::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: -1;
+    transition: background 0.3s ease;
+}
+
+.iconButton:hover::before {
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.iconButton:hover {
+    transform: translateY(-1px);
+}
+
+.initialsText {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #111827;
+}
+
+.arrow {
+    font-size: 0.6rem;
+    color: #6b7280;
+    line-height: 1;
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 260px;
+    background: rgba(255, 255, 255, 0.30);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    z-index: 1000;
+    animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dropdownHeader {
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    color: #4b5563;
+}
+
+.item {
+    display: flex;
+    padding: 12px 16px;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    width: 100%;
+    text-align: left;
+}
+
+.item:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.itemTitle {
+    display: block;
+    font-size: 0.85rem;
+    color: #111827;
+    font-weight: 600;
+}
+
+.itemDescription {
+    display: block;
+    font-size: 0.7rem;
+    color: #6b7280;
+    margin-top: 2px;
+}
+
+.logoutAction .itemTitle {
+    color: #ef4444;
 }
 
 .nav {
     display: flex;
     align-items: center;
-    gap: 2rem;
+    gap: 2.5rem;
 }
 
-.navLink {
-    color: #666;
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: color 0.2s ease;
-}
-
-.navLink:hover {
-    color: #1a1a1a;
-}
-
-.actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.iconButton {
-    background: #f0f2f5;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #1a1a1a;
-    transition: background 0.2s;
-}
-
-.iconButton:hover {
-    background: #e4e6eb;
-}
-
-.logoutButton {
-    background: transparent;
-    border: 1px solid #eee; /* Matches .divider color */
-    padding: 0.5rem 1rem;
-    border-radius: 8px; /* Slightly smaller radius than the form (12px) */
-    color: #1a1a1a;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.logoutButton:hover {
-    background: #f0f2f5;
-    border-color: #d0d0d0;
-}
-
-@media (max-width: 768px) {
-    .nav {
-        display: none; /* In a real app, you'd swap this for a hamburger menu */
-    }
-}
+.profileWrapper { position: relative; }
+.actions { display: flex; align-items: center; gap: 1rem; }
+.navLink { color: #4b5563; text-decoration: none; gap: 10px; font-weight: 500; font-size: 0.95rem; }
+.logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: #1a1a1a; font-weight: 700; }
+.logoBox { width: 20px; height: 20px; border-radius: 4px; display: flex; justify-content: center; align-items: center; }
+.logoInner { width: 8px; height: 8px; background: #fff; border-radius: 2px; }

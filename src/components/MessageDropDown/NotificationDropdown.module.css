@@ -1,0 +1,206 @@
+.wrapper {
+    position: relative;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+}
+
+.trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    min-width: 40px;
+    padding: 0 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    color: #111827;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    position: absolute;
+    right: 0;
+    background: transparent;
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+}
+
+.trigger::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: -1;
+    transition: background 0.3s ease;
+}
+
+.trigger:hover {
+    padding: 0 20px;
+    transform: translateY(-1px);
+    background: rgba(255, 255, 255, 0.6);
+    z-index: 10;
+}
+
+.iconContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.badgeDot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444;
+    border: 2px solid #fff;
+    border-radius: 50%;
+}
+
+.triggerLabel {
+    font-size: 0.85rem;
+    font-weight: 500;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-width 0.4s ease, opacity 0.3s ease, margin 0.4s ease;
+    margin-left: 0;
+}
+
+.trigger:hover .triggerLabel {
+    max-width: 250px;
+    opacity: 1;
+    margin-left: 12px;
+}
+
+.arrow {
+    font-size: 0.6rem;
+    color: #6b7280;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-left: 0;
+}
+
+.trigger:hover .arrow {
+    max-width: 20px;
+    opacity: 1;
+    margin-left: 8px;
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 320px;
+    background: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-8px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.header {
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.3);
+    font-weight: 600;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #4b5563;
+}
+
+.markReadBtn {
+    background: none;
+    border: none;
+    color: #2563eb;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+}
+
+.markReadBtn:hover {
+    background: rgba(37, 99, 235, 0.1);
+}
+
+.item {
+    padding: 14px 16px;
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.item:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.item:last-child {
+    border-bottom: none;
+}
+
+.statusIndicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+}
+
+.unread {
+    background-color: #3b82f6;
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
+.read { background-color: rgba(0, 0, 0, 0.1); }
+
+.itemTitle {
+    display: block;
+    font-size: 0.85rem;
+    color: #111827;
+    font-weight: 600;
+}
+
+.itemDescription {
+    font-size: 0.75rem;
+    color: #4b5563;
+    margin-top: 2px;
+}
+
+.viewAll {
+    display: block;
+    text-align: center;
+    padding: 14px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #2563eb;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.4);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    transition: background 0.2s;
+}
+
+.viewAll:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+}
