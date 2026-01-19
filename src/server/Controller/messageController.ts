@@ -2,7 +2,7 @@ import { supabase } from "../../lib/supabaseClient.ts";
 
 
 // get system messages for user
-export const getusersystemmessages = async (companyId: number) => {
+export const getcompanysystemmessages = async (companyId: number) => {
     const { data: readMessages, error: readError } = await supabase
         .from("system_message_reads")
         .select("message_id")
