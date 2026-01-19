@@ -25,3 +25,19 @@ export const getUserMessages = async () => {
     });
     return handleResponse(response);
 };
+
+export const readUserSystemMessage = async (messageId: number) => {
+    const response = await fetch(`${API_BASE_URL}/user/messages/read/${messageId}`, {
+        method: "PATCH",
+        credentials: "include",
+    });
+    return handleResponse(response);
+}
+
+export const readCompanySystemMessage = async (messageId: number) => {
+    const response = await fetch(`${API_BASE_URL}/company/messages/read/${messageId}`, {
+        method: "PATCH",
+        credentials: "include",
+    });
+    return handleResponse(response);
+}
