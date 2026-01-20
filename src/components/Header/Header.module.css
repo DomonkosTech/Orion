@@ -146,6 +146,20 @@
     gap: 2.5rem;
 }
 
+    @media (max-width: 768px) {
+        .nav {
+            display: none;
+        }
+        
+        .container {
+            gap: 1rem;
+        }
+
+        .actions {
+            gap: 0.5rem;
+        }
+    }
+
 .profileWrapper { position: relative; }
 .actions { display: flex; align-items: center; gap: 1rem; }
 .navLink { color: #4b5563; text-decoration: none; gap: 10px; font-weight: 500; font-size: 0.95rem; }
