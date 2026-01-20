@@ -6,7 +6,7 @@ import {
     getUserMessages,
     readCompanySystemMessage,
     readUserSystemMessage
-} from "../../Api/messageApi";
+} from "../../api/messageApi";
 
 interface Notification {
     id: number;
@@ -161,8 +161,8 @@ const NotificationDropdown: React.FC = () => {
                                             <span className={styles.itemDate}>{formatRelativeTime(notif.created_at)}</span>
                                         </div>
                                         <div className={styles.itemDescription}>
-                                            {notif.description.length > 150 
-                                                ? `${notif.description.substring(0, 150)}...` 
+                                            {notif.description.length > 150
+                                                ? `${notif.description.substring(0, 150)}...`
                                                 : notif.description}
                                         </div>
                                     </div>
