@@ -175,11 +175,32 @@
 }
 .read { background-color: rgba(0, 0, 0, 0.1); }
 
+.itemContent {
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+.itemHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+}
+
 .itemTitle {
     display: block;
     font-size: 0.85rem;
     color: #111827;
     font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.itemDate {
+    font-size: 0.7rem;
+    color: #6b7280;
+    flex-shrink: 0;
 }
 
 .itemDescription {
