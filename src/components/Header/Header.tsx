@@ -3,6 +3,7 @@ import styles from "./Header.module.css";
 
 // Components
 import NotificationDropdown from "../MessageDropDown/NotificationDropDown.tsx";
+import ProfileDropdown from "../ProfileDropdown/ProfileDropdown.tsx";
 
 // Server / hooks
 import { useLogout } from "../../api/authApi.ts";
@@ -27,7 +28,7 @@ export function Header({
                            actions,
                        }: HeaderProps) {
     const handleLogout = useLogout();
-    const { loggedIn, userType, loading, initials } = useAuth();
+    const { loggedIn, userType, loading, initials, name } = useAuth();
 
     // Dropdown state logic
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -108,35 +109,12 @@ export function Header({
                         </button>
 
                         {isMenuOpen && (
-                            <div className={styles.dropdown}>
-                                <div className={styles.dropdownHeader}>
-                                    {loggedIn ? (userType === "user" ? "Szia, Domonkos!" : "Céges Fiók") : "Vendég"}
-                                </div>
-
-                                {loggedIn ? (
-                                    <>
-                                        <a href="/profile" className={styles.item}>
-                                            <div>
-                                                <span className={styles.itemTitle}>Profilom</span>
-                                                <span className={styles.itemDescription}>Személyes adatok kezelése</span>
-                                            </div>
-                                        </a>
-                                        <button onClick={handleLogout} className={`${styles.item} ${styles.logoutAction}`}>
-                                            <div>
-                                                <span className={styles.itemTitle}>Kijelentkezés</span>
-                                                <span className={styles.itemDescription}>Viszlát legközelebb!</span>
-                                            </div>
-                                        </button>
-                                    </>
-                                ) : (
-                                    <a href="/UserLoginPage" className={styles.item}>
-                                        <div>
-                                            <span className={styles.itemTitle}>Bejelentkezés</span>
-                                            <span className={styles.itemDescription}>Lépjen be a fiókjába</span>
-                                        </div>
-                                    </a>
-                                )}
-                            </div>
+                            <ProfileDropdown
+                                loggedIn={loggedIn}
+                                userType={userType}
+                                handleLogout={handleLogout}
+                                name={name}
+                            />
                         )}
                     </div>
                     {actions}

@@ -166,12 +166,12 @@ const CompanyRegisterPage: React.FC = () => {
                                 />
                                 <div className={styles.row}>
                                     <InputField
-                                        label="Jelszó *" name="password" type="password"
+                                        label="Jelszó *" name="password" isPassword
                                         value={formData.password} onChange={handleChange}
                                         error={errors.password}
                                     />
                                     <InputField
-                                        label="Megerősítés *" name="confirmPassword" type="password"
+                                        label="Megerősítés *" name="confirmPassword" isPassword
                                         value={formData.confirmPassword} onChange={handleChange}
                                         error={errors.confirmPassword}
                                     />

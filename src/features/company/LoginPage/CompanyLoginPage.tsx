@@ -87,7 +87,7 @@ const CompanyLoginPage: React.FC = () => {
                     <InputField
                         id="password"
                         label="Jelszó"
-                        type="password"
+                        isPassword
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}

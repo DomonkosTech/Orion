@@ -162,7 +162,7 @@ const NotificationDropdown: React.FC = () => {
     return (
         <div className={styles.wrapper} ref={dropdownRef}>
             <button
-                className={styles.trigger}
+                className={`${styles.trigger} ${isOpen ? styles.expanded : ''}`}
                 onClick={() => setIsOpen(!isOpen)}
                 aria-expanded={isOpen}
             >
