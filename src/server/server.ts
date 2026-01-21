@@ -17,7 +17,8 @@ import companyRoutes from "./routes/companyRoute.ts";
 import advertisementRoutes from "./routes/advertisementRoute.ts";
 import applicantRoutes from "./routes/applicantRoute.ts";
 import emailRoute from "./routes/emailRoute.ts";
-import messageRoute from "./routes/messageRoutes.ts"
+import systemmessageRoute from "./routes/systemmessageRoute.ts"
+import messageRoute from "./routes/messageRoute.ts";
 
 // Initialize Express app
 const app = express();
@@ -45,10 +46,14 @@ app.use("/api", advertisementRoutes);
 // Applicant Routes (Submit, Track, Accept/Reject)
 app.use("/api", applicantRoutes);
 
-app.use("/api", messageRoute);
+// systemmessage Routes (Read, Update)
+app.use("/api", systemmessageRoute);
 
 // Email Routes (Send Email)
 app.use("/api/email", emailRoute);
+
+// Message Routes (Send Message, Read Messages, Delete Messages)
+app.use("/api/chat", messageRoute);
 
 // Start server
 app.listen(4000, () => console.log("Server running on http://localhost:4000"));
