@@ -143,8 +143,8 @@ const UserRegisterPage: React.FC = () => {
                             <section className={styles.section}>
                                 <InputField label="Email cím *" name="email" type="email" value={formData.email} onChange={handleChange} error={errors.email} />
                                 <div className={styles.row}>
-                                    <InputField label="Jelszó *" name="password" type="password" value={formData.password} onChange={handleChange} error={errors.password} />
-                                    <InputField label="Megerősítés *" name="confirmPassword" type="password" value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
+                                    <InputField label="Jelszó *" name="password" isPassword value={formData.password} onChange={handleChange} error={errors.password} />
+                                    <InputField label="Megerősítés *" name="confirmPassword" isPassword value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
                                 </div>
                             </section>
                         )}

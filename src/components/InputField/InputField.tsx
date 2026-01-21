@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styles from './InputField.module.css';
+import { Eye, EyeOff } from 'lucide-react';
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: React.ReactNode; // Supports strings or icons/components
     error?: string;
     containerClassName?: string; // To pass styles.field or styles.fieldFull
+    isPassword?: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -13,8 +15,18 @@ const InputField: React.FC<InputFieldProps> = ({
                                                    id,
                                                    className,
                                                    containerClassName,
+                                                   isPassword,
+                                                   type,
                                                    ...props
                                                }) => {
+    const [showPassword, setShowPassword] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
+    };
+
+    const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+
     return (
         <div className={`${styles.container} ${containerClassName || ''}`}>
             {label && (
@@ -22,11 +34,25 @@ const InputField: React.FC<InputFieldProps> = ({
                     {label}
                 </label>
             )}
-            <input
-                id={id}
-                className={`${styles.input} ${error ? styles.inputError : ''} ${className || ''}`}
-                {...props}
-            />
+            <div className={styles.inputWrapper}>
+                <input
+                    id={id}
+                    type={inputType}
+                    className={`${styles.input} ${error ? styles.inputError : ''} ${className || ''} ${isPassword ? styles.passwordInput : ''}`}
+                    {...props}
+                />
+                {isPassword && (
+                    <button
+                        type="button"
+                        className={styles.eyeButton}
+                        onClick={togglePasswordVisibility}
+                        tabIndex={-1}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                    >
+                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                )}
+            </div>
             {error && <span className={styles.errorMessage}>{error}</span>}
         </div>
     );

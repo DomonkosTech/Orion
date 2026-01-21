@@ -38,7 +38,8 @@
     transition: background 0.3s ease;
 }
 
-.trigger:hover {
+.trigger:hover,
+.trigger.expanded {
     padding: 0 20px;
     transform: translateY(-1px);
     background: rgba(255, 255, 255, 0.6);
@@ -74,7 +75,8 @@
     margin-left: 0;
 }
 
-.trigger:hover .triggerLabel {
+.trigger:hover .triggerLabel,
+.trigger.expanded .triggerLabel {
     max-width: 250px;
     opacity: 1;
     margin-left: 12px;
@@ -90,7 +92,8 @@
     margin-left: 0;
 }
 
-.trigger:hover .arrow {
+.trigger:hover .arrow,
+.trigger.expanded .arrow {
     max-width: 20px;
     opacity: 1;
     margin-left: 8px;
