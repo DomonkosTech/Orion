@@ -1,7 +1,7 @@
 import express from "express";
 import {type AuthRequest, verifyCompany, verifyToken, verifyUser,} from "../middleware/auth.ts";
 const router = express.Router();
-import {getcompanysystemmessages, getusersystemmessages, readsystemmessage} from "../Controller/messageController.ts";
+import {getcompanysystemmessages, getusersystemmessages, readsystemmessage} from "../Controller/systemmessageController.ts";
 
 
 router.get("/company/messages",verifyToken, verifyCompany, async (req: AuthRequest, res) => {
