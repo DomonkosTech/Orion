@@ -26,7 +26,6 @@ router.get("/user/messages",verifyToken, verifyUser, async (req: AuthRequest, re
             return res.status(403).json({ error: "Company access denied" });
         }
         const data = await getusersystemmessages(userId);
-        console.log(data);
         res.json({ success: true, data: data });
     } catch (error) {
         console.error(error);
