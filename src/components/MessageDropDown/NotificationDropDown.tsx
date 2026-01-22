@@ -74,6 +74,7 @@ const formatRelativeTime = (dateString?: string) => {
 const NotificationDropdown: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [expandedId, setExpandedId] = useState<number | null>(null);
+    const [isAnimating, setIsAnimating] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { userType, loggedIn } = useAuth();
     const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -136,9 +137,13 @@ const NotificationDropdown: React.FC = () => {
                 await readUserSystemMessage(id);
             }
 
-            setNotifications(prev => prev.map(n =>
-                n.id === id ? { ...n, isRead: true } : n
-            ));
+            // Immediately remove the notification from the list with animation
+            setNotifications(prev => prev.filter(n => n.id !== id));
+            
+            // If the removed notification was expanded, collapse it
+            if (expandedId === id) {
+                setExpandedId(null);
+            }
         } catch (error) {
             console.error("Failed to mark message as read", error);
         }
@@ -152,6 +157,7 @@ const NotificationDropdown: React.FC = () => {
     };
 
     const handleNotificationClick = (id: number) => {
+        setIsAnimating(true);
         setExpandedId(expandedId === id ? null : id);
     };
 
@@ -176,7 +182,11 @@ const NotificationDropdown: React.FC = () => {
                 <span className={styles.triggerLabel}>
                     {unreadCount > 0 ? `${unreadCount} új üzenet` : 'Üzenetek'}
                 </span>
-                <span className={styles.arrow}>{isOpen ? '▲' : '▼'}</span>
+                <span className={styles.arrow}>
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}>
+                        <path d="m6 9 6 6 6-6"/>
+                    </svg>
+                </span>
             </button>
 
             <AnimatePresence>
@@ -197,82 +207,95 @@ const NotificationDropdown: React.FC = () => {
                             )}
                         </div>
 
-                        <div className={styles.list}>
-                            {notifications.length === 0 ? (
-                                <div className={styles.emptyState}>
-                                    <BellOff size={48} className={styles.emptyIcon} />
-                                    <span className={styles.emptyText}>Minden elolvasva!</span>
-                                </div>
-                            ) : (
-                                notifications.map((notif, index) => (
-                                    <motion.div
-                                        key={notif.id}
-                                        className={styles.item}
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: index * 0.05 }}
-                                        onClick={() => handleNotificationClick(notif.id)}
+                        <div className={`${styles.list} ${isAnimating ? styles.animating : ''}`}>
+                            <AnimatePresence initial={false}>
+                                {notifications.length === 0 ? (
+                                    <motion.div 
+                                        key="empty"
+                                        className={styles.emptyState}
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        exit={{ opacity: 0 }}
+                                        transition={{ duration: 0.2 }}
                                     >
-                                        <CategoryIcon type={notif.type || 'alert'} isRead={notif.isRead} />
-                                        
-                                        <div className={styles.itemContent}>
-                                            <div className={styles.itemHeader}>
-                                                <h4 className={styles.itemTitle}>{notif.title}</h4>
-                                                <span className={styles.itemDate}>{formatRelativeTime(notif.created_at)}</span>
-                                            </div>
-                                            
-                                            <p className={styles.itemDescription}>
-                                                {expandedId === notif.id 
-                                                    ? notif.description 
-                                                    : (notif.description.length > 60 
-                                                        ? `${notif.description.substring(0, 60)}...` 
-                                                        : notif.description)}
-                                            </p>
-
-                                            <AnimatePresence>
-                                                {expandedId === notif.id && (
-                                                    <motion.div
-                                                        initial={{ height: 0, opacity: 0 }}
-                                                        animate={{ height: "auto", opacity: 1 }}
-                                                        exit={{ height: 0, opacity: 0 }}
-                                                        className={styles.detailsSection}
-                                                        onClick={(e) => e.stopPropagation()}
-                                                    >
-                                                        <div className={styles.actions}>
-                                                            {notif.type === 'update' && (
-                                                                <button 
-                                                                    className={`${styles.actionBtn} ${styles.primaryAction}`}
-                                                                    onClick={() => window.location.reload()}
-                                                                >
-                                                                    <RefreshCcw size={14} style={{ display: 'inline', marginRight: 4 }} />
-                                                                    Oldal frissítése
-                                                                </button>
-                                                            )}
-                                                            {notif.type === 'message' && (
-                                                                <button 
-                                                                    className={`${styles.actionBtn} ${styles.secondaryAction}`}
-                                                                    onClick={() => navigate('/profile')}
-                                                                >
-                                                                    Profil megtekintése
-                                                                </button>
-                                                            )}
-                                                            {!notif.isRead && (
-                                                                <button 
-                                                                    className={`${styles.actionBtn} ${styles.secondaryAction}`}
-                                                                    onClick={() => handleMarkAsRead(notif.id)}
-                                                                >
-                                                                    <CheckCircle2 size={14} style={{ display: 'inline', marginRight: 4 }} />
-                                                                    Megjelölés olvasottként
-                                                                </button>
-                                                            )}
-                                                        </div>
-                                                    </motion.div>
-                                                )}
-                                            </AnimatePresence>
-                                        </div>
+                                        <BellOff size={48} className={styles.emptyIcon} />
+                                        <span className={styles.emptyText}>Minden elolvasva!</span>
                                     </motion.div>
-                                ))
-                            )}
+                                ) : (
+                                    notifications.map((notif) => (
+                                        <motion.div
+                                            key={notif.id}
+                                            className={styles.item}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                            transition={{ duration: 0.15 }}
+                                            onClick={() => handleNotificationClick(notif.id)}
+                                        >
+                                            <CategoryIcon type={notif.type || 'alert'} isRead={notif.isRead} />
+                                            
+                                            <div className={styles.itemContent}>
+                                                <div className={styles.itemHeader}>
+                                                    <h4 className={styles.itemTitle}>{notif.title}</h4>
+                                                    <span className={styles.itemDate}>{formatRelativeTime(notif.created_at)}</span>
+                                                </div>
+                                                
+                                                <p className={styles.itemDescription}>
+                                                    {expandedId === notif.id 
+                                                        ? notif.description 
+                                                        : (notif.description.length > 50 
+                                                            ? `${notif.description.substring(0, 50)}...` 
+                                                            : notif.description)}
+                                                </p>
+
+                                                <AnimatePresence>
+                                                    {expandedId === notif.id && (
+                                                        <motion.div
+                                                            initial={{ opacity: 0, height: 0 }}
+                                                            animate={{ opacity: 1, height: 'auto' }}
+                                                            exit={{ opacity: 0, height: 0 }}
+                                                            transition={{ duration: 0.2 }}
+                                                            onAnimationStart={() => setIsAnimating(true)}
+                                                            onAnimationComplete={() => setIsAnimating(false)}
+                                                            className={styles.detailsSection}
+                                                            onClick={(e) => e.stopPropagation()}
+                                                        >
+                                                            <div className={styles.actions}>
+                                                                {notif.type === 'update' && (
+                                                                    <button 
+                                                                        className={`${styles.actionBtn} ${styles.primaryAction}`}
+                                                                        onClick={() => window.location.reload()}
+                                                                    >
+                                                                        <RefreshCcw size={14} style={{ marginRight: 6 }} />
+                                                                        Oldal frissítése
+                                                                    </button>
+                                                                )}
+                                                                {notif.type === 'message' && (
+                                                                    <button 
+                                                                        className={`${styles.actionBtn} ${styles.secondaryAction}`}
+                                                                        onClick={() => navigate('/profile')}
+                                                                    >
+                                                                        Profil megtekintése
+                                                                    </button>
+                                                                )}
+                                                                {!notif.isRead && (
+                                                                    <button 
+                                                                        className={`${styles.actionBtn} ${styles.secondaryAction}`}
+                                                                        onClick={() => handleMarkAsRead(notif.id)}
+                                                                    >
+                                                                        <CheckCircle2 size={14} style={{ marginRight: 6 }} />
+                                                                        Megjelölés olvasottként
+                                                                    </button>
+                                                                )}
+                                                            </div>
+                                                        </motion.div>
+                                                    )}
+                                                </AnimatePresence>
+                                            </div>
+                                        </motion.div>
+                                    ))
+                                )}
+                            </AnimatePresence>
                         </div>
                     </motion.div>
                 )}
