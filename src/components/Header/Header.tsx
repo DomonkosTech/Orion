@@ -98,14 +98,18 @@ export function Header({
 
                     <div className={styles.profileWrapper} ref={menuRef}>
                         <button
-                            className={styles.iconButton}
+                            className={`${styles.iconButton} ${isMenuOpen ? styles.expanded : ''}`}
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             aria-label="Profile Menu"
                         >
                             <span className={styles.initialsText}>
                                 {loggedIn ? initials : "?"}
                             </span>
-                            <span className={styles.arrow}>▼</span>
+                            <span className={styles.arrow}>
+                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}>
+                                    <path d="m6 9 6 6 6-6"/>
+                                </svg>
+                            </span>
                         </button>
 
                         {isMenuOpen && (
