@@ -26,7 +26,7 @@ import UserPasswordResetRequest from "./features/user/EditProfile/UserPasswordRe
 import UserPasswordResetSave from "./features/user/EditProfile/UserPasswordResetSave.tsx";
 import CompanyPasswordResetRequest from "./features/company/EditProfile/CompanyPasswordResetRequest.tsx";
 import CompanyPasswordResetSave from "./features/company/EditProfile/CompanyPasswordResetSave.tsx";
-
+import Messenger from "./features/user/messenger/messenger.tsx"
 
 function App() {
     return (
@@ -58,7 +58,7 @@ function App() {
                     element={<UserPasswordResetRequest />}
                 />
                 <Route
-                    path="/user/password/"
+                    path="/user/password"
                     element={<UserPasswordResetSave />}
                 />
                 <Route
@@ -66,10 +66,15 @@ function App() {
                     element={<CompanyPasswordResetRequest />}
                 />
                 <Route
-                    path="/company/password/"
+                    path="/company/password"
                     element={<CompanyPasswordResetSave />}
                 />
 
+                <Route
+                    path="/messenger"
+                    element={<Messenger />}
+
+                />
 
 
 
