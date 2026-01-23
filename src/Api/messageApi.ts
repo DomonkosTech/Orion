@@ -48,3 +48,21 @@ export const getMessagesForCompany = async (companyId: number) => {
     });
     return handleResponse(response);
 };
+
+export const sendUserMessage = async (message: string, companyId: number) => {
+    const response = await fetch(`${API_BASE_URL}/chat/user/send`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            // backend elvárás: { companyId, message }
+            companyId: companyId,
+            message: message,
+        }),
+        credentials: "include",
+    });
+
+    return handleResponse(response);
+};
+
