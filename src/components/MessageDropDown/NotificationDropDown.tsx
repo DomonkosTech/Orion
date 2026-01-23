@@ -8,7 +8,7 @@ import {
     getUserMessages,
     readCompanySystemMessage,
     readUserSystemMessage
-} from "../../api/messageApi";
+} from "../../Api/systemmessageApi.ts";
 import { useNavigate } from 'react-router-dom';
 
 interface Notification {
