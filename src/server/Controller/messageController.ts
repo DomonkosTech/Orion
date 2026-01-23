@@ -48,3 +48,17 @@ export const getChatMessages = async (userId: number, companyId:number, readerTy
 
     return data;
 };
+
+export const sendMessage = async (userId: number, companyId: number, message: string, senderType: string) => {
+    const { data, error } = await supabase
+        .from('messages')
+        .insert({
+            user_id: userId,
+            company_id: companyId,
+            message: message,
+            sender_type: senderType
+        }).select();
+    if (error) throw error;
+
+    return data
+}
