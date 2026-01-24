@@ -12,6 +12,7 @@ import { getAdvertisements, type Job } from "../../../../api/advertisementApi.ts
 import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 import Footer from "../../../../components/Footer/Footer.tsx";
 
+
 // Helper for formatting currency
 const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("hu-HU", {
@@ -86,59 +87,28 @@ const ListJobs: React.FC = () => {
     };
 
     return (
-        <>
+        <div className={styles.pageWrapper}>
             <Header />
 
-            <div className={styles.pageWrapper}>
-                {/* HERO / BANNER */}
-                <section className={styles.banner}>
-                    <div className={styles.bannerInner}>
-                        <BannerKicker>Álláskeresés</BannerKicker>
-
-                        <h1 className={styles.bannerTitle}>Találja meg a jövőjét</h1>
-                        <p className={styles.bannerSubtitle}>
-                            Fedezzen fel{" "}
-                            <strong>{jobs.length > 0 ? jobs.length : "több száz"}</strong> nyitott pozíciót
-                            vezető cégeknél — gyors szűrés, letisztult felület.
-                        </p>
-
-                        <div className={styles.bannerStats}>
-                            <div className={styles.stat}>
-                                <div className={styles.statLabel}>Elérhető hirdetések</div>
-                                <div className={styles.statValue}>{jobs.length || "—"}</div>
+            <main className={styles.mainContent}>
+                <div className={styles.container}>
+                    {/* Dashboard Style Header */}
+                    <div className={styles.dashboardHeader}>
+                        <div className={styles.welcomeSection}>
+                            <div className={styles.kickerWrapper}>
+                                <BannerKicker>Álláskeresés</BannerKicker>
                             </div>
-                            <div className={styles.statDivider} />
-                            <div className={styles.stat}>
-                                <div className={styles.statLabel}>Találatok</div>
-                                <div className={styles.statValue}>
-                                    {loading ? "…" : error ? "—" : filteredJobs.length}
-                                </div>
-                            </div>
-                            <div className={styles.statDivider} />
-                            <div className={styles.stat}>
-                                <div className={styles.statLabel}>Tipp</div>
-                                <div className={styles.statValueSm}>Használjon pozíció kulcsszót</div>
-                            </div>
+                            <h1 className={styles.heroTitle}>
+                                Találja meg a <span className={styles.accent}>jövőjét!</span>
+                            </h1>
+                            <p className={styles.heroSubtitle}>
+                                Fedezzen fel <strong>{jobs.length > 0 ? jobs.length : "több száz"}</strong> nyitott pozíciót vezető cégeknél.
+                            </p>
                         </div>
                     </div>
-                </section>
 
-                {/* SEARCH PANEL */}
-                <section className={styles.searchSection}>
-                    {/* ... (no changes in Search Panel) ... */}
-                    <div className={styles.searchShell}>
-                        <div className={styles.searchHeader}>
-                            <div>
-                                <h2 className={styles.searchTitle}>Keresés és szűrés</h2>
-                                <p className={styles.searchHint}>Válasszon helyszínt, pozíciót és minimálbért.</p>
-                            </div>
-
-                            <div className={styles.searchChip}>
-                                <span className={styles.searchChipDot} />
-                                Élő szűrés
-                            </div>
-                        </div>
-
+                    {/* Filter Section */}
+                    <div className={styles.searchForm}>
                         <FilterBar
                             searchTerm={searchTerm}
                             onSearchChange={setSearchTerm}
@@ -153,73 +123,45 @@ const ListJobs: React.FC = () => {
                             onClear={clearFilters}
                         />
                     </div>
-                </section>
 
-                {/* MAIN CONTENT */}
-                <main className={styles.contentContainer}>
+                    {/* Jobs Grid */}
                     {error && (
-                        <div className={styles.emptyState}>
-                            <span className={styles.emptyStateIcon}>⚠</span>
-                            <h3>Hiba történt</h3>
-                            <p className={styles.muted}>Nem sikerült betölteni az állásokat: {error}</p>
+                        <div style={{ textAlign: 'center', padding: '40px' }}>
+                            <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Hiba történt</h3>
+                            <p style={{ color: 'var(--muted)' }}>{error}</p>
                         </div>
                     )}
 
                     {loading && (
-                        <>
-                            <div className={styles.resultsHeader}>
-                                <div className={styles.resultsTitle}>Betöltés…</div>
-                                <div className={styles.resultsMeta}>Kérjük várjon</div>
-                            </div>
-
-                            <div className={styles.gridContainer}>
-                                {[1, 2, 3, 4, 5, 6, 7, 8].map((n) => (
-                                    <SkeletonCard key={n} />
-                                ))}
-                            </div>
-                        </>
+                        <div className={styles.grid}>
+                            {[1, 2, 3, 4, 5, 6].map((n) => (
+                                <SkeletonCard key={n} />
+                            ))}
+                        </div>
                     )}
 
                     {!loading && !error && (
                         <>
                             {filteredJobs.length > 0 ? (
-                                <>
-                                    <div className={styles.resultsHeader}>
-                                        <div>
-                                            <div className={styles.resultsTitle}>Találatok</div>
-                                            <div className={styles.resultsMeta}>
-                                                {filteredJobs.length} találat az Ön keresésére
-                                            </div>
-                                        </div>
-
-                                        <div className={styles.resultsPill}>
-                                            Szűrés aktív:{" "}
-                                            {(searchTerm || locationFilter || positionFilter || minWage)
-                                                ? "igen"
-                                                : "nem"}
-                                        </div>
-                                    </div>
-
-                                    <div className={styles.gridContainer}>
-                                        {filteredJobs.map((job) => (
-                                            <JobCard
-                                                key={job.id}
-                                                job={job}
-                                                onOpen={() => handleshowClick(job.id)}
-                                                formatCurrency={formatCurrency}
-                                            />
-                                        ))}
-                                    </div>
-                                </>
+                                <div className={styles.grid}>
+                                    {filteredJobs.map((job) => (
+                                        <JobCard
+                                            key={job.id}
+                                            job={job}
+                                            onOpen={() => handleshowClick(job.id)}
+                                            formatCurrency={formatCurrency}
+                                        />
+                                    ))}
+                                </div>
                             ) : (
                                 <EmptyState onClear={clearFilters} />
                             )}
                         </>
                     )}
-                </main>
-                <Footer></Footer>
-            </div>
-        </>
+                </div>
+            </main>
+            <Footer />
+        </div>
     );
 };
 

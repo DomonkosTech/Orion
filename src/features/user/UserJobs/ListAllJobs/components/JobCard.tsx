@@ -1,4 +1,5 @@
 import React from "react";
+import { MapPin, Heart, ArrowRight } from "lucide-react";
 import styles from "../ListJobs.module.css";
 import Button from "../../../../../components/Button/Button.tsx";
 
@@ -24,7 +25,7 @@ const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency }) => {
                 <div className={styles.logoPlaceholder}>
                     {job.title.charAt(0).toUpperCase()}
                 </div>
-                <span className={styles.bookmarkIcon}>♥</span>
+                <Heart className={styles.bookmarkIcon} size={20} />
             </div>
 
             <div>
@@ -36,7 +37,8 @@ const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency }) => {
                         {job.position}
                     </span>
                     <span className={`${styles.badge} ${styles.badgeLocation}`}>
-                        📍 {job.location}
+                        <MapPin size={12} style={{ marginRight: '4px', verticalAlign: 'middle' }} />
+                        {job.location}
                     </span>
                     {job.id % 3 === 0 && (
                         <span className={`${styles.badge} ${styles.badgeNew}`}>
@@ -60,7 +62,7 @@ const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency }) => {
 
                 <div onClick={(e) => { e.stopPropagation(); onOpen(); }}>
                     <Button type="button" color={"orion-blue"} variant={"secondary"}>
-                        Jelentkezés
+                        Részletek <ArrowRight size={16} style={{ marginLeft: '6px' }} />
                     </Button>
                 </div>
             </div>

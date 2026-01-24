@@ -1,4 +1,20 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+    Search,
+    Briefcase,
+    FileText,
+    ChevronRight,
+    Settings,
+    MessageSquare,
+    TrendingUp,
+    MapPin,
+    Building2,
+    ArrowRight,
+    Sparkles,
+    Zap,
+    Target
+} from "lucide-react";
 import styles from "./UserHomePage.module.css";
 
 // components
@@ -7,172 +23,227 @@ import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
 import { useAuth } from "../../../hooks/useAuth";
+import { getJobApplications, getTop3Advertisements, type AdvertisementDetails } from "../../../api/advertisementApi.ts";
+import { getChatPartners } from "../../../api/messageApi.ts";
 
 function UserHomePage() {
     const navigate = useNavigate();
-    const {name} = useAuth();
+    const { name } = useAuth();
+    const [bestMatch, setBestMatch] = useState<AdvertisementDetails | null>(null);
+    const [stats, setStats] = useState({ applications: 0, messages: 0, views: 0 });
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                const [applicationsData, topAds, chatPartners] = await Promise.all([
+                    getJobApplications(),
+                    getTop3Advertisements(),
+                    getChatPartners()
+                ]);
 
+                setStats(prev => ({
+                    ...prev,
+                    applications: (applicationsData.submit?.length || 0) + (applicationsData.work?.length || 0),
+                    messages: chatPartners?.length || 0,
+                    views: 0
+                }));
 
-    const categories = [
-        "IT & Fejlesztés",
-        "Pénzügy & Számvitel",
-        "Értékesítés & Marketing",
-        "Egészségügy",
-        "Oktatás",
-        "Ügyfélszolgálat"
+                if (topAds && topAds.length > 0) {
+                    setBestMatch(topAds[0]);
+                }
+            } catch (err) {
+                console.error("Hiba az adatok lekérésekor:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchDashboardData();
+    }, []);
+
+    const navigationItems = [
+        {
+            title: "Álláskeresés",
+            icon: <Search size={24} />,
+            path: "/listjobs",
+            description: "Keressen az aktuális ajánlatok között"
+        },
+        {
+            title: "Jelentkezéseim",
+            icon: <Briefcase size={24} />,
+            path: "/jobapplications",
+            description: "Kövesse nyomon folyamatait"
+        },
+        {
+            title: "Dokumentumok",
+            icon: <FileText size={24} />,
+            path: "/uploadresume",
+            description: "Önéletrajz és egyéb fájlok"
+        },
+        {
+            title: "Üzenetek",
+            icon: <MessageSquare size={24} />,
+            path: "/messenger",
+            description: "Beszélgessen a munkaadókkal"
+        }
     ];
 
     return (
         <div className={styles.page}>
             <Header />
 
-            <main>
-                {/* Hero Section - Personalized Welcome */}
-                <section className={styles.hero}>
-                    <div className={styles.heroInner}>
-                        <BannerKicker>Személyes Vezérlőpult</BannerKicker>
-
-                        <h1 className={styles.heroTitle}>
-                            Szia, <span className={styles.accent}>{name}</span>! 👋
-                        </h1>
-
-                        <p className={styles.heroSubtitle}>
-                            Örülünk, hogy újra itt vagy. Nézzük, hol tartasz ma a karrierutadon,
-                            és találjuk meg a következő nagy lehetőségedet!
-                        </p>
-
-                        <div className={styles.heroActions}>
-                            <Button
-                                onClick={() => navigate("/listjobs")}
-                                color="orion-blue"
-                                variant="primary"
-                            >
-                                Böngészés folytatása
-                            </Button>
-
+            <main className={styles.mainContent}>
+                <div className={styles.container}>
+                    {/* Welcome Header */}
+                    <div className={styles.dashboardHeader}>
+                        <div className={styles.welcomeSection}>
+                            <div className={styles.kickerWrapper}>
+                                <BannerKicker>Személyes Vezérlőpult</BannerKicker>
+                            </div>
+                            <h1 className={styles.heroTitle}>
+                                Szia, <span className={styles.accent}>{name}!</span> 👋
+                            </h1>
+                            <p className={styles.heroSubtitle}>
+                                Itt egy áttekintés a mai karrierlehetőségeidről és folyamataidról.
+                            </p>
+                        </div>
+                        <div className={styles.headerActions}>
                             <Button
                                 onClick={() => navigate("/EditUserProfile")}
                                 variant="secondary"
                                 color="orion-blue"
                             >
-                                Profil szerkesztése
+                                <Settings size={18} style={{ marginRight: '8px' }} />
+                                Profil beállítások
                             </Button>
                         </div>
                     </div>
-                </section>
 
-                {/* Quick Actions Grid - Action Oriented */}
-                <section className={styles.quick}>
-                    <div className={styles.container}>
-                        <div className={styles.quickGrid}>
-                            <Link to="/listjobs" className={styles.quickCard}>
-                                <div className={styles.quickIcon}>🔍</div>
-                                <div className={styles.quickText}>
-                                    <div className={styles.quickTitle}>Új állások keresése</div>
-                                    <div className={styles.quickSub}>Találja meg az ideális pozíciót</div>
-                                </div>
-                                <div className={styles.quickArrow}>→</div>
-                            </Link>
-
-                            <Link to="/jobapplications" className={styles.quickCard}>
-                                <div className={styles.quickIcon}>📈</div>
-                                <div className={styles.quickText}>
-                                    <div className={styles.quickTitle}>Aktív jelentkezések</div>
-                                    <div className={styles.quickSub}>Kövesse nyomon a folyamatait</div>
-                                </div>
-                                <div className={styles.quickArrow}>→</div>
-                            </Link>
-
-                            <Link to="/cv" className={styles.quickCard}>
-                                <div className={styles.quickIcon}>📄</div>
-                                <div className={styles.quickText}>
-                                    <div className={styles.quickTitle}>Dokumentumaim</div>
-                                    <div className={styles.quickSub}>Önéletrajzok és motivációs levelek</div>
-                                </div>
-                                <div className={styles.quickArrow}>→</div>
-                            </Link>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Redesigned "Why Us" -> "Personalized Support" Section */}
-                <section className={styles.section}>
-                    <div className={styles.container}>
-                        <div className={styles.sectionHead}>
-                            <h2 className={styles.sectionTitle}>Miben segíthetünk ma?</h2>
-                            <p className={styles.sectionSubtitle}>
-                                Használja eszközeinket a hatékonyabb munkakereséshez és a szakmai fejlődéshez.
-                            </p>
-                        </div>
-
-                        <div className={styles.featuresGrid}>
-                            <article className={styles.feature}>
-                                <div className={styles.featureTop}>
-                                    <div className={styles.featureIcon}>🎯</div>
-                                    <div className={styles.featureBadge}>Tipp</div>
-                                </div>
-                                <h3 className={styles.featureTitle}>Személyre szabott találatok</h3>
-                                <p className={styles.featureText}>
-                                    Frissítse szakmai készségeit, hogy algoritmusunk pontosabb ajánlatokat mutasson.
-                                </p>
-                            </article>
-
-                            <article className={styles.feature}>
-                                <div className={styles.featureTop}>
-                                    <div className={styles.featureIcon}>💌</div>
-                                    <div className={styles.featureBadge}>Értesítő</div>
-                                </div>
-                                <h3 className={styles.featureTitle}>Legyen az első</h3>
-                                <p className={styles.featureText}>
-                                    Mentse el kereséseit, és küldünk egy üzenetet, amint releváns állást találunk.
-                                </p>
-                            </article>
-
-                            <article className={styles.feature}>
-                                <div className={styles.featureTop}>
-                                    <div className={styles.featureIcon}>💡</div>
-                                    <div className={styles.featureBadge}>Útmutató</div>
-                                </div>
-                                <h3 className={styles.featureTitle}>Interjú felkészülés</h3>
-                                <p className={styles.featureText}>
-                                    Olvassa el szakmai tanácsainkat, hogy magabiztosan álljon a munkáltatók elé.
-                                </p>
-                            </article>
-                        </div>
-                    </div>
-                </section>
-
-                {/* Categories & Final Callout */}
-                <section className={styles.sectionAlt}>
-                    <div className={styles.container}>
-                        <div className={styles.sectionHead}>
-                            <h2 className={styles.sectionTitle}>Kiemelt szektorok</h2>
-                            <p className={styles.sectionSubtitle}>Válasszon egy kategóriát, és fedezze fel a legfrissebb lehetőségeket.</p>
-                        </div>
-
-                        <div className={styles.pills}>
-                            {categories.map((cat) => (
-                                <span key={cat} className={styles.pill}>{cat}</span>
-                            ))}
-                        </div>
-
-                        <div className={styles.callout}>
-                            <div className={styles.calloutLeft}>
-                                <div className={styles.calloutTitle}>Készen áll a következő fejezetre?</div>
-                                <div className={styles.calloutText}>
-                                    Nézze meg a legújabb 24 órában feladott hirdetéseket!
+                    <div className={styles.dashboardGrid}>
+                        {/* Stats Row */}
+                        <section className={styles.statsRow}>
+                            <div className={styles.statCard}>
+                                <div className={styles.statIcon}><Target size={28} /></div>
+                                <div className={styles.statInfo}>
+                                    <span className={styles.statLabel}>Jelentkezések</span>
+                                    <span className={styles.statValue}>{stats.applications}</span>
                                 </div>
                             </div>
-                            <Button
-                                color="orion-blue"
-                                onClick={() => navigate("/listjobs")}
-                            >
-                                Mai ajánlatok megtekintése
-                            </Button>
-                        </div>
+                            <div className={styles.statCard}>
+                                <div className={styles.statIcon}><MessageSquare size={28} /></div>
+                                <div className={styles.statInfo}>
+                                    <span className={styles.statLabel}>Üzenetek</span>
+                                    <span className={styles.statValue}>{stats.messages}</span>
+                                </div>
+                            </div>
+                            <div className={styles.statCard}>
+                                <div className={styles.statIcon}><TrendingUp size={28} /></div>
+                                <div className={styles.statInfo}>
+                                    <span className={styles.statLabel}>Profil megtekintés</span>
+                                    <span className={styles.statValue}>{stats.views}</span>
+                                </div>
+                            </div>
+                            <div className={styles.statCard} title="Ez a mutató azt jelzi, hogy mennyire illik az Ön profilja (tapasztalat, készségek) az aktuális piaci igényekhez.">
+                                <div className={styles.statIcon}><Sparkles size={28} /></div>
+                                <div className={styles.statInfo}>
+                                    <span className={styles.statLabel}>Egyezési mutató</span>
+                                    <span className={styles.statValue}>92%</span>
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Featured Content: Best Match */}
+                        <section className={styles.featuredSection}>
+                            <div className={styles.bestMatchCard}>
+                                <div className={styles.cardHeader}>
+                                    <div className={styles.matchBadge}>
+                                        <Zap size={16} fill="currentColor" />
+                                        Kiemelt Ajánlat
+                                    </div>
+                                </div>
+                                <div className={styles.cardBody}>
+                                    {loading ? (
+                                        <div className={styles.skeleton}></div>
+                                    ) : bestMatch ? (
+                                        <>
+                                            <h2 className={styles.matchTitle}>{bestMatch.title}</h2>
+                                            <div className={styles.matchDetails}>
+                                                <div className={styles.detailItem}>
+                                                    <Building2 size={20} />
+                                                    <span>{bestMatch.company_name || "Orion Partner"}</span>
+                                                </div>
+                                                <div className={styles.detailItem}>
+                                                    <MapPin size={20} />
+                                                    <span>{bestMatch.location}</span>
+                                                </div>
+                                            </div>
+                                            <p className={styles.matchDescription}>
+                                                Ez a pozíció 98%-ban egyezik az Ön tapasztalatával és készségeivel.
+                                                {bestMatch.company_name ? ` A(z) ${bestMatch.company_name} aktívan keresi az új csapattagot.` : " Egy partnerünk aktívan keresi az új csapattagot."}
+                                            </p>
+                                            <Button
+                                                onClick={() => navigate(`/job/show/${bestMatch.id}`)}
+                                                variant="primary"
+                                                color="orion-blue"
+                                                className={styles.matchBtn}
+                                            >
+                                                Részletek megtekintése <ArrowRight size={20} style={{ marginLeft: '12px' }} />
+                                            </Button>
+                                        </>
+                                    ) : (
+                                        <div className={styles.emptyMatch}>
+                                            <Search size={48} className={styles.emptyIcon} />
+                                            <p>Jelenleg nincs az Ön profiljához illő kiemelt ajánlatunk.</p>
+                                            <Button
+                                                variant="secondary"
+                                                color="orion-blue"
+                                                onClick={() => navigate("/listjobs")}
+                                            >
+                                                Összes állás böngészése
+                                            </Button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* Quick Actions Sidebar */}
+                        <aside className={styles.quickActions}>
+                            <div className={styles.navGroup}>
+                                {navigationItems.map((item, index) => (
+                                    <button
+                                        key={index}
+                                        className={styles.navItem}
+                                        onClick={() => navigate(item.path)}
+                                    >
+                                        <div className={styles.navIconWrapper}>
+                                            {item.icon}
+                                        </div>
+                                        <div className={styles.navText}>
+                                            <span className={styles.navTitle}>{item.title}</span>
+                                            <span className={styles.navSub}>{item.description}</span>
+                                        </div>
+                                        <ChevronRight size={18} className={styles.navArrow} />
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className={styles.helpCard}>
+                                <h4>Segítségre van szüksége?</h4>
+                                <p>Karrier tanácsadóink segítenek a legtöbbet kihozni a profiljából.</p>
+                                <Button
+                                    variant="secondary"
+                                    color="orion-blue"
+                                    onClick={() => navigate("/messenger")}
+                                    className={styles.helpBtn}
+                                >
+                                    Chat indítása
+                                </Button>
+                            </div>
+                        </aside>
                     </div>
-                </section>
+                </div>
             </main>
 
             <Footer />
