@@ -8,7 +8,7 @@ import FilterBar from "./components/FilterBar.tsx";
 import JobCard from "./components/JobCard.tsx";
 import SkeletonCard from "./components/SkeletonCard.tsx";
 import EmptyState from "./components/EmptyState.tsx";
-import { getAdvertisements, type Job } from "../../../../api/advertisementApi.ts";
+import { getAdvertisements, getAdvertisements2, type Job } from "../../../../api/advertisementApi.ts";
 import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 import Footer from "../../../../components/Footer/Footer.tsx";
 
@@ -24,6 +24,7 @@ const formatCurrency = (amount: number) => {
 
 const ListJobs: React.FC = () => {
     const [jobs, setJobs] = useState<Job[]>([]);
+    const [allJobsForFilters, setAllJobsForFilters] = useState<Job[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -40,50 +41,59 @@ const ListJobs: React.FC = () => {
         navigate(`/job/show/${adId}`);
     };
 
-    useEffect(() => {
-        const fetchJobs = async () => {
-            try {
-                const data = await getAdvertisements();
-                if (data.success) {
-                    setJobs(data.advertisements);
-                } else {
-                    throw new Error(data.error || "Hiba.");
-                }
-            } catch (err) {
-                console.error(err);
-                setError(err instanceof Error ? err.message : "Ismeretlen hiba.");
-            } finally {
-                setLoading(false);
+    const fetchJobs = async (
+        q: string = "",
+        loc: string = "",
+        pos: string = "",
+        wage: string = ""
+    ) => {
+        setLoading(true);
+        try {
+            const data = await getAdvertisements2(q, loc, pos, wage);
+            if (data.success) {
+                setJobs(data.advertisements);
+            } else {
+                throw new Error(data.error || "Hiba.");
             }
-        };
+        } catch (err) {
+            console.error(err);
+            setError(err instanceof Error ? err.message : "Ismeretlen hiba.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const fetchFilterOptions = async () => {
+        try {
+            const data = await getAdvertisements();
+            if (data.success) {
+                setAllJobsForFilters(data.advertisements);
+            }
+        } catch (err) {
+            console.error("Failed to fetch filter options:", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchFilterOptions();
         fetchJobs();
     }, []);
 
-    // Derived lists
-    const uniqueLocations = Array.from(new Set(jobs.map((j) => j.location).filter(Boolean)));
-    const uniquePositions = Array.from(new Set(jobs.map((j) => j.position).filter(Boolean)));
+    const handleSearch = (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        fetchJobs(searchTerm, locationFilter, positionFilter, minWage);
+    };
 
-    const filteredJobs = jobs.filter((job) => {
-        const term = searchTerm.trim().toLowerCase();
-        const matchesTerm = term
-            ? [job.title, job.position, job.location, job.tasks]
-                .filter(Boolean)
-                .some((f) => String(f).toLowerCase().includes(term))
-            : true;
-
-        const matchesLocation = locationFilter ? job.location === locationFilter : true;
-        const matchesPosition = positionFilter ? job.position === positionFilter : true;
-        const min = parseInt(minWage || "0", 10);
-        const matchesWage = min ? job.hourly_wage >= min : true;
-
-        return matchesTerm && matchesLocation && matchesPosition && matchesWage;
-    });
+    // Derived lists from all jobs to keep filter options stable
+    const uniqueLocations = Array.from(new Set(allJobsForFilters.map((j) => j.location).filter(Boolean)));
+    const uniquePositions = Array.from(new Set(allJobsForFilters.map((j) => j.position).filter(Boolean)));
 
     const clearFilters = () => {
         setSearchTerm("");
         setLocationFilter("");
         setPositionFilter("");
         setMinWage("");
+        fetchJobs("", "", "", "");
     };
 
     return (
@@ -121,6 +131,7 @@ const ListJobs: React.FC = () => {
                             minWage={minWage}
                             onMinWageChange={setMinWage}
                             onClear={clearFilters}
+                            onSubmit={handleSearch}
                         />
                     </div>
 
@@ -142,9 +153,9 @@ const ListJobs: React.FC = () => {
 
                     {!loading && !error && (
                         <>
-                            {filteredJobs.length > 0 ? (
+                            {jobs.length > 0 ? (
                                 <div className={styles.grid}>
-                                    {filteredJobs.map((job) => (
+                                    {jobs.map((job) => (
                                         <JobCard
                                             key={job.id}
                                             job={job}
