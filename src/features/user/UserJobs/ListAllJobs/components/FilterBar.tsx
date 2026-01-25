@@ -16,6 +16,7 @@ type Props = {
     minWage: string;
     onMinWageChange: (value: string) => void;
     onClear: () => void;
+    onSubmit: (e: React.FormEvent) => void;
 };
 
 const FilterBar: React.FC<Props> = ({
@@ -30,11 +31,12 @@ const FilterBar: React.FC<Props> = ({
     minWage,
     onMinWageChange,
     onClear,
+    onSubmit,
 }) => {
     const hasActiveFilters = Boolean(searchTerm || locationFilter || positionFilter || minWage);
 
     return (
-        <form className={styles.searchForm} onSubmit={(e) => e.preventDefault()}>
+        <form className={styles.searchForm} onSubmit={onSubmit}>
             <div className={styles.searchBarWrapper}>
                 <Search size={20} className={styles.inputIcon} />
                 <InputField
@@ -42,6 +44,7 @@ const FilterBar: React.FC<Props> = ({
                     placeholder="Milyen munkát keres? (pl. Java fejlesztő, Könyvelő)"
                     value={searchTerm}
                     onChange={(e) => onSearchChange(e.target.value)}
+                    className={styles.searchInput}
                 />
             </div>
 
@@ -87,7 +90,7 @@ const FilterBar: React.FC<Props> = ({
                 </div>
 
                 <div className={styles.actions}>
-                    <Button type="submit" color={"orion-blue"}>
+                    <Button type="submit" color={"orion-blue"} className={styles.searchButton}>
                         Keresés
                     </Button>
 
