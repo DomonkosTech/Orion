@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { saveNewCompanyPassword } from "../../../Api/emailApi.ts";
+import { saveNewCompanyPassword } from "../../../api/emailApi.ts";
 import { toast, Toaster } from "react-hot-toast";
+
+//components
+import InputField from "../../../components/InputField/InputField.tsx";
 
 const CompanyPasswordResetSave = () => {
     const [password, setPassword] = useState("");
@@ -49,12 +52,11 @@ const CompanyPasswordResetSave = () => {
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                             Új jelszó
                         </label>
-                        <input
+                        <InputField
                             type="password"
                             id="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Add meg az új jelszót"
                             required
                         />
@@ -64,12 +66,11 @@ const CompanyPasswordResetSave = () => {
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
                             Jelszó megerősítése
                         </label>
-                        <input
+                        <InputField
                             type="password"
                             id="confirmPassword"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                             placeholder="Add meg újra a jelszót"
                             required
                         />
