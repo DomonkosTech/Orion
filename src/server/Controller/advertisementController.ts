@@ -187,7 +187,7 @@ export const deleteEmployee = async (employeeId: number, companyId: number) => {
 export const getAllAdvertisements2 = async (q: string, location: string, position: string, hourly_wage: number, page: number, limit: number) => {
     let query = supabase
         .from("advertisement")
-        .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
+        .select("id,title,position,location,hourly_wage,tasks,requirements,job_description", { count: "exact" })
         .order("created_at", { ascending: false })
         .eq('is_active', true)
 
@@ -206,8 +206,8 @@ export const getAllAdvertisements2 = async (q: string, location: string, positio
     const from = (page - 1) * limit
     const to = from + limit - 1
 
-    const { data: advertisements, error } = await query.range(from, to)
+    const { data: advertisements, error, count } = await query.range(from, to)
 
     if (error) throw error;
-    return advertisements;
+    return { advertisements, count };
 };

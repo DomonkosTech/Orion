@@ -17,7 +17,7 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({ loggedIn, userType, h
 
             {loggedIn ? (
                 <>
-                    <a href="/profile" className={styles.item}>
+                    <a href="/EditUserProfile" className={styles.item}>
                         <div>
                             <span className={styles.itemTitle}>Profilom</span>
                             <span className={styles.itemDescription}>Személyes adatok kezelése</span>

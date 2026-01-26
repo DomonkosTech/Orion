@@ -96,16 +96,45 @@ const EditUserProfile: React.FC = () => {
         setEditMode(false);
     };
 
-    const handleDeleteResume = async () => {
-        if (!window.confirm("Biztosan törölni szeretné az önéletrajzát?")) return;
-        try {
-            const data = await deleteResume();
-            if (data.success) {
-                setResume(false);
-            }
-        } catch (err) {
-            console.error(err);
-        }
+    const handleDeleteResume = () => {
+        toast((t) => (
+            <div className={styles.toastConfirm}>
+                <p>Biztosan törölni szeretné az önéletrajzát?</p>
+                <div className={styles.toastActions}>
+                    <Button
+                        variant="secondary"
+                        color="gray"
+                        onClick={() => toast.dismiss(t.id)}
+                        style={{ padding: '4px 12px', fontSize: '0.9rem' }}
+                    >
+                        Mégse
+                    </Button>
+                    <Button
+                        variant="primary"
+                        color="danger"
+                        onClick={async () => {
+                            toast.dismiss(t.id);
+                            try {
+                                const data = await deleteResume();
+                                if (data.success) {
+                                    setResume(false);
+                                    toast.success("Önéletrajz törölve.");
+                                }
+                            } catch (err) {
+                                console.error(err);
+                                toast.error("Hiba történt a törlés során.");
+                            }
+                        }}
+                        style={{ padding: '4px 12px', fontSize: '0.9rem' }}
+                    >
+                        Törlés
+                    </Button>
+                </div>
+            </div>
+        ), {
+            duration: 5000,
+            position: 'top-center',
+        });
     };
 
     return (
@@ -305,7 +334,7 @@ const EditUserProfile: React.FC = () => {
                                             <Button
                                                 type="button"
                                                 onClick={handleDeleteResume}
-                                                color="fire-red"
+                                                color="danger"
                                                 variant="secondary"
                                             >
                                                 <Trash2 size={16} style={{marginRight: '8px'}} /> Törlés

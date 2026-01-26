@@ -41,6 +41,25 @@
     padding-right: 24px;
 }
 
+.toastConfirm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.toastConfirm p {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.toastActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
 .titleGroup h1 {
     font-size: 2.25rem;
     font-weight: 800;
