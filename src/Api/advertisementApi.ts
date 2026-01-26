@@ -106,7 +106,7 @@ export const getAdvertisements = async (
     position: string = "",
     hourly_wage: number | string = "",
     page: number = 1,
-    limit: number = 10
+    limit: number = 21
 ) => {
     const params = new URLSearchParams();
     if (q) params.append("q", q);
