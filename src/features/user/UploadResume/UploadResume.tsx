@@ -1,9 +1,8 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Upload, FileText, X, Info } from "lucide-react";
-import { uploadResume } from "../../../api/userApi";
+import { uploadResume } from "../../../Api/userApi";
 import styles from "./UploadResume.module.css";
-import {toast, Toaster} from "react-hot-toast";
 
 //components
 import { Header } from "../../../components/Header/Header.tsx";
@@ -26,12 +25,12 @@ const UploadResume = () => {
         if (!selectedFile) return;
 
         if (selectedFile.type !== "application/pdf") {
-            toast.error("Csak PDF fájlt lehet feltölteni!");
+            alert("Csak PDF fájlt lehet feltölteni!");
             return;
         }
 
         if (selectedFile.size > 5 * 1024 * 1024) {
-            toast.error("A fájl mérete nem lehet nagyobb 5MB-nál!");
+            alert("A fájl mérete nem lehet nagyobb 5MB-nál!");
             return;
         }
 
@@ -58,10 +57,10 @@ const UploadResume = () => {
         setSending(true);
         try {
             await uploadResume(file);
-            toast.success("Önéletrajz sikeresen feltöltve!");
+            alert("Önéletrajz sikeresen feltöltve!");
             navigate("/edituserprofile");
         } catch (err: unknown) {
-            toast.error(err instanceof Error ? err.message : "Ismeretlen hiba");
+            alert(err instanceof Error ? err.message : "Ismeretlen hiba");
         } finally {
             setSending(false);
         }
@@ -69,7 +68,6 @@ const UploadResume = () => {
 
     return (
         <div className={styles.pageWrapper}>
-            <Toaster />
             <Header />
 
             <main className={styles.container}>
