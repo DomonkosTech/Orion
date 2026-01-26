@@ -4,6 +4,7 @@ import { saveNewUserPassword } from "../../../api/emailApi.ts";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "./UserPasswordResetSave.module.css";
 import InputField from "../../../components/InputField/InputField.tsx";
+import Button from "../../../components/Button/Button.tsx";
 
 const UserPasswordResetSave = () => {
     const [password, setPassword] = useState("");
@@ -72,9 +73,9 @@ const UserPasswordResetSave = () => {
                             />
                         </div>
 
-                        <button type="submit" className={styles.submitBtn}>
+                        <Button type="submit" color={"orion-blue"}>
                             Jelszó mentése
-                        </button>
+                        </Button>
                     </form>
                 </div>
             </div>
