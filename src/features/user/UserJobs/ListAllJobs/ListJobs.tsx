@@ -31,9 +31,6 @@ const ListJobs: React.FC = () => {
     const [page, setPage] = useState<number>(1);
     const [totalCount, setTotalCount] = useState<number>(0);
 
-    const limit = 10;
-    const totalPages = Math.ceil(totalCount / limit);
-
     // Filters
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [locationFilter, setLocationFilter] = useState<string>("");
@@ -58,13 +55,19 @@ const ListJobs: React.FC = () => {
     ) => {
         setLoading(true);
         try {
-            const data = await getAdvertisements(q, loc, pos, wage, pg, limit);
+            const data = await getAdvertisements(q, loc, pos, wage, pg);
 
             if (data.success) {
-                setJobs(data.advertisements);
+                if (pg === 1) {
+                    setJobs(data.advertisements);
+                } else {
+                    setJobs((prev) => [...prev, ...data.advertisements]);
+                }
                 setTotalCount(data.totalCount || 0);
             } else {
-                setJobs([]);
+                if (pg === 1) {
+                    setJobs([]);
+                }
                 throw new Error(data.error || "Hiba.");
             }
         } catch (err) {
@@ -89,14 +92,24 @@ const ListJobs: React.FC = () => {
         fetchFilterOptions();
     }, []);
 
+    // Reset to page 1 and fetch when filters change
     useEffect(() => {
-        fetchJobs(searchTerm, locationFilter, positionFilter, minWage, page);
-    }, [page, searchTerm, locationFilter, positionFilter, minWage]);
+        setPage(1);
+        fetchJobs(searchTerm, locationFilter, positionFilter, minWage, 1);
+    }, [searchTerm, locationFilter, positionFilter, minWage]);
+
+    // Load more when page increases
+    useEffect(() => {
+        if (page > 1) {
+            fetchJobs(searchTerm, locationFilter, positionFilter, minWage, page);
+        }
+    }, [page]);
 
     const handleSearch = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
         setError(null);
         setPage(1);
+        fetchJobs(searchTerm, locationFilter, positionFilter, minWage, 1);
     };
 
     // Derived lists from all jobs to keep filter options stable
@@ -112,14 +125,8 @@ const ListJobs: React.FC = () => {
         setError(null);
     };
 
-    const handleNextPage = () => {
+    const handleLoadMore = () => {
         setPage((prev) => prev + 1);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    const handlePrevPage = () => {
-        setPage((prev) => Math.max(1, prev - 1));
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     return (
@@ -177,43 +184,35 @@ const ListJobs: React.FC = () => {
                         <>
                             {jobs.length > 0 && (
                                 <div className={styles.grid}>
-                                    {loading
-                                        ? [1, 2, 3, 4, 5, 6].map((n) => <SkeletonCard key={n} />)
-                                        : jobs.map((job) => (
-                                            <JobCard
-                                                key={job.id}
-                                                job={job}
-                                                onOpen={() => handleshowClick(job.id)}
-                                                formatCurrency={formatCurrency}
-                                            />
-                                        ))
-                                    }
+                                    {jobs.map((job) => (
+                                        <JobCard
+                                            key={job.id}
+                                            job={job}
+                                            onOpen={() => handleshowClick(job.id)}
+                                            formatCurrency={formatCurrency}
+                                        />
+                                    ))}
+                                    {loading && [1, 2, 3].map((n) => <SkeletonCard key={n} />)}
+                                </div>
+                            )}
+                            {jobs.length === 0 && loading && (
+                                <div className={styles.grid}>
+                                    {[1, 2, 3, 4, 5, 6].map((n) => <SkeletonCard key={n} />)}
                                 </div>
                             )}
 
-                            <div className={styles.pagination}>
-                                <Button
-                                    onClick={handlePrevPage}
-                                    disabled={page === 1 || loading}
-                                    variant="secondary"
-                                    color="orion-blue"
-                                >
-                                    Előző
-                                </Button>
-                                <div className={styles.pageInfo}>
-                                    <span className={styles.currentPage}>{page}</span>
-                                    <span className={styles.pageDivider}>/</span>
-                                    <span className={styles.totalPages}>{Math.max(1, totalPages)}</span>
+                            {jobs.length < totalCount && (
+                                <div className={styles.pagination}>
+                                    <Button
+                                        onClick={handleLoadMore}
+                                        disabled={loading}
+                                        variant="secondary"
+                                        color="orion-blue"
+                                    >
+                                        {loading ? "Betöltés..." : "Mutass többet"}
+                                    </Button>
                                 </div>
-                                <Button
-                                    onClick={handleNextPage}
-                                    disabled={page >= totalPages || loading}
-                                    variant="secondary"
-                                    color="orion-blue"
-                                >
-                                    Következő
-                                </Button>
-                            </div>
+                            )}
                         </>
                     )}
                 </div>
