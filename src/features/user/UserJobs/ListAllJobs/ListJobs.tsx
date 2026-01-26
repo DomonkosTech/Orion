@@ -8,9 +8,10 @@ import FilterBar from "./components/FilterBar.tsx";
 import JobCard from "./components/JobCard.tsx";
 import SkeletonCard from "./components/SkeletonCard.tsx";
 import EmptyState from "./components/EmptyState.tsx";
-import { getAdvertisements, getAdvertisements2, type Job } from "../../../../api/advertisementApi.ts";
+import { getAdvertisements, type Job } from "../../../../api/advertisementApi.ts";
 import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 import Footer from "../../../../components/Footer/Footer.tsx";
+import Button from "../../../../components/Button/Button.tsx";
 
 
 // Helper for formatting currency
@@ -27,6 +28,11 @@ const ListJobs: React.FC = () => {
     const [allJobsForFilters, setAllJobsForFilters] = useState<Job[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
+    const [page, setPage] = useState<number>(1);
+    const [totalCount, setTotalCount] = useState<number>(0);
+
+    const limit = 10;
+    const totalPages = Math.ceil(totalCount / limit);
 
     // Filters
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -41,18 +47,24 @@ const ListJobs: React.FC = () => {
         navigate(`/job/show/${adId}`);
     };
 
+// In ListJobs.tsx
+
     const fetchJobs = async (
         q: string = "",
         loc: string = "",
         pos: string = "",
-        wage: string = ""
+        wage: string = "",
+        pg: number = 1
     ) => {
         setLoading(true);
         try {
-            const data = await getAdvertisements2(q, loc, pos, wage);
+            const data = await getAdvertisements(q, loc, pos, wage, pg, limit);
+
             if (data.success) {
                 setJobs(data.advertisements);
+                setTotalCount(data.totalCount || 0);
             } else {
+                setJobs([]);
                 throw new Error(data.error || "Hiba.");
             }
         } catch (err) {
@@ -62,10 +74,9 @@ const ListJobs: React.FC = () => {
             setLoading(false);
         }
     };
-
     const fetchFilterOptions = async () => {
         try {
-            const data = await getAdvertisements();
+            const data = await getAdvertisements("", "", "", "", 1, 1000);
             if (data.success) {
                 setAllJobsForFilters(data.advertisements);
             }
@@ -76,12 +87,16 @@ const ListJobs: React.FC = () => {
 
     useEffect(() => {
         fetchFilterOptions();
-        fetchJobs();
     }, []);
+
+    useEffect(() => {
+        fetchJobs(searchTerm, locationFilter, positionFilter, minWage, page);
+    }, [page, searchTerm, locationFilter, positionFilter, minWage]);
 
     const handleSearch = (e?: React.FormEvent) => {
         if (e) e.preventDefault();
-        fetchJobs(searchTerm, locationFilter, positionFilter, minWage);
+        setError(null);
+        setPage(1);
     };
 
     // Derived lists from all jobs to keep filter options stable
@@ -93,7 +108,18 @@ const ListJobs: React.FC = () => {
         setLocationFilter("");
         setPositionFilter("");
         setMinWage("");
-        fetchJobs("", "", "", "");
+        setPage(1);
+        setError(null);
+    };
+
+    const handleNextPage = () => {
+        setPage((prev) => prev + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handlePrevPage = () => {
+        setPage((prev) => Math.max(1, prev - 1));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     return (
@@ -112,7 +138,7 @@ const ListJobs: React.FC = () => {
                                 Találja meg a <span className={styles.accent}>jövőjét!</span>
                             </h1>
                             <p className={styles.heroSubtitle}>
-                                Fedezzen fel <strong>{jobs.length > 0 ? jobs.length : "több száz"}</strong> nyitott pozíciót vezető cégeknél.
+                                Fedezzen fel <strong>{totalCount > 0 ? totalCount : "több száz"}</strong> nyitott pozíciót vezető cégeknél.
                             </p>
                         </div>
                     </div>
@@ -143,30 +169,51 @@ const ListJobs: React.FC = () => {
                         </div>
                     )}
 
-                    {loading && (
-                        <div className={styles.grid}>
-                            {[1, 2, 3, 4, 5, 6].map((n) => (
-                                <SkeletonCard key={n} />
-                            ))}
-                        </div>
+                    {!loading && !error && jobs.length === 0 && (
+                        <EmptyState onClear={clearFilters} />
                     )}
 
-                    {!loading && !error && (
+                    {!error && (
                         <>
-                            {jobs.length > 0 ? (
+                            {jobs.length > 0 && (
                                 <div className={styles.grid}>
-                                    {jobs.map((job) => (
-                                        <JobCard
-                                            key={job.id}
-                                            job={job}
-                                            onOpen={() => handleshowClick(job.id)}
-                                            formatCurrency={formatCurrency}
-                                        />
-                                    ))}
+                                    {loading
+                                        ? [1, 2, 3, 4, 5, 6].map((n) => <SkeletonCard key={n} />)
+                                        : jobs.map((job) => (
+                                            <JobCard
+                                                key={job.id}
+                                                job={job}
+                                                onOpen={() => handleshowClick(job.id)}
+                                                formatCurrency={formatCurrency}
+                                            />
+                                        ))
+                                    }
                                 </div>
-                            ) : (
-                                <EmptyState onClear={clearFilters} />
                             )}
+
+                            <div className={styles.pagination}>
+                                <Button
+                                    onClick={handlePrevPage}
+                                    disabled={page === 1 || loading}
+                                    variant="secondary"
+                                    color="orion-blue"
+                                >
+                                    Előző
+                                </Button>
+                                <div className={styles.pageInfo}>
+                                    <span className={styles.currentPage}>{page}</span>
+                                    <span className={styles.pageDivider}>/</span>
+                                    <span className={styles.totalPages}>{Math.max(1, totalPages)}</span>
+                                </div>
+                                <Button
+                                    onClick={handleNextPage}
+                                    disabled={page >= totalPages || loading}
+                                    variant="secondary"
+                                    color="orion-blue"
+                                >
+                                    Következő
+                                </Button>
+                            </div>
                         </>
                     )}
                 </div>

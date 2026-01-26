@@ -99,16 +99,8 @@ export const getJobApplications = async () => {
     return handleResponse(response);
 }
 
-export const getAdvertisements = async () => {
-    const response = await fetch(`${API_BASE_URL}/advertisements`, {
-        method: "GET",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-    });
-    return handleResponse(response);
-};
 
-export const getAdvertisements2 = async (
+export const getAdvertisements = async (
     q: string = "",
     location: string = "",
     position: string = "",
