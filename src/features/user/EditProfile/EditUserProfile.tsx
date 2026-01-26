@@ -173,6 +173,14 @@ const EditUserProfile: React.FC = () => {
                                         <ArrowLeft size={18} style={{marginRight: '8px'}} /> Vissza
                                     </Button>
                                     <Button
+                                        onClick={() => navigate("/user/password/reset")}
+                                        variant="secondary"
+                                        color="orion-blue"
+                                        className={styles.headerBtn}
+                                    >
+                                        Jelszó módosítása
+                                    </Button>
+                                    <Button
                                         onClick={() => setEditMode(true)}
                                         color="orion-blue"
                                         variant="primary"
