@@ -96,6 +96,9 @@ const CompanyEditProfile: React.FC = () => {
                                         <Button onClick={() => navigate("/company")} variant="secondary">
                                             <ArrowLeft size={18} /> Vissza
                                         </Button>
+                                        <Button onClick={() => navigate("/company/password/reset")} variant="secondary" color="orion-blue">
+                                            <Edit3 size={18} /> Jelszó módosítása
+                                        </Button>
                                         <Button onClick={() => setEditMode(true)} color="orion-blue">
                                             <Edit3 size={18} /> Szerkesztés
                                         </Button>
