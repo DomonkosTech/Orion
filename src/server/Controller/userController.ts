@@ -186,3 +186,22 @@ export const deleteResume = async (userId: number) => {
 
     return true;
 };
+
+
+export const incrementProfileViews = async (userId: number) => {
+    const { error } = await supabase.rpc("increment_profile_views", {
+        p_user_id: userId
+    });
+    if (error) throw error;
+    return true;
+}
+
+
+export const incrementResumeViews = async (userId: number) => {
+    const { error } = await supabase.rpc("increment_resume_views", {
+        p_user_id: userId
+    });
+    if (error) throw error;
+    return true;
+}
+
