@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { type AuthRequest, verifyToken } from "../middleware/auth.ts";
+import {type AuthRequest, verifyCompany, verifyToken} from "../middleware/auth.ts";
 import * as userService from "../Controller/userController.ts";
 
 const router = express.Router();
@@ -104,5 +104,43 @@ router.delete("/delete-resume", verifyToken, async (req: AuthRequest, res) => {
         return res.status(500).json({ error: "Internal server error" });
     }
 });
+
+
+router.patch("/user/profile/views/:id",verifyToken,verifyCompany, async (req, res) => {
+    try {
+        const userId = req.params.id;
+        if (!Number.isInteger(userId)) {
+            return res.status(400).json({ error: "Invalid user id" });
+        }
+        await userService.incrementProfileViews(parseInt(userId));
+        return res.json({ success: true });
+
+    }
+    catch (err) {
+        const error = err as Error;
+        console.error(error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+})
+
+
+router.patch("/user/resume/views/:id",verifyToken,verifyCompany, async (req, res) => {
+    try {
+        const userId = req.params.id;
+        if (!Number.isInteger(userId)) {
+            return res.status(400).json({ error: "Invalid user id" });
+        }
+        await userService.incrementResumeViews(parseInt(userId));
+        return res.json({ success: true });
+
+    }
+    catch (err) {
+        const error = err as Error;
+        console.error(error);
+        return res.status(500).json({ error: "Internal server error" });
+    }
+})
+
+
 
 export default router;
