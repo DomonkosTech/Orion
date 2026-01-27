@@ -101,3 +101,28 @@ export const deleteResume = async () => {
     });
     return handleResponse(response);
 };
+
+export const getUserStatistics = async () => {
+    const response = await fetch(`${API_BASE_URL}/user/stat`, {
+        method: "GET",
+        credentials: "include",
+    });
+    return handleResponse(response);
+}
+
+export const incrementProfileViews = async (userId: number) => {
+    const response = await fetch(`${API_BASE_URL}/user/profile/views/${userId}`, {
+        method: "PATCH",
+        credentials: "include",
+    });
+    return handleResponse(response);
+}
+
+export const incrementResumeViews = async (userId: number) => {
+    const response = await fetch(`${API_BASE_URL}/user/resume/views/${userId}`, {
+        method: "PATCH",
+        credentials: "include",
+    });
+    return handleResponse(response);
+}
+
