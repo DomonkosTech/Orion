@@ -30,6 +30,12 @@ export interface UserLoginData {
     password: string;
     rememberMe: boolean;
 }
+export interface DashboardStats{
+    total_applications: number;
+    profile_views?: number;
+    resume_views?: number;
+    accepted_applications?: number;
+}
 
 const handleResponse = async (response: Response) => {
     const data = await response.json();

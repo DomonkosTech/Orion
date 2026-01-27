@@ -25,6 +25,7 @@ import Footer from "../../../components/Footer/Footer.tsx";
 import { useAuth } from "../../../hooks/useAuth";
 import { getJobApplications, getTop3Advertisements, type AdvertisementDetails } from "../../../api/advertisementApi.ts";
 import { getChatPartners } from "../../../api/messageApi.ts";
+import {getUserStatistics, type DashboardStats} from "../../../api/userApi.ts"
 
 function UserHomePage() {
     const navigate = useNavigate();
@@ -36,10 +37,11 @@ function UserHomePage() {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const [applicationsData, topAds, chatPartners] = await Promise.all([
+                const [applicationsData, topAds, chatPartners, statsData] = await Promise.all([
                     getJobApplications(),
                     getTop3Advertisements(),
-                    getChatPartners()
+                    getChatPartners(),
+                    getUserStatistics()
                 ]);
 
                 setStats(prev => ({
@@ -133,7 +135,7 @@ function UserHomePage() {
                             <div className={styles.statCard}>
                                 <div className={styles.statIcon}><MessageSquare size={28} /></div>
                                 <div className={styles.statInfo}>
-                                    <span className={styles.statLabel}>Üzenetek</span>
+                                    <span className={styles.statLabel}>Önéletrajz megtekintés</span>
                                     <span className={styles.statValue}>{stats.messages}</span>
                                 </div>
                             </div>
