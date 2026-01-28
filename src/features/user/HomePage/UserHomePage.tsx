@@ -13,7 +13,8 @@ import {
     ArrowRight,
     Sparkles,
     Zap,
-    Target
+    Target,
+    FileUser
 } from "lucide-react";
 import styles from "./UserHomePage.module.css";
 
@@ -23,36 +24,62 @@ import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
 import { useAuth } from "../../../hooks/useAuth";
-import { getJobApplications, getTop3Advertisements, type AdvertisementDetails } from "../../../api/advertisementApi.ts";
-import { getChatPartners } from "../../../api/messageApi.ts";
+import { getTop3Advertisements } from "../../../api/advertisementApi.ts";
 import {getUserStatistics, type DashboardStats} from "../../../api/userApi.ts"
 
 function UserHomePage() {
     const navigate = useNavigate();
     const { name } = useAuth();
-    const [bestMatch, setBestMatch] = useState<AdvertisementDetails | null>(null);
-    const [stats, setStats] = useState({ applications: 0, messages: 0, views: 0 });
+    const [bestMatch, setBestMatch] = useState<any | null>(null);
+    const [stats, setStats] = useState<DashboardStats>({
+        total_applications: 0,
+        profile_views: 0,
+        resume_views: 0,
+        accepted_applications: 0
+    });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const [applicationsData, topAds, chatPartners, statsData] = await Promise.all([
-                    getJobApplications(),
+                const [topAdsData, statsData] = await Promise.all([
                     getTop3Advertisements(),
-                    getChatPartners(),
                     getUserStatistics()
                 ]);
 
-                setStats(prev => ({
-                    ...prev,
-                    applications: (applicationsData.submit?.length || 0) + (applicationsData.work?.length || 0),
-                    messages: chatPartners?.length || 0,
-                    views: 0
-                }));
+                // Hirdetések kezelése
+                if (Array.isArray(topAdsData) && topAdsData.length > 0) {
+                    setBestMatch(topAdsData[0]);
+                } else if (topAdsData?.success && Array.isArray(topAdsData.advertisements) && topAdsData.advertisements.length > 0) {
+                    setBestMatch(topAdsData.advertisements[0]);
+                }
 
-                if (topAds && topAds.length > 0) {
-                    setBestMatch(topAds[0]);
+                // Statisztikák kezelése
+                let finalStats = null;
+
+                if (Array.isArray(statsData) && statsData.length > 0) {
+                    finalStats = statsData[0];
+                } else if (statsData?.success) {
+                    if (statsData.data) {
+                        if (Array.isArray(statsData.data) && statsData.data.length > 0) {
+                            finalStats = statsData.data[0];
+                        } else if (statsData.data.stats) {
+                            finalStats = Array.isArray(statsData.data.stats) ? statsData.data.stats[0] : statsData.data.stats;
+                        } else {
+                            finalStats = statsData.data;
+                        }
+                    } else if (statsData.stats) {
+                        finalStats = Array.isArray(statsData.stats) ? statsData.stats[0] : statsData.stats;
+                    }
+                } else if (statsData && typeof statsData === 'object') {
+                    // Ha közvetlenül az objektum jön vissza success flag nélkül
+                    if ('total_applications' in statsData) {
+                        finalStats = statsData;
+                    }
+                }
+
+                if (finalStats) {
+                    setStats(finalStats);
                 }
             } catch (err) {
                 console.error("Hiba az adatok lekérésekor:", err);
@@ -90,6 +117,11 @@ function UserHomePage() {
             description: "Beszélgessen a munkaadókkal"
         }
     ];
+
+    // Egyezési mutató számítása
+    const matchRate = stats.total_applications > 0 
+        ? Math.round((stats.accepted_applications || 0) / stats.total_applications * 100) 
+        : "--";
 
     return (
         <div className={styles.page}>
@@ -129,28 +161,28 @@ function UserHomePage() {
                                 <div className={styles.statIcon}><Target size={28} /></div>
                                 <div className={styles.statInfo}>
                                     <span className={styles.statLabel}>Jelentkezések</span>
-                                    <span className={styles.statValue}>{stats.applications}</span>
+                                    <span className={styles.statValue}>{stats.total_applications}</span>
                                 </div>
                             </div>
                             <div className={styles.statCard}>
-                                <div className={styles.statIcon}><MessageSquare size={28} /></div>
+                                <div className={styles.statIcon}><FileUser size={28} /></div>
                                 <div className={styles.statInfo}>
                                     <span className={styles.statLabel}>Önéletrajz megtekintés</span>
-                                    <span className={styles.statValue}>{stats.messages}</span>
+                                    <span className={styles.statValue}>{stats.resume_views}</span>
                                 </div>
                             </div>
                             <div className={styles.statCard}>
                                 <div className={styles.statIcon}><TrendingUp size={28} /></div>
                                 <div className={styles.statInfo}>
                                     <span className={styles.statLabel}>Profil megtekintés</span>
-                                    <span className={styles.statValue}>{stats.views}</span>
+                                    <span className={styles.statValue}>{stats.profile_views}</span>
                                 </div>
                             </div>
                             <div className={styles.statCard} title="Ez a mutató azt jelzi, hogy mennyire illik az Ön profilja (tapasztalat, készségek) az aktuális piaci igényekhez.">
                                 <div className={styles.statIcon}><Sparkles size={28} /></div>
                                 <div className={styles.statInfo}>
                                     <span className={styles.statLabel}>Egyezési mutató</span>
-                                    <span className={styles.statValue}>92%</span>
+                                    <span className={styles.statValue}>{matchRate}%</span>
                                 </div>
                             </div>
                         </section>
