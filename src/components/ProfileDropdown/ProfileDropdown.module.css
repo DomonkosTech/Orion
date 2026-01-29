@@ -1,3 +1,113 @@
+.wrapper {
+    position: relative;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 48px;
+    min-width: 48px;
+}
+
+.trigger {
+    display: flex;
+    align-items: center;
+    /* justify-content: flex-start;  <-- Changed to flex-start for label expansion, but we center content */
+    justify-content: center;
+    height: 48px;
+    min-width: 48px;
+    padding: 0; /* Padding handled by hover/expanded state */
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    color: #111827;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    position: relative;
+    background: #f8fafc;
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    z-index: 20;
+}
+
+.trigger:hover,
+.trigger.expanded {
+    padding: 0 20px 0 24px; /* Left padding for label, right for arrow? No, let's keep it simple */
+    padding: 0 20px;
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.initialsText {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    /* Absolute position to remove from flow and prevent width jumps */
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    opacity: 1;
+    pointer-events: none;
+}
+
+/* Hide initials when expanded */
+.trigger:hover .initialsText,
+.trigger.expanded .initialsText {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8);
+    transition: opacity 0.1s ease, transform 0.1s ease;
+}
+
+/* Reappear delay when closing */
+.trigger:not(:hover):not(.expanded) .initialsText {
+    transition: opacity 0.2s ease 0.2s, transform 0.2s ease 0.2s;
+}
+
+.triggerLabel {
+    font-size: 0.9rem;
+    font-weight: 600;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.2s ease 0.1s;
+    margin-left: 0;
+    color: #1e293b;
+    white-space: nowrap;
+}
+
+.trigger:hover .triggerLabel,
+.trigger.expanded .triggerLabel {
+    max-width: 250px;
+    opacity: 1;
+    /* margin-left: 0; -> No margin needed as initials are absolute */
+}
+
+/* Smooth closing */
+.trigger:not(:hover):not(.expanded) .triggerLabel {
+    transition: opacity 0.1s ease, max-width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s;
+}
+
+.arrow {
+    font-size: 0.7rem;
+    color: #6b7280;
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-left: 0;
+    display: flex;
+}
+
+.trigger:hover .arrow,
+.trigger.expanded .arrow {
+    max-width: 20px;
+    opacity: 1;
+    margin-left: 8px;
+}
+
 .dropdown {
     position: absolute;
     top: calc(100% + 12px);
@@ -9,12 +119,7 @@
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
     z-index: 1000;
     overflow: hidden;
-    animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes slideIn {
-    from { opacity: 0; transform: translateY(-8px) scale(0.98); }
-    to { opacity: 1; transform: translateY(0) scale(1); }
+    /* Animation handled by Framer Motion in component */
 }
 
 .dropdownHeader {

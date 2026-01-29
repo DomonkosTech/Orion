@@ -30,21 +30,6 @@ export function Header({
     const handleLogout = useLogout();
     const { loggedIn, userType, loading, initials, name } = useAuth();
 
-    // Dropdown state logic
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const menuRef = useRef<HTMLDivElement>(null);
-
-    // Close on outside click
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
-                setIsMenuOpen(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
-    }, []);
-
     if (loading) return null;
 
     let dynamicNavItems = navItems;
@@ -94,33 +79,15 @@ export function Header({
 
                 {/* Right: Actions */}
                 <div className={styles.actions}>
+                    <ProfileDropdown
+                        loggedIn={loggedIn}
+                        userType={userType}
+                        handleLogout={handleLogout}
+                        name={name}
+                        initials={initials}
+                    />
+                    
                     <NotificationDropdown />
-
-                    <div className={styles.profileWrapper} ref={menuRef}>
-                        <button
-                            className={`${styles.iconButton} ${isMenuOpen ? styles.expanded : ''}`}
-                            onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            aria-label="Profile Menu"
-                        >
-                            <span className={styles.initialsText}>
-                                {loggedIn ? initials : "?"}
-                            </span>
-                            <span className={styles.arrow}>
-                                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}>
-                                    <path d="m6 9 6 6 6-6"/>
-                                </svg>
-                            </span>
-                        </button>
-
-                        {isMenuOpen && (
-                            <ProfileDropdown
-                                loggedIn={loggedIn}
-                                userType={userType}
-                                handleLogout={handleLogout}
-                                name={name}
-                            />
-                        )}
-                    </div>
                     {actions}
                 </div>
             </div>

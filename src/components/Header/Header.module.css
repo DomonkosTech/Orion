@@ -21,75 +21,75 @@
 .container {
     max-width: 94.5vw;
     margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* Logo | Nav | Actions */
     align-items: center;
 }
 
-.iconButton {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 40px;
-    padding: 0 16px;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    position: relative;
-    background: #ffffff;
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
-.iconButton:hover,
-.iconButton.expanded {
-    transform: translateY(-1px);
-    background: #ffffff;
-    border-color: rgba(0, 0, 0, 0.15);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-}
-
-.initialsText {
-    font-size: 0.85rem;
+/* Ensure logo stays on the left */
+.logo { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    text-decoration: none; 
+    color: #1a1a1a; 
     font-weight: 700;
-    color: #111827;
+    justify-self: start; 
 }
 
-.arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.6rem;
-    color: #6b7280;
-    line-height: 1;
-    margin-left: 8px;
+/* Ensure actions stay on the right */
+.actions { 
+    display: flex; 
+    align-items: center; 
+    gap: 16px; 
+    justify-self: end;
+    /* Use row-reverse so profile anchors right and expands left pushing notification */
+    flex-direction: row-reverse; 
 }
 
+/* Nav centered by grid */
 .nav {
     display: flex;
     align-items: center;
     gap: 2.5rem;
+    justify-self: center;
 }
 
-    @media (max-width: 768px) {
-        .nav {
-            display: none;
-        }
-        
-        .container {
-            gap: 1rem;
-        }
+.navLink { 
+    color: #4b5563; 
+    text-decoration: none; 
+    gap: 10px; 
+    font-weight: 500; 
+    font-size: 0.95rem; 
+    transition: color 0.2s ease;
+}
 
-        .actions {
-            gap: 0.5rem;
-        }
+.navLink:visited {
+    color: #4b5563;
+}
+
+.navLink:hover {
+    color: #1a1a1a;
+}
+
+@media (max-width: 768px) {
+    .container {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+    
+    .nav {
+        display: none;
     }
 
+    .actions {
+        gap: 0.5rem;
+        flex-direction: row;
+    }
+}
+
 .profileWrapper { position: relative; }
-.actions { display: flex; align-items: center; gap: 1rem; }
-.navLink { color: #4b5563; text-decoration: none; gap: 10px; font-weight: 500; font-size: 0.95rem; }
-.logo { display: flex; align-items: center; gap: 0.5rem; text-decoration: none; color: #1a1a1a; font-weight: 700; }
+
 .logoBox { width: 20px; height: 20px; border-radius: 4px; display: flex; justify-content: center; align-items: center; }
 .logoInner { width: 8px; height: 8px; background: #fff; border-radius: 2px; }

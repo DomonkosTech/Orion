@@ -196,6 +196,12 @@
     background: var(--orion-blue-soft);
 }
 
+.clearButton:disabled {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+}
+
 /* ---------------- Grid ---------------- */
 
 .grid {

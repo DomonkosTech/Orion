@@ -7,10 +7,8 @@ import Button from "../../../../../components/Button/Button.tsx";
 type Props = {
     searchTerm: string;
     onSearchChange: (value: string) => void;
-    locations: string[];
     locationFilter: string;
     onLocationChange: (value: string) => void;
-    positions: string[];
     positionFilter: string;
     onPositionChange: (value: string) => void;
     minWage: string;
@@ -22,10 +20,8 @@ type Props = {
 const FilterBar: React.FC<Props> = ({
     searchTerm,
     onSearchChange,
-    locations,
     locationFilter,
     onLocationChange,
-    positions,
     positionFilter,
     onPositionChange,
     minWage,
@@ -51,41 +47,35 @@ const FilterBar: React.FC<Props> = ({
             <div className={styles.filtersBar}>
                 <div className={styles.filterGroup}>
                     <MapPin size={18} className={styles.inputIcon} />
-                    <select
-                        className={styles.filterControl}
+                    <InputField
+                        type="text"
+                        placeholder="Helyszín"
                         value={locationFilter}
                         onChange={(e) => onLocationChange(e.target.value)}
-                    >
-                        <option value="">Helyszín (Összes)</option>
-                        {locations.map((loc) => (
-                            <option key={loc} value={loc}>{loc}</option>
-                        ))}
-                    </select>
+                        className={styles.filterControl}
+                    />
                 </div>
 
                 <div className={styles.filterGroup}>
                     <Briefcase size={18} className={styles.inputIcon} />
-                    <select
-                        className={styles.filterControl}
+                    <InputField
+                        type="text"
+                        placeholder="Pozíció"
                         value={positionFilter}
                         onChange={(e) => onPositionChange(e.target.value)}
-                    >
-                        <option value="">Pozíció (Összes)</option>
-                        {positions.map((pos) => (
-                            <option key={pos} value={pos}>{pos}</option>
-                        ))}
-                    </select>
+                        className={styles.filterControl}
+                    />
                 </div>
 
                 <div className={styles.filterGroup}>
                     <Coins size={18} className={styles.inputIcon} />
-                    <input
+                    <InputField
                         type="number"
                         min={0}
-                        className={styles.filterControl}
+                        placeholder="Min. Bér"
                         value={minWage}
                         onChange={(e) => onMinWageChange(e.target.value)}
-                        placeholder="Min. Bér"
+                        className={styles.filterControl}
                     />
                 </div>
 
@@ -94,15 +84,14 @@ const FilterBar: React.FC<Props> = ({
                         Keresés
                     </Button>
 
-                    {hasActiveFilters && (
-                        <button
-                            type="button" 
-                            onClick={onClear}
-                            className={styles.clearButton}
-                        >
-                            <X size={20} />
-                        </button>
-                    )}
+                    <button
+                        type="button"
+                        onClick={onClear}
+                        className={styles.clearButton}
+                        disabled={!hasActiveFilters}
+                    >
+                        <X size={20} />
+                    </button>
                 </div>
             </div>
         </form>
