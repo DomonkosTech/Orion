@@ -1,27 +1,29 @@
 .wrapper {
     position: relative;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    display: inline-block;
-    width: 40px;
-    height: 40px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 48px;
+    min-width: 48px;
 }
 
 .trigger {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
-    min-width: 40px;
-    padding: 0 10px;
+    height: 48px;
+    min-width: 48px;
+    padding: 0 12px;
     border: 1px solid rgba(0, 0, 0, 0.08);
     border-radius: 50px;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     color: #111827;
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    position: absolute;
-    right: 0;
-    background: #ffffff;
+    /* Changed from absolute to relative */
+    position: relative;
+    background: #f8fafc;
     overflow: hidden;
     white-space: nowrap;
     box-sizing: border-box;
@@ -33,7 +35,7 @@
 
 .trigger:hover,
 .trigger.expanded {
-    padding: 0 20px;
+    padding: 0 24px;
     transform: translateY(-1px);
     background: #ffffff;
     border-color: rgba(0, 0, 0, 0.15);
@@ -53,21 +55,22 @@
     position: absolute;
     top: -2px;
     right: -2px;
-    width: 8px;
-    height: 8px;
+    width: 10px;
+    height: 10px;
     background-color: #ef4444;
     border: 2px solid #fff;
     border-radius: 50%;
 }
 
 .triggerLabel {
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 0.9rem;
+    font-weight: 600;
     max-width: 0;
     opacity: 0;
     overflow: hidden;
     transition: max-width 0.2s ease, opacity 0.2s ease, margin 0.2s ease;
     margin-left: 0;
+    white-space: nowrap;
 }
 
 .trigger:hover .triggerLabel,
@@ -78,7 +81,7 @@
 }
 
 .arrow {
-    font-size: 0.6rem;
+    font-size: 0.7rem;
     color: #6b7280;
     max-width: 0;
     opacity: 0;

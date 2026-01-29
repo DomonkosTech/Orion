@@ -25,7 +25,6 @@ const formatCurrency = (amount: number) => {
 
 const ListJobs: React.FC = () => {
     const [jobs, setJobs] = useState<Job[]>([]);
-    const [allJobsForFilters, setAllJobsForFilters] = useState<Job[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
@@ -77,20 +76,6 @@ const ListJobs: React.FC = () => {
             setLoading(false);
         }
     };
-    const fetchFilterOptions = async () => {
-        try {
-            const data = await getAdvertisements("", "", "", "", 1, 1000);
-            if (data.success) {
-                setAllJobsForFilters(data.advertisements);
-            }
-        } catch (err) {
-            console.error("Failed to fetch filter options:", err);
-        }
-    };
-
-    useEffect(() => {
-        fetchFilterOptions();
-    }, []);
 
     // Initial fetch
     useEffect(() => {
@@ -110,10 +95,6 @@ const ListJobs: React.FC = () => {
         setPage(1);
         fetchJobs(searchTerm, locationFilter, positionFilter, minWage, 1);
     };
-
-    // Derived lists from all jobs to keep filter options stable
-    const uniqueLocations = Array.from(new Set(allJobsForFilters.map((j) => j.location).filter(Boolean)));
-    const uniquePositions = Array.from(new Set(allJobsForFilters.map((j) => j.position).filter(Boolean)));
 
     const clearFilters = () => {
         setSearchTerm("");
@@ -155,10 +136,8 @@ const ListJobs: React.FC = () => {
                         <FilterBar
                             searchTerm={searchTerm}
                             onSearchChange={setSearchTerm}
-                            locations={uniqueLocations}
                             locationFilter={locationFilter}
                             onLocationChange={setLocationFilter}
-                            positions={uniquePositions}
                             positionFilter={positionFilter}
                             onPositionChange={setPositionFilter}
                             minWage={minWage}
