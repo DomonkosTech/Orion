@@ -15,8 +15,6 @@
     --border2: #cbd5e1;
 
     --accent: var(--orion-blue);
-    --accent2: var(--orion-blue-dark);
-    --accentSoft: var(--orion-blue-light);
 
     min-height: 100vh;
     background: var(--bg);
@@ -234,10 +232,10 @@
 }
 
 .matchBtn {
-    padding: 16px 40px !important;
-    font-size: 1.1rem !important;
-    border-radius: 16px !important;
-    font-weight: 700 !important;
+    padding: 16px 40px;
+    font-size: 1.1rem;
+    border-radius: 16px;
+    font-weight: 700;
 }
 
 /* Quick Actions / Navigation */
@@ -310,6 +308,10 @@
     color: var(--muted);
 }
 
+.navArrow {
+    color: var(--muted2);
+}
+
 /* Help Card */
 .helpCard {
     background: var(--orion-blue);
@@ -338,16 +340,30 @@
 }
 
 .helpBtn {
-    background: white !important;
-    color: var(--orion-blue) !important;
-    border: none !important;
+    background: white;
+    color: var(--orion-blue);
+    border: none;
     width: 100%;
-    font-weight: 800 !important;
-    padding: 16px !important;
-    border-radius: 16px !important;
+    font-weight: 800;
+    padding: 16px;
+    border-radius: 16px;
 }
 
-/* Utilities */
+/* State Handlers */
+.emptyMatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 16px;
+    padding: 40px 0;
+}
+
+.emptyIcon {
+    color: var(--border2);
+}
+
 .skeleton {
     height: 300px;
     background: linear-gradient(90deg, #f1f5f9 25%, #f8fafc 50%, #f1f5f9 75%);
@@ -390,9 +406,6 @@
     }
     .quickActions {
         flex-direction: column;
-    }
-    .insightsGrid {
-        grid-template-columns: 1fr;
     }
 }
 
