@@ -24,13 +24,13 @@ import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
 import { useAuth } from "../../../hooks/useAuth";
-import { getTop3Advertisements } from "../../../api/advertisementApi.ts";
-import {getUserStatistics, type DashboardStats} from "../../../api/userApi.ts"
+import { getTop3Advertisements, type Job} from "../../../Api/advertisementApi.ts";
+import {getUserStatistics, type DashboardStats} from "../../../Api/userApi.ts"
 
 function UserHomePage() {
     const navigate = useNavigate();
     const { name } = useAuth();
-    const [bestMatch, setBestMatch] = useState<any | null>(null);
+    const [bestMatch, setBestMatch] = useState<Job | null>(null);
     const [stats, setStats] = useState<DashboardStats>({
         total_applications: 0,
         profile_views: 0,
@@ -47,46 +47,19 @@ function UserHomePage() {
                     getUserStatistics()
                 ]);
 
-                // Hirdetések kezelése
-                if (Array.isArray(topAdsData) && topAdsData.length > 0) {
-                    setBestMatch(topAdsData[0]);
-                } else if (topAdsData?.success && Array.isArray(topAdsData.advertisements) && topAdsData.advertisements.length > 0) {
-                    setBestMatch(topAdsData.advertisements[0]);
+                if(statsData.success){
+                    setStats(statsData.data.stats || {})
                 }
 
-                // Statisztikák kezelése
-                let finalStats = null;
-
-                if (Array.isArray(statsData) && statsData.length > 0) {
-                    finalStats = statsData[0];
-                } else if (statsData?.success) {
-                    if (statsData.data) {
-                        if (Array.isArray(statsData.data) && statsData.data.length > 0) {
-                            finalStats = statsData.data[0];
-                        } else if (statsData.data.stats) {
-                            finalStats = Array.isArray(statsData.data.stats) ? statsData.data.stats[0] : statsData.data.stats;
-                        } else {
-                            finalStats = statsData.data;
-                        }
-                    } else if (statsData.stats) {
-                        finalStats = Array.isArray(statsData.stats) ? statsData.stats[0] : statsData.stats;
-                    }
-                } else if (statsData && typeof statsData === 'object') {
-                    // Ha közvetlenül az objektum jön vissza success flag nélkül
-                    if ('total_applications' in statsData) {
-                        finalStats = statsData;
-                    }
-                }
-
-                if (finalStats) {
-                    setStats(finalStats);
-                }
-            } catch (err) {
-                console.error("Hiba az adatok lekérésekor:", err);
-            } finally {
-                setLoading(false);
+            if (topAdsData.success) {
+                setBestMatch(topAdsData);
             }
-        };
+        } catch (err) {
+            console.error("Hiba az adatok lekérésekor:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
         fetchDashboardData();
     }, []);
@@ -205,7 +178,7 @@ function UserHomePage() {
                                             <div className={styles.matchDetails}>
                                                 <div className={styles.detailItem}>
                                                     <Building2 size={20} />
-                                                    <span>{bestMatch.company_name || "Orion Partner"}</span>
+                                                    <span>{bestMatch.position || "Orion Partner"}</span>
                                                 </div>
                                                 <div className={styles.detailItem}>
                                                     <MapPin size={20} />
@@ -214,7 +187,7 @@ function UserHomePage() {
                                             </div>
                                             <p className={styles.matchDescription}>
                                                 Ez a pozíció 98%-ban egyezik az Ön tapasztalatával és készségeivel.
-                                                {bestMatch.company_name ? ` A(z) ${bestMatch.company_name} aktívan keresi az új csapattagot.` : " Egy partnerünk aktívan keresi az új csapattagot."}
+                                                {bestMatch.tasks ? ` A(z) ${bestMatch.hourly_wage} aktívan keresi az új csapattagot.` : " Egy partnerünk aktívan keresi az új csapattagot."}
                                             </p>
                                             <Button
                                                 onClick={() => navigate(`/job/show/${bestMatch.id}`)}
