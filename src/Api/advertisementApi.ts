@@ -13,6 +13,7 @@ export interface CompanyAdvertisement {
     title: string;
     location: string;
     position: string;
+    is_active: boolean;
 }
 
 export interface Job {
