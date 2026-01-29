@@ -81,7 +81,7 @@ const ShowListedJobs: React.FC = () => {
                                 </div>
 
                                 <div className={styles.controls}>
-                                    <span className={styles.statusBadge}>Aktív</span>
+                                    <span className={styles.statusBadge}>{ad.is_active? "Aktív" : "Inaktív"}</span>
                                     <button
                                         className={styles.editButton}
                                         onClick={(e) => handleEditClick(e, ad.id)}
