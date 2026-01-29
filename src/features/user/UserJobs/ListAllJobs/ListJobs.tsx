@@ -92,11 +92,10 @@ const ListJobs: React.FC = () => {
         fetchFilterOptions();
     }, []);
 
-    // Reset to page 1 and fetch when filters change
+    // Initial fetch
     useEffect(() => {
-        setPage(1);
-        fetchJobs(searchTerm, locationFilter, positionFilter, minWage, 1);
-    }, [searchTerm, locationFilter, positionFilter, minWage]);
+        fetchJobs();
+    }, []);
 
     // Load more when page increases
     useEffect(() => {
@@ -123,6 +122,7 @@ const ListJobs: React.FC = () => {
         setMinWage("");
         setPage(1);
         setError(null);
+        fetchJobs("", "", "", "", 1);
     };
 
     const handleLoadMore = () => {

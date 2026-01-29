@@ -13,8 +13,7 @@ import {
     ArrowRight,
     Sparkles,
     Zap,
-    Target,
-    FileUser
+    Target
 } from "lucide-react";
 import styles from "./UserHomePage.module.css";
 
@@ -24,42 +23,41 @@ import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
 import { useAuth } from "../../../hooks/useAuth";
-import { getTop3Advertisements, type Job} from "../../../Api/advertisementApi.ts";
-import {getUserStatistics, type DashboardStats} from "../../../Api/userApi.ts"
+import { getJobApplications, getTop3Advertisements, type AdvertisementDetails } from "../../../api/advertisementApi.ts";
+import { getChatPartners } from "../../../api/messageApi.ts";
 
 function UserHomePage() {
     const navigate = useNavigate();
     const { name } = useAuth();
-    const [bestMatch, setBestMatch] = useState<Job | null>(null);
-    const [stats, setStats] = useState<DashboardStats>({
-        total_applications: 0,
-        profile_views: 0,
-        resume_views: 0,
-        accepted_applications: 0
-    });
+    const [bestMatch, setBestMatch] = useState<AdvertisementDetails | null>(null);
+    const [stats, setStats] = useState({ applications: 0, messages: 0, views: 0 });
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const [topAdsData, statsData] = await Promise.all([
+                const [applicationsData, topAds, chatPartners] = await Promise.all([
+                    getJobApplications(),
                     getTop3Advertisements(),
-                    getUserStatistics()
+                    getChatPartners()
                 ]);
 
-                if(statsData.success){
-                    setStats(statsData.data.stats || {})
-                }
+                setStats(prev => ({
+                    ...prev,
+                    applications: (applicationsData.submit?.length || 0) + (applicationsData.work?.length || 0),
+                    messages: chatPartners?.length || 0,
+                    views: 0
+                }));
 
-            if (topAdsData.success) {
-                setBestMatch(topAdsData);
+                if (topAds && topAds.length > 0) {
+                    setBestMatch(topAds[0]);
+                }
+            } catch (err) {
+                console.error("Hiba az adatok lekérésekor:", err);
+            } finally {
+                setLoading(false);
             }
-        } catch (err) {
-            console.error("Hiba az adatok lekérésekor:", err);
-        } finally {
-            setLoading(false);
-        }
-    };
+        };
 
         fetchDashboardData();
     }, []);
@@ -90,11 +88,6 @@ function UserHomePage() {
             description: "Beszélgessen a munkaadókkal"
         }
     ];
-
-    // Egyezési mutató számítása
-    const matchRate = stats.total_applications > 0 
-        ? Math.round((stats.accepted_applications || 0) / stats.total_applications * 100) 
-        : "--";
 
     return (
         <div className={styles.page}>
@@ -134,28 +127,28 @@ function UserHomePage() {
                                 <div className={styles.statIcon}><Target size={28} /></div>
                                 <div className={styles.statInfo}>
                                     <span className={styles.statLabel}>Jelentkezések</span>
-                                    <span className={styles.statValue}>{stats.total_applications}</span>
+                                    <span className={styles.statValue}>{stats.applications}</span>
                                 </div>
                             </div>
                             <div className={styles.statCard}>
-                                <div className={styles.statIcon}><FileUser size={28} /></div>
+                                <div className={styles.statIcon}><MessageSquare size={28} /></div>
                                 <div className={styles.statInfo}>
-                                    <span className={styles.statLabel}>Önéletrajz megtekintés</span>
-                                    <span className={styles.statValue}>{stats.resume_views}</span>
+                                    <span className={styles.statLabel}>Üzenetek</span>
+                                    <span className={styles.statValue}>{stats.messages}</span>
                                 </div>
                             </div>
                             <div className={styles.statCard}>
                                 <div className={styles.statIcon}><TrendingUp size={28} /></div>
                                 <div className={styles.statInfo}>
                                     <span className={styles.statLabel}>Profil megtekintés</span>
-                                    <span className={styles.statValue}>{stats.profile_views}</span>
+                                    <span className={styles.statValue}>{stats.views}</span>
                                 </div>
                             </div>
                             <div className={styles.statCard} title="Ez a mutató azt jelzi, hogy mennyire illik az Ön profilja (tapasztalat, készségek) az aktuális piaci igényekhez.">
                                 <div className={styles.statIcon}><Sparkles size={28} /></div>
                                 <div className={styles.statInfo}>
                                     <span className={styles.statLabel}>Egyezési mutató</span>
-                                    <span className={styles.statValue}>{matchRate}%</span>
+                                    <span className={styles.statValue}>92%</span>
                                 </div>
                             </div>
                         </section>
@@ -178,7 +171,7 @@ function UserHomePage() {
                                             <div className={styles.matchDetails}>
                                                 <div className={styles.detailItem}>
                                                     <Building2 size={20} />
-                                                    <span>{bestMatch.position || "Orion Partner"}</span>
+                                                    <span>{bestMatch.company_name || "Orion Partner"}</span>
                                                 </div>
                                                 <div className={styles.detailItem}>
                                                     <MapPin size={20} />
@@ -187,7 +180,7 @@ function UserHomePage() {
                                             </div>
                                             <p className={styles.matchDescription}>
                                                 Ez a pozíció 98%-ban egyezik az Ön tapasztalatával és készségeivel.
-                                                {bestMatch.tasks ? ` A(z) ${bestMatch.hourly_wage} aktívan keresi az új csapattagot.` : " Egy partnerünk aktívan keresi az új csapattagot."}
+                                                {bestMatch.company_name ? ` A(z) ${bestMatch.company_name} aktívan keresi az új csapattagot.` : " Egy partnerünk aktívan keresi az új csapattagot."}
                                             </p>
                                             <Button
                                                 onClick={() => navigate(`/job/show/${bestMatch.id}`)}
