@@ -51,8 +51,8 @@ function UserHomePage() {
                     setStats(statsData.data.stats || {})
                 }
 
-                if (topAdsData.success) {
-                    setBestMatch(topAdsData);
+                if (topAdsData.success && topAdsData.advertisements && topAdsData.advertisements.length > 0) {
+                    setBestMatch(topAdsData.advertisements[0]);
                 }
             } catch (err) {
                 console.error("Hiba az adatok lekérésekor:", err);

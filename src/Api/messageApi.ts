@@ -12,8 +12,8 @@ export interface Message {
     id: number;
     user_id: number;
     company_id: number;
-    content?: string; // in case backend uses 'content'
-    message?: string; // in case backend uses 'message'
+    content?: string;
+    message?: string;
     sender_type: "USER" | "COMPANY";
     created_at: string;
     is_read?: boolean;
@@ -27,7 +27,7 @@ const handleResponse = async (response: Response) => {
     return data;
 };
 
-export const getChatPartners = async () => {
+export const getUserChatPartners = async () => {
     const response = await fetch(`${API_BASE_URL}/chat/user`, {
         method: "GET",
         headers: {
@@ -38,8 +38,30 @@ export const getChatPartners = async () => {
     return handleResponse(response);
 };
 
-export const getMessagesForCompany = async (companyId: number) => {
+export const getCompanyChatPartners = async () => {
+    const response = await fetch(`${API_BASE_URL}/chat/company`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
+    });
+    return handleResponse(response);
+};
+
+export const getMessagesForUser = async (companyId: number) => {
     const response = await fetch(`${API_BASE_URL}/chat/user/message/${companyId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: "include",
+    });
+    return handleResponse(response);
+};
+
+export const getMessagesForCompany = async (userId: number) => {
+    const response = await fetch(`${API_BASE_URL}/chat/company/message/${userId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -56,7 +78,6 @@ export const sendUserMessage = async (message: string, companyId: number) => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            // backend elvárás: { companyId, message }
             companyId: companyId,
             message: message,
         }),
@@ -65,4 +86,22 @@ export const sendUserMessage = async (message: string, companyId: number) => {
 
     return handleResponse(response);
 };
+
+export const sendCompanyMessage = async (message: string, userId: number) => {
+    const response = await fetch(`${API_BASE_URL}/chat/company/send`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+
+            companyId: userId,
+            message: message,
+        }),
+        credentials: "include",
+    });
+
+    return handleResponse(response);
+};
+
 
