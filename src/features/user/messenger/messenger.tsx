@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {type ChatPartner,type Message, getUserChatPartners, getMessagesForUser, sendUserMessage } from "../../../Api/messageApi.ts";
+import {type CompanyChatPartner,type Message, getUserChatPartners, getMessagesForUser, sendUserMessage } from "../../../Api/messageApi.ts";
 
 const containerStyle: React.CSSProperties = {
   display: "flex",
@@ -148,7 +148,7 @@ function formatDateTime(value?: string | null) {
 }
 
 const Messenger: React.FC = () => {
-  const [partners, setPartners] = useState<ChatPartner[]>([]);
+  const [partners, setPartners] = useState<CompanyChatPartner[]>([]);
   const [partnersLoading, setPartnersLoading] = useState(false);
   const [partnersError, setPartnersError] = useState<string | null>(null);
 
@@ -189,7 +189,7 @@ const Messenger: React.FC = () => {
       setPartnersError(null);
       try {
         const json = await getUserChatPartners();
-        const data: ChatPartner[] = json?.data ?? [];
+        const data: CompanyChatPartner[] = json?.data ?? [];
         if (!cancelled) {
           setPartners(data);
           // Auto-select first partner
@@ -282,7 +282,7 @@ const Messenger: React.FC = () => {
     }
   };
 
-  const renderPartner = (p: ChatPartner) => {
+  const renderPartner = (p: CompanyChatPartner) => {
     const active = p.company_id === selectedCompanyId;
     const initials = getInitials(p.company_name);
     return (

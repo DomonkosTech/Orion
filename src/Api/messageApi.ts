@@ -2,9 +2,16 @@
 
 const API_BASE_URL = "http://localhost:4000/api"
 
-export interface ChatPartner {
+export interface CompanyChatPartner {
     company_id: number;
     company_name: string;
+    last_message_at: string | null;
+}
+
+export interface UserChatPartner {
+    user_id: number;
+    user_lname: string,
+    user_fname: string,
     last_message_at: string | null;
 }
 
