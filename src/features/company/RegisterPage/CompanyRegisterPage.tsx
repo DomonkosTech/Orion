@@ -1,6 +1,6 @@
 import React from "react";
 import { registerCompany } from "../../../api/companyApi.ts";
-import { companyRegisterObject, companyRegisterSchema } from "../../../validation/Validation.ts";
+import { companyRegisterObject, companyRegisterSchema, passwordConfirmRefinement } from "../../../validation/Validation.ts";
 import RegisterPage from "../../../components/RegisterPage/RegisterPage.tsx";
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
@@ -8,14 +8,14 @@ import TextArea from "../../../components/TextArea/TextArea";
 import styles from "./CompanyRegisterPage.module.css";
 
 const stepSchemas = [
-    companyRegisterObject.pick({ email: true, password: true, confirmPassword: true }),
-    companyRegisterObject.pick({ name: true, address: true, taxNumber: true, website: true }),
+    companyRegisterObject.pick({ email: true, password: true, confirmPassword: true }).superRefine(passwordConfirmRefinement),
+    companyRegisterObject.pick({ name: true, address: true, tax_number: true, website: true }),
     companyRegisterObject.pick({
-        contactPersonName: true,
-        phoneNumber: true,
-        activityScope: true,
-        shortDescription: true,
-        termsAccepted: true
+        contact_person_name: true,
+        phone_number: true,
+        activity_scope: true,
+        short_description: true,
+        terms_accepted: true
     })
 ];
 
@@ -26,13 +26,13 @@ const CompanyRegisterPage: React.FC = () => {
         confirmPassword: "",
         name: "",
         address: "",
-        taxNumber: "",
-        contactPersonName: "",
-        activityScope: "",
+        tax_number: "",
+        contact_person_name: "",
+        activity_scope: "",
         website: "",
-        shortDescription: "",
-        phoneNumber: "",
-        termsAccepted: false
+        short_description: "",
+        phone_number: "",
+        terms_accepted: false
     };
 
     const steps = [
@@ -68,7 +68,7 @@ const CompanyRegisterPage: React.FC = () => {
                     <InputField label="Cégnév *" name="name" value={formData.name} onChange={handleChange} error={errors.name} />
                     <InputField label="Székhely címe *" name="address" value={formData.address} onChange={handleChange} error={errors.address} />
                     <div className={styles.row}>
-                        <InputField label="Adószám *" name="taxNumber" value={formData.taxNumber} onChange={handleChange} error={errors.taxNumber} />
+                        <InputField label="Adószám *" name="tax_number" value={formData.tax_number} onChange={handleChange} error={errors.tax_number} />
                         <InputField label="Weboldal" name="website" value={formData.website} onChange={handleChange} error={errors.website} />
                     </div>
                 </>
@@ -79,15 +79,15 @@ const CompanyRegisterPage: React.FC = () => {
             render: ({ formData, handleChange, handleCheckboxChange, errors }: any) => (
                 <>
                     <div className={styles.row}>
-                        <InputField label="Kapcsolattartó neve *" name="contactPersonName" value={formData.contactPersonName} onChange={handleChange} error={errors.contactPersonName} />
-                        <InputField label="Telefonszám *" name="phoneNumber" type="tel" value={formData.phoneNumber} onChange={handleChange} error={errors.phoneNumber} />
+                        <InputField label="Kapcsolattartó neve *" name="contact_person_name" value={formData.contact_person_name} onChange={handleChange} error={errors.contact_person_name} />
+                        <InputField label="Telefonszám *" name="phone_number" type="tel" value={formData.phone_number} onChange={handleChange} error={errors.phone_number} />
                     </div>
-                    <InputField label="Tevékenységi kör *" name="activityScope" value={formData.activityScope} onChange={handleChange} error={errors.activityScope} />
-                    <TextArea label="Rövid bemutatkozás *" name="shortDescription" value={formData.shortDescription} onChange={handleChange} rows={3} error={errors.shortDescription} />
+                    <InputField label="Tevékenységi kör *" name="activity_scope" value={formData.activity_scope} onChange={handleChange} error={errors.activity_scope} />
+                    <TextArea label="Rövid bemutatkozás *" name="short_description" value={formData.short_description} onChange={handleChange} rows={3} error={errors.short_description} />
 
-                    <div className={`${styles.terms} ${errors.termsAccepted ? styles.errorShake : ""}`}>
-                        <Checkbox label="Elfogadom a felhasználási feltételeket" checked={formData.termsAccepted} onChange={(checked) => handleCheckboxChange("termsAccepted", checked)} />
-                        {errors.termsAccepted && <span className={styles.errorText}>{errors.termsAccepted}</span>}
+                    <div className={`${styles.terms} ${errors.terms_accepted ? styles.errorShake : ""}`}>
+                        <Checkbox label="Elfogadom a felhasználási feltételeket" checked={formData.terms_accepted} onChange={(checked) => handleCheckboxChange("terms_accepted", checked)} />
+                        {errors.terms_accepted && <span className={styles.errorText}>{errors.terms_accepted}</span>}
                     </div>
                 </>
             )
@@ -98,15 +98,16 @@ const CompanyRegisterPage: React.FC = () => {
         await registerCompany({
             email: data.email,
             password: data.password,
+            confirmPassword: data.confirmPassword,
             name: data.name,
             address: data.address,
-            tax_number: data.taxNumber,
-            contact_person_name: data.contactPersonName,
-            activity_scope: data.activityScope,
+            tax_number: data.tax_number,
+            contact_person_name: data.contact_person_name,
+            activity_scope: data.activity_scope,
             website: data.website,
-            short_description: data.shortDescription,
-            phone_number: data.phoneNumber,
-            terms_accepted: data.termsAccepted
+            short_description: data.short_description,
+            phone_number: data.phone_number,
+            terms_accepted: data.terms_accepted
         });
     };
 

@@ -8,7 +8,7 @@ import {
     ClipboardCheck,
     AlertCircle
 } from "lucide-react";
-import { getJobApplications, type JobApplicationData } from "../../../Api/advertisementApi.ts";
+import { getJobApplications, type JobApplicationData } from "../../../api/advertisementApi.ts";
 import styles from "./JobApplications.module.css";
 
 // Components

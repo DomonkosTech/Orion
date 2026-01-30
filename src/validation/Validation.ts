@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // --- Reusable Logic ---
-const passwordConfirmRefinement = (data: any, ctx: z.RefinementCtx) => {
+export const passwordConfirmRefinement = (data: any, ctx: z.RefinementCtx) => {
     if (data.confirmPassword !== data.password) {
         ctx.addIssue({
             code: "custom",
@@ -46,13 +46,13 @@ export const userRegisterSchema = userRegisterObject.superRefine(passwordConfirm
     export const companyRegisterObject = authBase.extend({
     name: z.string().min(2, "A cégnév legalább 2 karakter"),
     address: z.string().min(5, "A cím legalább 5 karakter"),
-    taxNumber: z.string().length(13, "Az adószám pontosan 13 karakter").regex(/^\d{8}-\d{1}-\d{2}$/, "Helyes alak: 12345678-X-YY"),
-    contactPersonName: z.string().min(2, "Kapcsolattartó neve legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
-    activityScope: z.string().min(15, "Tevékenységi kör megadása kötelező (min. 15 karakter)"),
+    tax_number: z.string().trim().length(13, "Az adószám pontosan 13 karakter").regex(/^\d{8}-\d{1}-\d{2}$/, "Helyes alak: 12345678-X-YY"),
+    contact_person_name: z.string().min(2, "Kapcsolattartó neve legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
+    activity_scope: z.string().min(15, "Tevékenységi kör megadása kötelező (min. 15 karakter)"),
     website: z.string().trim().optional().refine((v) => !v || /^https?:\/\//i.test(v) || /^[\w.-]+\.[a-z]{2,}$/i.test(v), "Érvénytelen weboldal cím"),
-    shortDescription: z.string().min(10, "A leírás legalább 10 karakter").max(500, "Maximum 500 karakter"),
-    phoneNumber: z.string().regex(/^[0-9+\s-]{7,20}$/, "Érvénytelen telefonszám"),
-    termsAccepted: z.literal(true, { errorMap: () => ({ message: "El kell fogadnia a feltételeket" }) }),
+    short_description: z.string().min(10, "A leírás legalább 10 karakter").max(500, "Maximum 500 karakter"),
+    phone_number: z.string().regex(/^[0-9+\s-]{7,20}$/, "Érvénytelen telefonszám"),
+    terms_accepted: z.literal(true, { errorMap: () => ({ message: "El kell fogadnia a feltételeket" }) }),
 });
 
 export const companyRegisterSchema = companyRegisterObject.superRefine(passwordConfirmRefinement);
