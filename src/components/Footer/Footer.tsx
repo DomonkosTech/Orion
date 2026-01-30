@@ -18,7 +18,7 @@ const Footer = () => {
                     <div className={styles.footerTitle}>Gyors linkek</div>
                     <Link to="/listjobs" className={styles.footerLink}>Állások</Link>
                     <Link to="/jobapplication" className={styles.footerLink}>Jelentkezések</Link>
-                    <Link to="/EditUserProfile" className={styles.footerLink}>Profil</Link>
+                    <Link to="/UserEditProfile" className={styles.footerLink}>Profil</Link>
                 </div>
 
                 {/* Contact Section */}

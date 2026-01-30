@@ -1,6 +1,6 @@
 import React from "react";
 import { registerUser } from "../../../api/userApi.ts";
-import { userRegisterObject, userRegisterSchema } from "../../../validation/Validation.ts";
+import { userRegisterObject, userRegisterSchema, passwordConfirmRefinement } from "../../../validation/Validation.ts";
 import RegisterPage from "../../../components/RegisterPage/RegisterPage.tsx";
 import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
@@ -8,7 +8,7 @@ import TextArea from "../../../components/TextArea/TextArea";
 import styles from "./UserRegisterPage.module.css";
 
 const stepSchemas = [
-    userRegisterObject.pick({ email: true, password: true, confirmPassword: true }),
+    userRegisterObject.pick({ email: true, password: true, confirmPassword: true }).superRefine(passwordConfirmRefinement),
     userRegisterObject.pick({ lname: true, fname: true, birth_place: true, birth_date: true, personal_id: true, address_card_number: true, nationality: true }),
     userRegisterObject.pick({ address: true, phone_number: true, tax_number: true, qualifications: true, short_bio: true, terms_accepted: true })
 ];

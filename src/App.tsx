@@ -3,7 +3,7 @@ import UserHomePage from "./features/user/HomePage/UserHomePage.tsx";
 import UserLoginPage from "./features/user/LoginPage/UserLoginPage.tsx";
 import UserRegisterPage from "./features/user/RegisterPage/UserRegisterPage.tsx";
 import IsLoggedIn from "./IsLoggedIn.tsx";
-import EditUserProfile from "./features/user/EditProfile/EditUserProfile.tsx";
+import UserEditProfile from "./features/user/EditProfile/UserEditProfile.tsx";
 import CompanyRegisterPage from "./features/company/RegisterPage/CompanyRegisterPage.tsx";
 import CompanyLoginPage from "./features/company/LoginPage/CompanyLoginPage.tsx";
 import CompanyEditProfile from "./features/company/EditProfile/CompanyEditProfile.tsx";
@@ -121,10 +121,10 @@ function App() {
                     }
                 />
                 <Route
-                    path="/EditUserProfile"
+                    path="/UserEditProfile"
                     element={
                         <IsLoggedIn mode="user">
-                            <EditUserProfile />
+                            <UserEditProfile />
                         </IsLoggedIn>
                     }
                 />

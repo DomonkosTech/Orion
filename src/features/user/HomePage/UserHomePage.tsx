@@ -117,7 +117,7 @@ function UserHomePage() {
                         </div>
                         <div className={styles.headerActions}>
                             <Button
-                                onClick={() => navigate("/EditUserProfile")}
+                                onClick={() => navigate("/UserEditProfile")}
                                 variant="secondary"
                                 color="orion-blue"
                             >
@@ -187,7 +187,7 @@ function UserHomePage() {
                                             </div>
                                             <p className={styles.matchDescription}>
                                                 Ez a pozíció 98%-ban egyezik az Ön tapasztalatával és készségeivel.
-                                                {bestMatch.tasks ? ` A(z) ${bestMatch.hourly_wage} aktívan keresi az új csapattagot.` : " Egy partnerünk aktívan keresi az új csapattagot."}
+                                             F   {bestMatch.tasks ? ` A(z) ${bestMatch.hourly_wage} aktívan keresi az új csapattagot.` : " Egy partnerünk aktívan keresi az új csapattagot."}
                                             </p>
                                             <Button
                                                 onClick={() => navigate(`/job/show/${bestMatch.id}`)}

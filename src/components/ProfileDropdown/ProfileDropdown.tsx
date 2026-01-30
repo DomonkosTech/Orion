@@ -37,6 +37,13 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
         return name || (userType === "company" ? "Céges Fiók" : "Felhasználó");
     };
 
+    const getProfileLink = () => {
+        if (userType === "company") {
+            return "/CompanyEditProfile";
+        }
+        return "/UserEditProfile";
+    };
+
     return (
         <div className={styles.wrapper} ref={dropdownRef}>
             <button
@@ -73,7 +80,7 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
 
                         {loggedIn ? (
                             <>
-                                <a href="/EditUserProfile" className={styles.item}>
+                                <a href={getProfileLink()} className={styles.item}>
                                     <div>
                                         <span className={styles.itemTitle}>Profilom</span>
                                         <span className={styles.itemDescription}>Személyes adatok kezelése</span>
