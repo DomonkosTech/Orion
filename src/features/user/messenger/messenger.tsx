@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import {type ChatPartner,type Message, getChatPartners, getMessagesForCompany, sendUserMessage } from "../../../Api/messageApi.ts";
+import {type ChatPartner,type Message, getUserChatPartners, getMessagesForUser, sendUserMessage } from "../../../Api/messageApi.ts";
 
 const containerStyle: React.CSSProperties = {
   display: "flex",
@@ -188,7 +188,7 @@ const Messenger: React.FC = () => {
       setPartnersLoading(true);
       setPartnersError(null);
       try {
-        const json = await getChatPartners();
+        const json = await getUserChatPartners();
         const data: ChatPartner[] = json?.data ?? [];
         if (!cancelled) {
           setPartners(data);
@@ -216,7 +216,7 @@ const Messenger: React.FC = () => {
       setMessagesError(null);
       try {
         // selectedCompanyId is guaranteed to be number here because of the check above
-        const json = await getMessagesForCompany(selectedCompanyId!);
+        const json = await getMessagesForUser(selectedCompanyId!);
         const data: Message[] = json?.data ?? [];
         if (!cancelled) setMessages(data);
       } catch  {
@@ -266,7 +266,7 @@ const Messenger: React.FC = () => {
       } else {
         // Ha nem kaptunk vissza üzenetet, frissítsük a listát
         try {
-          const json = await getMessagesForCompany(selectedCompanyId);
+          const json = await getMessagesForUser(selectedCompanyId);
           const data: Message[] = json?.data ?? [];
           setMessages(data);
         } catch {
