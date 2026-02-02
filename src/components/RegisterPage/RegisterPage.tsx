@@ -7,6 +7,7 @@ import styles from "./RegisterPage.module.css";
 // Components
 import Button from "../Button/Button.tsx";
 import {Header} from "../Header/Header.tsx";
+import Footer from "../Footer/Footer.tsx";
 
 interface Step<T> {
     label: string;
@@ -26,6 +27,7 @@ interface RegisterPageProps<T> {
     onSubmit: (data: T) => Promise<void>;
     redirectPath: string;
     title: string;
+    loginPath?: string;
 }
 
 const RegisterPage = <T extends Record<string, any>>({
@@ -35,7 +37,8 @@ const RegisterPage = <T extends Record<string, any>>({
     finalSchema,
     onSubmit,
     redirectPath,
-    title
+    title,
+    loginPath
 }: RegisterPageProps<T>) => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
@@ -195,10 +198,16 @@ const RegisterPage = <T extends Record<string, any>>({
                                     <Button type="submit" isLoading={isLoading} variant="primary" color="orion-blue">Regisztráció befejezése</Button>
                                 )}
                             </div>
+                            {loginPath && (
+                                <div className={styles.loginLink}>
+                                    Már van fiókja? <span onClick={() => navigate(loginPath)}>Jelentkezzen be!</span>
+                                </div>
+                            )}
                         </form>
                     </div>
                 </div>
             </div>
+            <Footer/>
         </>
     );
 };
