@@ -1,20 +1,36 @@
-import json
 import re
 import regex
+import uvicorn
+from fastapi import FastAPI, HTTPException, Body
 from nltk.stem.snowball import SnowballStemmer
 from sentence_transformers import SentenceTransformer, util
+from supabase import create_client, Client
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+# Initialize Supabase client
+supabase_url = "https://nlabffngmifszpwrqetx.supabase.co"
+supabase_key = os.getenv("SUPABASE_SERVICE_KEY")
+supabase: Client = create_client(supabase_url, supabase_key)
+
+app = FastAPI()
 
 stemmer = SnowballStemmer("hungarian")
 def stem_hunspell(word: str) -> str:
     return stemmer.stem(word.lower())
 
-def load_jobs_from_ts(filename):
-    with open(filename, 'r', encoding='utf-8') as f:
-        content = f.read()
-        match = re.search(r'\[.*\]', content, re.DOTALL)
-        if match:
-            return json.loads(match.group(0))
-    return []
+async def get_jobs():
+    try:
+        response = supabase.table("advertisement").select(
+            "id,title,position,location,hourly_wage,tasks,requirements,job_description"
+        ).eq('is_active', True).execute()
+        return response.data
+    except Exception as e:
+        print(f"Error fetching data from Supabase: {e}")
+        return []
 
 WEIGHTS = {
     "TEXT": 0.65,
@@ -73,62 +89,6 @@ def cosine_similarity(a: str, b: str) -> float:
     emb_b = model.encode(b, convert_to_tensor=True)
     return float(util.cos_sim(emb_a, emb_b))
 
-def explain_match(user_text: str, job_text: str, job_location: str) -> dict:
-    user_loc_tokens = set(normalize_location(user_text))
-    job_loc_tokens = set(normalize_location(job_location))
-
-    def remove_locations(text, loc_tokens):
-        words = text.lower().split()
-        out = []
-        for w in words:
-            locs = normalize_location(w)
-            if locs and locs[0] in loc_tokens:
-                continue
-            out.append(w)
-        return " ".join(out)
-
-    clean_user_text = remove_locations(user_text, job_loc_tokens)
-    clean_job_text = job_text
-
-    def clean_text(text):
-        words = text.lower().split()
-        return [w for w in words if len(w) > 2 and w not in STOP_WORDS]
-
-    user_words = clean_text(clean_user_text)
-    job_words = clean_text(clean_job_text)
-
-    exact_matches = []
-    user_tokens = set(normalize(clean_user_text))
-    job_tokens = set(normalize(clean_job_text))
-    for word in user_words:
-        toks = normalize(word)
-        if toks and toks[0] in job_tokens:
-            exact_matches.append(word)
-
-    semantic_matches = []
-    if user_words and job_words:
-        embeddings_user = model.encode(user_words, convert_to_tensor=True)
-        embeddings_job = model.encode(job_words, convert_to_tensor=True)
-        similarities = util.cos_sim(embeddings_user, embeddings_job)
-        for i, user_word in enumerate(user_words):
-            if user_word in exact_matches or user_word in STOP_WORDS:
-                continue
-            best_idx = int(similarities[i].argmax())
-            similarity_score = float(similarities[i][best_idx])
-            if similarity_score > 0.7:
-                job_word = job_words[best_idx]
-                if job_word not in STOP_WORDS:
-                    semantic_matches.append({
-                        "user_word": user_word,
-                        "similar_job_word": job_word,
-                        "similarity": similarity_score
-                    })
-
-    return {
-        "exact_matches": exact_matches,
-        "semantic_matches": semantic_matches
-    }
-
 def calculate_wage_score(job_wage: float, target_wage: float) -> float:
     if not job_wage or not target_wage:
         return 0.0
@@ -184,12 +144,10 @@ def recommend(user_text: str, target_wage: int, job: dict) -> dict:
         "isTitleMatch": has_match_in_title
     }
 
-    job_with_scores["reasons"] = explain_match(prof_text, full_job_text, job_location)
     return job_with_scores
 
-
-def OrionAI(userinput, wage):
-    jobs = load_jobs_from_ts("jobs.json")
+async def OrionAI(userinput, wage):
+    jobs = await get_jobs()  # Using the Supabase fetch function instead of loading from jobs.json
     user_input = userinput
     min_wage = wage
 
@@ -203,17 +161,20 @@ def OrionAI(userinput, wage):
         print(f"Helyszín: {job.get('location', '')}{' ✅' if s['location'] > 0 else ''}")
         print(f"Bér: {job.get('hourly_wage', 0)} Ft/óra (Bér pont: {s['wage']:.2f})")
         print(f"Szöveges egyezés: {s['text']:.2f}")
-        reasons = job["reasons"]
-        if reasons["exact_matches"]:
-            print(f"Pontos egyezések: {', '.join(reasons['exact_matches'])}")
-        if reasons["semantic_matches"]:
-            print("Hasonló kifejezések:")
-            for match in reasons["semantic_matches"]:
-                print(f"  - {match['user_word']} ≈ {match['similar_job_word']} ({match['similarity']:.2f})")
 
+    top_ids = [job.get("id") for job in ranked[:10]]
+    return top_ids
+
+@app.post("/OrionAI")
+async def recommend_jobs(body: dict = Body(...)):
+    try:
+        userinput = body.get("userinput")
+        wage = body.get("wage")
+        if len(userinput) > 0 and wage > 0:
+            return await OrionAI(userinput, wage)
+        raise HTTPException(status_code=400, detail="Invalid input")
+    except Exception as e:
+        return {"error": str(e)}
 
 if __name__ == "__main__":
-    while True:
-        user_input = str(input("milyen munkát keresel: "))
-        wage = int(input("milyen órabér környékén: "))
-        OrionAI(user_input, wage)
+    uvicorn.run(app, host="localhost", port=8000)
