@@ -120,6 +120,7 @@ const CompanyRegisterPage: React.FC = () => {
             onSubmit={handleCompanyRegister}
             redirectPath="/CompanyLoginPage"
             title="Cég regisztráció"
+            loginPath="/CompanyLoginPage"
         />
     );
 };

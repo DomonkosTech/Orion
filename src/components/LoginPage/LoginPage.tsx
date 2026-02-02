@@ -8,6 +8,7 @@ import InputField from "../InputField/InputField";
 import Checkbox from "../Checkbox/Checkbox";
 import Button from "../Button/Button.tsx";
 import { Header } from "../Header/Header.tsx";
+import Footer from "../Footer/Footer.tsx";
 import { loginSchema } from "../../validation/Validation.ts";
 
 interface LoginPageProps {
@@ -178,6 +179,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
                     </div>
                 </form>
             </div>
+            <Footer/>
         </>
     );
 };

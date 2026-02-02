@@ -24,6 +24,7 @@ const formatCurrency = (amount: number) => {
 };
 
 const ListJobs: React.FC = () => {
+    const PAGE_SIZE = 21;
     const [jobs, setJobs] = useState<Job[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
@@ -36,14 +37,20 @@ const ListJobs: React.FC = () => {
     const [positionFilter, setPositionFilter] = useState<string>("");
     const [minWage, setMinWage] = useState<string>("");
 
+    // Applied filters state to ensure pagination uses the same filters as the search
+    const [appliedFilters, setAppliedFilters] = useState({
+        searchTerm: "",
+        locationFilter: "",
+        positionFilter: "",
+        minWage: ""
+    });
+
     const navigate = useNavigate();
 
     // Navigation handlers
     const handleshowClick = (adId: number) => {
         navigate(`/job/show/${adId}`);
     };
-
-// In ListJobs.tsx
 
     const fetchJobs = async (
         q: string = "",
@@ -54,7 +61,7 @@ const ListJobs: React.FC = () => {
     ) => {
         setLoading(true);
         try {
-            const data = await getAdvertisements(q, loc, pos, wage, pg);
+            const data = await getAdvertisements(q, loc, pos, wage, pg, PAGE_SIZE);
 
             if (data.success) {
                 if (pg === 1) {
@@ -62,7 +69,10 @@ const ListJobs: React.FC = () => {
                 } else {
                     setJobs((prev) => [...prev, ...data.advertisements]);
                 }
-                setTotalCount(data.totalCount || 0);
+                // Only update totalCount if it's provided
+                if (data.totalCount !== undefined) {
+                    setTotalCount(Number(data.totalCount));
+                }
             } else {
                 if (pg === 1) {
                     setJobs([]);
@@ -71,7 +81,10 @@ const ListJobs: React.FC = () => {
             }
         } catch (err) {
             console.error(err);
-            setError(err instanceof Error ? err.message : "Ismeretlen hiba.");
+            // Only set main error if it's the first page, otherwise we lose the list
+            if (pg === 1) {
+                setError(err instanceof Error ? err.message : "Ismeretlen hiba.");
+            }
         } finally {
             setLoading(false);
         }
@@ -85,7 +98,13 @@ const ListJobs: React.FC = () => {
     // Load more when page increases
     useEffect(() => {
         if (page > 1) {
-            fetchJobs(searchTerm, locationFilter, positionFilter, minWage, page);
+            fetchJobs(
+                appliedFilters.searchTerm,
+                appliedFilters.locationFilter,
+                appliedFilters.positionFilter,
+                appliedFilters.minWage,
+                page
+            );
         }
     }, [page]);
 
@@ -93,6 +112,12 @@ const ListJobs: React.FC = () => {
         if (e) e.preventDefault();
         setError(null);
         setPage(1);
+        setAppliedFilters({
+            searchTerm,
+            locationFilter,
+            positionFilter,
+            minWage
+        });
         fetchJobs(searchTerm, locationFilter, positionFilter, minWage, 1);
     };
 
@@ -103,12 +128,25 @@ const ListJobs: React.FC = () => {
         setMinWage("");
         setPage(1);
         setError(null);
+        setAppliedFilters({
+            searchTerm: "",
+            locationFilter: "",
+            positionFilter: "",
+            minWage: ""
+        });
         fetchJobs("", "", "", "", 1);
     };
 
     const handleLoadMore = () => {
         setPage((prev) => prev + 1);
     };
+
+    // Determine if we should show the "Load More" button
+    // If totalCount is available, use it.
+    // Fallback: If totalCount is missing (0), check if we have a full page of results.
+    const showLoadMore = totalCount > 0
+        ? jobs.length < totalCount
+        : (jobs.length > 0 && jobs.length % PAGE_SIZE === 0);
 
     return (
         <div className={styles.pageWrapper}>
@@ -180,7 +218,7 @@ const ListJobs: React.FC = () => {
                                 </div>
                             )}
 
-                            {jobs.length < totalCount && (
+                            {showLoadMore && (
                                 <div className={styles.pagination}>
                                     <Button
                                         onClick={handleLoadMore}
