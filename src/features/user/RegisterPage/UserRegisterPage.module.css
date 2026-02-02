@@ -1,15 +1,21 @@
 .row {
     display: flex;
-    gap: 1rem;
+    gap: 1.25rem;
 }
 
 .row > div { flex: 1; }
 
 .terms {
     background: var(--orion-blue-light);
-    padding: 1rem;
-    border-radius: 8px;
+    padding: 1.25rem;
+    border-radius: 12px;
     margin-top: 1rem;
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.terms:hover {
+    border-color: var(--orion-blue);
 }
 
 @keyframes shake {
@@ -22,15 +28,17 @@
 
 .errorShake {
     animation: shake 0.4s ease-in-out;
+    border-color: #ff4d4f;
 }
 
 .errorText {
     color: #ff4d4f;
-    font-size: 12px;
-    margin-top: 4px;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
     display: block;
+    font-weight: 500;
 }
 
 @media (max-width: 480px) {
-    .row { flex-direction: column; }
+    .row { flex-direction: column; gap: 1rem; }
 }

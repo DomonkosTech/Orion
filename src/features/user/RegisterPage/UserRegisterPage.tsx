@@ -6,6 +6,7 @@ import InputField from "../../../components/InputField/InputField";
 import Checkbox from "../../../components/Checkbox/Checkbox";
 import TextArea from "../../../components/TextArea/TextArea";
 import styles from "./UserRegisterPage.module.css";
+import registerStyles from "../../../components/RegisterPage/RegisterPage.module.css";
 
 const stepSchemas = [
     userRegisterObject.pick({ email: true, password: true, confirmPassword: true }).superRefine(passwordConfirmRefinement),
@@ -36,15 +37,44 @@ const UserRegisterPage: React.FC = () => {
     const steps = [
         {
             label: "Fiók adatok",
-            render: ({ formData, handleChange, errors }: any) => (
-                <>
-                    <InputField label="Email cím *" name="email" type="email" value={formData.email} onChange={handleChange} error={errors.email} />
-                    <div className={styles.row}>
-                        <InputField label="Jelszó *" name="password" isPassword value={formData.password} onChange={handleChange} error={errors.password} />
-                        <InputField label="Megerősítés *" name="confirmPassword" isPassword value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
-                    </div>
-                </>
-            )
+            render: ({ formData, handleChange, errors }: any) => {
+                const password = formData.password || "";
+                const hasMinLength = password.length >= 8;
+                const hasLower = /[a-z]/.test(password);
+                const hasUpper = /[A-Z]/.test(password);
+                const hasNumber = /[0-9]/.test(password);
+                const hasSpecial = /[^a-zA-Z0-9]/.test(password);
+
+                return (
+                    <>
+                        <InputField label="Email cím *" name="email" type="email" value={formData.email} onChange={handleChange} error={errors.email} />
+                        <div className={styles.row}>
+                            <InputField label="Jelszó *" name="password" isPassword value={formData.password} onChange={handleChange} error={errors.password} />
+                            <InputField label="Megerősítés *" name="confirmPassword" isPassword value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
+                        </div>
+                        <div className={registerStyles.passwordRequirements}>
+                            <p>Jelszó követelmények:</p>
+                            <ul>
+                                <li className={hasMinLength ? registerStyles.reqMet : registerStyles.reqUnmet}>
+                                    <span className={registerStyles.reqIcon}>{hasMinLength ? "✓" : "○"}</span> Legalább 8 karakter
+                                </li>
+                                <li className={hasLower ? registerStyles.reqMet : registerStyles.reqUnmet}>
+                                    <span className={registerStyles.reqIcon}>{hasLower ? "✓" : "○"}</span> Kisbetű
+                                </li>
+                                <li className={hasUpper ? registerStyles.reqMet : registerStyles.reqUnmet}>
+                                    <span className={registerStyles.reqIcon}>{hasUpper ? "✓" : "○"}</span> Nagybetű
+                                </li>
+                                <li className={hasNumber ? registerStyles.reqMet : registerStyles.reqUnmet}>
+                                    <span className={registerStyles.reqIcon}>{hasNumber ? "✓" : "○"}</span> Szám
+                                </li>
+                                <li className={hasSpecial ? registerStyles.reqMet : registerStyles.reqUnmet}>
+                                    <span className={registerStyles.reqIcon}>{hasSpecial ? "✓" : "○"}</span> Speciális karakter
+                                </li>
+                            </ul>
+                        </div>
+                    </>
+                );
+            }
         },
         {
             label: "Személyes adatok",
@@ -94,6 +124,7 @@ const UserRegisterPage: React.FC = () => {
             onSubmit={registerUser}
             redirectPath="/UserLoginPage"
             title="Fiók létrehozása"
+            loginPath="/UserLoginPage"
         />
     );
 };
