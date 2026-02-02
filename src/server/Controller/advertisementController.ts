@@ -132,6 +132,19 @@ export const gettopAdvertisements = async () => {
     return advertisements;
 };
 
+// get selected jobs
+export const getSelectedJobs = async (ids: number[]) => {
+    const { data: advertisements, error } = await supabase
+        .from("advertisement")
+        .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
+        .in("id", ids)
+        .eq('is_active', true)
+        .limit(10);
+
+    if (error) throw error;
+    return advertisements;
+}
+
 // update the click number
 export const incrementClickCount = async (id: string) => {
     const { error } = await supabase.rpc("increment_click_count", {
