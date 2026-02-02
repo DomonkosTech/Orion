@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "server": "tsx src/server/server.ts",
+    "OrionAI": "python3 src/server/OrionAI.py",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",

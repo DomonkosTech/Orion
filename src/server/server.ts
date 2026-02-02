@@ -19,6 +19,8 @@ import applicantRoutes from "./routes/applicantRoute.ts";
 import emailRoute from "./routes/emailRoute.ts";
 import systemmessageRoute from "./routes/systemmessageRoute.ts"
 import messageRoute from "./routes/messageRoute.ts";
+import OrionAIRoute from "./routes/OrionAIRoute.ts";
+
 
 // Initialize Express app
 const app = express();
@@ -54,6 +56,9 @@ app.use("/api/email", emailRoute);
 
 // Message Routes (Send Message, Read Messages, Delete Messages)
 app.use("/api/chat", messageRoute);
+
+// OrionAI Routes
+app.use("/api", OrionAIRoute);
 
 // Start server
 app.listen(4000, () => console.log("Server running on http://localhost:4000"));
