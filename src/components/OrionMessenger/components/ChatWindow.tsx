@@ -3,6 +3,7 @@ import { useMessenger } from "../hooks/useMessenger";
 import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
 import styles from "../MessengerPage.module.css";
+import { useTranslation, Trans } from "react-i18next";
 
 function getInitials(name?: string) {
   if (!name) return "?";
@@ -17,6 +18,7 @@ function getInitials(name?: string) {
 }
 
 const ChatWindow: React.FC = () => {
+  const { t } = useTranslation('components');
   const {
     selectedCompany,
     messages,
@@ -67,17 +69,17 @@ const ChatWindow: React.FC = () => {
   return (
     <section className={styles.chatPane}>
       <div className={styles.chatHeader}>
-        {selectedCompany ? selectedCompany.company_name : "Válassz egy beszélgetést"}
+        {selectedCompany ? selectedCompany.company_name : t('chatWindow.selectConversation')}
       </div>
       <div className={styles.messagesContainer}>
         {!selectedCompany && !showLoader && (
           <div className={styles.emptyState}>
             <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>💬</div>
-            <div>Válassz egy partnert a bal oldali listából<br/>a beszélgetés megkezdéséhez.</div>
+            <div><Trans i18nKey="chatWindow.emptyState" t={t} /></div>
           </div>
         )}
         {showLoader && (
-            <div className={`${styles.emptyState} ${styles.loadingState}`}>Üzenetek betöltése…</div>
+            <div className={`${styles.emptyState} ${styles.loadingState}`}>{t('chatWindow.loading')}</div>
         )}
         {messagesError && !showLoader && (
             <div className={styles.emptyState} style={{ color: "#ef4444" }}>{messagesError}</div>
@@ -93,13 +95,13 @@ const ChatWindow: React.FC = () => {
                     marginBottom: "16px",
                     fontSize: "0.9rem"
                 }}>
-                    Hiba történt az üzenet küldésekor: {sendError}
+                    {t('chatWindow.sendError', { error: sendError })}
                 </div>
             )}
             {messages.length === 0 ? (
               <div className={styles.emptyState}>
                   <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>👋</div>
-                  <div>Még nincsenek üzenetek ebben a beszélgetésben.<br/>Írj valamit a kezdéshez!</div>
+                  <div><Trans i18nKey="chatWindow.noMessages" t={t} /></div>
               </div>
             ) : (
               messages.map((m, index) => {

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "./LoginPage.module.css";
+import { useTranslation } from "react-i18next";
 
 // Import Shared Components and Services
 import InputField from "../InputField/InputField";
@@ -32,6 +33,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
     switchViewPath,
     switchViewLabel
 }) => {
+    const { t } = useTranslation('components');
     // State for form inputs, loading status, and navigation
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -57,15 +59,12 @@ const LoginPage: React.FC<LoginPageProps> = ({
             // Attempt to log in using the provided service
             const data = await onLogin({ email, password, rememberMe });
 
-            // Check if the response indicates success (handling different API return structures if needed)
-            // Assuming onLogin returns the data object directly or throws
-            // If the API returns { success: true, ... } check that, otherwise assume success if no error thrown
             if (data && data.success === false) {
-                 toast.error(data.error || "Hiba történt");
+                 toast.error(data.error || t('loginPage.genericError'));
                  return;
             }
 
-            toast.success("Sikeres bejelentkezés!");
+            toast.success(t('loginPage.loginSuccess'));
             // Dispatch a global event to notify other parts of the app (e.g., navbar)
             try { window.dispatchEvent(new Event("auth-changed")); } catch { /* empty */ }
             // Navigate to the home page on successful login
@@ -78,12 +77,12 @@ const LoginPage: React.FC<LoginPageProps> = ({
             const errorObj = err as { status?: number; message?: string };
                 
             if (errorObj.status === 403 || errorObj.message === "Account not activated") {
-                toast.error("A fiók nincs aktiválva. Kérjük hitelesítse email címét!");
+                toast.error(t('loginPage.accountNotActivated'));
                 navigate(onVerifyRedirect);
                 return;
             }
 
-            const message = err instanceof Error ? err.message : "Hálózati hiba történt";
+            const message = err instanceof Error ? err.message : t('loginPage.networkError');
             toast.error(message);
         } finally {
             // Stop the loading indicator
@@ -103,9 +102,9 @@ const LoginPage: React.FC<LoginPageProps> = ({
                     <div className={styles.fieldsContainer}>
                         <InputField
                             id="email"
-                            label="Email cím"
+                            label={t('loginPage.emailLabel')}
                             type="email"
-                            placeholder="email@pelda.hu"
+                            placeholder={t('loginPage.emailPlaceholder')}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
@@ -113,7 +112,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
                         <InputField
                             id="password"
-                            label="Jelszó"
+                            label={t('loginPage.passwordLabel')}
                             isPassword
                             placeholder="••••••••"
                             value={password}
@@ -125,7 +124,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
                     {/* Options Row: Remember Me & Forgot Password */}
                     <div className={styles.optionsRow}>
                         <Checkbox
-                            label="Emlékezz rám"
+                            label={t('loginPage.rememberMe')}
                             checked={rememberMe}
                             onChange={setRememberMe}
                         />
@@ -134,14 +133,14 @@ const LoginPage: React.FC<LoginPageProps> = ({
                             variant="link"
                             onClick={() => navigate(forgotPasswordPath)}
                         >
-                            Elfelejtette jelszavát?
+                            {t('loginPage.forgotPassword')}
                         </Button>
                     </div>
 
                     {/* Main Actions */}
                     <div className={styles.actions}>
                         <Button type="submit" isLoading={isLoading} variant="primary">
-                            Bejelentkezés
+                            {t('loginPage.loginButton')}
                         </Button>
 
                         <Button
@@ -149,21 +148,21 @@ const LoginPage: React.FC<LoginPageProps> = ({
                             variant="secondary"
                             onClick={() => navigate(registerPath)}
                         >
-                            Regisztráció
+                            {t('loginPage.registerButton')}
                         </Button>
                     </div>
 
                     {/* Footer / Switch View */}
                     <div className={styles.footer}>
                         <p>
-                            Nincs még fiókja?{" "}
+                            {t('loginPage.noAccount')}{" "}
                             <Button
                                 type="button"
                                 variant="link"
                                 onClick={() => navigate(registerPath)}
                                 style={{ display: 'inline', padding: 0 }}
                             >
-                                Regisztráljon itt
+                                {t('loginPage.registerHere')}
                             </Button>
                         </p>
 

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
 import { z, ZodSchema } from "zod";
 import styles from "./RegisterPage.module.css";
+import { useTranslation } from "react-i18next";
 
 // Components
 import Button from "../Button/Button.tsx";
@@ -40,6 +41,7 @@ const RegisterPage = <T extends Record<string, any>>({
     title,
     loginPath
 }: RegisterPageProps<T>) => {
+    const { t } = useTranslation('components');
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
@@ -85,7 +87,7 @@ const RegisterPage = <T extends Record<string, any>>({
                     }
                 });
                 setErrors(formattedErrors);
-                toast.error("Kérjük, javítsa a hibákat a továbblépéshez!");
+                toast.error(t('registerPage.fixErrors'));
             }
             return false;
         }
@@ -122,17 +124,17 @@ const RegisterPage = <T extends Record<string, any>>({
                 }
             });
             setErrors(formattedErrors);
-            toast.error("Ellenőrizze az adatokat!");
+            toast.error(t('registerPage.checkData'));
             return;
         }
 
         setIsLoading(true);
         try {
             await onSubmit(formData);
-            toast.success("Sikeres regisztráció!");
+            toast.success(t('registerPage.success'));
             setTimeout(() => navigate(redirectPath), 1500);
         } catch (err: unknown) {
-            toast.error(err instanceof Error ? err.message : "Hálózati hiba történt");
+            toast.error(err instanceof Error ? err.message : t('registerPage.networkError'));
         } finally {
             setIsLoading(false);
         }
@@ -142,10 +144,7 @@ const RegisterPage = <T extends Record<string, any>>({
     useEffect(() => {
         const handleGlobalKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
-                // If we are on the last step, let the native form submit handle it (or handleRegister)
-                // If we are NOT on the last step, we want to prevent default and go to next step
                 if (step < steps.length) {
-                    // Check if the active element is a button to avoid double triggering if the user is focused on a button
                     const activeElement = document.activeElement;
                     if (activeElement && activeElement.tagName === 'BUTTON') {
                         return;
@@ -161,7 +160,7 @@ const RegisterPage = <T extends Record<string, any>>({
         return () => {
             document.removeEventListener('keydown', handleGlobalKeyDown);
         };
-    }, [step, steps.length, formData]); // Dependencies are important here so nextStep uses current state
+    }, [step, steps.length, formData]);
 
     return (
         <>
@@ -172,7 +171,7 @@ const RegisterPage = <T extends Record<string, any>>({
                     <div className={styles.card}>
                         <header className={styles.header}>
                             <h1>{title}</h1>
-                            <p>Lépés {step} / {steps.length}: {steps[step - 1].label}</p>
+                            <p>{t('registerPage.step', { step, totalSteps: steps.length, label: steps[step - 1].label })}</p>
                             <div className={styles.stepper}>
                                 {steps.map((_, index) => (
                                     <div key={index} className={`${styles.step} ${step === index + 1 ? styles.current : ""} ${step > index + 1 ? styles.completed : ""}`} />
@@ -191,16 +190,16 @@ const RegisterPage = <T extends Record<string, any>>({
                             </section>
 
                             <div className={styles.footer}>
-                                {step > 1 && <Button type="button" variant="secondary" color="orion-blue" onClick={prevStep}>Vissza</Button>}
+                                {step > 1 && <Button type="button" variant="secondary" color="orion-blue" onClick={prevStep}>{t('registerPage.back')}</Button>}
                                 {step < steps.length ? (
-                                    <Button type="button" variant="primary" color="orion-blue" onClick={nextStep}>Folytatás</Button>
+                                    <Button type="button" variant="primary" color="orion-blue" onClick={nextStep}>{t('registerPage.continue')}</Button>
                                 ) : (
-                                    <Button type="submit" isLoading={isLoading} variant="primary" color="orion-blue">Regisztráció befejezése</Button>
+                                    <Button type="submit" isLoading={isLoading} variant="primary" color="orion-blue">{t('registerPage.finishRegistration')}</Button>
                                 )}
                             </div>
                             {loginPath && (
                                 <div className={styles.loginLink}>
-                                    Már van fiókja? <span onClick={() => navigate(loginPath)}>Jelentkezzen be!</span>
+                                    {t('registerPage.alreadyHaveAccount')}{" "} <span onClick={() => navigate(loginPath)}>{t('registerPage.loginHere')}</span>
                                 </div>
                             )}
                         </form>

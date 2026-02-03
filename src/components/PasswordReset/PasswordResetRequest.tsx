@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "./PasswordResetRequest.module.css";
+import { useTranslation } from "react-i18next";
 
 // components
 import InputField from "../InputField/InputField";
@@ -16,28 +17,33 @@ interface PasswordResetRequestProps {
 
 const PasswordResetRequest: React.FC<PasswordResetRequestProps> = ({
     onSendEmail,
-    title = "Jelszó csere",
-    description = "Kérjük, adja meg az email címét a jelszó cserélő link újraküldéséhez.",
-    successMessage = "Link elküldve az email címére!"
+    title,
+    description,
+    successMessage
 }) => {
+    const { t } = useTranslation('components');
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+
+    const finalTitle = title || t('passwordResetRequest.title');
+    const finalDescription = description || t('passwordResetRequest.description');
+    const finalSuccessMessage = successMessage || t('passwordResetRequest.successMessage');
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!email) {
-            toast.error("Kérjük, adjon meg egy email címet!");
+            toast.error(t('passwordResetRequest.emailRequired'));
             return;
         }
 
         setIsLoading(true);
         try {
             await onSendEmail(email);
-            toast.success(successMessage);
+            toast.success(finalSuccessMessage);
             setEmail("");
         } catch (error) {
             console.error(error);
-            toast.error("Hiba történt a küldés során!");
+            toast.error(t('passwordResetRequest.sendError'));
         } finally {
             setIsLoading(false);
         }
@@ -51,19 +57,19 @@ const PasswordResetRequest: React.FC<PasswordResetRequestProps> = ({
                 <div className={styles.container}>
                     <div className={styles.card}>
                         <header className={styles.header}>
-                            <h1>{title}</h1>
-                            <p>{description}</p>
+                            <h1>{finalTitle}</h1>
+                            <p>{finalDescription}</p>
                         </header>
 
                         <form onSubmit={handleSubmit} className={styles.form}>
                             <section className={styles.section}>
                                 <InputField
-                                    label="Email cím"
+                                    label={t('passwordResetRequest.emailLabel')}
                                     name="email"
                                     type="email"
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="pelda@email.hu"
+                                    placeholder={t('passwordResetRequest.emailPlaceholder')}
                                 />
                             </section>
 
@@ -75,7 +81,7 @@ const PasswordResetRequest: React.FC<PasswordResetRequestProps> = ({
                                     isLoading={isLoading}
                                     style={{ width: '100%' }}
                                 >
-                                    Link küldése
+                                    {t('passwordResetRequest.sendLink')}
                                 </Button>
                             </div>
                         </form>

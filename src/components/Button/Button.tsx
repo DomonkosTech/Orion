@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Button.module.css';
+import { useTranslation } from 'react-i18next';
 
 // Added 'danger' and 'gray' to match the site's action palette
 export type ButtonColor = 'orion-blue' | 'fire-red' | 'leaf-green' | 'black' | 'danger' | 'gray';
@@ -20,6 +21,7 @@ const Button: React.FC<ButtonProps> = ({
                                            className,
                                            ...props
                                        }) => {
+    const { t } = useTranslation('components');
     const buttonClass = [
         styles.btn,
         styles[variant],
@@ -34,7 +36,7 @@ const Button: React.FC<ButtonProps> = ({
             disabled={isLoading || props.disabled}
             {...props}
         >
-            {isLoading ? "Betöltés..." : children}
+            {isLoading ? t('loading') : children}
         </button>
     );
 };
