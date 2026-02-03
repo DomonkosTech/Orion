@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import pageStyles from "./UserEditProfile.module.css";
 import formStyles from "../../../components/EditProfile/EditProfile.module.css";
 import {
@@ -15,6 +16,7 @@ import TextArea from "../../../components/TextArea/TextArea.tsx";
 import Button from "../../../components/Button/Button.tsx";
 
 const UserEditProfile: React.FC = () => {
+    const { t } = useTranslation('user');
     return (
         <div className={pageStyles.pageWrapper}>
             <Header />
@@ -25,24 +27,24 @@ const UserEditProfile: React.FC = () => {
                         return (
                             <>
                                 <section className={formStyles.formCard}>
-                                    <h2 className={formStyles.cardTitle}><User size={20} /> Személyes adatok</h2>
+                                    <h2 className={formStyles.cardTitle}><User size={20} /> {t('profile.personalData.title')}</h2>
                                     <div className={formStyles.inputGroup}>
                                         <InputField
-                                            label="Vezetéknév"
+                                            label={t('profile.personalData.lastName')}
                                             value={user.lname}
                                             readOnly={!editMode}
                                             onChange={(e) => setUser({ ...user, lname: e.target.value })}
                                             containerClassName={formStyles.field}
                                         />
                                         <InputField
-                                            label="Keresztnév"
+                                            label={t('profile.personalData.firstName')}
                                             value={user.fname}
                                             readOnly={!editMode}
                                             onChange={(e) => setUser({ ...user, fname: e.target.value })}
                                             containerClassName={formStyles.field}
                                         />
                                         <InputField
-                                            label={<><Calendar size={14}/> Születési dátum</>}
+                                            label={<><Calendar size={14}/> {t('profile.personalData.birthDate')}</>}
                                             type="date"
                                             value={user.birth_date}
                                             readOnly={!editMode}
@@ -50,7 +52,7 @@ const UserEditProfile: React.FC = () => {
                                             containerClassName={formStyles.field}
                                         />
                                         <InputField
-                                            label="Születési hely"
+                                            label={t('profile.personalData.birthPlace')}
                                             value={user.birth_place}
                                             readOnly={!editMode}
                                             onChange={(e) => setUser({ ...user, birth_place: e.target.value })}
@@ -60,10 +62,10 @@ const UserEditProfile: React.FC = () => {
                                 </section>
 
                                 <section className={formStyles.formCard}>
-                                    <h2 className={formStyles.cardTitle}><Mail size={20} /> Elérhetőség</h2>
+                                    <h2 className={formStyles.cardTitle}><Mail size={20} /> {t('profile.contact.title')}</h2>
                                     <div className={formStyles.inputGroup}>
                                         <InputField
-                                            label="Email cím"
+                                            label={t('profile.contact.email')}
                                             type="email"
                                             value={user.email}
                                             readOnly={!editMode}
@@ -71,14 +73,14 @@ const UserEditProfile: React.FC = () => {
                                             containerClassName={formStyles.fieldFull}
                                         />
                                         <InputField
-                                            label={<><Phone size={14}/> Telefonszám</>}
+                                            label={<><Phone size={14}/> {t('profile.contact.phone')}</>}
                                             value={user.phone_number}
                                             readOnly={!editMode}
                                             onChange={(e) => setUser({ ...user, phone_number: e.target.value })}
                                             containerClassName={formStyles.fieldFull}
                                         />
                                         <InputField
-                                            label={<><MapPin size={14}/> Lakcím</>}
+                                            label={<><MapPin size={14}/> {t('profile.contact.address')}</>}
                                             value={user.address}
                                             readOnly={!editMode}
                                             onChange={(e) => setUser({ ...user, address: e.target.value })}
@@ -88,11 +90,11 @@ const UserEditProfile: React.FC = () => {
                                 </section>
 
                                 <section className={`${formStyles.formCard} ${formStyles.fullWidth}`}>
-                                    <h2 className={formStyles.cardTitle}><BookOpen size={20} /> Szakmai profil</h2>
+                                    <h2 className={formStyles.cardTitle}><BookOpen size={20} /> {t('profile.professional.title')}</h2>
                                     <div className={formStyles.inputGroup}>
                                         <div className={formStyles.fieldFull}>
                                             <TextArea
-                                                label="Rövid bemutatkozás"
+                                                label={t('profile.professional.bio')}
                                                 value={user.short_bio}
                                                 readOnly={!editMode}
                                                 maxLength={500}
@@ -101,7 +103,7 @@ const UserEditProfile: React.FC = () => {
                                         </div>
                                         <div className={formStyles.fieldFull}>
                                             <TextArea
-                                                label="Végzettségek"
+                                                label={t('profile.professional.qualifications')}
                                                 value={user.qualifications}
                                                 readOnly={!editMode}
                                                 maxLength={1000}
@@ -112,11 +114,11 @@ const UserEditProfile: React.FC = () => {
                                 </section>
 
                                 <section className={`${formStyles.formCard} ${formStyles.fullWidth}`}>
-                                    <h2 className={formStyles.cardTitle}><CreditCard size={20} /> Okmányok & Önéletrajz</h2>
+                                    <h2 className={formStyles.cardTitle}><CreditCard size={20} /> {t('profile.documents.title')}</h2>
                                     <div className={formStyles.docGrid}>
                                         <div className={formStyles.docFields}>
                                             <InputField
-                                                label="Adószám"
+                                                label={t('profile.documents.taxNumber')}
                                                 value={user.tax_number}
                                                 readOnly={!editMode}
                                                 onChange={(e) => setUser({ ...user, tax_number: e.target.value })}
@@ -124,7 +126,7 @@ const UserEditProfile: React.FC = () => {
                                             />
                                             {documents && (
                                                 <InputField
-                                                    label="Személyi igazolvány"
+                                                    label={t('profile.documents.personalId')}
                                                     value={documents.personal_id}
                                                     readOnly={!editMode}
                                                     onChange={(e) => setDocuments({ ...documents, personal_id: e.target.value })}
@@ -133,7 +135,7 @@ const UserEditProfile: React.FC = () => {
                                             )}
                                             {documents && (
                                                 <InputField
-                                                    label="Lakcímkártya"
+                                                    label={t('profile.documents.addressCard')}
                                                     value={documents.address_card_number}
                                                     readOnly={!editMode}
                                                     onChange={(e) => setDocuments({ ...documents, address_card_number: e.target.value })}
@@ -146,8 +148,8 @@ const UserEditProfile: React.FC = () => {
                                             <div className={formStyles.resumeInfo}>
                                                 <FileText size={32} className={resume ? formStyles.iconActive : formStyles.iconMuted} />
                                                 <div>
-                                                    <h3>Önéletrajz</h3>
-                                                    <p>{resume ? "Feltöltve és aktív" : "Még nincs feltöltve"}</p>
+                                                    <h3>{t('profile.documents.resume.title')}</h3>
+                                                    <p>{resume ? t('profile.documents.resume.uploaded') : t('profile.documents.resume.notUploaded')}</p>
                                                 </div>
                                             </div>
                                             {resume ? (
@@ -157,7 +159,7 @@ const UserEditProfile: React.FC = () => {
                                                     color="danger"
                                                     variant="secondary"
                                                 >
-                                                    <Trash2 size={16} style={{marginRight: '8px'}} /> Törlés
+                                                    <Trash2 size={16} style={{marginRight: '8px'}} /> {t('profile.documents.resume.delete')}
                                                 </Button>
                                             ) : (
                                                 <Button
@@ -165,7 +167,7 @@ const UserEditProfile: React.FC = () => {
                                                     onClick={() => navigate("/uploadresume")}
                                                     color="orion-blue"
                                                 >
-                                                    <Plus size={16} style={{marginRight: '8px'}} /> Feltöltés
+                                                    <Plus size={16} style={{marginRight: '8px'}} /> {t('profile.documents.resume.upload')}
                                                 </Button>
                                             )}
                                         </div>

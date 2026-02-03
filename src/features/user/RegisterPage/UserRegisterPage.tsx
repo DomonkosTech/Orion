@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { registerUser } from "../../../api/userApi.ts";
 import { userRegisterObject, userRegisterSchema, passwordConfirmRefinement } from "../../../validation/Validation.ts";
 import RegisterPage from "../../../components/RegisterPage/RegisterPage.tsx";
@@ -15,6 +16,7 @@ const stepSchemas = [
 ];
 
 const UserRegisterPage: React.FC = () => {
+    const { t } = useTranslation('user');
     const initialValues = {
         email: "",
         password: "",
@@ -36,7 +38,7 @@ const UserRegisterPage: React.FC = () => {
 
     const steps = [
         {
-            label: "Fiók adatok",
+            label: t('register.steps.account'),
             render: ({ formData, handleChange, errors }: any) => {
                 const password = formData.password || "";
                 const hasMinLength = password.length >= 8;
@@ -47,28 +49,28 @@ const UserRegisterPage: React.FC = () => {
 
                 return (
                     <>
-                        <InputField label="Email cím *" name="email" type="email" value={formData.email} onChange={handleChange} error={errors.email} />
+                        <InputField label={t('register.fields.email')} name="email" type="email" value={formData.email} onChange={handleChange} error={errors.email} />
                         <div className={styles.row}>
-                            <InputField label="Jelszó *" name="password" isPassword value={formData.password} onChange={handleChange} error={errors.password} />
-                            <InputField label="Megerősítés *" name="confirmPassword" isPassword value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
+                            <InputField label={t('register.fields.password')} name="password" isPassword value={formData.password} onChange={handleChange} error={errors.password} />
+                            <InputField label={t('register.fields.confirmPassword')} name="confirmPassword" isPassword value={formData.confirmPassword} onChange={handleChange} error={errors.confirmPassword} />
                         </div>
                         <div className={registerStyles.passwordRequirements}>
-                            <p>Jelszó követelmények:</p>
+                            <p>{t('register.passwordRequirements.title')}</p>
                             <ul>
                                 <li className={hasMinLength ? registerStyles.reqMet : registerStyles.reqUnmet}>
-                                    <span className={registerStyles.reqIcon}>{hasMinLength ? "✓" : "○"}</span> Legalább 8 karakter
+                                    <span className={registerStyles.reqIcon}>{hasMinLength ? "✓" : "○"}</span> {t('register.passwordRequirements.minLength')}
                                 </li>
                                 <li className={hasLower ? registerStyles.reqMet : registerStyles.reqUnmet}>
-                                    <span className={registerStyles.reqIcon}>{hasLower ? "✓" : "○"}</span> Kisbetű
+                                    <span className={registerStyles.reqIcon}>{hasLower ? "✓" : "○"}</span> {t('register.passwordRequirements.lowercase')}
                                 </li>
                                 <li className={hasUpper ? registerStyles.reqMet : registerStyles.reqUnmet}>
-                                    <span className={registerStyles.reqIcon}>{hasUpper ? "✓" : "○"}</span> Nagybetű
+                                    <span className={registerStyles.reqIcon}>{hasUpper ? "✓" : "○"}</span> {t('register.passwordRequirements.uppercase')}
                                 </li>
                                 <li className={hasNumber ? registerStyles.reqMet : registerStyles.reqUnmet}>
-                                    <span className={registerStyles.reqIcon}>{hasNumber ? "✓" : "○"}</span> Szám
+                                    <span className={registerStyles.reqIcon}>{hasNumber ? "✓" : "○"}</span> {t('register.passwordRequirements.number')}
                                 </li>
                                 <li className={hasSpecial ? registerStyles.reqMet : registerStyles.reqUnmet}>
-                                    <span className={registerStyles.reqIcon}>{hasSpecial ? "✓" : "○"}</span> Speciális karakter
+                                    <span className={registerStyles.reqIcon}>{hasSpecial ? "✓" : "○"}</span> {t('register.passwordRequirements.special')}
                                 </li>
                             </ul>
                         </div>
@@ -77,37 +79,37 @@ const UserRegisterPage: React.FC = () => {
             }
         },
         {
-            label: "Személyes adatok",
+            label: t('register.steps.personal'),
             render: ({ formData, handleChange, errors }: any) => (
                 <>
                     <div className={styles.row}>
-                        <InputField label="Vezetéknév *" name="lname" value={formData.lname} onChange={handleChange} error={errors.lname} />
-                        <InputField label="Keresztnév *" name="fname" value={formData.fname} onChange={handleChange} error={errors.fname} />
+                        <InputField label={t('register.fields.lastName')} name="lname" value={formData.lname} onChange={handleChange} error={errors.lname} />
+                        <InputField label={t('register.fields.firstName')} name="fname" value={formData.fname} onChange={handleChange} error={errors.fname} />
                     </div>
                     <div className={styles.row}>
-                        <InputField label="Születési hely" name="birth_place" value={formData.birth_place} onChange={handleChange} error={errors.birth_place} />
-                        <InputField label="Születési idő" name="birth_date" type="date" value={formData.birth_date} onChange={handleChange} error={errors.birth_date} />
+                        <InputField label={t('register.fields.birthPlace')} name="birth_place" value={formData.birth_place} onChange={handleChange} error={errors.birth_place} />
+                        <InputField label={t('register.fields.birthDate')} name="birth_date" type="date" value={formData.birth_date} onChange={handleChange} error={errors.birth_date} />
                     </div>
-                    <InputField label="Nemzetiség *" name="nationality" value={formData.nationality} onChange={handleChange} error={errors.nationality} />
-                    <InputField label="Személyi igazolvány szám *" name="personal_id" value={formData.personal_id} onChange={handleChange} error={errors.personal_id} />
-                    <InputField label="Lakcímkártya szám *" name="address_card_number" value={formData.address_card_number} onChange={handleChange} error={errors.address_card_number} />
+                    <InputField label={t('register.fields.nationality')} name="nationality" value={formData.nationality} onChange={handleChange} error={errors.nationality} />
+                    <InputField label={t('register.fields.personalId')} name="personal_id" value={formData.personal_id} onChange={handleChange} error={errors.personal_id} />
+                    <InputField label={t('register.fields.addressCard')} name="address_card_number" value={formData.address_card_number} onChange={handleChange} error={errors.address_card_number} />
                 </>
             )
         },
         {
-            label: "Szakmai profil",
+            label: t('register.steps.professional'),
             render: ({ formData, handleChange, handleCheckboxChange, errors }: any) => (
                 <>
-                    <InputField label="Lakcím" name="address" value={formData.address} onChange={handleChange} error={errors.address} />
+                    <InputField label={t('register.fields.address')} name="address" value={formData.address} onChange={handleChange} error={errors.address} />
                     <div className={styles.row}>
-                        <InputField label="Telefonszám" name="phone_number" type="tel" value={formData.phone_number} onChange={handleChange} error={errors.phone_number} />
-                        <InputField label="Adószám" name="tax_number" value={formData.tax_number} onChange={handleChange} error={errors.tax_number} />
+                        <InputField label={t('register.fields.phone')} name="phone_number" type="tel" value={formData.phone_number} onChange={handleChange} error={errors.phone_number} />
+                        <InputField label={t('register.fields.taxNumber')} name="tax_number" value={formData.tax_number} onChange={handleChange} error={errors.tax_number} />
                     </div>
-                    <InputField label="Végzettségek" name="qualifications" value={formData.qualifications} onChange={handleChange} error={errors.qualifications} />
-                    <TextArea label="Rövid bemutatkozás" name="short_bio" value={formData.short_bio} onChange={handleChange} rows={3} error={errors.short_bio} />
+                    <InputField label={t('register.fields.qualifications')} name="qualifications" value={formData.qualifications} onChange={handleChange} error={errors.qualifications} />
+                    <TextArea label={t('register.fields.bio')} name="short_bio" value={formData.short_bio} onChange={handleChange} rows={3} error={errors.short_bio} />
 
                     <div className={`${styles.terms} ${errors.terms_accepted ? styles.errorShake : ""}`}>
-                        <Checkbox label="Elfogadom a felhasználási feltételeket" checked={formData.terms_accepted} onChange={(checked) => handleCheckboxChange("terms_accepted", checked)} />
+                        <Checkbox label={t('register.fields.terms')} checked={formData.terms_accepted} onChange={(checked) => handleCheckboxChange("terms_accepted", checked)} />
                         {errors.terms_accepted && <span className={styles.errorText}>{errors.terms_accepted}</span>}
                     </div>
                 </>
@@ -123,7 +125,7 @@ const UserRegisterPage: React.FC = () => {
             finalSchema={userRegisterSchema}
             onSubmit={registerUser}
             redirectPath="/UserLoginPage"
-            title="Fiók létrehozása"
+            title={t('register.title')}
             loginPath="/UserLoginPage"
         />
     );

@@ -1,18 +1,20 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import LoginPage from "../../../components/LoginPage/LoginPage.tsx";
 import { loginUser } from "../../../api/userApi.ts";
 
 const UserLoginPage: React.FC = () => {
+    const { t } = useTranslation('user');
     return (
         <LoginPage
-            title="Felhasználó bejelentkezés"
+            title={t('login.title')}
             onLogin={loginUser}
             onSuccessRedirect="/userhomepage"
             onVerifyRedirect="/user/sendverify"
             registerPath="/UserRegisterPage"
             forgotPasswordPath="/user/password/reset"
             switchViewPath="/CompanyLoginPage"
-            switchViewLabel="Váltás céges nézetre"
+            switchViewLabel={t('login.switchViewLabel')}
         />
     );
 };

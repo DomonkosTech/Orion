@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 import styles from "./ListJobs.module.css";
 
 // Components
@@ -24,6 +25,7 @@ const formatCurrency = (amount: number) => {
 };
 
 const ListJobs: React.FC = () => {
+    const { t } = useTranslation('user');
     const PAGE_SIZE = 21;
     const [jobs, setJobs] = useState<Job[]>([]);
     const [error, setError] = useState<string | null>(null);
@@ -158,13 +160,23 @@ const ListJobs: React.FC = () => {
                     <div className={styles.dashboardHeader}>
                         <div className={styles.welcomeSection}>
                             <div className={styles.kickerWrapper}>
-                                <BannerKicker>Álláskeresés</BannerKicker>
+                                <BannerKicker>{t('jobs.list.kicker')}</BannerKicker>
                             </div>
                             <h1 className={styles.heroTitle}>
-                                Találja meg a <span className={styles.accent}>jövőjét!</span>
+                                <Trans i18nKey="jobs.list.title">
+                                    Találja meg a <span className={styles.accent}>jövőjét!</span>
+                                </Trans>
                             </h1>
                             <p className={styles.heroSubtitle}>
-                                Fedezzen fel <strong>{totalCount > 0 ? totalCount : "több száz"}</strong> nyitott pozíciót vezető cégeknél.
+                                {totalCount > 0 ? (
+                                    <Trans i18nKey="jobs.list.subtitle" values={{ count: totalCount }}>
+                                        Fedezzen fel <strong>{{ count: totalCount }}</strong> nyitott pozíciót vezető cégeknél.
+                                    </Trans>
+                                ) : (
+                                    <Trans i18nKey="jobs.list.subtitleDefault">
+                                        Fedezzen fel <strong>több száz</strong> nyitott pozíciót vezető cégeknél.
+                                    </Trans>
+                                )}
                             </p>
                         </div>
                     </div>
@@ -188,7 +200,7 @@ const ListJobs: React.FC = () => {
                     {/* Jobs Grid */}
                     {error && (
                         <div style={{ textAlign: 'center', padding: '40px' }}>
-                            <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Hiba történt</h3>
+                            <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{t('jobs.list.errorTitle')}</h3>
                             <p style={{ color: 'var(--muted)' }}>{error}</p>
                         </div>
                     )}
@@ -226,7 +238,7 @@ const ListJobs: React.FC = () => {
                                         variant="secondary"
                                         color="orion-blue"
                                     >
-                                        {loading ? "Betöltés..." : "Mutass többet"}
+                                        {loading ? t('jobs.list.loading') : t('jobs.list.loadMore')}
                                     </Button>
                                 </div>
                             )}

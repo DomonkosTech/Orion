@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 import {
     Search,
     Briefcase,
@@ -29,6 +30,7 @@ import {getUserStatistics, type DashboardStats} from "../../../api/userApi.ts"
 
 function UserHomePage() {
     const navigate = useNavigate();
+    const { t } = useTranslation('user');
     const { name } = useAuth();
     const [bestMatch, setBestMatch] = useState<Job | null>(null);
     const [stats, setStats] = useState<DashboardStats>({
@@ -66,28 +68,28 @@ function UserHomePage() {
 
     const navigationItems = [
         {
-            title: "Álláskeresés",
+            title: t('navigation.search.title'),
             icon: <Search size={24} />,
             path: "/listjobs",
-            description: "Keressen az aktuális ajánlatok között"
+            description: t('navigation.search.description')
         },
         {
-            title: "Jelentkezéseim",
+            title: t('navigation.applications.title'),
             icon: <Briefcase size={24} />,
             path: "/jobapplications",
-            description: "Kövesse nyomon folyamatait"
+            description: t('navigation.applications.description')
         },
         {
-            title: "Dokumentumok",
+            title: t('navigation.documents.title'),
             icon: <FileText size={24} />,
             path: "/uploadresume",
-            description: "Önéletrajz és egyéb fájlok"
+            description: t('navigation.documents.description')
         },
         {
-            title: "Üzenetek",
+            title: t('navigation.messages.title'),
             icon: <MessageSquare size={24} />,
             path: "/messenger",
-            description: "Beszélgessen a munkaadókkal"
+            description: t('navigation.messages.description')
         }
     ];
 
@@ -106,13 +108,15 @@ function UserHomePage() {
                     <div className={styles.dashboardHeader}>
                         <div className={styles.welcomeSection}>
                             <div className={styles.kickerWrapper}>
-                                <BannerKicker>Személyes Vezérlőpult</BannerKicker>
+                                <BannerKicker>{t('dashboard.kicker')}</BannerKicker>
                             </div>
                             <h1 className={styles.heroTitle}>
-                                Szia, <span className={styles.accent}>{name}!</span> 👋
+                                <Trans i18nKey="dashboard.welcome" values={{ name }}>
+                                    Szia, <span className={styles.accent}>{name}!</span> 👋
+                                </Trans>
                             </h1>
                             <p className={styles.heroSubtitle}>
-                                Itt egy áttekintés a mai karrierlehetőségeidről és folyamataidról.
+                                {t('dashboard.subtitle')}
                             </p>
                         </div>
                         <div className={styles.headerActions}>
@@ -122,7 +126,7 @@ function UserHomePage() {
                                 color="orion-blue"
                             >
                                 <Settings size={18} style={{ marginRight: '8px' }} />
-                                Profil beállítások
+                                {t('dashboard.profileSettings')}
                             </Button>
                         </div>
                     </div>
@@ -133,28 +137,28 @@ function UserHomePage() {
                             <div className={styles.statCard}>
                                 <div className={styles.statIcon}><Target size={28} /></div>
                                 <div className={styles.statInfo}>
-                                    <span className={styles.statLabel}>Jelentkezések</span>
+                                    <span className={styles.statLabel}>{t('stats.applications')}</span>
                                     <span className={styles.statValue}>{stats.total_applications}</span>
                                 </div>
                             </div>
                             <div className={styles.statCard}>
                                 <div className={styles.statIcon}><FileUser size={28} /></div>
                                 <div className={styles.statInfo}>
-                                    <span className={styles.statLabel}>Önéletrajz megtekintés</span>
+                                    <span className={styles.statLabel}>{t('stats.resumeViews')}</span>
                                     <span className={styles.statValue}>{stats.resume_views}</span>
                                 </div>
                             </div>
                             <div className={styles.statCard}>
                                 <div className={styles.statIcon}><TrendingUp size={28} /></div>
                                 <div className={styles.statInfo}>
-                                    <span className={styles.statLabel}>Profil megtekintés</span>
+                                    <span className={styles.statLabel}>{t('stats.profileViews')}</span>
                                     <span className={styles.statValue}>{stats.profile_views}</span>
                                 </div>
                             </div>
-                            <div className={styles.statCard} title="Ez a mutató azt jelzi, hogy mennyire illik az Ön profilja (tapasztalat, készségek) az aktuális piaci igényekhez.">
+                            <div className={styles.statCard} title={t('stats.matchRateTooltip')}>
                                 <div className={styles.statIcon}><Sparkles size={28} /></div>
                                 <div className={styles.statInfo}>
-                                    <span className={styles.statLabel}>Egyezési mutató</span>
+                                    <span className={styles.statLabel}>{t('stats.matchRate')}</span>
                                     <span className={styles.statValue}>{matchRate}%</span>
                                 </div>
                             </div>
@@ -166,7 +170,7 @@ function UserHomePage() {
                                 <div className={styles.cardHeader}>
                                     <div className={styles.matchBadge}>
                                         <Zap size={16} fill="currentColor" />
-                                        Kiemelt Ajánlat
+                                        {t('featured.badge')}
                                     </div>
                                 </div>
                                 <div className={styles.cardBody}>
@@ -178,7 +182,7 @@ function UserHomePage() {
                                             <div className={styles.matchDetails}>
                                                 <div className={styles.detailItem}>
                                                     <Building2 size={20} />
-                                                    <span>{bestMatch.position || "Orion Partner"}</span>
+                                                    <span>{bestMatch.position || t('featured.defaultPosition')}</span>
                                                 </div>
                                                 <div className={styles.detailItem}>
                                                     <MapPin size={20} />
@@ -186,8 +190,11 @@ function UserHomePage() {
                                                 </div>
                                             </div>
                                             <p className={styles.matchDescription}>
-                                                Ez a pozíció 98%-ban egyezik az Ön tapasztalatával és készségeivel.
-                                             F   {bestMatch.tasks ? ` A(z) ${bestMatch.hourly_wage} aktívan keresi az új csapattagot.` : " Egy partnerünk aktívan keresi az új csapattagot."}
+                                                {t('featured.description')}
+                                                {" "}
+                                                {bestMatch.tasks 
+                                                    ? t('featured.descriptionDynamic', { wage: bestMatch.hourly_wage }) 
+                                                    : t('featured.descriptionDefault')}
                                             </p>
                                             <Button
                                                 onClick={() => navigate(`/job/show/${bestMatch.id}`)}
@@ -195,19 +202,19 @@ function UserHomePage() {
                                                 color="orion-blue"
                                                 className={styles.matchBtn}
                                             >
-                                                Részletek megtekintése <ArrowRight size={20} style={{ marginLeft: '12px' }} />
+                                                {t('featured.detailsButton')} <ArrowRight size={20} style={{ marginLeft: '12px' }} />
                                             </Button>
                                         </>
                                     ) : (
                                         <div className={styles.emptyMatch}>
                                             <Search size={48} className={styles.emptyIcon} />
-                                            <p>Jelenleg nincs az Ön profiljához illő kiemelt ajánlatunk.</p>
+                                            <p>{t('featured.empty.message')}</p>
                                             <Button
                                                 variant="secondary"
                                                 color="orion-blue"
                                                 onClick={() => navigate("/listjobs")}
                                             >
-                                                Összes állás böngészése
+                                                {t('featured.empty.button')}
                                             </Button>
                                         </div>
                                     )}
@@ -237,15 +244,15 @@ function UserHomePage() {
                             </div>
 
                             <div className={styles.helpCard}>
-                                <h4>Segítségre van szüksége?</h4>
-                                <p>Karrier tanácsadóink segítenek a legtöbbet kihozni a profiljából.</p>
+                                <h4>{t('help.title')}</h4>
+                                <p>{t('help.text')}</p>
                                 <Button
                                     variant="secondary"
                                     color="orion-blue"
                                     onClick={() => navigate("/messenger")}
                                     className={styles.helpBtn}
                                 >
-                                    Chat indítása
+                                    {t('help.button')}
                                 </Button>
                             </div>
                         </aside>
