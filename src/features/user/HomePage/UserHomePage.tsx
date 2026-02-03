@@ -111,7 +111,7 @@ function UserHomePage() {
                                 <BannerKicker>{t('dashboard.kicker')}</BannerKicker>
                             </div>
                             <h1 className={styles.heroTitle}>
-                                <Trans i18nKey="dashboard.welcome" values={{ name }}>
+                                <Trans i18nKey="dashboard.welcome" t={t} values={{ name }}>
                                     Hi, <span className={styles.accent}>{name}!</span> 👋
                                 </Trans>
                             </h1>

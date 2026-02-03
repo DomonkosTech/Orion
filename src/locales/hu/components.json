@@ -120,5 +120,31 @@
     "title": "Beszélgetések",
     "loading": "Partnerek betöltése…",
     "noConversations": "Még nincs beszélgetés."
+  },
+  "profileDropdown": {
+    "guest": "Vendég",
+    "companyAccount": "Céges Fiók",
+    "user": "Felhasználó",
+    "greeting": "Szia, {{name}}!",
+    "myProfile": "Profilom",
+    "manageData": "Személyes adatok kezelése",
+    "logout": "Kijelentkezés",
+    "goodbye": "Viszlát legközelebb!",
+    "login": "Bejelentkezés",
+    "loginDesc": "Lépjen be a fiókjába"
+  },
+  "languageSelector": {
+    "title": "Nyelv"
+  },
+  "notificationDropdown": {
+    "newMessage": "{{count}} új üzenet",
+    "messages": "Üzenetek",
+    "title": "ÉRTESÍTÉSEK",
+    "markAllRead": "Összes olvasott",
+    "allRead": "Minden elolvasva!",
+    "refreshPage": "Oldal frissítése",
+    "viewProfile": "Profil megtekintése",
+    "markRead": "Megjelölés olvasottként",
+    "systemMessage": "Rendszerüzenet"
   }
 }

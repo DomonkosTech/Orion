@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Settings, User, Info, CheckCircle2, RefreshCcw, BellOff } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import styles from './NotificationDropdown.module.css';
 import { useAuth } from "../../hooks/useAuth";
 import {
@@ -8,7 +9,7 @@ import {
     getUserMessages,
     readCompanySystemMessage,
     readUserSystemMessage
-} from "../../Api/systemmessageApi.ts";
+} from "../../api/systemmessageApi.ts";
 import { useNavigate } from 'react-router-dom';
 
 interface Notification {
@@ -54,7 +55,7 @@ const CategoryIcon = ({ type, isRead }: { type: string, isRead: boolean }) => {
     }
 };
 
-const formatRelativeTime = (dateString?: string) => {
+const formatRelativeTime = (dateString?: string, language: string = 'hu') => {
     if (!dateString) return '';
     const date = new Date(dateString);
     const now = new Date();
@@ -68,10 +69,11 @@ const formatRelativeTime = (dateString?: string) => {
     if (diffMinutes < 60) return `${diffMinutes}m`;
     if (diffHours < 24) return `${diffHours}h`;
     if (diffDays < 31) return `${diffDays}d`;
-    return date.toLocaleDateString('hu-HU', { year: '2-digit', month: 'short', day: 'numeric' });
+    return date.toLocaleDateString(language, { year: '2-digit', month: 'short', day: 'numeric' });
 };
 
 const NotificationDropdown: React.FC = () => {
+    const { t, i18n } = useTranslation('components');
     const [isOpen, setIsOpen] = useState(false);
     const [expandedId, setExpandedId] = useState<number | null>(null);
     const [isAnimating, setIsAnimating] = useState(false);
@@ -109,7 +111,7 @@ const NotificationDropdown: React.FC = () => {
             if (Array.isArray(messages)) {
                 const mappedNotifications: Notification[] = messages.map((msg: any) => ({
                     id: msg.id,
-                    title: msg.subject || msg.title || 'Rendszerüzenet',
+                    title: msg.subject || msg.title || t('notificationDropdown.systemMessage'),
                     description: msg.message || msg.description || msg.content || '',
                     isRead: false,
                     created_at: msg.created_at,
@@ -180,7 +182,9 @@ const NotificationDropdown: React.FC = () => {
                     {unreadCount > 0 && <span className={styles.badgeDot} />}
                 </div>
                 <span className={styles.triggerLabel}>
-                    {unreadCount > 0 ? `${unreadCount} új üzenet` : 'Üzenetek'}
+                    {unreadCount > 0 
+                        ? t('notificationDropdown.newMessage', { count: unreadCount }) 
+                        : t('notificationDropdown.messages')}
                 </span>
                 <span className={styles.arrow}>
                     <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.3s ease' }}>
@@ -199,10 +203,10 @@ const NotificationDropdown: React.FC = () => {
                         transition={{ duration: 0.2, ease: "easeOut" }}
                     >
                         <div className={styles.header}>
-                            <span>ÉRTESÍTÉSEK</span>
+                            <span>{t('notificationDropdown.title')}</span>
                             {notifications.length > 0 && (
                                 <button className={styles.markReadBtn} onClick={handleMarkAllAsRead}>
-                                    Összes olvasott
+                                    {t('notificationDropdown.markAllRead')}
                                 </button>
                             )}
                         </div>
@@ -219,7 +223,7 @@ const NotificationDropdown: React.FC = () => {
                                         transition={{ duration: 0.2 }}
                                     >
                                         <BellOff size={48} className={styles.emptyIcon} />
-                                        <span className={styles.emptyText}>Minden elolvasva!</span>
+                                        <span className={styles.emptyText}>{t('notificationDropdown.allRead')}</span>
                                     </motion.div>
                                 ) : (
                                     notifications.map((notif) => (
@@ -237,7 +241,7 @@ const NotificationDropdown: React.FC = () => {
                                             <div className={styles.itemContent}>
                                                 <div className={styles.itemHeader}>
                                                     <h4 className={styles.itemTitle}>{notif.title}</h4>
-                                                    <span className={styles.itemDate}>{formatRelativeTime(notif.created_at)}</span>
+                                                    <span className={styles.itemDate}>{formatRelativeTime(notif.created_at, i18n.language)}</span>
                                                 </div>
                                                 
                                                 <p className={styles.itemDescription}>
@@ -267,7 +271,7 @@ const NotificationDropdown: React.FC = () => {
                                                                         onClick={() => window.location.reload()}
                                                                     >
                                                                         <RefreshCcw size={14} style={{ marginRight: 6 }} />
-                                                                        Oldal frissítése
+                                                                        {t('notificationDropdown.refreshPage')}
                                                                     </button>
                                                                 )}
                                                                 {notif.type === 'message' && (
@@ -275,7 +279,7 @@ const NotificationDropdown: React.FC = () => {
                                                                         className={`${styles.actionBtn} ${styles.secondaryAction}`}
                                                                         onClick={() => navigate('/profile')}
                                                                     >
-                                                                        Profil megtekintése
+                                                                        {t('notificationDropdown.viewProfile')}
                                                                     </button>
                                                                 )}
                                                                 {!notif.isRead && (
@@ -284,7 +288,7 @@ const NotificationDropdown: React.FC = () => {
                                                                         onClick={() => handleMarkAsRead(notif.id)}
                                                                     >
                                                                         <CheckCircle2 size={14} style={{ marginRight: 6 }} />
-                                                                        Megjelölés olvasottként
+                                                                        {t('notificationDropdown.markRead')}
                                                                     </button>
                                                                 )}
                                                             </div>
