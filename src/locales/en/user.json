@@ -1,0 +1,202 @@
+{
+  "dashboard": {
+    "kicker": "Personal Dashboard",
+    "welcome": "Hi, <1>{{name}}!</1> 👋",
+    "subtitle": "Here's an overview of your career opportunities and processes for today.",
+    "profileSettings": "Profile settings"
+  },
+  "stats": {
+    "applications": "Applications",
+    "resumeViews": "Resume Views",
+    "profileViews": "Profile Views",
+    "matchRate": "Match Rate",
+    "matchRateTooltip": "This rate indicates how well your profile (experience, skills) matches current market needs."
+  },
+  "featured": {
+    "badge": "Featured Offer",
+    "defaultPosition": "Orion Partner",
+    "description": "This position matches your experience and skills by 98%.",
+    "descriptionDynamic": "{{wage}} is actively looking for a new team member.",
+    "descriptionDefault": "One of our partners is actively looking for a new team member.",
+    "detailsButton": "View Details",
+    "empty": {
+      "message": "We currently have no featured offers matching your profile.",
+      "button": "Browse all jobs"
+    }
+  },
+  "navigation": {
+    "search": {
+      "title": "Job Search",
+      "description": "Search among current offers"
+    },
+    "applications": {
+      "title": "My Applications",
+      "description": "Track your processes"
+    },
+    "documents": {
+      "title": "Documents",
+      "description": "Resume and other files"
+    },
+    "messages": {
+      "title": "Messages",
+      "description": "Chat with employers"
+    }
+  },
+  "help": {
+    "title": "Need help?",
+    "text": "Our career advisors will help you get the most out of your profile.",
+    "button": "Start Chat"
+  },
+  "jobs": {
+    "list": {
+      "kicker": "Job Search",
+      "title": "Find your <1>future!</1>",
+      "subtitle": "Discover <1>{{count}}</1> open positions at leading companies.",
+      "subtitleDefault": "Discover <1>hundreds</1> of open positions at leading companies.",
+      "errorTitle": "An error occurred",
+      "loadMore": "Show more",
+      "loading": "Loading..."
+    },
+    "show": {
+      "loading": "Loading...",
+      "error": "Failed to load the job.",
+      "fetchError": "An error occurred while loading the job.",
+      "notFound": "No ad found.",
+      "backToList": "Back to list",
+      "backToBrowsing": "Back to browsing",
+      "kicker": "Detailed view",
+      "positionLabel": "Job:",
+      "descriptionTitle": "Job Description",
+      "tasksTitle": "Main Tasks",
+      "requirementsTitle": "Requirements",
+      "wageLabel": "Gross hourly wage",
+      "locationLabel": "Location",
+      "referenceLabel": "Reference",
+      "applyButton": "Apply now",
+      "applyingButton": "Applying...",
+      "successMessage": "Application successful!",
+      "failureMessage": "Application failed.",
+      "alreadyAppliedMessage": "You have already applied!",
+      "errorMessage": "An error occurred during application.",
+      "trustText": "Have a question? Feel free to contact us at Orion customer service."
+    }
+  },
+  "login": {
+    "title": "User Login",
+    "switchViewLabel": "Switch to company view"
+  },
+  "profile": {
+    "personalData": {
+      "title": "Personal Data",
+      "lastName": "Last Name",
+      "firstName": "First Name",
+      "birthDate": "Date of Birth",
+      "birthPlace": "Place of Birth"
+    },
+    "contact": {
+      "title": "Contact",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "address": "Address"
+    },
+    "professional": {
+      "title": "Professional Profile",
+      "bio": "Short Bio",
+      "qualifications": "Qualifications"
+    },
+    "documents": {
+      "title": "Documents & Resume",
+      "taxNumber": "Tax Number",
+      "personalId": "Personal ID",
+      "addressCard": "Address Card",
+      "resume": {
+        "title": "Resume",
+        "uploaded": "Uploaded and active",
+        "notUploaded": "Not yet uploaded",
+        "delete": "Delete",
+        "upload": "Upload"
+      }
+    }
+  },
+  "register": {
+    "title": "Create Account",
+    "steps": {
+      "account": "Account Details",
+      "personal": "Personal Details",
+      "professional": "Professional Profile"
+    },
+    "fields": {
+      "email": "Email Address *",
+      "password": "Password *",
+      "confirmPassword": "Confirmation *",
+      "lastName": "Last Name *",
+      "firstName": "First Name *",
+      "birthPlace": "Place of Birth",
+      "birthDate": "Date of Birth",
+      "nationality": "Nationality *",
+      "personalId": "Personal ID Number *",
+      "addressCard": "Address Card Number *",
+      "address": "Address",
+      "phone": "Phone Number",
+      "taxNumber": "Tax Number",
+      "qualifications": "Qualifications",
+      "bio": "Short Bio",
+      "terms": "I accept the terms of use"
+    },
+    "passwordRequirements": {
+      "title": "Password requirements:",
+      "minLength": "At least 8 characters",
+      "lowercase": "Lowercase letter",
+      "uppercase": "Uppercase letter",
+      "number": "Number",
+      "special": "Special character"
+    }
+  },
+  "uploadResume": {
+    "title": "Upload Resume",
+    "subtitle": "Upload your professional resume in PDF format for faster application.",
+    "dropText": "<1>Click to upload</1> or drag and drop the file here",
+    "fileHint": "PDF only (Max. 5MB)",
+    "info": {
+      "stored": "The uploaded file is stored as part of your profile.",
+      "update": "You can update or delete it at any time."
+    },
+    "buttons": {
+      "submit": "Save Resume",
+      "submitting": "Uploading...",
+      "cancel": "Cancel"
+    },
+    "alerts": {
+      "onlyPdf": "Only PDF files can be uploaded!",
+      "sizeLimit": "The file size cannot exceed 5MB!",
+      "success": "Resume uploaded successfully!",
+      "unknownError": "Unknown error"
+    }
+  },
+  "jobApplications": {
+    "loading": "Loading data...",
+    "retry": "Try again",
+    "networkError": "A network error occurred",
+    "header": {
+      "kicker": "Employments",
+      "title": "My Jobs & Applications",
+      "subtitle": "Track your current jobs and the status of your submitted applications.",
+      "back": "Back"
+    },
+    "works": {
+      "title": "My Current Jobs",
+      "empty": "You have no active jobs at the moment.",
+      "position": "Position",
+      "company": "Company",
+      "wage": "Hourly Wage",
+      "hireDate": "Hire Date"
+    },
+    "submissions": {
+      "title": "Status of My Applications",
+      "empty": "You haven't applied for any ads yet.",
+      "advertisement": "Ad",
+      "status": "Status",
+      "lastUpdated": "Last Updated"
+    }
+  }
+}

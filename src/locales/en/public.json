@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "kicker": "Career • Growth • Stability",
+    "title": "Build your future in our <1>expert</1> team.",
+    "subtitle": "Join one of the most dynamically developing communities in Hungary. Value-creating work, modern tools, and real professional support await you.",
+    "mainCta": "View Open Positions",
+    "secondaryCta": "Why choose us?"
+  },
+  "valuePropositions": {
+    "title": "Employee Experience with Us",
+    "subtitle": "We offer not just a job, but a career path. We believe in continuous learning and work-life balance.",
+    "features": {
+      "development": {
+        "badge": "Development",
+        "title": "Professional Trainings",
+        "text": "An annual training budget and an internal mentoring program support continuous advancement."
+      },
+      "flexibility": {
+        "badge": "Flexibility",
+        "title": "Hybrid Work",
+        "text": "The ideal combination of a modern office environment and working from home."
+      },
+      "value": {
+        "badge": "Value",
+        "title": "Premium Benefits",
+        "text": "Competitive salary bands, cafeteria, and health insurance for all our colleagues."
+      }
+    }
+  },
+  "featuredJobs": {
+    "title": "Our Featured Opportunities",
+    "subtitle": "Check out our latest job offers and find the one that's right for you.",
+    "detailsButton": "Details",
+    "callout": {
+      "title": "Didn't find what you were looking for?",
+      "text": "Register in our database, and we will notify you when a suitable opportunity arises.",
+      "cta": "Register"
+    }
+  }
+}

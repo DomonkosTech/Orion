@@ -1,0 +1,118 @@
+{
+  "loading": "Loading...",
+  "footer": {
+    "motto": "A clean career portal experience.",
+    "quickLinks": "Quick Links",
+    "jobs": "Jobs",
+    "applications": "Applications",
+    "profile": "Profile",
+    "contact": "Contact",
+    "copyright": "© {{year}} Orion. All rights reserved."
+  },
+  "header": {
+    "home": "Home",
+    "jobs": "Jobs",
+    "myApplications": "My Applications",
+    "dashboard": "Dashboard",
+    "postJob": "Post a Job",
+    "employees": "Employees",
+    "login": "Login",
+    "forCompanies": "For Companies"
+  },
+  "loginPage": {
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "email@example.com",
+    "passwordLabel": "Password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot your password?",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "noAccount": "Don't have an account yet?",
+    "registerHere": "Register here",
+    "loginSuccess": "Login successful!",
+    "accountNotActivated": "Account not activated. Please verify your email address!",
+    "networkError": "A network error occurred",
+    "genericError": "An error occurred"
+  },
+  "inputField": {
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
+  },
+  "editProfile": {
+    "loadingError": "Failed to load data.",
+    "saveSuccess": "Profile updated successfully!",
+    "saveError": "An error occurred while saving!",
+    "deleteResumeConfirmation": "Are you sure you want to delete your resume?",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "resumeDeleted": "Resume deleted.",
+    "deleteError": "An error occurred while deleting.",
+    "loadingData": "Loading data...",
+    "noData": "No data found.",
+    "backToMain": "Back to main page",
+    "userAccount": "User Account",
+    "companyManagement": "Company Management",
+    "myProfile": "My Profile",
+    "companyData": "Company Data",
+    "userDescription": "Manage your personal data and documents in one place.",
+    "companyDescription": "Modify your company's data for recruitment.",
+    "back": "Back",
+    "changePassword": "Change Password",
+    "edit": "Edit",
+    "save": "Save"
+  },
+  "bannerKicker": {
+    "text": "Orion • {{children}}"
+  },
+  "registerPage": {
+    "step": "Step {{step}} / {{totalSteps}}: {{label}}",
+    "fixErrors": "Please fix the errors to continue!",
+    "checkData": "Please check your data!",
+    "success": "Registration successful!",
+    "networkError": "A network error occurred",
+    "back": "Back",
+    "continue": "Continue",
+    "finishRegistration": "Finish Registration",
+    "alreadyHaveAccount": "Already have an account?",
+    "loginHere": "Log in!"
+  },
+  "passwordResetRequest": {
+    "title": "Password Reset",
+    "description": "Please enter your email address to resend the password reset link.",
+    "successMessage": "Link sent to your email address!",
+    "emailRequired": "Please enter an email address!",
+    "sendError": "An error occurred while sending!",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "example@email.com",
+    "sendLink": "Send Link"
+  },
+  "passwordResetSave": {
+    "title": "Enter a new password",
+    "passwordLabel": "New password",
+    "passwordPlaceholder": "Enter the new password",
+    "confirmLabel": "Confirm password",
+    "confirmPlaceholder": "Enter the password again",
+    "button": "Save password",
+    "errorMatch": "Passwords do not match!",
+    "errorLength": "Password must be at least 6 characters long!",
+    "errorToken": "Invalid or missing token!",
+    "errorSave": "An error occurred while saving the password.",
+    "success": "Password changed successfully!"
+  },
+  "chatWindow": {
+    "selectConversation": "Select a conversation",
+    "emptyState": "Select a partner from the list on the left<br/>to start a conversation.",
+    "loading": "Loading messages…",
+    "sendError": "Error sending message: {{error}}",
+    "noMessages": "There are no messages in this conversation yet.<br/>Write something to get started!"
+  },
+  "messageInput": {
+    "placeholder": "Write a message...",
+    "placeholderDisabled": "Select a partner...",
+    "sending": "Sending",
+    "send": "Send"
+  },
+  "messageBubble": {
+    "seenByCompany": "Seen by company"
+  }
+}
