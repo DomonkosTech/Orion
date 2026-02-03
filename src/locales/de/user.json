@@ -1,0 +1,202 @@
+{
+  "dashboard": {
+    "kicker": "Persönliches Dashboard",
+    "welcome": "Hallo, <1>{{name}}!</1> 👋",
+    "subtitle": "Hier ist ein Überblick über Ihre heutigen Karrieremöglichkeiten und -prozesse.",
+    "profileSettings": "Profileinstellungen"
+  },
+  "stats": {
+    "applications": "Bewerbungen",
+    "resumeViews": "Lebenslaufansichten",
+    "profileViews": "Profilansichten",
+    "matchRate": "Übereinstimmungsrate",
+    "matchRateTooltip": "Diese Rate gibt an, wie gut Ihr Profil (Erfahrung, Fähigkeiten) den aktuellen Marktanforderungen entspricht."
+  },
+  "featured": {
+    "badge": "Top-Angebot",
+    "defaultPosition": "Orion-Partner",
+    "description": "Diese Position entspricht zu 98 % Ihrer Erfahrung und Ihren Fähigkeiten.",
+    "descriptionDynamic": "{{wage}} sucht aktiv nach einem neuen Teammitglied.",
+    "descriptionDefault": "Einer unserer Partner sucht aktiv nach einem neuen Teammitglied.",
+    "detailsButton": "Details anzeigen",
+    "empty": {
+      "message": "Wir haben derzeit keine Top-Angebote, die Ihrem Profil entsprechen.",
+      "button": "Alle Jobs durchsuchen"
+    }
+  },
+  "navigation": {
+    "search": {
+      "title": "Jobsuche",
+      "description": "Suchen Sie unter den aktuellen Angeboten"
+    },
+    "applications": {
+      "title": "Meine Bewerbungen",
+      "description": "Verfolgen Sie Ihre Prozesse"
+    },
+    "documents": {
+      "title": "Dokumente",
+      "description": "Lebenslauf und andere Dateien"
+    },
+    "messages": {
+      "title": "Nachrichten",
+      "description": "Chatten Sie mit Arbeitgebern"
+    }
+  },
+  "help": {
+    "title": "Brauchen Sie Hilfe?",
+    "text": "Unsere Karriereberater helfen Ihnen, das Beste aus Ihrem Profil herauszuholen.",
+    "button": "Chat starten"
+  },
+  "jobs": {
+    "list": {
+      "kicker": "Jobsuche",
+      "title": "Finden Sie Ihre <1>Zukunft!</1>",
+      "subtitle": "Entdecken Sie <1>{{count}}</1> offene Stellen bei führenden Unternehmen.",
+      "subtitleDefault": "Entdecken Sie <1>Hunderte</1> von offenen Stellen bei führenden Unternehmen.",
+      "errorTitle": "Ein Fehler ist aufgetreten",
+      "loadMore": "Mehr anzeigen",
+      "loading": "Laden..."
+    },
+    "show": {
+      "loading": "Laden...",
+      "error": "Fehler beim Laden des Jobs.",
+      "fetchError": "Beim Laden des Jobs ist ein Fehler aufgetreten.",
+      "notFound": "Keine Anzeige gefunden.",
+      "backToList": "Zurück zur Liste",
+      "backToBrowsing": "Zurück zum Stöbern",
+      "kicker": "Detailansicht",
+      "positionLabel": "Job:",
+      "descriptionTitle": "Stellenbeschreibung",
+      "tasksTitle": "Hauptaufgaben",
+      "requirementsTitle": "Anforderungen",
+      "wageLabel": "Bruttostundenlohn",
+      "locationLabel": "Standort",
+      "referenceLabel": "Referenz",
+      "applyButton": "Jetzt bewerben",
+      "applyingButton": "Bewerbung wird gesendet...",
+      "successMessage": "Bewerbung erfolgreich!",
+      "failureMessage": "Bewerbung fehlgeschlagen.",
+      "alreadyAppliedMessage": "Sie haben sich bereits beworben!",
+      "errorMessage": "Bei der Bewerbung ist ein Fehler aufgetreten.",
+      "trustText": "Haben Sie eine Frage? Kontaktieren Sie uns gerne beim Orion-Kundenservice."
+    }
+  },
+  "login": {
+    "title": "Benutzer-Login",
+    "switchViewLabel": "Zur Firmenansicht wechseln"
+  },
+  "profile": {
+    "personalData": {
+      "title": "Persönliche Daten",
+      "lastName": "Nachname",
+      "firstName": "Vorname",
+      "birthDate": "Geburtsdatum",
+      "birthPlace": "Geburtsort"
+    },
+    "contact": {
+      "title": "Kontakt",
+      "email": "E-Mail-Adresse",
+      "phone": "Telefonnummer",
+      "address": "Adresse"
+    },
+    "professional": {
+      "title": "Berufliches Profil",
+      "bio": "Kurze Biografie",
+      "qualifications": "Qualifikationen"
+    },
+    "documents": {
+      "title": "Dokumente & Lebenslauf",
+      "taxNumber": "Steuernummer",
+      "personalId": "Personalausweis",
+      "addressCard": "Adresskarte",
+      "resume": {
+        "title": "Lebenslauf",
+        "uploaded": "Hochgeladen und aktiv",
+        "notUploaded": "Noch nicht hochgeladen",
+        "delete": "Löschen",
+        "upload": "Hochladen"
+      }
+    }
+  },
+  "register": {
+    "title": "Konto erstellen",
+    "steps": {
+      "account": "Kontodaten",
+      "personal": "Persönliche Daten",
+      "professional": "Berufliches Profil"
+    },
+    "fields": {
+      "email": "E-Mail-Adresse *",
+      "password": "Passwort *",
+      "confirmPassword": "Bestätigung *",
+      "lastName": "Nachname *",
+      "firstName": "Vorname *",
+      "birthPlace": "Geburtsort",
+      "birthDate": "Geburtsdatum",
+      "nationality": "Nationalität *",
+      "personalId": "Personalausweisnummer *",
+      "addressCard": "Adresskartennummer *",
+      "address": "Adresse",
+      "phone": "Telefonnummer",
+      "taxNumber": "Steuernummer",
+      "qualifications": "Qualifikationen",
+      "bio": "Kurze Biografie",
+      "terms": "Ich akzeptiere die Nutzungsbedingungen"
+    },
+    "passwordRequirements": {
+      "title": "Passwortanforderungen:",
+      "minLength": "Mindestens 8 Zeichen",
+      "lowercase": "Kleinbuchstabe",
+      "uppercase": "Großbuchstabe",
+      "number": "Zahl",
+      "special": "Sonderzeichen"
+    }
+  },
+  "uploadResume": {
+    "title": "Lebenslauf hochladen",
+    "subtitle": "Laden Sie Ihren beruflichen Lebenslauf im PDF-Format für eine schnellere Bewerbung hoch.",
+    "dropText": "<1>Zum Hochladen klicken</1> oder die Datei hierher ziehen",
+    "fileHint": "Nur PDF (Max. 5MB)",
+    "info": {
+      "stored": "Die hochgeladene Datei wird als Teil Ihres Profils gespeichert.",
+      "update": "Sie können sie jederzeit aktualisieren oder löschen."
+    },
+    "buttons": {
+      "submit": "Lebenslauf speichern",
+      "submitting": "Wird hochgeladen...",
+      "cancel": "Abbrechen"
+    },
+    "alerts": {
+      "onlyPdf": "Es können nur PDF-Dateien hochgeladen werden!",
+      "sizeLimit": "Die Dateigröße darf 5 MB nicht überschreiten!",
+      "success": "Lebenslauf erfolgreich hochgeladen!",
+      "unknownError": "Unbekannter Fehler"
+    }
+  },
+  "jobApplications": {
+    "loading": "Daten werden geladen...",
+    "retry": "Erneut versuchen",
+    "networkError": "Ein Netzwerkfehler ist aufgetreten",
+    "header": {
+      "kicker": "Anstellungen",
+      "title": "Meine Jobs & Bewerbungen",
+      "subtitle": "Verfolgen Sie Ihre aktuellen Jobs und den Status Ihrer eingereichten Bewerbungen.",
+      "back": "Zurück"
+    },
+    "works": {
+      "title": "Meine aktuellen Jobs",
+      "empty": "Sie haben im Moment keine aktiven Jobs.",
+      "position": "Position",
+      "company": "Firma",
+      "wage": "Stundenlohn",
+      "hireDate": "Einstellungsdatum"
+    },
+    "submissions": {
+      "title": "Status meiner Bewerbungen",
+      "empty": "Sie haben sich noch auf keine Anzeigen beworben.",
+      "advertisement": "Anzeige",
+      "status": "Status",
+      "lastUpdated": "Zuletzt aktualisiert"
+    }
+  }
+}

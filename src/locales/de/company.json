@@ -1,0 +1,267 @@
+{
+  "home": {
+    "banner": "Unternehmens-Dashboard",
+    "title": "Willkommen zurück!",
+    "subtitle": "Verwalten Sie Ihre Rekrutierungsprozesse und analysieren Sie die Leistung.",
+    "newJobButton": "+ Neue Stelle ausschreiben",
+    "stats": {
+      "views": "Gesamtansichten",
+      "applicants": "Aktive Bewerber",
+      "employees": "Mitarbeiter",
+      "conversion": "Konversion"
+    },
+    "activeJobs": {
+      "title": "Aktuelle Anzeigen",
+      "viewAll": "Alle ansehen",
+      "statusActive": "Aktiv",
+      "view": "Ansehen"
+    },
+    "recentActivity": {
+      "title": "Letzte Aktivitäten",
+      "applied": "hat sich beworben auf:",
+      "empty": "Keine letzten Aktivitäten."
+    }
+  },
+  "login": {
+    "title": "Firmen-Login",
+    "switchView": "Zur Benutzeransicht wechseln"
+  },
+  "addJob": {
+    "banner": "Verwaltung",
+    "title": "Neue Anzeige aufgeben",
+    "subtitle": "Erstellen Sie in wenigen Minuten eine professionelle Stellenanzeige.",
+    "validation": {
+      "requiredFields": "Bitte füllen Sie die Pflichtfelder aus!",
+      "success": "Anzeige erfolgreich erstellt!",
+      "error": "Fehler beim Erstellen der Anzeige."
+    },
+    "sections": {
+      "basicInfo": {
+        "title": "Grundlegende Informationen",
+        "jobTitle": "Anzeigentitel *",
+        "jobTitlePlaceholder": "z.B. Senior Logistikmanager",
+        "position": "Position *",
+        "positionPlaceholder": "z.B. Lagerarbeiter",
+        "location": "Arbeitsort *",
+        "locationPlaceholder": "Budapest, 13. Bezirk"
+      },
+      "details": {
+        "title": "Aufgaben & Erwartungen",
+        "description": "Stellenbeschreibung",
+        "descriptionPlaceholder": "Stellen Sie das Unternehmen und die Möglichkeit vor...",
+        "tasks": "Aufgaben",
+        "tasksPlaceholder": "Liste der täglichen Aufgaben...",
+        "requirements": "Anforderungen",
+        "requirementsPlaceholder": "Erfahrung, Sprachkenntnisse..."
+      },
+      "benefits": {
+        "title": "Zusätzliche Vorteile",
+        "hint": "Wählen Sie aus, was Sie den Bewerbern bieten:",
+        "options": {
+          "homeOffice": "Home-Office",
+          "cafeteria": "Cafeteria",
+          "bonus": "Bonus",
+          "companyCar": "Firmenwagen",
+          "flexibleHours": "Flexible Arbeitszeiten",
+          "modernTools": "Moderne Arbeitsmittel"
+        }
+      }
+    },
+    "sidebar": {
+      "title": "Einstellungen",
+      "hourlyWage": "Stundenlohn (HUF)",
+      "jobType": "Anstellungsart",
+      "types": {
+        "fullTime": "Vollzeit",
+        "partTime": "Teilzeit",
+        "freelance": "Projektarbeit"
+      },
+      "active": {
+        "label": "Sofortige Aktivierung",
+        "hint": "Die Anzeige wird sofort sichtbar sein"
+      },
+      "submit": "Anzeige veröffentlichen",
+      "saving": "Speichern...",
+      "cancel": "Abbrechen und zurück",
+      "tip": {
+        "title": "💡 Tipp für den Erfolg",
+        "text": "Ein detaillierter Abschnitt \"Aufgaben\" erhöht die Bewerbungsabsicht um 40%!"
+      }
+    }
+  },
+  "editJob": {
+    "banner": "Verwaltung",
+    "title": "Anzeige bearbeiten",
+    "subtitle": "Verwalten und optimieren Sie Ihre Stellenanzeige, um die besten Kandidaten zu erreichen.",
+    "loading": "Anzeige wird geladen...",
+    "notFound": "Anzeige nicht gefunden.",
+    "actions": {
+      "back": "Zurück",
+      "edit": "Bearbeiten",
+      "cancel": "Abbrechen",
+      "save": "Speichern"
+    },
+    "sections": {
+      "position": {
+        "title": "Positionsdetails",
+        "jobTitle": "Anzeigenname",
+        "jobTitlePlaceholder": "z.B. Senior Frontend-Entwickler",
+        "position": "Job/Position",
+        "positionPlaceholder": "z.B. Softwareentwicklung",
+        "hourlyWage": "Angebotener Stundenlohn (Brutto)",
+        "hourlyWagePlaceholder": "z.B. 2500",
+        "location": "Arbeitsort",
+        "locationPlaceholder": "z.B. Budapest, Remote"
+      },
+      "content": {
+        "title": "Inhaltsdetails",
+        "description": "Positionsbeschreibung",
+        "descriptionPlaceholder": "Beschreiben Sie die Position kurz...",
+        "tasks": "Hauptaufgaben",
+        "tasksPlaceholder": "Listen Sie die täglichen Aufgaben auf...",
+        "requirements": "Erwartungen an den Kandidaten",
+        "requirementsPlaceholder": "Welche Fähigkeiten sollte er haben?"
+      },
+      "status": {
+        "title": "Status",
+        "active": "Aktiv",
+        "inactive": "Inaktiv",
+        "visibility": "Sichtbarkeit",
+        "public": "Die Anzeige ist öffentlich.",
+        "hidden": "Die Anzeige ist verborgen."
+      },
+      "info": {
+        "title": "Information",
+        "text": "Änderungen werden nach dem Speichern sofort wirksam. Für inaktive Anzeigen können keine neuen Bewerbungen eingehen."
+      }
+    },
+    "notifications": {
+      "loadError": "Fehler beim Laden der Anzeige.",
+      "saveSuccess": "Anzeige erfolgreich aktualisiert!",
+      "saveError": "Fehler beim Speichern!",
+      "statusActive": "Anzeige aktiviert",
+      "statusInactive": "Anzeige deaktiviert",
+      "statusError": "Statusänderung fehlgeschlagen!"
+    }
+  },
+  "ats": {
+    "banner": "Rekrutierung",
+    "title": "Bewerber-Tracking",
+    "views": "Anzahl der Aufrufe:",
+    "back": "Zurück",
+    "loading": "Laden...",
+    "empty": "Keine neuen Bewerber für diese Anzeige.",
+    "actions": {
+      "cv": "Lebenslauf",
+      "accept": "Einstellen",
+      "reject": "Ablehnen"
+    },
+    "notifications": {
+      "noId": "Keine Anzeigen-ID angegeben.",
+      "fetchError": "Fehler beim Abrufen der Bewerber.",
+      "networkError": "Netzwerkfehler oder Server nicht erreichbar.",
+      "acceptSuccess": "Erfolgreich angenommen",
+      "rejectSuccess": "Erfolgreich abgelehnt",
+      "actionError": "Ein Fehler ist aufgetreten.",
+      "cvError": "Der Lebenslauf ist nicht verfügbar"
+    }
+  },
+  "editProfile": {
+    "general": {
+      "title": "Allgemeine Informationen",
+      "companyName": "Firmenname",
+      "taxNumber": "Steuernummer",
+      "activityScope": "Tätigkeitsbereich",
+      "website": "Webseite (URL)"
+    },
+    "contact": {
+      "title": "Kontakt",
+      "contactPerson": "Name des Ansprechpartners",
+      "phone": "Telefonnummer",
+      "address": "Adresse"
+    },
+    "introduction": {
+      "title": "Unternehmensvorstellung",
+      "placeholder": "Schreiben Sie ein paar Worte über die Mission und die Ziele des Unternehmens..."
+    }
+  },
+  "passwordReset": {
+    "title": "Neues Passwort anfordern",
+    "description": "Bitte geben Sie Ihre E-Mail-Adresse ein, um den Link zum Zurücksetzen des Passworts erneut zu senden.",
+    "success": "Link an Ihre E-Mail-Adresse gesendet!"
+  },
+  "register": {
+    "title": "Firmenregistrierung",
+    "steps": {
+      "account": "Kontodaten",
+      "company": "Firmendetails",
+      "contact": "Kontaktinformationen"
+    },
+    "fields": {
+      "email": "E-Mail-Adresse *",
+      "password": "Passwort *",
+      "confirmPassword": "Bestätigung *",
+      "companyName": "Firmenname *",
+      "address": "Adresse des Hauptsitzes *",
+      "taxNumber": "Steuernummer *",
+      "website": "Webseite",
+      "contactPerson": "Name des Ansprechpartners *",
+      "phone": "Telefonnummer *",
+      "activityScope": "Tätigkeitsbereich *",
+      "shortDescription": "Kurze Vorstellung *",
+      "terms": "Ich akzeptiere die Nutzungsbedingungen"
+    },
+    "passwordRequirements": {
+      "title": "Passwortanforderungen:",
+      "length": "Mindestens 8 Zeichen",
+      "lower": "Kleinbuchstabe",
+      "upper": "Großbuchstabe",
+      "number": "Zahl",
+      "special": "Sonderzeichen"
+    }
+  },
+  "sendVerify": {
+    "title": "E-Mail-Verifizierung",
+    "description": "Bitte geben Sie Ihre E-Mail-Adresse ein, um den Verifizierungslink erneut zu senden.",
+    "emailLabel": "E-Mail-Adresse",
+    "emailPlaceholder": "beispiel@email.com",
+    "button": "Link senden",
+    "errorEmail": "Bitte geben Sie eine E-Mail-Adresse ein!",
+    "errorSend": "Beim Senden ist ein Fehler aufgetreten!",
+    "success": "Verifizierungslink an Ihre E-Mail-Adresse gesendet!"
+  },
+  "verify": {
+    "title": "Konto aktivieren",
+    "verifying": "E-Mail wird verifiziert...",
+    "success": "E-Mail-Verifizierung erfolgreich!",
+    "error": "Ein Fehler ist aufgetreten: "
+  },
+  "employees": {
+    "title": "Mitarbeiter verwalten",
+    "subtitle": "Verzeichnis der aktiven Mitarbeiter des Unternehmens.",
+    "loading": "Laden...",
+    "table": {
+      "name": "Name",
+      "email": "E-Mail",
+      "position": "Position",
+      "wage": "Gehalt",
+      "actions": "Aktionen"
+    },
+    "deleteConfirm": "Sind Sie sicher, dass Sie diesen Mitarbeiter entfernen möchten?",
+    "deleteSuccess": "Erfolgreich entfernt",
+    "deleteError": "Löschen fehlgeschlagen",
+    "deleteErrorGeneric": "Beim Löschen ist ein Fehler aufgetreten",
+    "fire": "Entlassen"
+  },
+  "showJobs": {
+    "banner": "Verwaltung",
+    "title": "Ihre aktuellen Anzeigen",
+    "back": "Zurück",
+    "add": "Anzeige hinzufügen",
+    "edit": "Bearbeiten",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "noJobs": "Keine Anzeigen zum Anzeigen.",
+    "fetchError": "Fehler beim Abrufen der Anzeigen:"
+  }
+}
