@@ -114,5 +114,17 @@
   },
   "messageBubble": {
     "seenByCompany": "Seen by company"
+  },
+  "profileDropdown": {
+    "guest": "Guest",
+    "companyAccount": "Company Account",
+    "user": "User",
+    "greeting": "Hi, {{name}}!",
+    "myProfile": "My Profile",
+    "manageData": "Manage personal data",
+    "logout": "Logout",
+    "goodbye": "See you next time!",
+    "login": "Login",
+    "loginDesc": "Log in to your account"
   }
 }

@@ -112,7 +112,7 @@ function UserHomePage() {
                             </div>
                             <h1 className={styles.heroTitle}>
                                 <Trans i18nKey="dashboard.welcome" values={{ name }}>
-                                    Szia, <span className={styles.accent}>{name}!</span> 👋
+                                    Hi, <span className={styles.accent}>{name}!</span> 👋
                                 </Trans>
                             </h1>
                             <p className={styles.heroSubtitle}>
