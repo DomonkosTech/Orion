@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import styles from "./ShowListedJobs.module.css";
 
 // Icons
@@ -15,6 +16,7 @@ import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import { getCompanyAdvertisements, type CompanyAdvertisement } from "../../../Api/advertisementApi";
 
 const ShowListedJobs: React.FC = () => {
+    const { t } = useTranslation('company');
     const navigate = useNavigate();
     const [ads, setAds] = useState<CompanyAdvertisement[]>([]);
 
@@ -26,7 +28,7 @@ const ShowListedJobs: React.FC = () => {
                     setAds(data.advertisements);
                 }
             } catch (err) {
-                console.error("Hirdetések lekérése sikertelen:", err);
+                console.error(t('showJobs.fetchError'), err);
             }
         };
         fetchAds();
@@ -44,8 +46,8 @@ const ShowListedJobs: React.FC = () => {
             <main className={styles.container}>
                 <header className={styles.header}>
                     <div>
-                        <BannerKicker>Kezelés</BannerKicker>
-                        <h1 className={styles.title}>Aktuális hirdetései</h1>
+                        <BannerKicker>{t('showJobs.banner')}</BannerKicker>
+                        <h1 className={styles.title}>{t('showJobs.title')}</h1>
                     </div>
                     <div className={styles.actions}>
                         <Button
@@ -53,7 +55,7 @@ const ShowListedJobs: React.FC = () => {
                             onClick={() => navigate("/company")}
                         >
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <ArrowLeft size={18} /> Vissza
+                                <ArrowLeft size={18} /> {t('showJobs.back')}
                             </div>
                         </Button>
                         <Button
@@ -61,7 +63,7 @@ const ShowListedJobs: React.FC = () => {
                             onClick={() => navigate("/AddJob")}
                         >
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Plus size={18} /> Hirdetés hozzáadása
+                                <Plus size={18} /> {t('showJobs.add')}
                             </div>
                         </Button>
                     </div>
@@ -81,11 +83,11 @@ const ShowListedJobs: React.FC = () => {
                                 </div>
 
                                 <div className={styles.controls}>
-                                    <span className={styles.statusBadge}>{ad.is_active? "Aktív" : "Inaktív"}</span>
+                                    <span className={styles.statusBadge}>{ad.is_active ? t('showJobs.active') : t('showJobs.inactive')}</span>
                                     <button
                                         className={styles.editButton}
                                         onClick={(e) => handleEditClick(e, ad.id)}
-                                        title="Szerkesztés"
+                                        title={t('showJobs.edit')}
                                     >
                                         <Settings size={20}/>
                                     </button>
@@ -93,7 +95,7 @@ const ShowListedJobs: React.FC = () => {
                             </div>
                         ))
                     ) : (
-                        <p className={styles.jobSubInfo}>Nincsenek megjeleníthető hirdetések.</p>
+                        <p className={styles.jobSubInfo}>{t('showJobs.noJobs')}</p>
                     )}
                 </div>
             </main>

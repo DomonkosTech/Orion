@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { createAdvertisement } from "../../../api/advertisementApi";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "./AddJob.module.css";
@@ -12,9 +13,19 @@ import Button from "../../../components/Button/Button.tsx";
 import TextArea from "../../../components/TextArea/TextArea.tsx";
 import InputField from "../../../components/InputField/InputField.tsx";
 
-const BENEFITS_OPTIONS = ["Home Office", "Cafeteria", "Bónusz", "Céges autó", "Rugalmas munkaidő", "Modern eszközök"];
-
 const AddJob: React.FC = () => {
+    const { t } = useTranslation('company');
+    const navigate = useNavigate();
+
+    const BENEFITS_OPTIONS = [
+        { key: "Home Office", label: t('addJob.sections.benefits.options.homeOffice') },
+        { key: "Cafeteria", label: t('addJob.sections.benefits.options.cafeteria') },
+        { key: "Bónusz", label: t('addJob.sections.benefits.options.bonus') },
+        { key: "Céges autó", label: t('addJob.sections.benefits.options.companyCar') },
+        { key: "Rugalmas munkaidő", label: t('addJob.sections.benefits.options.flexibleHours') },
+        { key: "Modern eszközök", label: t('addJob.sections.benefits.options.modernTools') }
+    ];
+
     const [formData, setFormData] = useState({
         title: "",
         position: "",
@@ -40,7 +51,6 @@ const AddJob: React.FC = () => {
     //
 
     const [isLoading, setIsLoading] = useState(false);
-    const navigate = useNavigate();
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target;
@@ -50,19 +60,19 @@ const AddJob: React.FC = () => {
         }));
     };
 
-    const toggleBenefit = (benefit: string) => {
+    const toggleBenefit = (benefitKey: string) => {
         setFormData(prev => ({
             ...prev,
-            benefits: prev.benefits.includes(benefit)
-                ? prev.benefits.filter(b => b !== benefit)
-                : [...prev.benefits, benefit]
+            benefits: prev.benefits.includes(benefitKey)
+                ? prev.benefits.filter(b => b !== benefitKey)
+                : [...prev.benefits, benefitKey]
         }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!formData.title.trim() || !formData.position.trim() || !formData.location.trim() || !formData.hourly_wage.trim()) {
-            toast.error("Kérlek, töltsd ki a kötelező mezőket!");
+            toast.error(t('addJob.validation.requiredFields'));
             return;
         }
 
@@ -72,10 +82,10 @@ const AddJob: React.FC = () => {
                 ...formData,
                 hourly_wage: parseFloat(formData.hourly_wage),
             });
-            toast.success("Sikeres a hirdetés létrehozása!");
+            toast.success(t('addJob.validation.success'));
             navigate("/company");
         } catch {
-            toast.error("Hiba a hirdetés létrehozása során.");
+            toast.error(t('addJob.validation.error'));
         } finally {
             setIsLoading(false);
         }
@@ -88,9 +98,9 @@ const AddJob: React.FC = () => {
 
             <main className={styles.container}>
                 <header className={styles.header}>
-                    <BannerKicker>Adminisztráció</BannerKicker>
-                    <h1 className={styles.title}>Új hirdetés közzététele</h1>
-                    <p className={styles.subtitle}>Készítsen profi álláshirdetést percek alatt.</p>
+                    <BannerKicker>{t('addJob.banner')}</BannerKicker>
+                    <h1 className={styles.title}>{t('addJob.title')}</h1>
+                    <p className={styles.subtitle}>{t('addJob.subtitle')}</p>
                 </header>
 
                 <form onSubmit={handleSubmit} className={styles.layout}>
@@ -99,30 +109,30 @@ const AddJob: React.FC = () => {
 
                         {/* Section 1: Alapadatok */}
                         <section className={styles.card}>
-                            <h2 className={styles.cardTitle}><span>1</span> Alapadatok</h2>
+                            <h2 className={styles.cardTitle}><span>1</span> {t('addJob.sections.basicInfo.title')}</h2>
                             <div className={styles.formGrid}>
                                 <div className={styles.fullWidth}>
                                     <InputField
-                                        label="Hirdetés címe *"
+                                        label={t('addJob.sections.basicInfo.jobTitle')}
                                         name="title"
-                                        placeholder="pl. Senior Logisztikai Menedzser"
+                                        placeholder={t('addJob.sections.basicInfo.jobTitlePlaceholder')}
                                         value={formData.title}
                                         onChange={handleInputChange}
                                         required
                                     />
                                 </div>
                                 <InputField
-                                    label="Pozíció *"
+                                    label={t('addJob.sections.basicInfo.position')}
                                     name="position"
-                                    placeholder="pl. Raktáros"
+                                    placeholder={t('addJob.sections.basicInfo.positionPlaceholder')}
                                     value={formData.position}
                                     onChange={handleInputChange}
                                     required
                                 />
                                 <InputField
-                                    label="Munkavégzés helye *"
+                                    label={t('addJob.sections.basicInfo.location')}
                                     name="location"
-                                    placeholder="Budapest, XIII. kerület"
+                                    placeholder={t('addJob.sections.basicInfo.locationPlaceholder')}
                                     value={formData.location}
                                     onChange={handleInputChange}
                                     required
@@ -132,29 +142,29 @@ const AddJob: React.FC = () => {
 
                         {/* Section 2: Részletek & Leírás */}
                         <section className={styles.card}>
-                            <h2 className={styles.cardTitle}><span>2</span> Feladatok & Elvárások</h2>
+                            <h2 className={styles.cardTitle}><span>2</span> {t('addJob.sections.details.title')}</h2>
                             <div className={styles.stackedInputs}>
                                 <TextArea
-                                    label="Munka Leírása"
+                                    label={t('addJob.sections.details.description')}
                                     name="job_description"
-                                    placeholder="Mutassa be a céget és a lehetőséget..."
+                                    placeholder={t('addJob.sections.details.descriptionPlaceholder')}
                                     rows={5}
                                     value={formData.job_description}
                                     onChange={handleInputChange}
                                 />
                                 <div className={styles.formGrid}>
                                     <TextArea
-                                        label="Feladatok"
+                                        label={t('addJob.sections.details.tasks')}
                                         name="tasks"
-                                        placeholder="Napi teendők listája..."
+                                        placeholder={t('addJob.sections.details.tasksPlaceholder')}
                                         rows={4}
                                         value={formData.tasks}
                                         onChange={handleInputChange}
                                     />
                                     <TextArea
-                                        label="Követelmények"
+                                        label={t('addJob.sections.details.requirements')}
                                         name="requirements"
-                                        placeholder="Tapasztalat, nyelvtudás..."
+                                        placeholder={t('addJob.sections.details.requirementsPlaceholder')}
                                         rows={4}
                                         value={formData.requirements}
                                         onChange={handleInputChange}
@@ -165,17 +175,17 @@ const AddJob: React.FC = () => {
 
                         {/* Section 3: Extra Juttatások (Interactive Tags) */}
                         <section className={styles.card}>
-                            <h2 className={styles.cardTitle}><span>3</span> Extra Juttatások</h2>
-                            <p className={styles.hint}>Válassza ki, mit kínál a jelentkezőknek:</p>
+                            <h2 className={styles.cardTitle}><span>3</span> {t('addJob.sections.benefits.title')}</h2>
+                            <p className={styles.hint}>{t('addJob.sections.benefits.hint')}</p>
                             <div className={styles.benefitsGrid}>
                                 {BENEFITS_OPTIONS.map(benefit => (
                                     <button
-                                        key={benefit}
+                                        key={benefit.key}
                                         type="button"
-                                        className={`${styles.benefitTag} ${formData.benefits.includes(benefit) ? styles.activeBenefit : ""}`}
-                                        onClick={() => toggleBenefit(benefit)}
+                                        className={`${styles.benefitTag} ${formData.benefits.includes(benefit.key) ? styles.activeBenefit : ""}`}
+                                        onClick={() => toggleBenefit(benefit.key)}
                                     >
-                                        {benefit}
+                                        {benefit.label}
                                     </button>
                                 ))}
                             </div>
@@ -185,10 +195,10 @@ const AddJob: React.FC = () => {
                     {/* Sidebar Area */}
                     <aside className={styles.sidebar}>
                         <div className={`${styles.card} ${styles.stickyCard}`}>
-                            <h3 className={styles.sidebarTitle}>Beállítások</h3>
+                            <h3 className={styles.sidebarTitle}>{t('addJob.sidebar.title')}</h3>
 
                             <div className={styles.sidebarInputGroup}>
-                                <label>Órabér (HUF)</label>
+                                <label>{t('addJob.sidebar.hourlyWage')}</label>
                                 <InputField
                                     type="number"
                                     name="hourly_wage"
@@ -200,11 +210,11 @@ const AddJob: React.FC = () => {
                             </div>
 
                             <div className={styles.sidebarInputGroup}>
-                                <label>Foglalkoztatás típusa</label>
+                                <label>{t('addJob.sidebar.jobType')}</label>
                                 <select name="job_type" className={styles.sidebarSelect} onChange={handleInputChange}>
-                                    <option value="Full-time">Teljes munkaidő</option>
-                                    <option value="Part-time">Részmunkaidő</option>
-                                    <option value="Freelance">Projektmunka</option>
+                                    <option value="Full-time">{t('addJob.sidebar.types.fullTime')}</option>
+                                    <option value="Part-time">{t('addJob.sidebar.types.partTime')}</option>
+                                    <option value="Freelance">{t('addJob.sidebar.types.freelance')}</option>
                                 </select>
                             </div>
 
@@ -217,25 +227,25 @@ const AddJob: React.FC = () => {
                                         onChange={handleInputChange}
                                     />
                                     <div>
-                                        <strong>Azonnali aktiválás</strong>
-                                        <span>A hirdetés rögtön látható lesz</span>
+                                        <strong>{t('addJob.sidebar.active.label')}</strong>
+                                        <span>{t('addJob.sidebar.active.hint')}</span>
                                     </div>
                                 </label>
                             </div>
 
                             <div className={styles.sidebarActions}>
                                 <Button type="submit" color="orion-blue" disabled={isLoading} className={styles.submitBtn}>
-                                    {isLoading ? "Mentés..." : "Hirdetés közzététele"}
+                                    {isLoading ? t('addJob.sidebar.saving') : t('addJob.sidebar.submit')}
                                 </Button>
                                 <button type="button" className={styles.cancelLink} onClick={() => navigate("/company")}>
-                                    Mégsem és visszalépés
+                                    {t('addJob.sidebar.cancel')}
                                 </button>
                             </div>
                         </div>
 
                         <div className={styles.tipCard}>
-                            <h4>💡 Tipp a sikerhez</h4>
-                            <p>A részletesen kitöltött "Feladatok" szekció 40%-kal növeli a jelentkezési kedvet!</p>
+                            <h4>{t('addJob.sidebar.tip.title')}</h4>
+                            <p>{t('addJob.sidebar.tip.text')}</p>
                         </div>
                     </aside>
                 </form>
