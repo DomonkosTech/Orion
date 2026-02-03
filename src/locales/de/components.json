@@ -1,0 +1,124 @@
+{
+  "loading": "Laden...",
+  "footer": {
+    "motto": "Ein sauberes Karriereportal-Erlebnis.",
+    "quickLinks": "Schnell-Links",
+    "jobs": "Stellen",
+    "applications": "Bewerbungen",
+    "profile": "Profil",
+    "contact": "Kontakt",
+    "copyright": "© {{year}} Orion. Alle Rechte vorbehalten."
+  },
+  "header": {
+    "home": "Startseite",
+    "jobs": "Stellen",
+    "myApplications": "Meine Bewerbungen",
+    "dashboard": "Dashboard",
+    "postJob": "Stelle ausschreiben",
+    "employees": "Mitarbeiter",
+    "login": "Anmelden",
+    "forCompanies": "Für Unternehmen"
+  },
+  "loginPage": {
+    "emailLabel": "E-Mail-Adresse",
+    "emailPlaceholder": "email@beispiel.com",
+    "passwordLabel": "Passwort",
+    "rememberMe": "Angemeldet bleiben",
+    "forgotPassword": "Passwort vergessen?",
+    "loginButton": "Anmelden",
+    "registerButton": "Registrieren",
+    "noAccount": "Haben Sie noch kein Konto?",
+    "registerHere": "Hier registrieren",
+    "loginSuccess": "Anmeldung erfolgreich!",
+    "accountNotActivated": "Konto nicht aktiviert. Bitte bestätigen Sie Ihre E-Mail-Adresse!",
+    "networkError": "Ein Netzwerkfehler ist aufgetreten",
+    "genericError": "Ein Fehler ist aufgetreten"
+  },
+  "inputField": {
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort ausblenden"
+  },
+  "editProfile": {
+    "loadingError": "Daten konnten nicht geladen werden.",
+    "saveSuccess": "Profil erfolgreich aktualisiert!",
+    "saveError": "Beim Speichern ist ein Fehler aufgetreten!",
+    "deleteResumeConfirmation": "Sind Sie sicher, dass Sie Ihren Lebenslauf löschen möchten?",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "resumeDeleted": "Lebenslauf gelöscht.",
+    "deleteError": "Beim Löschen ist ein Fehler aufgetreten.",
+    "loadingData": "Daten werden geladen...",
+    "noData": "Keine Daten gefunden.",
+    "backToMain": "Zurück zur Hauptseite",
+    "userAccount": "Benutzerkonto",
+    "companyManagement": "Unternehmensverwaltung",
+    "myProfile": "Mein Profil",
+    "companyData": "Unternehmensdaten",
+    "userDescription": "Verwalten Sie Ihre persönlichen Daten und Dokumente an einem Ort.",
+    "companyDescription": "Ändern Sie die Daten Ihres Unternehmens für die Personalbeschaffung.",
+    "back": "Zurück",
+    "changePassword": "Passwort ändern",
+    "edit": "Bearbeiten",
+    "save": "Speichern"
+  },
+  "bannerKicker": {
+    "text": "Orion • {{children}}"
+  },
+  "registerPage": {
+    "step": "Schritt {{step}} / {{totalSteps}}: {{label}}",
+    "fixErrors": "Bitte beheben Sie die Fehler, um fortzufahren!",
+    "checkData": "Überprüfen Sie die Daten!",
+    "success": "Registrierung erfolgreich!",
+    "networkError": "Ein Netzwerkfehler ist aufgetreten",
+    "back": "Zurück",
+    "continue": "Weiter",
+    "finishRegistration": "Registrierung abschließen",
+    "alreadyHaveAccount": "Haben Sie bereits ein Konto?",
+    "loginHere": "Hier anmelden!"
+  },
+  "passwordResetRequest": {
+    "title": "Passwort zurücksetzen",
+    "description": "Bitte geben Sie Ihre E-Mail-Adresse ein, um den Link zum Zurücksetzen des Passworts erneut zu senden.",
+    "successMessage": "Link an Ihre E-Mail-Adresse gesendet!",
+    "emailRequired": "Bitte geben Sie eine E-Mail-Adresse ein!",
+    "sendError": "Beim Senden ist ein Fehler aufgetreten!",
+    "emailLabel": "E-Mail-Adresse",
+    "emailPlaceholder": "beispiel@email.com",
+    "sendLink": "Link senden"
+  },
+  "passwordResetSave": {
+    "title": "Neues Passwort eingeben",
+    "passwordLabel": "Neues Passwort",
+    "passwordPlaceholder": "Geben Sie das neue Passwort ein",
+    "confirmLabel": "Passwort bestätigen",
+    "confirmPlaceholder": "Geben Sie das Passwort erneut ein",
+    "button": "Passwort speichern",
+    "errorMatch": "Die Passwörter stimmen nicht überein!",
+    "errorLength": "Das Passwort muss mindestens 6 Zeichen lang sein!",
+    "errorToken": "Ungültiges oder fehlendes Token!",
+    "errorSave": "Beim Speichern des Passworts ist ein Fehler aufgetreten.",
+    "success": "Passwort erfolgreich geändert!"
+  },
+  "chatWindow": {
+    "selectConversation": "Wählen Sie ein Gespräch aus",
+    "emptyState": "Wählen Sie einen Partner aus der Liste auf der linken Seite,<br/>um ein Gespräch zu beginnen.",
+    "loading": "Nachrichten werden geladen…",
+    "sendError": "Beim Senden der Nachricht ist ein Fehler aufgetreten: {{error}}",
+    "noMessages": "Es gibt noch keine Nachrichten in diesem Gespräch.<br/>Schreiben Sie etwas, um zu beginnen!"
+  },
+  "messageInput": {
+    "placeholder": "Schreiben Sie eine Nachricht...",
+    "placeholderDisabled": "Wählen Sie einen Partner...",
+    "sending": "Senden",
+    "send": "Senden"
+  },
+  "messageBubble": {
+    "seenByCompany": "Vom Unternehmen gesehen"
+  },
+  "conversationList": {
+    "back": "Zurück",
+    "title": "Gespräche",
+    "loading": "Partner werden geladen…",
+    "noConversations": "Noch keine Gespräche."
+  }
+}

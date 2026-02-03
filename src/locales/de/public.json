@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "kicker": "Karriere • Wachstum • Stabilität",
+    "title": "Bauen Sie Ihre Zukunft in unserem <1>Experten</1>-Team.",
+    "subtitle": "Treten Sie einer der dynamischsten Gemeinschaften in Ungarn bei. Wertschöpfende Arbeit, moderne Werkzeuge und echte professionelle Unterstützung erwarten Sie.",
+    "mainCta": "Offene Stellen anzeigen",
+    "secondaryCta": "Warum uns wählen?"
+  },
+  "valuePropositions": {
+    "title": "Mitarbeitererfahrung bei uns",
+    "subtitle": "Wir bieten nicht nur einen Job, sondern einen Karriereweg. Wir glauben an kontinuierliches Lernen und eine ausgewogene Work-Life-Balance.",
+    "features": {
+      "development": {
+        "badge": "Entwicklung",
+        "title": "Professionelle Schulungen",
+        "text": "Ein jährliches Schulungsbudget und ein internes Mentoring-Programm unterstützen den kontinuierlichen Fortschritt."
+      },
+      "flexibility": {
+        "badge": "Flexibilität",
+        "title": "Hybrides Arbeiten",
+        "text": "Die ideale Kombination aus einer modernen Büroumgebung und der Arbeit von zu Hause aus."
+      },
+      "value": {
+        "badge": "Wert",
+        "title": "Premium-Vorteile",
+        "text": "Wettbewerbsfähige Gehaltsbänder, Cafeteria und Krankenversicherung für alle unsere Kollegen."
+      }
+    }
+  },
+  "featuredJobs": {
+    "title": "Unsere Top-Möglichkeiten",
+    "subtitle": "Schauen Sie sich unsere neuesten Stellenangebote an und finden Sie das richtige für Sie.",
+    "detailsButton": "Details",
+    "callout": {
+      "title": "Haben Sie nicht gefunden, wonach Sie gesucht haben?",
+      "text": "Registrieren Sie sich in unserer Datenbank, und wir benachrichtigen Sie, wenn sich eine passende Gelegenheit ergibt.",
+      "cta": "Registrieren"
+    }
+  }
+}
