@@ -1,0 +1,267 @@
+{
+  "home": {
+    "banner": "Company Dashboard",
+    "title": "Welcome back!",
+    "subtitle": "Manage your recruitment processes and analyze performance.",
+    "newJobButton": "+ Post a New Job",
+    "stats": {
+      "views": "Total Views",
+      "applicants": "Active Applicants",
+      "employees": "Employees",
+      "conversion": "Conversion"
+    },
+    "activeJobs": {
+      "title": "Current Ads",
+      "viewAll": "View All",
+      "statusActive": "Active",
+      "view": "View"
+    },
+    "recentActivity": {
+      "title": "Recent Activity",
+      "applied": "applied for:",
+      "empty": "No recent activity."
+    }
+  },
+  "login": {
+    "title": "Company Login",
+    "switchView": "Switch to user view"
+  },
+  "addJob": {
+    "banner": "Administration",
+    "title": "Post a New Ad",
+    "subtitle": "Create a professional job ad in minutes.",
+    "validation": {
+      "requiredFields": "Please fill in the required fields!",
+      "success": "Ad created successfully!",
+      "error": "Error creating the ad."
+    },
+    "sections": {
+      "basicInfo": {
+        "title": "Basic Information",
+        "jobTitle": "Ad Title *",
+        "jobTitlePlaceholder": "e.g., Senior Logistics Manager",
+        "position": "Position *",
+        "positionPlaceholder": "e.g., Warehouse Worker",
+        "location": "Work Location *",
+        "locationPlaceholder": "Budapest, 13th district"
+      },
+      "details": {
+        "title": "Tasks & Expectations",
+        "description": "Job Description",
+        "descriptionPlaceholder": "Introduce the company and the opportunity...",
+        "tasks": "Tasks",
+        "tasksPlaceholder": "List of daily tasks...",
+        "requirements": "Requirements",
+        "requirementsPlaceholder": "Experience, language skills..."
+      },
+      "benefits": {
+        "title": "Extra Benefits",
+        "hint": "Select what you offer to applicants:",
+        "options": {
+          "homeOffice": "Home Office",
+          "cafeteria": "Cafeteria",
+          "bonus": "Bonus",
+          "companyCar": "Company Car",
+          "flexibleHours": "Flexible Hours",
+          "modernTools": "Modern Tools"
+        }
+      }
+    },
+    "sidebar": {
+      "title": "Settings",
+      "hourlyWage": "Hourly Wage (HUF)",
+      "jobType": "Type of Employment",
+      "types": {
+        "fullTime": "Full-time",
+        "partTime": "Part-time",
+        "freelance": "Project work"
+      },
+      "active": {
+        "label": "Immediate activation",
+        "hint": "The ad will be visible immediately"
+      },
+      "submit": "Publish Ad",
+      "saving": "Saving...",
+      "cancel": "Cancel and go back",
+      "tip": {
+        "title": "💡 Tip for success",
+        "text": "A detailed \"Tasks\" section increases application intent by 40%!"
+      }
+    }
+  },
+  "editJob": {
+    "banner": "Management",
+    "title": "Edit Ad",
+    "subtitle": "Manage and optimize your job ad to reach the best candidates.",
+    "loading": "Loading ad...",
+    "notFound": "Ad not found.",
+    "actions": {
+      "back": "Back",
+      "edit": "Edit",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "sections": {
+      "position": {
+        "title": "Position Details",
+        "jobTitle": "Ad Name",
+        "jobTitlePlaceholder": "e.g., Senior Frontend Developer",
+        "position": "Job/Position",
+        "positionPlaceholder": "e.g., Software Development",
+        "hourlyWage": "Offered Hourly Wage (Gross)",
+        "hourlyWagePlaceholder": "e.g., 2500",
+        "location": "Work Location",
+        "locationPlaceholder": "e.g., Budapest, Remote"
+      },
+      "content": {
+        "title": "Content Details",
+        "description": "Position Description",
+        "descriptionPlaceholder": "Briefly describe the position...",
+        "tasks": "Main Tasks",
+        "tasksPlaceholder": "List the daily tasks...",
+        "requirements": "Expectations for the candidate",
+        "requirementsPlaceholder": "What skills should they have?"
+      },
+      "status": {
+        "title": "Status",
+        "active": "Active",
+        "inactive": "Inactive",
+        "visibility": "Visibility",
+        "public": "The ad is public.",
+        "hidden": "The ad is hidden."
+      },
+      "info": {
+        "title": "Information",
+        "text": "Changes take effect immediately after saving. No new applications can be received for inactive ads."
+      }
+    },
+    "notifications": {
+      "loadError": "Failed to load the ad.",
+      "saveSuccess": "Ad updated successfully!",
+      "saveError": "Error during saving!",
+      "statusActive": "Ad activated",
+      "statusInactive": "Ad deactivated",
+      "statusError": "Status change failed!"
+    }
+  },
+  "ats": {
+    "banner": "Recruitment",
+    "title": "Applicant Tracking",
+    "views": "Number of views:",
+    "back": "Back",
+    "loading": "Loading...",
+    "empty": "No new applicants for this ad.",
+    "actions": {
+      "cv": "CV",
+      "accept": "Hire",
+      "reject": "Reject"
+    },
+    "notifications": {
+      "noId": "No ad ID provided.",
+      "fetchError": "Error fetching applicants.",
+      "networkError": "Network error or server is unavailable.",
+      "acceptSuccess": "Successfully accepted",
+      "rejectSuccess": "Successfully rejected",
+      "actionError": "An error occurred.",
+      "cvError": "The resume is not available"
+    }
+  },
+  "editProfile": {
+    "general": {
+      "title": "General Information",
+      "companyName": "Company Name",
+      "taxNumber": "Tax Number",
+      "activityScope": "Scope of Activity",
+      "website": "Website (URL)"
+    },
+    "contact": {
+      "title": "Contact",
+      "contactPerson": "Contact Person's Name",
+      "phone": "Phone Number",
+      "address": "Address"
+    },
+    "introduction": {
+      "title": "Company Introduction",
+      "placeholder": "Write a few words about the company's mission and goals..."
+    }
+  },
+  "passwordReset": {
+    "title": "Request new password",
+    "description": "Please enter your email address to resend the password reset link.",
+    "success": "link sent to your email address!"
+  },
+  "register": {
+    "title": "Company Registration",
+    "steps": {
+      "account": "Account Details",
+      "company": "Company Details",
+      "contact": "Contact Information"
+    },
+    "fields": {
+      "email": "Email Address *",
+      "password": "Password *",
+      "confirmPassword": "Confirmation *",
+      "companyName": "Company Name *",
+      "address": "Headquarters Address *",
+      "taxNumber": "Tax Number *",
+      "website": "Website",
+      "contactPerson": "Contact Person's Name *",
+      "phone": "Phone Number *",
+      "activityScope": "Scope of Activity *",
+      "shortDescription": "Short Introduction *",
+      "terms": "I accept the terms of use"
+    },
+    "passwordRequirements": {
+      "title": "Password requirements:",
+      "length": "At least 8 characters",
+      "lower": "Lowercase letter",
+      "upper": "Uppercase letter",
+      "number": "Number",
+      "special": "Special character"
+    }
+  },
+  "sendVerify": {
+    "title": "Email Verification",
+    "description": "Please enter your email address to resend the verification link.",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "example@email.com",
+    "button": "Send Link",
+    "errorEmail": "Please enter an email address!",
+    "errorSend": "An error occurred while sending!",
+    "success": "Verification link sent to your email address!"
+  },
+  "verify": {
+    "title": "Activate Account",
+    "verifying": "Verifying email...",
+    "success": "Email verification successful!",
+    "error": "An error occurred: "
+  },
+  "employees": {
+    "title": "Manage Employees",
+    "subtitle": "Record of the company's active employees.",
+    "loading": "Loading...",
+    "table": {
+      "name": "Name",
+      "email": "Email",
+      "position": "Position",
+      "wage": "Salary",
+      "actions": "Actions"
+    },
+    "deleteConfirm": "Are you sure you want to remove this employee?",
+    "deleteSuccess": "Successfully removed",
+    "deleteError": "Deletion failed",
+    "deleteErrorGeneric": "An error occurred during deletion",
+    "fire": "Fire"
+  },
+  "showJobs": {
+    "banner": "Management",
+    "title": "Your Current Ads",
+    "back": "Back",
+    "add": "Add Ad",
+    "edit": "Edit",
+    "active": "Active",
+    "inactive": "Inactive",
+    "noJobs": "No ads to display.",
+    "fetchError": "Failed to fetch ads:"
+  }
+}
