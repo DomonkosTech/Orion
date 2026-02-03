@@ -120,5 +120,31 @@
     "title": "Gespräche",
     "loading": "Partner werden geladen…",
     "noConversations": "Noch keine Gespräche."
+  },
+  "profileDropdown": {
+    "guest": "Gast",
+    "companyAccount": "Unternehmenskonto",
+    "user": "Benutzer",
+    "greeting": "Hallo, {{name}}!",
+    "myProfile": "Mein Profil",
+    "manageData": "Persönliche Daten verwalten",
+    "logout": "Abmelden",
+    "goodbye": "Bis zum nächsten Mal!",
+    "login": "Anmelden",
+    "loginDesc": "Melden Sie sich an"
+  },
+  "languageSelector": {
+    "title": "Sprache"
+  },
+  "notificationDropdown": {
+    "newMessage": "{{count}} neue Nachricht",
+    "messages": "Nachrichten",
+    "title": "BENACHRICHTIGUNGEN",
+    "markAllRead": "Alle als gelesen markieren",
+    "allRead": "Alles erledigt!",
+    "refreshPage": "Seite aktualisieren",
+    "viewProfile": "Profil ansehen",
+    "markRead": "Als gelesen markieren",
+    "systemMessage": "Systemnachricht"
   }
 }

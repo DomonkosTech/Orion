@@ -126,5 +126,25 @@
     "goodbye": "See you next time!",
     "login": "Login",
     "loginDesc": "Log in to your account"
+  },
+  "languageSelector": {
+    "title": "Language"
+  },
+  "conversationList": {
+    "title": "Conversations",
+    "back": "Back",
+    "loading": "Loading partners...",
+    "empty": "No conversations yet."
+  },
+  "notificationDropdown": {
+    "newMessage": "{{count}} new message",
+    "messages": "Messages",
+    "title": "NOTIFICATIONS",
+    "markAllRead": "Mark all as read",
+    "allRead": "All caught up!",
+    "refreshPage": "Refresh Page",
+    "viewProfile": "View Profile",
+    "markRead": "Mark as read",
+    "systemMessage": "System Message"
   }
 }

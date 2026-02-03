@@ -5,11 +5,13 @@ import styles from "../MessengerPage.module.css";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 import { ArrowLeft } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const ConversationList: React.FC = () => {
   const { partners, partnersLoading, partnersError, selectedCompanyId, setSelectedCompanyId } = useMessenger();
   const navigate = useNavigate();
   const { userType } = useAuth();
+  const { t } = useTranslation('components');
   
   const handleBack = () => {
       if (userType === "company") {
@@ -22,15 +24,15 @@ const ConversationList: React.FC = () => {
   return (
     <aside className={styles.sidebar}>
       <div className={styles.sidebarHeader}>
-          <button onClick={handleBack} className={styles.headerBackButton} title="Vissza">
+          <button onClick={handleBack} className={styles.headerBackButton} title={t('conversationList.back')}>
               <ArrowLeft size={24} />
           </button>
-          Beszélgetések
+          {t('conversationList.title')}
       </div>
-      {partnersLoading && <div className={`${styles.sidebarState} ${styles.loadingState}`}>Partnerek betöltése…</div>}
+      {partnersLoading && <div className={`${styles.sidebarState} ${styles.loadingState}`}>{t('conversationList.loading')}</div>}
       {partnersError && <div className={styles.sidebarState} style={{ color: "#ef4444" }}>{partnersError}</div>}
       {!partnersLoading && !partnersError && partners.length === 0 && (
-        <div className={styles.sidebarState}>Még nincs beszélgetés.</div>
+        <div className={styles.sidebarState}>{t('conversationList.empty')}</div>
       )}
       <div style={{ flex: 1, overflowY: "auto" }}>
         {partners.map((p, index) => (
