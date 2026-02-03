@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { getEmployees, deleteEmployee } from "../../../api/advertisementApi.ts";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "./ShowEmployees.module.css";
@@ -27,6 +28,7 @@ interface Employee {
 }
 
 const ShowEmployees = () => {
+    const { t } = useTranslation('company');
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -48,23 +50,23 @@ const ShowEmployees = () => {
     }, []);
 
     const handleDelete = async (id: number) => {
-        if (!window.confirm("Biztosan el akarja távolítani ezt az alkalmazottat?")) return;
+        if (!window.confirm(t('employees.deleteConfirm'))) return;
 
         try {
             const response = await deleteEmployee(id);
             if (response.success) {
                 setEmployees(employees.filter(employee => employee.id !== id));
-                toast.success("Sikeresen eltávolítva");
+                toast.success(t('employees.deleteSuccess'));
             } else {
-                toast.error("Sikertelen törlés");
+                toast.error(t('employees.deleteError'));
             }
         } catch (error) {
             console.error(error)
-            toast.error("Hiba történt a törlés során");
+            toast.error(t('employees.deleteErrorGeneric'));
         }
     };
 
-    if (loading) return <div className={styles.loading}>Betöltés...</div>;
+    if (loading) return <div className={styles.loading}>{t('employees.loading')}</div>;
 
     return (
         <div className={styles.page}>
@@ -73,9 +75,9 @@ const ShowEmployees = () => {
 
             <main className={styles.container}>
                 <header className={styles.header}>
-                    <BannerKicker>Adminisztráció</BannerKicker>
-                    <h1 className={styles.title}>Alkalmazottak kezelése</h1>
-                    <p className={styles.subtitle}>A vállalat aktív munkavállalóinak nyilvántartása.</p>
+                    <BannerKicker>{t('addJob.banner')}</BannerKicker>
+                    <h1 className={styles.title}>{t('employees.title')}</h1>
+                    <p className={styles.subtitle}>{t('employees.subtitle')}</p>
                 </header>
 
                 <div className={styles.card}>
@@ -83,11 +85,11 @@ const ShowEmployees = () => {
                         <table className={styles.employeeTable}>
                             <thead>
                             <tr>
-                                <th>Név</th>
-                                <th>Email</th>
-                                <th>Pozíció</th>
-                                <th>Munkabér</th>
-                                <th style={{ textAlign: 'right' }}>Műveletek</th>
+                                <th>{t('employees.table.name')}</th>
+                                <th>{t('employees.table.email')}</th>
+                                <th>{t('employees.table.position')}</th>
+                                <th>{t('employees.table.wage')}</th>
+                                <th style={{ textAlign: 'right' }}>{t('employees.table.actions')}</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -106,7 +108,7 @@ const ShowEmployees = () => {
                                             onClick={() => handleDelete(employee.id)}
                                             style={{ padding: '6px 12px', fontSize: '0.85rem' }}
                                         >
-                                            Kirúgás
+                                            {t('employees.fire')}
                                         </Button>
                                     </td>
                                 </tr>

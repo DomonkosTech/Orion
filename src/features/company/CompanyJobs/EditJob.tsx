@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
     Briefcase, MapPin, AlignLeft,
     CheckCircle, AlertCircle, Save, XCircle, Edit3, ArrowLeft
@@ -23,6 +24,7 @@ import InputField from "../../../components/InputField/InputField.tsx";
 import TextArea from "../../../components/TextArea/TextArea.tsx";
 
 const EditJob: React.FC = () => {
+    const { t } = useTranslation('company');
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -44,7 +46,7 @@ const EditJob: React.FC = () => {
                 }
             } catch (err) {
                 console.error("Fetch error:", err);
-                toast.error("Nem sikerült betölteni a hirdetést.");
+                toast.error(t('editJob.notifications.loadError'));
             } finally {
                 setLoading(false);
             }
@@ -60,12 +62,12 @@ const EditJob: React.FC = () => {
             if (data.success) {
                 setOriginalData(advertisement);
                 setEditMode(false);
-                toast.success("Hirdetés sikeresen frissítve!");
+                toast.success(t('editJob.notifications.saveSuccess'));
                 navigate("/company");
             }
         } catch (err) {
             console.error(err);
-            toast.error("Hiba történt a mentés során!");
+            toast.error(t('editJob.notifications.saveError'));
         } finally {
             setIsSaving(false);
         }
@@ -84,11 +86,11 @@ const EditJob: React.FC = () => {
             if (data.success) {
                 setAdvertisement({ ...advertisement, is_active: newStatus });
                 setOriginalData(prev => prev ? { ...prev, is_active: newStatus } : null);
-                toast.success(`Hirdetés ${newStatus ? "aktiválva" : "deaktiválva"}`);
+                toast.success(newStatus ? t('editJob.notifications.statusActive') : t('editJob.notifications.statusInactive'));
             }
         } catch (err) {
             console.error(err);
-            toast.error("Státusz módosítása sikertelen!");
+            toast.error(t('editJob.notifications.statusError'));
         }
     };
 
@@ -96,12 +98,12 @@ const EditJob: React.FC = () => {
         <div className={styles.pageWrapper}>
             <div className={styles.loadingState}>
                 <div className={styles.spinner}></div>
-                <p>Hirdetés betöltése...</p>
+                <p>{t('editJob.loading')}</p>
             </div>
         </div>
     );
 
-    if (!advertisement) return <p>Hirdetés nem található.</p>;
+    if (!advertisement) return <p>{t('editJob.notFound')}</p>;
 
     return (
         <div className={styles.pageWrapper}>
@@ -111,28 +113,28 @@ const EditJob: React.FC = () => {
             <main className={styles.container}>
                 <header className={styles.header}>
                     <div className={styles.titleGroup}>
-                        <BannerKicker>Kezelés</BannerKicker>
-                        <h1>Hirdetés Szerkesztése</h1>
-                        <p>Kezelje és optimalizálja álláshirdetését a legjobb jelöltek eléréséhez.</p>
+                        <BannerKicker>{t('editJob.banner')}</BannerKicker>
+                        <h1>{t('editJob.title')}</h1>
+                        <p>{t('editJob.subtitle')}</p>
                     </div>
 
                     <div className={styles.actionGroup}>
                         {!editMode ? (
                             <>
                                 <Button onClick={() => navigate("/company")} variant="secondary">
-                                    <ArrowLeft size={18} style={{marginRight: '8px'}} /> Vissza
+                                    <ArrowLeft size={18} style={{marginRight: '8px'}} /> {t('editJob.actions.back')}
                                 </Button>
                                 <Button onClick={() => setEditMode(true)} color="orion-blue">
-                                    <Edit3 size={18} style={{marginRight: '8px'}} /> Szerkesztés
+                                    <Edit3 size={18} style={{marginRight: '8px'}} /> {t('editJob.actions.edit')}
                                 </Button>
                             </>
                         ) : (
                             <>
                                 <Button onClick={handleCancel} variant="secondary">
-                                    <XCircle size={18} style={{marginRight: '8px'}} /> Mégse
+                                    <XCircle size={18} style={{marginRight: '8px'}} /> {t('editJob.actions.cancel')}
                                 </Button>
                                 <Button onClick={handleSave} color="orion-blue" isLoading={isSaving}>
-                                    <Save size={18} style={{marginRight: '8px'}} /> Mentés
+                                    <Save size={18} style={{marginRight: '8px'}} /> {t('editJob.actions.save')}
                                 </Button>
                             </>
                         )}
@@ -143,37 +145,37 @@ const EditJob: React.FC = () => {
                     <div className={styles.contentArea}>
                         {/* Basic Info Card */}
                         <section className={styles.card}>
-                            <h2 className={styles.cardTitle}><Briefcase size={22} /> Pozíció adatai</h2>
+                            <h2 className={styles.cardTitle}><Briefcase size={22} /> {t('editJob.sections.position.title')}</h2>
                             <div className={styles.inputGrid}>
                                 <InputField
-                                    label="Hirdetés megnevezése"
+                                    label={t('editJob.sections.position.jobTitle')}
                                     value={advertisement.title}
                                     readOnly={!editMode}
                                     onChange={(e) => setAdvertisement({...advertisement, title: e.target.value})}
                                     containerClassName={styles.fullWidth}
-                                    placeholder="pl. Senior Frontend Fejlesztő"
+                                    placeholder={t('editJob.sections.position.jobTitlePlaceholder')}
                                 />
                                 <InputField
-                                    label="Munkakör / Pozíció"
+                                    label={t('editJob.sections.position.position')}
                                     value={advertisement.position}
                                     readOnly={!editMode}
                                     onChange={(e) => setAdvertisement({...advertisement, position: e.target.value})}
-                                    placeholder="pl. Szoftverfejlesztés"
+                                    placeholder={t('editJob.sections.position.positionPlaceholder')}
                                 />
                                 <InputField
-                                    label={<>Kínált órabér (Bruttó)</>}
+                                    label={<>{t('editJob.sections.position.hourlyWage')}</>}
                                     value={advertisement.hourly_wage}
                                     readOnly={!editMode}
                                     onChange={(e) => setAdvertisement({...advertisement, hourly_wage: e.target.value})}
-                                    placeholder="pl. 2500"
+                                    placeholder={t('editJob.sections.position.hourlyWagePlaceholder')}
                                 />
                                 <InputField
-                                    label={<><MapPin size={14} style={{marginRight: '4px'}}/> Munkavégzés helye</>}
+                                    label={<><MapPin size={14} style={{marginRight: '4px'}}/> {t('editJob.sections.position.location')}</>}
                                     value={advertisement.location}
                                     readOnly={!editMode}
                                     onChange={(e) => setAdvertisement({...advertisement, location: e.target.value})}
                                     containerClassName={styles.fullWidth}
-                                    placeholder="pl. Budapest, Remote"
+                                    placeholder={t('editJob.sections.position.locationPlaceholder')}
                                 />
 
                             </div>
@@ -181,34 +183,34 @@ const EditJob: React.FC = () => {
 
                         {/* Description Card */}
                         <section className={styles.card}>
-                            <h2 className={styles.cardTitle}><AlignLeft size={22} /> Tartalmi részletek</h2>
+                            <h2 className={styles.cardTitle}><AlignLeft size={22} /> {t('editJob.sections.content.title')}</h2>
                             <div className={styles.contentGrid}>
                                 <TextArea
-                                    label="Pozíció leírása"
+                                    label={t('editJob.sections.content.description')}
                                     value={advertisement.job_description}
                                     readOnly={!editMode}
                                     onChange={(e) => setAdvertisement({...advertisement, job_description: e.target.value})}
-                                    placeholder="Mutassa be a pozíciót röviden..."
+                                    placeholder={t('editJob.sections.content.descriptionPlaceholder')}
                                     rows={3} // Reduced height
                                 />
 
                                 {/* New nested grid for side-by-side text areas */}
                                 <div className={styles.textAreaSecondaryGrid}>
                                     <TextArea
-                                        label="Főbb feladatok"
+                                        label={t('editJob.sections.content.tasks')}
                                         value={advertisement.tasks}
                                         readOnly={!editMode}
                                         onChange={(e) => setAdvertisement({...advertisement, tasks: e.target.value})}
                                         rows={4} // Reduced from 6
-                                        placeholder="Sorolja fel a napi feladatokat..."
+                                        placeholder={t('editJob.sections.content.tasksPlaceholder')}
                                     />
                                     <TextArea
-                                        label="Elvárások a jelölttel szemben"
+                                        label={t('editJob.sections.content.requirements')}
                                         value={advertisement.requirements}
                                         readOnly={!editMode}
                                         onChange={(e) => setAdvertisement({...advertisement, requirements: e.target.value})}
                                         rows={4} // Reduced from 6
-                                        placeholder="Milyen készségekkel kell rendelkeznie?"
+                                        placeholder={t('editJob.sections.content.requirementsPlaceholder')}
                                     />
                                 </div>
                             </div>
@@ -218,17 +220,17 @@ const EditJob: React.FC = () => {
                     <aside className={styles.sidebar}>
                         {/* Status Card */}
                         <section className={styles.card}>
-                            <h2 className={styles.cardTitle}><AlertCircle size={22} /> Státusz</h2>
+                            <h2 className={styles.cardTitle}><AlertCircle size={22} /> {t('editJob.sections.status.title')}</h2>
                             <div className={styles.statusCard}>
                                 <div className={`${styles.statusBadge} ${advertisement.is_active ? styles.statusActive : styles.statusInactive}`}>
                                     {advertisement.is_active ? <CheckCircle size={16} /> : <XCircle size={16} />}
-                                    {advertisement.is_active ? "Aktív" : "Inaktív"}
+                                    {advertisement.is_active ? t('editJob.sections.status.active') : t('editJob.sections.status.inactive')}
                                 </div>
                                 
                                 <div className={styles.statusToggle}>
                                     <div className={styles.statusInfo}>
-                                        <h3>Láthatóság</h3>
-                                        <p>{advertisement.is_active ? "A hirdetés publikus." : "A hirdetés rejtett."}</p>
+                                        <h3>{t('editJob.sections.status.visibility')}</h3>
+                                        <p>{advertisement.is_active ? t('editJob.sections.status.public') : t('editJob.sections.status.hidden')}</p>
                                     </div>
                                     <label className={styles.switch}>
                                         <input
@@ -243,9 +245,9 @@ const EditJob: React.FC = () => {
                         </section>
 
                         <section className={styles.card}>
-                            <h3 style={{fontSize: '1rem', marginBottom: '12px', color: 'var(--text-main)'}}>Információ</h3>
+                            <h3 style={{fontSize: '1rem', marginBottom: '12px', color: 'var(--text-main)'}}>{t('editJob.sections.info.title')}</h3>
                             <p style={{fontSize: '0.875rem', color: 'var(--text-muted)', lineHeight: '1.5'}}>
-                                A módosítások mentés után azonnal életbe lépnek. Az inaktív hirdetésekre nem érkezhet új jelentkezés.
+                                {t('editJob.sections.info.text')}
                             </p>
                         </section>
                     </aside>

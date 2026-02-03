@@ -1,0 +1,280 @@
+{
+  "home": {
+    "banner": "Vállalati Vezérlőpult",
+    "title": "Üdvözöljük újra!",
+    "subtitle": "Kezelje toborzási folyamatait és elemezze a teljesítményt.",
+    "newJobButton": "+ Új hirdetés feladása",
+    "stats": {
+      "views": "Összes megtekintés",
+      "applicants": "Aktív jelentkezők",
+      "employees": "Alkalmazottak",
+      "conversion": "Konverzió"
+    },
+    "activeJobs": {
+      "title": "Aktuális hirdetések",
+      "viewAll": "Összes megtekintése",
+      "statusActive": "Aktív",
+      "view": "Megtekintés"
+    },
+    "recentActivity": {
+      "title": "Legutóbbi aktivitás",
+      "applied": "jelentkezett:",
+      "empty": "Nincs legutóbbi aktivitás."
+    }
+  },
+  "login": {
+    "title": "Cég bejelentkezés",
+    "switchView": "Váltás felhasználó nézetre"
+  },
+  "addJob": {
+    "banner": "Adminisztráció",
+    "title": "Új hirdetés közzététele",
+    "subtitle": "Készítsen profi álláshirdetést percek alatt.",
+    "validation": {
+      "requiredFields": "Kérlek, töltsd ki a kötelező mezőket!",
+      "success": "Sikeres a hirdetés létrehozása!",
+      "error": "Hiba a hirdetés létrehozása során."
+    },
+    "sections": {
+      "basicInfo": {
+        "title": "Alapadatok",
+        "jobTitle": "Hirdetés címe *",
+        "jobTitlePlaceholder": "pl. Senior Logisztikai Menedzser",
+        "position": "Pozíció *",
+        "positionPlaceholder": "pl. Raktáros",
+        "location": "Munkavégzés helye *",
+        "locationPlaceholder": "Budapest, XIII. kerület"
+      },
+      "details": {
+        "title": "Feladatok & Elvárások",
+        "description": "Munka Leírása",
+        "descriptionPlaceholder": "Mutassa be a céget és a lehetőséget...",
+        "tasks": "Feladatok",
+        "tasksPlaceholder": "Napi teendők listája...",
+        "requirements": "Követelmények",
+        "requirementsPlaceholder": "Tapasztalat, nyelvtudás..."
+      },
+      "benefits": {
+        "title": "Extra Juttatások",
+        "hint": "Válassza ki, mit kínál a jelentkezőknek:",
+        "options": {
+          "homeOffice": "Home Office",
+          "cafeteria": "Cafeteria",
+          "bonus": "Bónusz",
+          "companyCar": "Céges autó",
+          "flexibleHours": "Rugalmas munkaidő",
+          "modernTools": "Modern eszközök"
+        }
+      }
+    },
+    "sidebar": {
+      "title": "Beállítások",
+      "hourlyWage": "Órabér (HUF)",
+      "jobType": "Foglalkoztatás típusa",
+      "types": {
+        "fullTime": "Teljes munkaidő",
+        "partTime": "Részmunkaidő",
+        "freelance": "Projektmunka"
+      },
+      "active": {
+        "label": "Azonnali aktiválás",
+        "hint": "A hirdetés rögtön látható lesz"
+      },
+      "submit": "Hirdetés közzététele",
+      "saving": "Mentés...",
+      "cancel": "Mégsem és visszalépés",
+      "tip": {
+        "title": "💡 Tipp a sikerhez",
+        "text": "A részletesen kitöltött \"Feladatok\" szekció 40%-kal növeli a jelentkezési kedvet!"
+      }
+    }
+  },
+  "editJob": {
+    "banner": "Kezelés",
+    "title": "Hirdetés Szerkesztése",
+    "subtitle": "Kezelje és optimalizálja álláshirdetését a legjobb jelöltek eléréséhez.",
+    "loading": "Hirdetés betöltése...",
+    "notFound": "Hirdetés nem található.",
+    "actions": {
+      "back": "Vissza",
+      "edit": "Szerkesztés",
+      "cancel": "Mégse",
+      "save": "Mentés"
+    },
+    "sections": {
+      "position": {
+        "title": "Pozíció adatai",
+        "jobTitle": "Hirdetés megnevezése",
+        "jobTitlePlaceholder": "pl. Senior Frontend Fejlesztő",
+        "position": "Munkakör / Pozíció",
+        "positionPlaceholder": "pl. Szoftverfejlesztés",
+        "hourlyWage": "Kínált órabér (Bruttó)",
+        "hourlyWagePlaceholder": "pl. 2500",
+        "location": "Munkavégzés helye",
+        "locationPlaceholder": "pl. Budapest, Remote"
+      },
+      "content": {
+        "title": "Tartalmi részletek",
+        "description": "Pozíció leírása",
+        "descriptionPlaceholder": "Mutassa be a pozíciót röviden...",
+        "tasks": "Főbb feladatok",
+        "tasksPlaceholder": "Sorolja fel a napi feladatokat...",
+        "requirements": "Elvárások a jelölttel szemben",
+        "requirementsPlaceholder": "Milyen készségekkel kell rendelkeznie?"
+      },
+      "status": {
+        "title": "Státusz",
+        "active": "Aktív",
+        "inactive": "Inaktív",
+        "visibility": "Láthatóság",
+        "public": "A hirdetés publikus.",
+        "hidden": "A hirdetés rejtett."
+      },
+      "info": {
+        "title": "Információ",
+        "text": "A módosítások mentés után azonnal életbe lépnek. Az inaktív hirdetésekre nem érkezhet új jelentkezés."
+      }
+    },
+    "notifications": {
+      "loadError": "Nem sikerült betölteni a hirdetést.",
+      "saveSuccess": "Hirdetés sikeresen frissítve!",
+      "saveError": "Hiba történt a mentés során!",
+      "statusActive": "Hirdetés aktiválva",
+      "statusInactive": "Hirdetés deaktiválva",
+      "statusError": "Státusz módosítása sikertelen!"
+    }
+  },
+  "ats": {
+    "banner": "Toborzás",
+    "title": "Jelentkezők kezelése",
+    "views": "Megtekintések száma:",
+    "back": "Vissza",
+    "loading": "Betöltés...",
+    "empty": "Nincsenek új jelentkezők ehhez a hirdetéshez.",
+    "actions": {
+      "cv": "CV",
+      "accept": "Felvétel",
+      "reject": "Elutasítás"
+    },
+    "notifications": {
+      "noId": "Nincs hirdetés azonosító megadva.",
+      "fetchError": "Hiba a jelentkezők lekérésekor.",
+      "networkError": "Hálózati hiba vagy a szerver nem elérhető.",
+      "acceptSuccess": "Sikeresen elfogadva",
+      "rejectSuccess": "Sikeresen elutasítva",
+      "actionError": "Hiba történt.",
+      "cvError": "Az önéletrajz nem elérhető"
+    }
+  },
+  "editProfile": {
+    "general": {
+      "title": "Általános információk",
+      "companyName": "Cég neve",
+      "taxNumber": "Adószám",
+      "activityScope": "Tevékenységi kör",
+      "website": "Weboldal (URL)"
+    },
+    "contact": {
+      "title": "Elérhetőség",
+      "contactPerson": "Kapcsolattartó neve",
+      "phone": "Telefonszám",
+      "address": "Cím"
+    },
+    "introduction": {
+      "title": "Céges bemutatkozás",
+      "placeholder": "Írjon pár szót a cég küldetéséről és céljairól..."
+    }
+  },
+  "passwordReset": {
+    "title": "Új jelszó igénylés",
+    "description": "Kérjük, adja meg az email címét a jelszó csere link újraküldéséhez.",
+    "success": "link elküldve az email címére!",
+    "save": {
+      "title": "Új jelszó megadása",
+      "passwordLabel": "Új jelszó",
+      "passwordPlaceholder": "Add meg az új jelszót",
+      "confirmLabel": "Jelszó megerősítése",
+      "confirmPlaceholder": "Add meg újra a jelszót",
+      "button": "Jelszó mentése",
+      "errorMatch": "A jelszavak nem egyeznek!",
+      "errorLength": "A jelszónak legalább 6 karakter hosszúnak kell lennie!",
+      "errorToken": "Érvénytelen vagy hiányzó token!",
+      "errorSave": "Hiba történt a jelszó mentése közben.",
+      "success": "Sikeres jelszóváltoztatás!"
+    }
+  },
+  "register": {
+    "title": "Cég regisztráció",
+    "steps": {
+      "account": "Fiók adatok",
+      "company": "Cég adatok",
+      "contact": "Kapcsolattartás"
+    },
+    "fields": {
+      "email": "Email cím *",
+      "password": "Jelszó *",
+      "confirmPassword": "Megerősítés *",
+      "companyName": "Cégnév *",
+      "address": "Székhely címe *",
+      "taxNumber": "Adószám *",
+      "website": "Weboldal",
+      "contactPerson": "Kapcsolattartó neve *",
+      "phone": "Telefonszám *",
+      "activityScope": "Tevékenységi kör *",
+      "shortDescription": "Rövid bemutatkozás *",
+      "terms": "Elfogadom a felhasználási feltételeket"
+    },
+    "passwordRequirements": {
+      "title": "Jelszó követelmények:",
+      "length": "Legalább 8 karakter",
+      "lower": "Kisbetű",
+      "upper": "Nagybetű",
+      "number": "Szám",
+      "special": "Speciális karakter"
+    }
+  },
+  "sendVerify": {
+    "title": "E-mail hitelesítés",
+    "description": "Kérjük, adja meg az email címét a hitelesítő link újraküldéséhez.",
+    "emailLabel": "Email cím",
+    "emailPlaceholder": "pelda@email.hu",
+    "button": "Link küldése",
+    "errorEmail": "Kérjük, adjon meg egy email címet!",
+    "errorSend": "Hiba történt a küldés során!",
+    "success": "Hitelesítő link elküldve az email címére!"
+  },
+  "verify": {
+    "title": "Fiók aktiválása",
+    "verifying": "E-mail ellenőrzése folyamatban...",
+    "success": "Sikeres e-mail igazolás!",
+    "error": "Hiba történt: "
+  },
+  "employees": {
+    "title": "Alkalmazottak kezelése",
+    "subtitle": "A vállalat aktív munkavállalóinak nyilvántartása.",
+    "loading": "Betöltés...",
+    "table": {
+      "name": "Név",
+      "email": "Email",
+      "position": "Pozíció",
+      "wage": "Munkabér",
+      "actions": "Műveletek"
+    },
+    "deleteConfirm": "Biztosan el akarja távolítani ezt az alkalmazottat?",
+    "deleteSuccess": "Sikeresen eltávolítva",
+    "deleteError": "Sikertelen törlés",
+    "deleteErrorGeneric": "Hiba történt a törlés során",
+    "fire": "Kirúgás"
+  },
+  "showJobs": {
+    "banner": "Kezelés",
+    "title": "Aktuális hirdetései",
+    "back": "Vissza",
+    "add": "Hirdetés hozzáadása",
+    "edit": "Szerkesztés",
+    "active": "Aktív",
+    "inactive": "Inaktív",
+    "noJobs": "Nincsenek megjeleníthető hirdetések.",
+    "fetchError": "Hirdetések lekérése sikertelen:"
+  }
+}

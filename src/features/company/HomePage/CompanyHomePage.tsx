@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 import styles from "./CompanyHomePage.module.css";
 
 // Components
@@ -12,10 +13,9 @@ import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import { getCompanyAdvertisements, type CompanyAdvertisement } from "../../../api/advertisementApi";
 import { getCompanystat, type DashboardStats, type LastApplication } from "../../../api/companyApi";
 
-
-
 const CompanyHomePage: React.FC = () => {
     const navigate = useNavigate();
+    const { t } = useTranslation('company');
     const [ads, setAds] = useState<CompanyAdvertisement[]>([]);
     const [stats, setStats] = useState<DashboardStats>({});
     const [lastActivities, setLastActivities] = useState<LastApplication[]>([]);
@@ -55,31 +55,31 @@ const CompanyHomePage: React.FC = () => {
             <main className={styles.container}>
                 <header className={styles.dashboardHeader}>
                     <div>
-                        <BannerKicker>Vállalati Vezérlőpult</BannerKicker>
-                        <h1 className={styles.title}>Üdvözöljük újra!</h1>
-                        <p className={styles.subtitle}>Kezelje toborzási folyamatait és elemezze a teljesítményt.</p>
+                        <BannerKicker>{t('home.banner')}</BannerKicker>
+                        <h1 className={styles.title}>{t('home.title')}</h1>
+                        <p className={styles.subtitle}>{t('home.subtitle')}</p>
                     </div>
                     <Button onClick={() => navigate("/AddJob")} color="orion-blue">
-                        + Új hirdetés feladása
+                        {t('home.newJobButton')}
                     </Button>
                 </header>
 
                 {/* Statisztikai Sáv */}
                 <section className={styles.statsGrid}>
                     <div className={styles.statCard}>
-                        <div className={styles.statLabel}>Összes megtekintés</div>
+                        <div className={styles.statLabel}>{t('home.stats.views')}</div>
                         <div className={styles.statValue}>{stats.views || 0}</div>
                     </div>
                     <div className={styles.statCard}>
-                        <div className={styles.statLabel}>Aktív jelentkezők</div>
+                        <div className={styles.statLabel}>{t('home.stats.applicants')}</div>
                         <div className={styles.statValue}>{stats.applicants || 0}</div>
                     </div>
                     <div className={styles.statCard}>
-                        <div className={styles.statLabel}>Alkalmazottak</div>
+                        <div className={styles.statLabel}>{t('home.stats.employees')}</div>
                         <div className={styles.statValue}>{stats.employees || "-"}</div>
                     </div>
                     <div className={styles.statCard}>
-                        <div className={styles.statLabel}>Konverzió</div>
+                        <div className={styles.statLabel}>{t('home.stats.conversion')}</div>
                         <div className={styles.statValue}>{stats.conversion ? stats.conversion + "%" : "-"}</div>
                     </div>
                 </section>
@@ -88,17 +88,17 @@ const CompanyHomePage: React.FC = () => {
                     {/* Aktív hirdetések listája */}
                     <section className={styles.section}>
                         <div className={styles.sectionHeader}>
-                            <h2 className={styles.sectionTitle}>Aktuális hirdetések ({ads.length})</h2>
-                            <Button variant="secondary" onClick={() => navigate("/ShowListedJobs")}>Összes megtekintése</Button>
+                            <h2 className={styles.sectionTitle}>{t('home.activeJobs.title')} ({ads.length})</h2>
+                            <Button variant="secondary" onClick={() => navigate("/ShowListedJobs")}>{t('home.activeJobs.viewAll')}</Button>
                         </div>
                         <div className={styles.jobList}>
                             {ads.slice(0, 5).map(ad => (
                                 <div key={ad.id} className={styles.jobItem} onClick={() => navigate(`/company/ATS/${ad.id}`)}>
                                     <div className={styles.jobInfo}>
                                         <h4>{ad.title}</h4>
-                                        <div className={styles.jobMeta}>{ad.position} • Aktív</div>
+                                        <div className={styles.jobMeta}>{ad.position} • {t('home.activeJobs.statusActive')}</div>
                                     </div>
-                                    <div className={styles.badge}>Megtekintés</div>
+                                    <div className={styles.badge}>{t('home.activeJobs.view')}</div>
                                 </div>
                             ))}
                         </div>
@@ -107,20 +107,30 @@ const CompanyHomePage: React.FC = () => {
                     {/* Értesítések / Legutóbbi tevékenység */}
                     <aside className={styles.section}>
                         <div className={styles.sectionHeader}>
-                            <h2 className={styles.sectionTitle}>Legutóbbi aktivitás</h2>
+                            <h2 className={styles.sectionTitle}>{t('home.recentActivity.title')}</h2>
                         </div>
                         <div className={styles.jobList}>
                             {lastActivities.length > 0 ? (
                                 lastActivities.map((activity, index) => (
                                     <div key={index} className={styles.jobItem}>
                                         <div className={styles.jobMeta}>
-                                            <strong>{activity.users?.fname} {activity.users?.lname}</strong> jelentkezett: <i>{activity.advertisement?.title}</i>
+                                            <Trans
+                                                i18nKey="home.recentActivity.applied"
+                                                t={t}
+                                                values={{
+                                                    name: `${activity.users?.fname} ${activity.users?.lname}`,
+                                                    title: activity.advertisement?.title
+                                                }}
+                                                components={{ strong: <strong />, i: <i /> }}
+                                            >
+                                                <strong>{{ name: `${activity.users?.fname} ${activity.users?.lname}` }}</strong> jelentkezett: <i>{{ title: activity.advertisement?.title }}</i>
+                                            </Trans>
                                         </div>
                                     </div>
                                 ))
                             ) : (
                                 <div className={styles.jobItem}>
-                                    <div className={styles.jobMeta}>Nincs legutóbbi aktivitás.</div>
+                                    <div className={styles.jobMeta}>{t('home.recentActivity.empty')}</div>
                                 </div>
                             )}
                         </div>

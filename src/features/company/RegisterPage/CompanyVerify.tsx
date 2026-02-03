@@ -1,10 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { verifyCompanyEmail } from "../../../api/emailApi.ts";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "../../user/RegisterPage/UserRegisterPage.module.css";
 
 const CompanyVerify = () => {
+    const { t } = useTranslation('company');
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const isVerifying = useRef(false);
@@ -17,11 +19,11 @@ const CompanyVerify = () => {
 
             verifyCompanyEmail(token)
                 .then(() => {
-                    toast.success("Sikeres e-mail igazolás!");
+                    toast.success(t('verify.success'));
                     setTimeout(() => navigate("/CompanyLoginPage"), 2000);
                 })
                 .catch((error) => {
-                    toast.error("Hiba történt: " + error.message);
+                    toast.error(t('verify.error') + error.message);
                 });
         }
     }, [searchParams, navigate]);
@@ -32,9 +34,9 @@ const CompanyVerify = () => {
             <div className={styles.container}>
                 <div className={styles.card} style={{ textAlign: 'center' }}>
                     <header className={styles.header}>
-                        <h1>Fiók aktiválása</h1>
+                        <h1>{t('verify.title')}</h1>
                         <div className={styles.section} style={{ marginTop: '2rem' }}>
-                            <p>E-mail ellenőrzése folyamatban...</p>
+                            <p>{t('verify.verifying')}</p>
                             {/* You could add a Spinner component here */}
                             <div className={styles.stepper}>
                                 <div className={`${styles.step} ${styles.active}`} style={{ width: '100px', animation: 'pulse 1.5s infinite' }} />

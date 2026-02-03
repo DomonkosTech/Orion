@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { toast, Toaster } from "react-hot-toast";
 import { sendCompanyVerificationEmail } from "../../../Api/emailApi.ts";
 import styles from "../../user/RegisterPage/UserRegisterPage.module.css";
@@ -8,24 +9,25 @@ import InputField from "../../../components/InputField/InputField";
 import Button from "../../../components/Button/Button.tsx";
 
 const CompanySendVerify: React.FC = () => {
+    const { t } = useTranslation('company');
     const [email, setEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!email) {
-            toast.error("Kérjük, adjon meg egy email címet!");
+            toast.error(t('sendVerify.errorEmail'));
             return;
         }
 
         setIsLoading(true);
         try {
             await sendCompanyVerificationEmail(email);
-            toast.success("Hitelesítő link elküldve az email címére!");
+            toast.success(t('sendVerify.success'));
             setEmail("");
         } catch (error) {
             console.error(error);
-            toast.error("Hiba történt a küldés során!");
+            toast.error(t('sendVerify.errorSend'));
         } finally {
             setIsLoading(false);
         }
@@ -37,19 +39,19 @@ const CompanySendVerify: React.FC = () => {
             <div className={styles.container}>
                 <div className={styles.card}>
                     <header className={styles.header}>
-                        <h1>E-mail hitelesítés</h1>
-                        <p>Kérjük, adja meg az email címét a hitelesítő link újraküldéséhez.</p>
+                        <h1>{t('sendVerify.title')}</h1>
+                        <p>{t('sendVerify.description')}</p>
                     </header>
 
                     <form onSubmit={handleSubmit} className={styles.form}>
                         <section className={styles.section}>
                             <InputField
-                                label="Email cím"
+                                label={t('sendVerify.emailLabel')}
                                 name="email"
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                placeholder="pelda@email.hu"
+                                placeholder={t('sendVerify.emailPlaceholder')}
                             />
                         </section>
 
@@ -61,7 +63,7 @@ const CompanySendVerify: React.FC = () => {
                                 isLoading={isLoading}
                                 style={{ width: '100%' }}
                             >
-                                Link küldése
+                                {t('sendVerify.button')}
                             </Button>
                         </div>
                     </form>

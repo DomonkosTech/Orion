@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from "react-i18next";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "./ApplicantTrackingSystem.module.css";
 
@@ -21,6 +22,7 @@ import {
 } from "../../../api/applicationApi.ts";
 
 export const ApplicantTrackingSystem: React.FC = () => {
+    const { t } = useTranslation('company');
     const navigate = useNavigate();
     const [applicants, setApplicants] = useState<Applicant[]>([]);
     const [loading, setLoading] = useState(true);
@@ -31,7 +33,7 @@ export const ApplicantTrackingSystem: React.FC = () => {
         const fetchApplicants = async () => {
             if (!id) {
                 setLoading(false);
-                setError("Nincs hirdetés azonosító megadva.");
+                setError(t('ats.notifications.noId'));
                 console.error(error)
                 return;
             }
@@ -40,11 +42,11 @@ export const ApplicantTrackingSystem: React.FC = () => {
                 if (data.success) {
                     setApplicants(data.applicants);
                 } else {
-                    setError(data.error || "Hiba a jelentkezők lekérésekor.");
+                    setError(data.error || t('ats.notifications.fetchError'));
                 }
             } catch (err) {
                 console.error(err)
-                setError("Hálózati hiba vagy a szerver nem elérhető.");
+                setError(t('ats.notifications.networkError'));
             } finally {
                 setLoading(false);
             }
@@ -56,12 +58,12 @@ export const ApplicantTrackingSystem: React.FC = () => {
         try {
             const data = await acceptApplication(applicationId);
             if (data.success) {
-                toast.success("Sikeresen elfogadva");
+                toast.success(t('ats.notifications.acceptSuccess'));
                 setApplicants(prev => prev.filter(app => app.id !== applicationId));
             }
         } catch (err) {
             console.error(err)
-            toast.error("Hiba történt.");
+            toast.error(t('ats.notifications.actionError'));
         }
     };
 
@@ -73,7 +75,7 @@ export const ApplicantTrackingSystem: React.FC = () => {
             }
         } catch (err) {
             console.error(err)
-            toast.error("Az önéletrajz nem elérhető");
+            toast.error(t('ats.notifications.cvError'));
         }
     };
 
@@ -81,16 +83,16 @@ export const ApplicantTrackingSystem: React.FC = () => {
         try {
             const data = await rejectApplication(applicationId);
             if (data.success) {
-                toast.success("Sikeresen elutasítva");
+                toast.success(t('ats.notifications.rejectSuccess'));
                 setApplicants(prev => prev.filter(app => app.id !== applicationId));
             }
         } catch (err) {
             console.error(err)
-            toast.error("Hiba történt.");
+            toast.error(t('ats.notifications.actionError'));
         }
     };
 
-    if (loading) return <div className={styles.page}><Header /><p className={styles.emptyState}>Betöltés...</p></div>;
+    if (loading) return <div className={styles.page}><Header /><p className={styles.emptyState}>{t('ats.loading')}</p></div>;
 
     return (
         <div className={styles.page}>
@@ -98,16 +100,16 @@ export const ApplicantTrackingSystem: React.FC = () => {
             <main className={styles.container}>
                 <header className={styles.header}>
                     <div>
-                        <BannerKicker>Toborzás</BannerKicker>
-                        <h1 className={styles.title}>Jelentkezők kezelése</h1>
+                        <BannerKicker>{t('ats.banner')}</BannerKicker>
+                        <h1 className={styles.title}>{t('ats.title')}</h1>
                         {applicants.length > 0 && (
                             <div className={styles.statsCounter}>
-                                Megtekintések száma: {applicants[0].click_count?.click_count ?? 0}
+                                {t('ats.views')} {applicants[0].click_count?.click_count ?? 0}
                             </div>
                         )}
                     </div>
                     <Button variant="secondary" onClick={() => navigate(-1)}>
-                        <ArrowLeft size={18} /> Vissza
+                        <ArrowLeft size={18} /> {t('ats.back')}
                     </Button>
                 </header>
 
@@ -116,7 +118,7 @@ export const ApplicantTrackingSystem: React.FC = () => {
                 <div className={styles.applicantList}>
                     {applicants.length === 0 ? (
                         <div className={styles.emptyState}>
-                            <p>Nincsenek új jelentkezők ehhez a hirdetéshez.</p>
+                            <p>{t('ats.empty')}</p>
                         </div>
                     ) : (
                         applicants.map((applicant) => (
@@ -135,19 +137,19 @@ export const ApplicantTrackingSystem: React.FC = () => {
                                         onClick={() => handleDownloadResume(applicant.id)}
                                         className={`${styles.btn} ${styles.btnDownload}`}
                                     >
-                                        <FileText size={16} /> CV
+                                        <FileText size={16} /> {t('ats.actions.cv')}
                                     </button>
                                     <Button
                                         color={"leaf-green"}
                                         onClick={() => handleAccept(applicant.id)}
                                     >
-                                        <Check size={16} /> Felvétel
+                                        <Check size={16} /> {t('ats.actions.accept')}
                                     </Button>
                                     <Button
                                         color={"fire-red"}
                                         onClick={() => handleReject(applicant.id)}
                                     >
-                                        <X size={16} /> Elutasítás
+                                        <X size={16} /> {t('ats.actions.reject')}
                                     </Button>
                                 </div>
                             </div>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import pageStyles from "./CompanyEditProfile.module.css";
 import formStyles from "../../../components/EditProfile/EditProfile.module.css";
 import {
@@ -13,6 +14,8 @@ import InputField from "../../../components/InputField/InputField.tsx";
 import TextArea from "../../../components/TextArea/TextArea.tsx";
 
 const CompanyEditProfile: React.FC = () => {
+    const { t } = useTranslation('company');
+
     return (
         <div className={pageStyles.pageWrapper}>
             <Header />
@@ -23,11 +26,11 @@ const CompanyEditProfile: React.FC = () => {
                         return (
                             <>
                                 <section className={formStyles.formCard}>
-                                    <h2 className={formStyles.cardTitle}><Building2 size={20}/> Általános információk</h2>
+                                    <h2 className={formStyles.cardTitle}><Building2 size={20}/> {t('editProfile.general.title')}</h2>
                                     <div className={formStyles.inputGroup}>
                                         <div className={formStyles.fieldFull}>
                                             <InputField
-                                                label="Cég neve"
+                                                label={t('editProfile.general.companyName')}
                                                 value={company.name}
                                                 readOnly={!editMode}
                                                 onChange={(e) => setCompany({...company, name: e.target.value})}
@@ -35,14 +38,14 @@ const CompanyEditProfile: React.FC = () => {
                                             />
                                         </div>
                                         <InputField
-                                            label="Adószám"
+                                            label={t('editProfile.general.taxNumber')}
                                             value={company.tax_number}
                                             readOnly={!editMode}
                                             onChange={(e) => setCompany({...company, tax_number: e.target.value})}
                                             containerClassName={formStyles.field}
                                         />
                                         <InputField
-                                            label="Tevékenységi kör"
+                                            label={t('editProfile.general.activityScope')}
                                             value={company.activity_scope}
                                             readOnly={!editMode}
                                             onChange={(e) => setCompany({...company, activity_scope: e.target.value})}
@@ -50,7 +53,7 @@ const CompanyEditProfile: React.FC = () => {
                                         />
                                         <div className={formStyles.fieldFull}>
                                             <InputField
-                                                label="Weboldal (URL)"
+                                                label={t('editProfile.general.website')}
                                                 type="url"
                                                 value={company.website}
                                                 readOnly={!editMode}
@@ -62,24 +65,24 @@ const CompanyEditProfile: React.FC = () => {
                                 </section>
 
                                 <section className={formStyles.formCard}>
-                                    <h2 className={formStyles.cardTitle}><Phone size={20}/> Elérhetőség</h2>
+                                    <h2 className={formStyles.cardTitle}><Phone size={20}/> {t('editProfile.contact.title')}</h2>
                                     <div className={formStyles.inputGroup}>
                                         <InputField
-                                            label="Kapcsolattartó neve"
+                                            label={t('editProfile.contact.contactPerson')}
                                             value={company.contact_person_name}
                                             readOnly={!editMode}
                                             onChange={(e) => setCompany({...company, contact_person_name: e.target.value})}
                                             containerClassName={formStyles.fieldFull}
                                         />
                                         <InputField
-                                            label="Telefonszám"
+                                            label={t('editProfile.contact.phone')}
                                             value={company.phone_number}
                                             readOnly={!editMode}
                                             onChange={(e) => setCompany({...company, phone_number: e.target.value})}
                                             containerClassName={formStyles.fieldFull}
                                         />
                                         <InputField
-                                            label="Cím"
+                                            label={t('editProfile.contact.address')}
                                             value={company.address}
                                             readOnly={!editMode}
                                             onChange={(e) => setCompany({...company, address: e.target.value})}
@@ -89,7 +92,7 @@ const CompanyEditProfile: React.FC = () => {
                                 </section>
 
                                 <section className={`${formStyles.formCard} ${formStyles.fullWidth}`}>
-                                    <h2 className={formStyles.cardTitle}><FileText size={20}/> Céges bemutatkozás</h2>
+                                    <h2 className={formStyles.cardTitle}><FileText size={20}/> {t('editProfile.introduction.title')}</h2>
                                     <div className={formStyles.fieldFull}>
                                         <TextArea
                                             label=""
@@ -97,7 +100,7 @@ const CompanyEditProfile: React.FC = () => {
                                             value={company.short_description}
                                             readOnly={!editMode}
                                             onChange={(e) => setCompany({...company, short_description: e.target.value})}
-                                            placeholder="Írjon pár szót a cég küldetéséről és céljairól..."
+                                            placeholder={t('editProfile.introduction.placeholder')}
                                         />
                                     </div>
                                 </section>

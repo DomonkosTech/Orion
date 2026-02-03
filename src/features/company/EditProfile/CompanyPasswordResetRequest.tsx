@@ -1,14 +1,17 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { sendCompanyPasswordResetEmail } from "../../../api/emailApi.ts";
 import PasswordResetRequest from "../../../components/PasswordReset/PasswordResetRequest.tsx";
 
 const CompanyPasswordResetRequest: React.FC = () => {
+    const { t } = useTranslation('company');
+
     return (
         <PasswordResetRequest
             onSendEmail={sendCompanyPasswordResetEmail}
-            title="Új jelszó igénylés"
-            description="Kérjük, adja meg az email címét a jelszó csere link újraküldéséhez."
-            successMessage="link elküldve az email címére!"
+            title={t('passwordReset.title')}
+            description={t('passwordReset.description')}
+            successMessage={t('passwordReset.success')}
         />
     );
 };
