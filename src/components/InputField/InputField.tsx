@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styles from './InputField.module.css';
 import { Eye, EyeOff } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface InputFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: React.ReactNode; // Supports strings or icons/components
@@ -19,6 +20,7 @@ const InputField: React.FC<InputFieldProps> = ({
                                                    type,
                                                    ...props
                                                }) => {
+    const { t } = useTranslation('components');
     const [showPassword, setShowPassword] = useState(false);
 
     const togglePasswordVisibility = () => {
@@ -47,7 +49,7 @@ const InputField: React.FC<InputFieldProps> = ({
                         className={styles.eyeButton}
                         onClick={togglePasswordVisibility}
                         tabIndex={-1}
-                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-label={showPassword ? t('inputField.hidePassword') : t('inputField.showPassword')}
                     >
                         {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button>

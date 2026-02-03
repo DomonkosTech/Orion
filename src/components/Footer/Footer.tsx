@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import styles from './Footer.module.css';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+    const { t } = useTranslation('components');
     const currentYear = new Date().getFullYear();
 
     return (
@@ -10,20 +12,20 @@ const Footer = () => {
                 {/* Brand Section */}
                 <div className={styles.footerCol}>
                     <div className={styles.footerBrand}>Orion</div>
-                    <div className={styles.footerMuted}>Letisztult karrierportál élmény.</div>
+                    <div className={styles.footerMuted}>{t('footer.motto')}</div>
                 </div>
 
                 {/* Navigation Links */}
                 <div className={styles.footerCol}>
-                    <div className={styles.footerTitle}>Gyors linkek</div>
-                    <Link to="/listjobs" className={styles.footerLink}>Állások</Link>
-                    <Link to="/jobapplication" className={styles.footerLink}>Jelentkezések</Link>
-                    <Link to="/UserEditProfile" className={styles.footerLink}>Profil</Link>
+                    <div className={styles.footerTitle}>{t('footer.quickLinks')}</div>
+                    <Link to="/listjobs" className={styles.footerLink}>{t('footer.jobs')}</Link>
+                    <Link to="/jobapplication" className={styles.footerLink}>{t('footer.applications')}</Link>
+                    <Link to="/UserEditProfile" className={styles.footerLink}>{t('footer.profile')}</Link>
                 </div>
 
                 {/* Contact Section */}
                 <div className={styles.footerCol}>
-                    <div className={styles.footerTitle}>Kapcsolat</div>
+                    <div className={styles.footerTitle}>{t('footer.contact')}</div>
                     <a className={styles.footerLink} href="mailto:info@orion.hu">
                         info@orion.hu
                     </a>
@@ -32,7 +34,7 @@ const Footer = () => {
             </div>
 
             <div className={styles.footerBottom}>
-                © {currentYear} Orion. Minden jog fenntartva.
+                {t('footer.copyright', { year: currentYear })}
             </div>
         </footer>
     );

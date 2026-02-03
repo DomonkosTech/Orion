@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React from "react";
 import styles from "./Header.module.css";
+import { useTranslation } from "react-i18next";
 
 // Components
 import NotificationDropdown from "../MessageDropDown/NotificationDropDown.tsx";
@@ -27,6 +28,7 @@ export function Header({
                            navItems = [],
                            actions,
                        }: HeaderProps) {
+    const { t } = useTranslation('components');
     const handleLogout = useLogout();
     const { loggedIn, userType, loading, initials, name } = useAuth();
 
@@ -37,22 +39,22 @@ export function Header({
     if (loggedIn) {
         if (userType === "user" && dynamicNavItems.length === 0) {
             dynamicNavItems = [
-                { label: "Kezdőlap", href: "/userhomepage" },
-                { label: "Állások", href: "/listjobs" },
-                { label: "Jelentkezéseim", href: "/JobApplications" },
+                { label: t('header.home'), href: "/userhomepage" },
+                { label: t('header.jobs'), href: "/listjobs" },
+                { label: t('header.myApplications'), href: "/JobApplications" },
             ];
         } else if (userType === "company" && dynamicNavItems.length === 0) {
             dynamicNavItems = [
-                { label: "Vezérlőpult", href: "/company" },
-                { label: "Hirdetés feladása", href: "/AddJob" },
-                { label: "Alkalmazottak", href: "/employees" },
+                { label: t('header.dashboard'), href: "/company" },
+                { label: t('header.postJob'), href: "/AddJob" },
+                { label: t('header.employees'), href: "/employees" },
             ];
         }
     } else if (dynamicNavItems.length === 0) {
         dynamicNavItems = [
-            {label: "Kezdőlap", href: "/" },
-            {label: "Bejelentkezés", href: "/UserLoginPage"},
-            {label: "Cégeknek", href: "/CompanyLoginPage"}
+            {label: t('header.home'), href: "/" },
+            {label: t('header.login'), href: "/UserLoginPage"},
+            {label: t('header.forCompanies'), href: "/CompanyLoginPage"}
 
         ];
     }

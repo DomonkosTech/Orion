@@ -19,6 +19,7 @@ import {
 import styles from "./EditProfile.module.css";
 import { toast, Toaster } from "react-hot-toast";
 import { userUpdateProfileSchema, companyUpdateProfileSchema } from "../../validation/Validation.ts";
+import { useTranslation } from "react-i18next";
 
 // Components
 import Button from "../Button/Button.tsx";
@@ -43,6 +44,7 @@ interface EditProfileProps {
 }
 
 const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
+    const { t } = useTranslation('components');
     // User state
     const [user, setUser] = useState<UserProfileData | null>(null);
     const [documents, setDocuments] = useState<Documents | null>(null);
@@ -84,13 +86,13 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                 }
             } catch (err) {
                 console.error("Fetch error:", err);
-                toast.error("Adatok betöltése sikertelen.");
+                toast.error(t('editProfile.loadingError'));
             } finally {
                 setLoading(false);
             }
         };
         fetchData();
-    }, [type]);
+    }, [type, t]);
 
     const handleSave = async () => {
         setIsSaving(true);
@@ -107,7 +109,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
 
                 const data = await updateUserProfile({ user, documents });
                 if (data.success) {
-                    toast.success("Profil sikeresen frissítve!");
+                    toast.success(t('editProfile.saveSuccess'));
                     setOriginalUser(user);
                     setOriginalDocuments(documents);
                     setEditMode(false);
@@ -125,12 +127,12 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                     setCompany(data.company);
                     setOriginalCompany(data.company);
                     setEditMode(false);
-                    toast.success("Sikeres mentés!");
+                    toast.success(t('editProfile.saveSuccess'));
                 }
             }
         } catch (err) {
             console.error(err);
-            toast.error("Hiba történt a mentés során!");
+            toast.error(t('editProfile.saveError'));
         } finally {
             setIsSaving(false);
         }
@@ -149,7 +151,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
     const handleDeleteResume = () => {
         toast((t) => (
             <div className={styles.toastConfirm}>
-                <p>Biztosan törölni szeretné az önéletrajzát?</p>
+                <p>{t('editProfile.deleteResumeConfirmation')}</p>
                 <div className={styles.toastActions}>
                     <Button
                         variant="secondary"
@@ -157,7 +159,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                         onClick={() => toast.dismiss(t.id)}
                         style={{ padding: '4px 12px', fontSize: '0.9rem' }}
                     >
-                        Mégse
+                        {t('editProfile.cancel')}
                     </Button>
                     <Button
                         variant="primary"
@@ -168,16 +170,16 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                                 const data = await deleteResume();
                                 if (data.success) {
                                     setResume(false);
-                                    toast.success("Önéletrajz törölve.");
+                                    toast.success(t('editProfile.resumeDeleted'));
                                 }
                             } catch (err) {
                                 console.error(err);
-                                toast.error("Hiba történt a törlés során.");
+                                toast.error(t('editProfile.deleteError'));
                             }
                         }}
                         style={{ padding: '4px 12px', fontSize: '0.9rem' }}
                     >
-                        Törlés
+                        {t('editProfile.delete')}
                     </Button>
                 </div>
             </div>
@@ -206,20 +208,20 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
             {loading ? (
                 <div className={styles.loadingState}>
                     <div className={styles.spinner}></div>
-                    <p>Adatok betöltése...</p>
+                    <p>{t('editProfile.loadingData')}</p>
                 </div>
             ) : (!user && type === "user") || (!company && type === "company") ? (
                 <div className={styles.loadingState}>
-                    <p>Nem található adat.</p>
-                    <Button onClick={() => navigate(type === "user" ? "/userhomepage" : "/company")} color="orion-blue">Vissza a főoldalra</Button>
+                    <p>{t('editProfile.noData')}</p>
+                    <Button onClick={() => navigate(type === "user" ? "/userhomepage" : "/company")} color="orion-blue">{t('editProfile.backToMain')}</Button>
                 </div>
             ) : (
                 <>
                     <div className={styles.profileHeader}>
                         <div className={styles.titleGroup}>
-                            <BannerKicker>{type === "user" ? "Felhasználói Fiók" : "Cégkezelés"}</BannerKicker>
-                            <h1>{type === "user" ? "Profilom" : "Cégadatok"}</h1>
-                            <p>{type === "user" ? "Kezeld a személyes adataidat és dokumentumaidat egy helyen." : "Módosítsa vállalata adatait a munkaerő-toborzáshoz."}</p>
+                            <BannerKicker>{type === "user" ? t('editProfile.userAccount') : t('editProfile.companyManagement')}</BannerKicker>
+                            <h1>{type === "user" ? t('editProfile.myProfile') : t('editProfile.companyData')}</h1>
+                            <p>{type === "user" ? t('editProfile.userDescription') : t('editProfile.companyDescription')}</p>
                         </div>
 
                         {!editMode ? (
@@ -230,7 +232,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                                     color="black"
                                     className={styles.headerBtn}
                                 >
-                                    <ArrowLeft size={18} style={{marginRight: '8px'}} /> Vissza
+                                    <ArrowLeft size={18} style={{marginRight: '8px'}} /> {t('editProfile.back')}
                                 </Button>
                                 <Button
                                     onClick={() => navigate(type === "user" ? "/user/password/reset" : "/company/password/reset")}
@@ -238,7 +240,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                                     color="orion-blue"
                                     className={styles.headerBtn}
                                 >
-                                    Jelszó módosítása
+                                    {t('editProfile.changePassword')}
                                 </Button>
                                 <Button
                                     onClick={() => setEditMode(true)}
@@ -246,7 +248,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                                     variant="primary"
                                     className={styles.headerBtn}
                                 >
-                                    <Edit3 size={18} style={{marginRight: '8px'}} /> Szerkesztés
+                                    <Edit3 size={18} style={{marginRight: '8px'}} /> {t('editProfile.edit')}
                                 </Button>
                             </div>
                         ) : (
@@ -257,7 +259,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                                     color="black"
                                     className={styles.headerBtn}
                                 >
-                                    <XCircle size={18} style={{marginRight: '8px'}} /> Mégse
+                                    <XCircle size={18} style={{marginRight: '8px'}} /> {t('editProfile.cancel')}
                                 </Button>
                                 <Button
                                     onClick={handleSave}
@@ -265,7 +267,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                                     isLoading={isSaving}
                                     className={styles.headerBtn}
                                 >
-                                    <Save size={18} style={{marginRight: '8px'}} /> Mentés
+                                    <Save size={18} style={{marginRight: '8px'}} /> {t('editProfile.save')}
                                 </Button>
                             </div>
                         )}

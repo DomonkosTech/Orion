@@ -188,20 +188,7 @@
   "passwordReset": {
     "title": "Új jelszó igénylés",
     "description": "Kérjük, adja meg az email címét a jelszó csere link újraküldéséhez.",
-    "success": "link elküldve az email címére!",
-    "save": {
-      "title": "Új jelszó megadása",
-      "passwordLabel": "Új jelszó",
-      "passwordPlaceholder": "Add meg az új jelszót",
-      "confirmLabel": "Jelszó megerősítése",
-      "confirmPlaceholder": "Add meg újra a jelszót",
-      "button": "Jelszó mentése",
-      "errorMatch": "A jelszavak nem egyeznek!",
-      "errorLength": "A jelszónak legalább 6 karakter hosszúnak kell lennie!",
-      "errorToken": "Érvénytelen vagy hiányzó token!",
-      "errorSave": "Hiba történt a jelszó mentése közben.",
-      "success": "Sikeres jelszóváltoztatás!"
-    }
+    "success": "link elküldve az email címére!"
   },
   "register": {
     "title": "Cég regisztráció",

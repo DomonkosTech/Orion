@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "./PasswordResetSave.module.css";
 import InputField from "../InputField/InputField";
@@ -15,6 +16,7 @@ const PasswordResetSave: React.FC<PasswordResetSaveProps> = ({
     onSavePassword,
     redirectPath
 }) => {
+    const { t } = useTranslation('components');
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [searchParams] = useSearchParams();
@@ -24,27 +26,27 @@ const PasswordResetSave: React.FC<PasswordResetSaveProps> = ({
         e.preventDefault();
 
         if (password !== confirmPassword) {
-            toast.error("A jelszavak nem egyeznek!");
+            toast.error(t('passwordResetSave.errorMatch'));
             return;
         }
 
         if (password.length < 6) {
-            toast.error("A jelszónak legalább 6 karakter hosszúnak kell lennie!");
+            toast.error(t('passwordResetSave.errorLength'));
             return;
         }
 
         const token = searchParams.get("token");
         if (!token) {
-            toast.error("Érvénytelen vagy hiányzó token!");
+            toast.error(t('passwordResetSave.errorToken'));
             return;
         }
 
         try {
             await onSavePassword(token, password);
-            toast.success("Sikeres jelszóváltoztatás!");
+            toast.success(t('passwordResetSave.success'));
             navigate(redirectPath);
         } catch (err) {
-            const errorMessage = err instanceof Error ? err.message : "Hiba történt a jelszó mentése közben.";
+            const errorMessage = err instanceof Error ? err.message : t('passwordResetSave.errorSave');
             toast.error(errorMessage);
         }
     };
@@ -56,29 +58,29 @@ const PasswordResetSave: React.FC<PasswordResetSaveProps> = ({
             <main className={styles.mainContent}>
                 <div className={styles.container}>
                     <div className={styles.card}>
-                        <h2 className={styles.title}>Új jelszó megadása</h2>
+                        <h2 className={styles.title}>{t('passwordResetSave.title')}</h2>
 
                         <form onSubmit={handleSubmit} className={styles.form}>
                             <div className={styles.field}>
-                                <label htmlFor="password">Új jelszó</label>
+                                <label htmlFor="password">{t('passwordResetSave.passwordLabel')}</label>
                                 <InputField
                                     type="password"
                                     id="password"
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="Add meg az új jelszót"
+                                    placeholder={t('passwordResetSave.passwordPlaceholder')}
                                     required
                                 />
                             </div>
 
                             <div className={styles.field}>
-                                <label htmlFor="confirmPassword">Jelszó megerősítése</label>
+                                <label htmlFor="confirmPassword">{t('passwordResetSave.confirmLabel')}</label>
                                 <InputField
                                     type="password"
                                     id="confirmPassword"
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
-                                    placeholder="Add meg újra a jelszót"
+                                    placeholder={t('passwordResetSave.confirmPlaceholder')}
                                     required
                                 />
                             </div>
@@ -88,7 +90,7 @@ const PasswordResetSave: React.FC<PasswordResetSaveProps> = ({
                                 color={"orion-blue"}
                                 style={{ width: '100%' }}
                             >
-                                Jelszó mentése
+                                {t('passwordResetSave.button')}
                             </Button>
                         </form>
                     </div>

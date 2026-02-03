@@ -1,6 +1,7 @@
 import React from "react";
 import type {Message} from "../../../api/messageApi.ts";
 import styles from "../MessengerPage.module.css";
+import { useTranslation } from "react-i18next";
 
 interface MessageBubbleProps {
     message: Message;
@@ -20,6 +21,7 @@ function formatDateTime(value?: string | null) {
 }
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, initials, isLastRead, style }) => {
+    const { t } = useTranslation('components');
     const text = message.content ?? message.message ?? "";
     const rowClass = isUser ? `${styles.bubbleRow} ${styles.bubbleRowUser}` : `${styles.bubbleRow} ${styles.bubbleRowCompany}`;
     const bubbleClass = isUser ? `${styles.bubble} ${styles.userBubble}` : `${styles.bubble} ${styles.companyBubble}`;
@@ -30,7 +32,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isUser, initials
                 <div>{text}</div>
                 <div className={styles.smallMuted}>{formatDateTime(message.created_at)}</div>
                 {isUser && isLastRead && (
-                    <div className={styles.smallAvatar} title={"Látta a cég"}>
+                    <div className={styles.smallAvatar} title={t('messageBubble.seenByCompany')}>
                         {initials}
                     </div>
                 )}

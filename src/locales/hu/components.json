@@ -1,0 +1,124 @@
+{
+  "loading": "Betöltés...",
+  "footer": {
+    "motto": "Letisztult karrierportál élmény.",
+    "quickLinks": "Gyors linkek",
+    "jobs": "Állások",
+    "applications": "Jelentkezések",
+    "profile": "Profil",
+    "contact": "Kapcsolat",
+    "copyright": "© {{year}} Orion. Minden jog fenntartva."
+  },
+  "header": {
+    "home": "Kezdőlap",
+    "jobs": "Állások",
+    "myApplications": "Jelentkezéseim",
+    "dashboard": "Vezérlőpult",
+    "postJob": "Hirdetés feladása",
+    "employees": "Alkalmazottak",
+    "login": "Bejelentkezés",
+    "forCompanies": "Cégeknek"
+  },
+  "loginPage": {
+    "emailLabel": "Email cím",
+    "emailPlaceholder": "email@pelda.hu",
+    "passwordLabel": "Jelszó",
+    "rememberMe": "Emlékezz rám",
+    "forgotPassword": "Elfelejtette jelszavát?",
+    "loginButton": "Bejelentkezés",
+    "registerButton": "Regisztráció",
+    "noAccount": "Nincs még fiókja?",
+    "registerHere": "Regisztráljon itt",
+    "loginSuccess": "Sikeres bejelentkezés!",
+    "accountNotActivated": "A fiók nincs aktiválva. Kérjük hitelesítse email címét!",
+    "networkError": "Hálózati hiba történt",
+    "genericError": "Hiba történt"
+  },
+  "inputField": {
+    "showPassword": "Jelszó megjelenítése",
+    "hidePassword": "Jelszó elrejtése"
+  },
+  "editProfile": {
+    "loadingError": "Adatok betöltése sikertelen.",
+    "saveSuccess": "Profil sikeresen frissítve!",
+    "saveError": "Hiba történt a mentés során!",
+    "deleteResumeConfirmation": "Biztosan törölni szeretné az önéletrajzát?",
+    "cancel": "Mégse",
+    "delete": "Törlés",
+    "resumeDeleted": "Önéletrajz törölve.",
+    "deleteError": "Hiba történt a törlés során.",
+    "loadingData": "Adatok betöltése...",
+    "noData": "Nem található adat.",
+    "backToMain": "Vissza a főoldalra",
+    "userAccount": "Felhasználói Fiók",
+    "companyManagement": "Cégkezelés",
+    "myProfile": "Profilom",
+    "companyData": "Cégadatok",
+    "userDescription": "Kezeld a személyes adataidat és dokumentumaidat egy helyen.",
+    "companyDescription": "Módosítsa vállalata adatait a munkaerő-toborzáshoz.",
+    "back": "Vissza",
+    "changePassword": "Jelszó módosítása",
+    "edit": "Szerkesztés",
+    "save": "Mentés"
+  },
+  "bannerKicker": {
+    "text": "Orion • {{children}}"
+  },
+  "registerPage": {
+    "step": "Lépés {{step}} / {{totalSteps}}: {{label}}",
+    "fixErrors": "Kérjük, javítsa a hibákat a továbblépéshez!",
+    "checkData": "Ellenőrizze az adatokat!",
+    "success": "Sikeres regisztráció!",
+    "networkError": "Hálózati hiba történt",
+    "back": "Vissza",
+    "continue": "Folytatás",
+    "finishRegistration": "Regisztráció befejezése",
+    "alreadyHaveAccount": "Már van fiókja?",
+    "loginHere": "Jelentkezzen be!"
+  },
+  "passwordResetRequest": {
+    "title": "Jelszó csere",
+    "description": "Kérjük, adja meg az email címét a jelszó cserélő link újraküldéséhez.",
+    "successMessage": "Link elküldve az email címére!",
+    "emailRequired": "Kérjük, adjon meg egy email címet!",
+    "sendError": "Hiba történt a küldés során!",
+    "emailLabel": "Email cím",
+    "emailPlaceholder": "pelda@email.hu",
+    "sendLink": "Link küldése"
+  },
+  "passwordResetSave": {
+    "title": "Új jelszó megadása",
+    "passwordLabel": "Új jelszó",
+    "passwordPlaceholder": "Add meg az új jelszót",
+    "confirmLabel": "Jelszó megerősítése",
+    "confirmPlaceholder": "Add meg újra a jelszót",
+    "button": "Jelszó mentése",
+    "errorMatch": "A jelszavak nem egyeznek!",
+    "errorLength": "A jelszónak legalább 6 karakter hosszúnak kell lennie!",
+    "errorToken": "Érvénytelen vagy hiányzó token!",
+    "errorSave": "Hiba történt a jelszó mentése közben.",
+    "success": "Sikeres jelszóváltoztatás!"
+  },
+  "chatWindow": {
+    "selectConversation": "Válassz egy beszélgetést",
+    "emptyState": "Válassz egy partnert a bal oldali listából<br/>a beszélgetés megkezdéséhez.",
+    "loading": "Üzenetek betöltése…",
+    "sendError": "Hiba történt az üzenet küldésekor: {{error}}",
+    "noMessages": "Még nincsenek üzenetek ebben a beszélgetésben.<br/>Írj valamit a kezdéshez!"
+  },
+  "messageInput": {
+    "placeholder": "Írj üzenetet...",
+    "placeholderDisabled": "Válassz partnert...",
+    "sending": "Küldés",
+    "send": "Küldés"
+  },
+  "messageBubble": {
+    "seenByCompany": "Látta a cég"
+  },
+  "conversationList": {
+    "back": "Vissza",
+    "title": "Beszélgetések",
+    "loading": "Partnerek betöltése…",
+    "noConversations": "Még nincs beszélgetés."
+  }
+}
