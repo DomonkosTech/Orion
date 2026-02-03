@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "server": "tsx src/server/server.ts",
-    "OrionAI": "python3 src/server/OrionAI.py",
+    "OrionAI": ".venv\\Scripts\\python src/server/OrionAI.py",
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
@@ -26,6 +26,7 @@
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.68.0",
     "react-hot-toast": "^2.6.0",
+    "react-i18next": "^16.5.4",
     "react-router-dom": "^7.8.2",
     "react-tsparticles": "^2.10.1",
     "tsparticles": "^2.11.1",
