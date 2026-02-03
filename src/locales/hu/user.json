@@ -1,0 +1,202 @@
+{
+  "dashboard": {
+    "kicker": "Személyes Vezérlőpult",
+    "welcome": "Szia, <1>{{name}}!</1> 👋",
+    "subtitle": "Itt egy áttekintés a mai karrierlehetőségeidről és folyamataidról.",
+    "profileSettings": "Profil beállítások"
+  },
+  "stats": {
+    "applications": "Jelentkezések",
+    "resumeViews": "Önéletrajz megtekintés",
+    "profileViews": "Profil megtekintés",
+    "matchRate": "Egyezési mutató",
+    "matchRateTooltip": "Ez a mutató azt jelzi, hogy mennyire illik az Ön profilja (tapasztalat, készségek) az aktuális piaci igényekhez."
+  },
+  "featured": {
+    "badge": "Kiemelt Ajánlat",
+    "defaultPosition": "Orion Partner",
+    "description": "Ez a pozíció 98%-ban egyezik az Ön tapasztalatával és készségeivel.",
+    "descriptionDynamic": "A(z) {{wage}} aktívan keresi az új csapattagot.",
+    "descriptionDefault": "Egy partnerünk aktívan keresi az új csapattagot.",
+    "detailsButton": "Részletek megtekintése",
+    "empty": {
+      "message": "Jelenleg nincs az Ön profiljához illő kiemelt ajánlatunk.",
+      "button": "Összes állás böngészése"
+    }
+  },
+  "navigation": {
+    "search": {
+      "title": "Álláskeresés",
+      "description": "Keressen az aktuális ajánlatok között"
+    },
+    "applications": {
+      "title": "Jelentkezéseim",
+      "description": "Kövesse nyomon folyamatait"
+    },
+    "documents": {
+      "title": "Dokumentumok",
+      "description": "Önéletrajz és egyéb fájlok"
+    },
+    "messages": {
+      "title": "Üzenetek",
+      "description": "Beszélgessen a munkaadókkal"
+    }
+  },
+  "help": {
+    "title": "Segítségre van szüksége?",
+    "text": "Karrier tanácsadóink segítenek a legtöbbet kihozni a profiljából.",
+    "button": "Chat indítása"
+  },
+  "jobs": {
+    "list": {
+      "kicker": "Álláskeresés",
+      "title": "Találja meg a <1>jövőjét!</1>",
+      "subtitle": "Fedezzen fel <1>{{count}}</1> nyitott pozíciót vezető cégeknél.",
+      "subtitleDefault": "Fedezzen fel <1>több száz</1> nyitott pozíciót vezető cégeknél.",
+      "errorTitle": "Hiba történt",
+      "loadMore": "Mutass többet",
+      "loading": "Betöltés..."
+    },
+    "show": {
+      "loading": "Betöltés...",
+      "error": "Az állás betöltése sikertelen.",
+      "fetchError": "Hiba történt az állás betöltése során.",
+      "notFound": "Nem található hirdetés.",
+      "backToList": "Vissza a listához",
+      "backToBrowsing": "Vissza a böngészéshez",
+      "kicker": "Részletes megtekintés",
+      "positionLabel": "Munkakör:",
+      "descriptionTitle": "Munkaköri leírás",
+      "tasksTitle": "Főbb feladatok",
+      "requirementsTitle": "Elvárások",
+      "wageLabel": "Bruttó órabér",
+      "locationLabel": "Helyszín",
+      "referenceLabel": "Referencia",
+      "applyButton": "Jelentkezés most",
+      "applyingButton": "Jelentkezés...",
+      "successMessage": "Sikeres jelentkezés!",
+      "failureMessage": "A jelentkezés sikertelen.",
+      "alreadyAppliedMessage": "Már jelentkeztél!",
+      "errorMessage": "Hiba történt a jelentkezés során.",
+      "trustText": "Kérdése van? Keressen minket bizalommal az Orion ügyfélszolgálatán."
+    }
+  },
+  "login": {
+    "title": "Felhasználó bejelentkezés",
+    "switchViewLabel": "Váltás céges nézetre"
+  },
+  "profile": {
+    "personalData": {
+      "title": "Személyes adatok",
+      "lastName": "Vezetéknév",
+      "firstName": "Keresztnév",
+      "birthDate": "Születési dátum",
+      "birthPlace": "Születési hely"
+    },
+    "contact": {
+      "title": "Elérhetőség",
+      "email": "Email cím",
+      "phone": "Telefonszám",
+      "address": "Lakcím"
+    },
+    "professional": {
+      "title": "Szakmai profil",
+      "bio": "Rövid bemutatkozás",
+      "qualifications": "Végzettségek"
+    },
+    "documents": {
+      "title": "Okmányok & Önéletrajz",
+      "taxNumber": "Adószám",
+      "personalId": "Személyi igazolvány",
+      "addressCard": "Lakcímkártya",
+      "resume": {
+        "title": "Önéletrajz",
+        "uploaded": "Feltöltve és aktív",
+        "notUploaded": "Még nincs feltöltve",
+        "delete": "Törlés",
+        "upload": "Feltöltés"
+      }
+    }
+  },
+  "register": {
+    "title": "Fiók létrehozása",
+    "steps": {
+      "account": "Fiók adatok",
+      "personal": "Személyes adatok",
+      "professional": "Szakmai profil"
+    },
+    "fields": {
+      "email": "Email cím *",
+      "password": "Jelszó *",
+      "confirmPassword": "Megerősítés *",
+      "lastName": "Vezetéknév *",
+      "firstName": "Keresztnév *",
+      "birthPlace": "Születési hely",
+      "birthDate": "Születési idő",
+      "nationality": "Nemzetiség *",
+      "personalId": "Személyi igazolvány szám *",
+      "addressCard": "Lakcímkártya szám *",
+      "address": "Lakcím",
+      "phone": "Telefonszám",
+      "taxNumber": "Adószám",
+      "qualifications": "Végzettségek",
+      "bio": "Rövid bemutatkozás",
+      "terms": "Elfogadom a felhasználási feltételeket"
+    },
+    "passwordRequirements": {
+      "title": "Jelszó követelmények:",
+      "minLength": "Legalább 8 karakter",
+      "lowercase": "Kisbetű",
+      "uppercase": "Nagybetű",
+      "number": "Szám",
+      "special": "Speciális karakter"
+    }
+  },
+  "uploadResume": {
+    "title": "Önéletrajz feltöltése",
+    "subtitle": "Töltsd fel szakmai önéletrajzod PDF formátumban a gyorsabb jelentkezéshez.",
+    "dropText": "<1>Kattints a feltöltéshez</1> vagy húzd ide a fájlt",
+    "fileHint": "Csak PDF (Max. 5MB)",
+    "info": {
+      "stored": "A feltöltött fájlt profilod részeként tároljuk.",
+      "update": "Bármikor frissítheted vagy törölheted."
+    },
+    "buttons": {
+      "submit": "Önéletrajz mentése",
+      "submitting": "Feltöltés folyamatban...",
+      "cancel": "Mégse"
+    },
+    "alerts": {
+      "onlyPdf": "Csak PDF fájlt lehet feltölteni!",
+      "sizeLimit": "A fájl mérete nem lehet nagyobb 5MB-nál!",
+      "success": "Önéletrajz sikeresen feltöltve!",
+      "unknownError": "Ismeretlen hiba"
+    }
+  },
+  "jobApplications": {
+    "loading": "Adatok betöltése...",
+    "retry": "Próbálja újra",
+    "networkError": "Hálózati hiba történt",
+    "header": {
+      "kicker": "Munkaviszonyok",
+      "title": "Munkáim & Jelentkezéseim",
+      "subtitle": "Kövesd nyomon aktuális munkáidat és a leadott jelentkezéseid állapotát.",
+      "back": "Vissza"
+    },
+    "works": {
+      "title": "Aktuális Munkáim",
+      "empty": "Nincs aktív munkád jelenleg.",
+      "position": "Pozíció",
+      "company": "Cég",
+      "wage": "Órabér",
+      "hireDate": "Belépés"
+    },
+    "submissions": {
+      "title": "Jelentkezéseim Státusza",
+      "empty": "Még nem jelentkeztél egy hirdetésre sem.",
+      "advertisement": "Hirdetés",
+      "status": "Státusz",
+      "lastUpdated": "Utolsó frissítés"
+    }
+  }
+}

@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useTranslation, Trans } from "react-i18next";
 import { MapPin, Hash, Wallet, ClipboardList, Target, Briefcase, ChevronLeft } from "lucide-react";
 import {
     updateviewcounter,
@@ -17,6 +18,7 @@ import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 import Footer from "../../../../components/Footer/Footer.tsx";
 
 const ShowJob = () => {
+    const { t } = useTranslation('user');
     const { id } = useParams();
     const [advertisement, setAdvertisement] = useState<AdvertisementDetails | null>(null);
     const [loading, setLoading] = useState(true); // Used only for initial page load
@@ -44,17 +46,17 @@ const ShowJob = () => {
                     }
 
                 } else {
-                    setError(data.error || "Az állás betöltése sikertelen.");
+                    setError(data.error || t('jobs.show.error'));
                 }
             } catch (err) {
                 console.error("Fetch error:", err);
-                setError("Hiba történt az állás betöltése során.");
+                setError(t('jobs.show.fetchError'));
             } finally {
                 setLoading(false);
             }
         };
         fetchAdvertisement();
-    }, [id]);
+    }, [id, t]);
 
     const handleSubmitApplication = async () => {
         if (!id) return;
@@ -71,16 +73,16 @@ const ShowJob = () => {
             const data = await submitApplication(id);
 
             if (data.success) {
-                finalStatus = "Sikeres jelentkezés!";
+                finalStatus = t('jobs.show.successMessage');
             } else {
-                finalStatus = data.error || "A jelentkezés sikertelen.";
+                finalStatus = data.error || t('jobs.show.failureMessage');
             }
         } catch (err) {
             console.error("Submit application error:", err);
             if (err instanceof ApiError && err.status === 409) {
-                finalStatus = "Már jelentkeztél!";
+                finalStatus = t('jobs.show.alreadyAppliedMessage');
             } else {
-                finalStatus = "Hiba történt a jelentkezés során.";
+                finalStatus = t('jobs.show.errorMessage');
             }
         } finally {
             const elapsedTime = Date.now() - startTime;
@@ -96,7 +98,7 @@ const ShowJob = () => {
             <div className={styles.pageWrapper}>
                 <Header />
                 <div style={{ textAlign: 'center', padding: '100px' }}>
-                    <p>Betöltés...</p>
+                    <p>{t('jobs.show.loading')}</p>
                 </div>
             </div>
         );
@@ -107,14 +109,14 @@ const ShowJob = () => {
             <div className={styles.pageWrapper}>
                 <Header />
                 <div style={{ textAlign: 'center', padding: '100px' }}>
-                    <p>{error || "Nem található hirdetés."}</p>
+                    <p>{error || t('jobs.show.notFound')}</p>
                     <Button
                         type="button"
                         color="orion-blue"
                         variant="secondary"
                         onClick={() => navigate("/listjobs")}
                     >
-                        Vissza a listához
+                        {t('jobs.show.backToList')}
                     </Button>
                 </div>
             </div>
@@ -128,13 +130,13 @@ const ShowJob = () => {
             <header className={styles.banner}>
                 <div className={styles.bannerInner}>
                     <button onClick={() => navigate("/listjobs")} className={styles.backButton}>
-                        <ChevronLeft size={16} /> Vissza a böngészéshez
+                        <ChevronLeft size={16} /> {t('jobs.show.backToBrowsing')}
                     </button>
-                    <BannerKicker>Részletes megtekintés</BannerKicker>
+                    <BannerKicker>{t('jobs.show.kicker')}</BannerKicker>
                     <h1 className={styles.bannerTitle}>{advertisement.title}</h1>
                     <div className={styles.bannerMeta}>
                         <Briefcase size={18} />
-                        <span>Munkakör: <strong>{advertisement.position}</strong></span>
+                        <span>{t('jobs.show.positionLabel')} <strong>{advertisement.position}</strong></span>
                     </div>
                 </div>
             </header>
@@ -144,7 +146,7 @@ const ShowJob = () => {
                     <section className={styles.section}>
                         <h2 className={styles.sectionTitle}>
                             <ClipboardList size={22} className={styles.iconBlue} />
-                            Munkaköri leírás
+                            {t('jobs.show.descriptionTitle')}
                         </h2>
                         <div className={styles.richText}>
                             {advertisement.job_description}
@@ -154,7 +156,7 @@ const ShowJob = () => {
                     <section className={styles.section}>
                         <h2 className={styles.sectionTitle}>
                             <Target size={22} className={styles.iconBlue} />
-                            Főbb feladatok
+                            {t('jobs.show.tasksTitle')}
                         </h2>
                         <div className={styles.richText}>
                             {advertisement.tasks}
@@ -164,7 +166,7 @@ const ShowJob = () => {
                     <section className={styles.section}>
                         <h2 className={styles.sectionTitle}>
                             <Briefcase size={22} className={styles.iconBlue} />
-                            Elvárások
+                            {t('jobs.show.requirementsTitle')}
                         </h2>
                         <div className={styles.tagCloud}>
                             {advertisement.requirements.split(',').map((req, index) => (
@@ -180,20 +182,20 @@ const ShowJob = () => {
                             <Wallet size={24} className={styles.iconBlue} />
                             <div>
                                 <div className={styles.priceTag}>{advertisement.hourly_wage} Ft</div>
-                                <span className={styles.mutedSmall}>Bruttó órabér</span>
+                                <span className={styles.mutedSmall}>{t('jobs.show.wageLabel')}</span>
                             </div>
                         </div>
 
                         <div className={styles.infoGrid}>
                             <div className={styles.infoRow}>
                                 <div className={styles.infoLabel}>
-                                    <MapPin size={16} /> Helyszín
+                                    <MapPin size={16} /> {t('jobs.show.locationLabel')}
                                 </div>
                                 <span className={styles.value}>{advertisement.location}</span>
                             </div>
                             <div className={styles.infoRow}>
                                 <div className={styles.infoLabel}>
-                                    <Hash size={16} /> Referencia
+                                    <Hash size={16} /> {t('jobs.show.referenceLabel')}
                                 </div>
                                 <span className={styles.value}>#{id}</span>
                             </div>
@@ -208,7 +210,7 @@ const ShowJob = () => {
                                 className={styles.applyBtn}
                                 disabled={isSubmitting} // Disable to prevent multiple clicks
                             >
-                                {isSubmitting ? "Jelentkezés..." : "Jelentkezés most"}
+                                {isSubmitting ? t('jobs.show.applyingButton') : t('jobs.show.applyButton')}
                             </Button>
                         </div>
 
@@ -220,7 +222,7 @@ const ShowJob = () => {
                     </div>
 
                     <div className={styles.trustCard}>
-                        <p>Kérdése van? Keressen minket bizalommal az Orion ügyfélszolgálatán.</p>
+                        <p>{t('jobs.show.trustText')}</p>
                     </div>
                 </aside>
             </main>

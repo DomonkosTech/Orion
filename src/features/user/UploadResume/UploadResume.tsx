@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation, Trans } from "react-i18next";
 import { Upload, FileText, X, Info } from "lucide-react";
 import { uploadResume } from "../../../api/userApi";
 import styles from "./UploadResume.module.css";
@@ -10,6 +11,7 @@ import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
 
 const UploadResume = () => {
+    const { t } = useTranslation('user');
     const [file, setFile] = useState<File | null>(null);
     const [sending, setSending] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
@@ -25,12 +27,12 @@ const UploadResume = () => {
         if (!selectedFile) return;
 
         if (selectedFile.type !== "application/pdf") {
-            alert("Csak PDF fájlt lehet feltölteni!");
+            alert(t('uploadResume.alerts.onlyPdf'));
             return;
         }
 
         if (selectedFile.size > 5 * 1024 * 1024) {
-            alert("A fájl mérete nem lehet nagyobb 5MB-nál!");
+            alert(t('uploadResume.alerts.sizeLimit'));
             return;
         }
 
@@ -57,10 +59,10 @@ const UploadResume = () => {
         setSending(true);
         try {
             await uploadResume(file);
-            alert("Önéletrajz sikeresen feltöltve!");
+            alert(t('uploadResume.alerts.success'));
             navigate("/edituserprofile");
         } catch (err: unknown) {
-            alert(err instanceof Error ? err.message : "Ismeretlen hiba");
+            alert(err instanceof Error ? err.message : t('uploadResume.alerts.unknownError'));
         } finally {
             setSending(false);
         }
@@ -73,8 +75,8 @@ const UploadResume = () => {
             <main className={styles.container}>
                 <div className={styles.uploadCard}>
                     <div className={styles.headerSection}>
-                        <h1 className={styles.title}>Önéletrajz feltöltése</h1>
-                        <p className={styles.subtitle}>Töltsd fel szakmai önéletrajzod PDF formátumban a gyorsabb jelentkezéshez.</p>
+                        <h1 className={styles.title}>{t('uploadResume.title')}</h1>
+                        <p className={styles.subtitle}>{t('uploadResume.subtitle')}</p>
                     </div>
 
                     <div
@@ -98,9 +100,11 @@ const UploadResume = () => {
                                     <Upload size={32} />
                                 </div>
                                 <p className={styles.dropText}>
-                                    <strong>Kattints a feltöltéshez</strong> vagy húzd ide a fájlt
+                                    <Trans i18nKey="uploadResume.dropText">
+                                        <strong>Kattints a feltöltéshez</strong> vagy húzd ide a fájlt
+                                    </Trans>
                                 </p>
-                                <span className={styles.fileHint}>Csak PDF (Max. 5MB)</span>
+                                <span className={styles.fileHint}>{t('uploadResume.fileHint')}</span>
                             </div>
                         ) : (
                             <div className={styles.filePreview}>
@@ -122,8 +126,8 @@ const UploadResume = () => {
                     <div className={styles.infoBox}>
                         <Info size={18} />
                         <ul>
-                            <li>A feltöltött fájlt profilod részeként tároljuk.</li>
-                            <li>Bármikor frissítheted vagy törölheted.</li>
+                            <li>{t('uploadResume.info.stored')}</li>
+                            <li>{t('uploadResume.info.update')}</li>
                         </ul>
                     </div>
 
@@ -136,7 +140,7 @@ const UploadResume = () => {
                             disabled={sending || !file}
                             className={styles.submitBtn}
                         >
-                            {sending ? "Feltöltés folyamatban..." : "Önéletrajz mentése"}
+                            {sending ? t('uploadResume.buttons.submitting') : t('uploadResume.buttons.submit')}
                         </Button>
 
                         <Button
@@ -144,7 +148,7 @@ const UploadResume = () => {
                             underline
                             onClick={() => navigate("/EditUserProfile")}
                         >
-                            Mégse
+                            {t('uploadResume.buttons.cancel')}
                         </Button>
                     </div>
                 </div>
