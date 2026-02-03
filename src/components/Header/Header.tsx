@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 // Components
 import NotificationDropdown from "../MessageDropDown/NotificationDropDown.tsx";
 import ProfileDropdown from "../ProfileDropdown/ProfileDropdown.tsx";
+import LanguageSelector from "../LanguageSelector/LanguageSelector.tsx";
 
 // Server / hooks
 import { useLogout } from "../../api/authApi.ts";
@@ -88,8 +89,9 @@ export function Header({
                         name={name}
                         initials={initials}
                     />
-                    
+
                     <NotificationDropdown />
+                    <LanguageSelector />
                     {actions}
                 </div>
             </div>

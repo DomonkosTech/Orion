@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import styles from "./ProfileDropdown.module.css";
 
 interface ProfileDropdownProps {
@@ -17,6 +18,7 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
                                                              name,
                                                              initials
                                                          }) => {
+    const { t } = useTranslation('components');
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -33,8 +35,8 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
 
     // Helper to determine what text to show in the expanded label
     const getLabelText = () => {
-        if (!loggedIn) return "Vendég";
-        return name || (userType === "company" ? "Céges Fiók" : "Felhasználó");
+        if (!loggedIn) return t('profileDropdown.guest');
+        return name || (userType === "company" ? t('profileDropdown.companyAccount') : t('profileDropdown.user'));
     };
 
     const getProfileLink = () => {
@@ -75,29 +77,29 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
                         transition={{ duration: 0.2, ease: "easeOut" }}
                     >
                         <div className={styles.dropdownHeader}>
-                            {loggedIn ? (userType === "user" ? `Szia, ${name || "Felhasználó"}!` : "Céges Fiók") : "Vendég"}
+                            {loggedIn ? (userType === "user" ? t('profileDropdown.greeting', { name: name || t('profileDropdown.user') }) : t('profileDropdown.companyAccount')) : t('profileDropdown.guest')}
                         </div>
 
                         {loggedIn ? (
                             <>
                                 <a href={getProfileLink()} className={styles.item}>
                                     <div>
-                                        <span className={styles.itemTitle}>Profilom</span>
-                                        <span className={styles.itemDescription}>Személyes adatok kezelése</span>
+                                        <span className={styles.itemTitle}>{t('profileDropdown.myProfile')}</span>
+                                        <span className={styles.itemDescription}>{t('profileDropdown.manageData')}</span>
                                     </div>
                                 </a>
                                 <button onClick={handleLogout} className={`${styles.item} ${styles.logoutAction}`}>
                                     <div>
-                                        <span className={styles.itemTitle}>Kijelentkezés</span>
-                                        <span className={styles.itemDescription}>Viszlát legközelebb!</span>
+                                        <span className={styles.itemTitle}>{t('profileDropdown.logout')}</span>
+                                        <span className={styles.itemDescription}>{t('profileDropdown.goodbye')}</span>
                                     </div>
                                 </button>
                             </>
                         ) : (
                             <a href="/UserLoginPage" className={styles.item}>
                                 <div>
-                                    <span className={styles.itemTitle}>Bejelentkezés</span>
-                                    <span className={styles.itemDescription}>Lépjen be a fiókjába</span>
+                                    <span className={styles.itemTitle}>{t('profileDropdown.login')}</span>
+                                    <span className={styles.itemDescription}>{t('profileDropdown.loginDesc')}</span>
                                 </div>
                             </a>
                         )}

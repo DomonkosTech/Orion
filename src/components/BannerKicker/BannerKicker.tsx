@@ -9,8 +9,8 @@ const BannerKicker = ({ children }: BannerKickerProps) => {
     const { t } = useTranslation('components');
     return (
         <div className={styles.bannerKicker}>
-            <Trans i18nKey="bannerKicker.text" t={t}>
-                Orion • {{children}}
+            <Trans i18nKey="bannerKicker.text" t={t} values={{ children }}>
+                Orion • {children}
             </Trans>
         </div>
     );
