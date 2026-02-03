@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { useTranslation, Trans } from "react-i18next";
 import styles from "./PublicHomePage.module.css";
 
 // components
@@ -7,10 +8,11 @@ import { Header } from "../../../components/Header/Header.tsx";
 import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
-import { getTop3Advertisements, type CompanyAdvertisement } from "../../../Api/advertisementApi.ts";
+import { getTop3Advertisements, type CompanyAdvertisement } from "../../../api/advertisementApi.ts";
 
 function PublicHomePage() {
     const navigate = useNavigate();
+    const { t } = useTranslation('public');
     const [featuredJobs, setFeaturedJobs] = useState<CompanyAdvertisement[]>([]);
 
     useEffect(() => {
@@ -38,15 +40,16 @@ function PublicHomePage() {
                 {/* Hero Section */}
                 <section className={styles.hero}>
                     <div className={styles.heroInner}>
-                        <BannerKicker>Karrier • Fejlődés • Stabilitás</BannerKicker>
+                        <BannerKicker>{t('hero.kicker')}</BannerKicker>
 
                         <h1 className={styles.heroTitle}>
-                            Építse a jövőjét <span className={styles.accent}>szakértő</span> csapatunkban.
+                            <Trans i18nKey="hero.title">
+                                Építse a jövőjét <span className={styles.accent}>szakértő</span> csapatunkban.
+                            </Trans>
                         </h1>
 
                         <p className={styles.heroSubtitle}>
-                            Csatlakozzon Magyarország egyik legdinamikusabban fejlődő közösségéhez.
-                            Értékteremtő munka, modern eszközök és valódi szakmai támogatás várja.
+                            {t('hero.subtitle')}
                         </p>
 
                         <div className={styles.heroActions}>
@@ -55,7 +58,7 @@ function PublicHomePage() {
                                 color="orion-blue"
                                 variant="primary"
                             >
-                                Nyitott pozíciók megtekintése
+                                {t('hero.mainCta')}
                             </Button>
 
                             <Button
@@ -63,7 +66,7 @@ function PublicHomePage() {
                                 variant="secondary"
                                 color="orion-blue"
                             >
-                                Miért válasszon minket?
+                                {t('hero.secondaryCta')}
                             </Button>
                         </div>
                     </div>
@@ -73,9 +76,9 @@ function PublicHomePage() {
                 <section className={styles.section} id="about">
                     <div className={styles.container}>
                         <div className={styles.sectionHead}>
-                            <h2 className={styles.sectionTitle}>Munkavállalói élmény nálunk</h2>
+                            <h2 className={styles.sectionTitle}>{t('valuePropositions.title')}</h2>
                             <p className={styles.sectionSubtitle}>
-                                Nem csak állást, hanem karrierutat kínálunk. Hiszünk a folyamatos tanulásban és a munka-magánélet egyensúlyában.
+                                {t('valuePropositions.subtitle')}
                             </p>
                         </div>
 
@@ -83,33 +86,33 @@ function PublicHomePage() {
                             <article className={styles.feature}>
                                 <div className={styles.featureTop}>
                                     <div className={styles.featureIcon}>🚀</div>
-                                    <div className={styles.featureBadge}>Fejlődés</div>
+                                    <div className={styles.featureBadge}>{t('valuePropositions.features.development.badge')}</div>
                                 </div>
-                                <h3 className={styles.featureTitle}>Szakmai tréningek</h3>
+                                <h3 className={styles.featureTitle}>{t('valuePropositions.features.development.title')}</h3>
                                 <p className={styles.featureText}>
-                                    Éves képzési keret és belső mentorprogram segíti a folyamatos előrelépést.
+                                    {t('valuePropositions.features.development.text')}
                                 </p>
                             </article>
 
                             <article className={styles.feature}>
                                 <div className={styles.featureTop}>
                                     <div className={styles.featureIcon}>🏠</div>
-                                    <div className={styles.featureBadge}>Rugalmasság</div>
+                                    <div className={styles.featureBadge}>{t('valuePropositions.features.flexibility.badge')}</div>
                                 </div>
-                                <h3 className={styles.featureTitle}>Hibrid munkavégzés</h3>
+                                <h3 className={styles.featureTitle}>{t('valuePropositions.features.flexibility.title')}</h3>
                                 <p className={styles.featureText}>
-                                    Modern irodai környezet és otthoni munkavégzés ideális kombinációja.
+                                    {t('valuePropositions.features.flexibility.text')}
                                 </p>
                             </article>
 
                             <article className={styles.feature}>
                                 <div className={styles.featureTop}>
                                     <div className={styles.featureIcon}>💎</div>
-                                    <div className={styles.featureBadge}>Érték</div>
+                                    <div className={styles.featureBadge}>{t('valuePropositions.features.value.badge')}</div>
                                 </div>
-                                <h3 className={styles.featureTitle}>Prémium juttatások</h3>
+                                <h3 className={styles.featureTitle}>{t('valuePropositions.features.value.title')}</h3>
                                 <p className={styles.featureText}>
-                                    Versenyképes bérsávok, cafeteria és egészségbiztosítás minden kollégánknak.
+                                    {t('valuePropositions.features.value.text')}
                                 </p>
                             </article>
                         </div>
@@ -120,8 +123,8 @@ function PublicHomePage() {
                 <section className={styles.sectionAlt}>
                     <div className={styles.container}>
                         <div className={styles.sectionHead}>
-                            <h2 className={styles.sectionTitle}>Kiemelt lehetőségeink</h2>
-                            <p className={styles.sectionSubtitle}>Tekintse meg legfrissebb állásajánlatainkat és találja meg az Önnek megfelelőt.</p>
+                            <h2 className={styles.sectionTitle}>{t('featuredJobs.title')}</h2>
+                            <p className={styles.sectionSubtitle}>{t('featuredJobs.subtitle')}</p>
                         </div>
 
                         <div className={styles.jobList}>
@@ -137,7 +140,7 @@ function PublicHomePage() {
                                         color="orion-blue"
                                         onClick={() => navigate(`/job/show/${job.id}`)}
                                     >
-                                        Részletek
+                                        {t('featuredJobs.detailsButton')}
                                     </Button>
                                 </div>
                             ))}
@@ -145,16 +148,16 @@ function PublicHomePage() {
 
                         <div className={styles.callout}>
                             <div className={styles.calloutLeft}>
-                                <div className={styles.calloutTitle}>Nem találta meg amit keresett?</div>
+                                <div className={styles.calloutTitle}>{t('featuredJobs.callout.title')}</div>
                                 <div className={styles.calloutText}>
-                                    Regisztráljon adatbázisunkba, és értesítjük, ha érkezik Önhöz illő lehetőség.
+                                    {t('featuredJobs.callout.text')}
                                 </div>
                             </div>
                             <Button
                                 color="orion-blue"
                                 onClick={() => navigate("/UserLoginPage")}
                             >
-                                Regisztráció
+                                {t('featuredJobs.callout.cta')}
                             </Button>
                         </div>
                     </div>

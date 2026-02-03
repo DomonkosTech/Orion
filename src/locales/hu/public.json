@@ -1,0 +1,40 @@
+{
+  "hero": {
+    "kicker": "Karrier • Fejlődés • Stabilitás",
+    "title": "Építse a jövőjét <1>szakértő</1> csapatunkban.",
+    "subtitle": "Csatlakozzon Magyarország egyik legdinamikusabban fejlődő közösségéhez. Értékteremtő munka, modern eszközök és valódi szakmai támogatás várja.",
+    "mainCta": "Nyitott pozíciók megtekintése",
+    "secondaryCta": "Miért válasszon minket?"
+  },
+  "valuePropositions": {
+    "title": "Munkavállalói élmény nálunk",
+    "subtitle": "Nem csak állást, hanem karrierutat kínálunk. Hiszünk a folyamatos tanulásban és a munka-magánélet egyensúlyában.",
+    "features": {
+      "development": {
+        "badge": "Fejlődés",
+        "title": "Szakmai tréningek",
+        "text": "Éves képzési keret és belső mentorprogram segíti a folyamatos előrelépést."
+      },
+      "flexibility": {
+        "badge": "Rugalmasság",
+        "title": "Hibrid munkavégzés",
+        "text": "Modern irodai környezet és otthoni munkavégzés ideális kombinációja."
+      },
+      "value": {
+        "badge": "Érték",
+        "title": "Prémium juttatások",
+        "text": "Versenyképes bérsávok, cafeteria és egészségbiztosítás minden kollégánknak."
+      }
+    }
+  },
+  "featuredJobs": {
+    "title": "Kiemelt lehetőségeink",
+    "subtitle": "Tekintse meg legfrissebb állásajánlatainkat és találja meg az Önnek megfelelőt.",
+    "detailsButton": "Részletek",
+    "callout": {
+      "title": "Nem találta meg amit keresett?",
+      "text": "Regisztráljon adatbázisunkba, és értesítjük, ha érkezik Önhöz illő lehetőség.",
+      "cta": "Regisztráció"
+    }
+  }
+}
