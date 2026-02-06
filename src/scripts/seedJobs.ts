@@ -107,7 +107,7 @@ async function seed() {
     };
 
     const jobs = [];
-    const TOTAL_JOBS = 500;
+    const TOTAL_JOBS = 1;
 
     for (let i = 0; i < TOTAL_JOBS; i++) {
         const pos = pick(positions);
@@ -139,7 +139,7 @@ async function seed() {
     }
 
     // Insert
-    const batchSize = 100;
+    const batchSize = 1;
     for (let i = 0; i < jobs.length; i += batchSize) {
         const batch = jobs.slice(i, i + batchSize);
         const { error } = await supabase.from("advertisement").insert(batch);

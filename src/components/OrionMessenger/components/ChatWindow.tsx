@@ -4,6 +4,7 @@ import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
 import styles from "../MessengerPage.module.css";
 import { useTranslation, Trans } from "react-i18next";
+import { useAuth } from "../../../hooks/useAuth";
 
 function getInitials(name?: string) {
   if (!name) return "?";
@@ -19,6 +20,7 @@ function getInitials(name?: string) {
 
 const ChatWindow: React.FC = () => {
   const { t } = useTranslation('components');
+  const { userType } = useAuth();
   const {
     selectedCompany,
     messages,
@@ -29,32 +31,22 @@ const ChatWindow: React.FC = () => {
   } = useMessenger();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [showLoader, setShowLoader] = useState(false);
-  const [minTimePassed, setMinTimePassed] = useState(false);
+  
+  // Use a local state to delay the appearance of the loader slightly to avoid flickering
+  // but ensure it clears as soon as messagesLoading is false.
+  const [delayedLoading, setDelayedLoading] = useState(false);
 
-  // EFFECT 1: Handle the start of loading and the timer.
   useEffect(() => {
-    if (selectedCompany) {
-      setShowLoader(true);
-      setMinTimePassed(false);
-
-      const timer = setTimeout(() => {
-        setMinTimePassed(true);
-      }, 250); // Wait time set to 250ms
-
-      return () => clearTimeout(timer);
+    let timer: NodeJS.Timeout;
+    if (messagesLoading) {
+      timer = setTimeout(() => setDelayedLoading(true), 150);
     } else {
-      setShowLoader(false);
+      setDelayedLoading(false);
     }
-  }, [selectedCompany]);
+    return () => clearTimeout(timer);
+  }, [messagesLoading]);
 
-  // EFFECT 2: Handle the end of loading.
-  useEffect(() => {
-    if (showLoader && !messagesLoading && minTimePassed) {
-      setShowLoader(false);
-    }
-  }, [showLoader, messagesLoading, minTimePassed]);
-
+  const showLoader = messagesLoading && delayedLoading;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -105,15 +97,17 @@ const ChatWindow: React.FC = () => {
               </div>
             ) : (
               messages.map((m, index) => {
-                const isUser = m.sender_type === "USER";
+                const isUserMessage = m.sender_type === "USER";
+                const isMyMessage = (userType === "user" && isUserMessage) || (userType === "company" && !isUserMessage);
                 const initials = getInitials(selectedCompany?.company_name);
+                
                 return (
                   <MessageBubble
                     key={m.id}
                     message={m}
-                    isUser={isUser}
+                    isMyMessage={isMyMessage}
                     initials={initials}
-                    isLastRead={isUser && m.id === lastReadUserMessageId}
+                    isLastRead={isMyMessage && m.id === lastReadUserMessageId}
                     style={{ animationDelay: `${index * 100}ms` }}
                   />
                 );
