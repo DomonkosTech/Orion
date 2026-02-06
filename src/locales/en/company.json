@@ -20,6 +20,20 @@
       "title": "Recent Activity",
       "applied": "applied for:",
       "empty": "No recent activity."
+    },
+    "quickActions": {
+      "newJob": {
+        "title": "New Job",
+        "description": "Post a new vacancy"
+      },
+      "messenger": {
+        "title": "Messages",
+        "description": "Chat with candidates"
+      },
+      "employees": {
+        "title": "Employees",
+        "description": "Manage your staff"
+      }
     }
   },
   "login": {

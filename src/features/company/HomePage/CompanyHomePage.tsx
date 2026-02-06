@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
+import { MessageSquare, Users, PlusCircle } from "lucide-react";
 import styles from "./CompanyHomePage.module.css";
 
 // Components
@@ -59,10 +60,38 @@ const CompanyHomePage: React.FC = () => {
                         <h1 className={styles.title}>{t('home.title')}</h1>
                         <p className={styles.subtitle}>{t('home.subtitle')}</p>
                     </div>
-                    <Button onClick={() => navigate("/AddJob")} color="orion-blue">
-                        {t('home.newJobButton')}
-                    </Button>
                 </header>
+
+                {/* Gyorsműveletek Sáv */}
+                <section className={styles.quickActions}>
+                    <div className={styles.actionCard} onClick={() => navigate("/AddJob")}>
+                        <div className={styles.actionIcon}>
+                            <PlusCircle size={24} />
+                        </div>
+                        <div className={styles.actionContent}>
+                            <h3>{t('home.quickActions.newJob.title')}</h3>
+                            <p>{t('home.quickActions.newJob.description')}</p>
+                        </div>
+                    </div>
+                    <div className={styles.actionCard} onClick={() => navigate("/messenger")}>
+                        <div className={styles.actionIcon}>
+                            <MessageSquare size={24} />
+                        </div>
+                        <div className={styles.actionContent}>
+                            <h3>{t('home.quickActions.messenger.title')}</h3>
+                            <p>{t('home.quickActions.messenger.description')}</p>
+                        </div>
+                    </div>
+                    <div className={styles.actionCard} onClick={() => navigate("/employees")}>
+                        <div className={styles.actionIcon}>
+                            <Users size={24} />
+                        </div>
+                        <div className={styles.actionContent}>
+                            <h3>{t('home.quickActions.employees.title')}</h3>
+                            <p>{t('home.quickActions.employees.description')}</p>
+                        </div>
+                    </div>
+                </section>
 
                 {/* Statisztikai Sáv */}
                 <section className={styles.statsGrid}>
@@ -89,7 +118,7 @@ const CompanyHomePage: React.FC = () => {
                     <section className={styles.section}>
                         <div className={styles.sectionHeader}>
                             <h2 className={styles.sectionTitle}>{t('home.activeJobs.title')} ({ads.length})</h2>
-                            <Button variant="secondary" onClick={() => navigate("/ShowListedJobs")}>{t('home.activeJobs.viewAll')}</Button>
+                            <Button variant="secondary" color={"orion-blue"} onClick={() => navigate("/ShowListedJobs")}>{t('home.activeJobs.viewAll')}</Button>
                         </div>
                         <div className={styles.jobList}>
                             {ads.slice(0, 5).map(ad => (

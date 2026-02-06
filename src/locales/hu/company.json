@@ -20,6 +20,20 @@
       "title": "Legutóbbi aktivitás",
       "applied": "jelentkezett:",
       "empty": "Nincs legutóbbi aktivitás."
+    },
+    "quickActions": {
+      "newJob": {
+        "title": "Új Hirdetés",
+        "description": "Adjon fel új állást"
+      },
+      "messenger": {
+        "title": "Üzenetek",
+        "description": "Csevegés a jelöltekkel"
+      },
+      "employees": {
+        "title": "Alkalmazottak",
+        "description": "Személyzet kezelése"
+      }
     }
   },
   "login": {

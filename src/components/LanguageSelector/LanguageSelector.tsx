@@ -7,13 +7,13 @@ import styles from './LanguageSelector.module.css';
 interface Language {
     code: string;
     name: string;
-    flag: string;
+    prefix: string;
 }
 
 const LANGUAGES: Language[] = [
-    { code: 'hu', name: 'Magyar', flag: '🇭🇺' },
-    { code: 'en', name: 'English', flag: '🇬🇧' },
-    { code: 'de', name: 'Deutsch', flag: '🇩🇪' }
+    { code: 'hu', name: 'Magyar', prefix: 'HU' },
+    { code: 'en', name: 'English', prefix: 'EN' },
+    { code: 'de', name: 'Deutsch', prefix: 'DE' }
 ];
 
 const LanguageSelector: React.FC = () => {
@@ -50,7 +50,7 @@ const LanguageSelector: React.FC = () => {
                 aria-label="Language Selector"
             >
                 <div className={styles.triggerContent}>
-                    <span className={styles.flagWrapper}>{currentLang.flag}</span>
+                    <span className={styles.prefixWrapper}>{currentLang.prefix}</span>
                     <span className={styles.triggerLabel}>{currentLang.name}</span>
                 </div>
                 <span className={styles.arrow}>
@@ -79,7 +79,7 @@ const LanguageSelector: React.FC = () => {
                                 className={`${styles.item} ${currentLang.code === lang.code ? styles.active : ''}`}
                                 onClick={() => changeLanguage(lang.code)}
                             >
-                                <span className={styles.itemFlag}>{lang.flag}</span>
+                                <span className={styles.itemPrefix}>{lang.prefix}</span>
                                 <span className={styles.itemTitle}>{lang.name}</span>
                                 {currentLang.code === lang.code && (
                                     <Check size={16} className={styles.checkIcon} />

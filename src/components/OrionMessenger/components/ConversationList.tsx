@@ -27,7 +27,9 @@ const ConversationList: React.FC = () => {
           <button onClick={handleBack} className={styles.headerBackButton} title={t('conversationList.back')}>
               <ArrowLeft size={24} />
           </button>
-          {t('conversationList.title')}
+          <span style={{ flex: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {t('conversationList.title')}
+          </span>
       </div>
       {partnersLoading && <div className={`${styles.sidebarState} ${styles.loadingState}`}>{t('conversationList.loading')}</div>}
       {partnersError && <div className={styles.sidebarState} style={{ color: "#ef4444" }}>{partnersError}</div>}
@@ -37,10 +39,10 @@ const ConversationList: React.FC = () => {
       <div style={{ flex: 1, overflowY: "auto" }}>
         {partners.map((p, index) => (
           <ConversationItem
-            key={p.company_id}
+            key={p.id}
             partner={p}
-            isActive={p.company_id === selectedCompanyId}
-            onClick={() => setSelectedCompanyId(p.company_id)}
+            isActive={p.id === selectedCompanyId}
+            onClick={() => setSelectedCompanyId(p.id)}
             style={{ animationDelay: `${index * 100}ms` }}
           />
         ))}

@@ -20,6 +20,20 @@
       "title": "Letzte Aktivitäten",
       "applied": "hat sich beworben auf:",
       "empty": "Keine letzten Aktivitäten."
+    },
+    "quickActions": {
+      "newJob": {
+        "title": "Neue Anzeige",
+        "description": "Schreiben Sie eine neue Stelle aus"
+      },
+      "messenger": {
+        "title": "Nachrichten",
+        "description": "Chatten Sie mit Kandidaten"
+      },
+      "employees": {
+        "title": "Mitarbeiter",
+        "description": "Verwalten Sie Ihr Personal"
+      }
     }
   },
   "login": {
