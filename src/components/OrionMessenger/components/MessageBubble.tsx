@@ -33,9 +33,14 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isMyMessage, isL
     const rowClass = isMyMessage ? `${styles.bubbleRow} ${styles.bubbleRowUser}` : `${styles.bubbleRow} ${styles.bubbleRowCompany}`;
     const bubbleClass = isMyMessage ? `${styles.bubble} ${styles.userBubble}` : `${styles.bubble} ${styles.companyBubble}`;
 
+    // Calculate dynamic width to maintain approx 75:25 aspect ratio
+    // Increased multiplier further to make it wider relative to height
+    const estimatedLength = text.length;
+    const dynamicWidth = Math.ceil(30 * Math.sqrt(estimatedLength));
+
     return (
         <div className={rowClass} style={style}>
-            <div className={bubbleClass}>
+            <div className={bubbleClass} style={{ width: `${dynamicWidth}px` }}>
                 <div style={{ wordBreak: 'break-word' }}>{text}</div>
                 <div className={styles.messageFooter}>
                     <div className={styles.smallMuted}>{formatDateTime(message.created_at)}</div>

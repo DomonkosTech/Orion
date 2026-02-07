@@ -121,7 +121,7 @@ function App() {
                     }
                 />
                 <Route
-                    path="/UserEditProfile"
+                    path="/usereditprofile"
                     element={
                         <IsLoggedIn mode="user">
                             <UserEditProfile />

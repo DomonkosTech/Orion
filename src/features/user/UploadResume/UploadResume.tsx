@@ -61,7 +61,7 @@ const UploadResume = () => {
         try {
             await uploadResume(file);
             toast.success(t('uploadResume.alerts.success'));
-            navigate("/edituserprofile");
+            navigate("/usereditprofile");
         } catch (err: unknown) {
             toast.error(err instanceof Error ? err.message : t('uploadResume.alerts.unknownError'));
         } finally {
@@ -148,7 +148,7 @@ const UploadResume = () => {
                         <Button
                             variant="link"
                             underline
-                            onClick={() => navigate("/EditUserProfile")}
+                            onClick={() => navigate("/usereditprofile")}
                         >
                             {t('uploadResume.buttons.cancel')}
                         </Button>
