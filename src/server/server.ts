@@ -4,8 +4,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
-import { WebSocketServer, WebSocket } from "ws";
-import { supabase } from "../lib/supabaseClient.ts";
+import { setupRealtime } from "./realtime/RealtimeServer.ts";
 
 // Import secret keys
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
@@ -63,49 +62,11 @@ app.use("/api/chat", messageRoute);
 // OrionAI Routes
 app.use("/api", OrionAIRoute);
 
-// Create HTTP server
+// Create an HTTP server
 const server = createServer(app);
 
-// Initialize WebSocket Server
-const wss = new WebSocketServer({ server });
-
-wss.on("connection", (ws) => {
-    console.log("New WebSocket connection");
-
-    ws.on("message", (message) => {
-        console.log("Received:", message);
-    });
-
-    ws.on("close", () => {
-        console.log("WebSocket disconnected");
-    });
-});
-
-// Subscribe to Supabase changes
-supabase
-    .channel('messages')
-    .on(
-        'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload) => {
-            console.log('New message received from Supabase:', payload);
-            // Broadcast to all connected WebSocket clients
-            wss.clients.forEach((client) => {
-                if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({
-                        type: 'NEW_MESSAGE',
-                        payload: payload.new
-                    }));
-                }
-            });
-        }
-    )
-    .subscribe((status, error) => {
-        console.log("Supabase subscription status:", status);
-        if (error) {
-            console.error("Supabase subscription error:", error);
-        }
-    });
+// Initialize Realtime (WebSocket + Supabase)
+setupRealtime(server);
 
 // Start server
 server.listen(4000, () => console.log("Server running on http://localhost:4000"));

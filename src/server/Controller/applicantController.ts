@@ -1,4 +1,5 @@
 import { supabase } from "../../lib/supabaseClient.ts";
+import {incrementResumeViews} from "./userController.ts"
 
 export const submitApplication = async (userId: number, advertisementId: string) => {
     // check if application already exists
@@ -200,6 +201,8 @@ export const getResumeUrl = async (applicationId: string, companyId: number) => 
         .createSignedUrl(filePath, 3600);
 
     if (urlError) throw urlError;
+
+    await incrementResumeViews(userId)
 
     return { success: true, url: data.signedUrl };
 };
