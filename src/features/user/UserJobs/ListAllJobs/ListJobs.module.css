@@ -85,6 +85,10 @@
     font-weight: 500;
 }
 
+.aiButtonWrapper {
+    margin-bottom: 12px;
+}
+
 /* ---------------- Filter Section ---------------- */
 
 .searchForm {

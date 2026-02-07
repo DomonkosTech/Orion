@@ -223,3 +223,19 @@ export const deleteEmployee = async (id: number) => {
     });
     return handleResponse(response);
 }
+
+export const OrionAI = async (userinput: string) => {
+    const wage = 2000;
+    const response = await fetch(`${API_BASE_URL}/OrionAI`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            userinput: userinput,
+            wage: wage,
+        })
+    });
+    return handleResponse(response);
+}
