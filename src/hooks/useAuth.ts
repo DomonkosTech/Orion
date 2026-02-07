@@ -11,6 +11,7 @@ export function useAuth() {
     const [loading, setLoading] = useState(true);
     const [initials, setInitials] = useState<string>("");
     const [name, setName] = useState<string>(""); //bocsi peti
+    const [userData, setUserData] = useState<any>(null);
 
 
     useEffect(() => {
@@ -25,6 +26,7 @@ export function useAuth() {
 
                 setLoggedIn(Boolean(data.loggedIn));
                 setUserType(data.userType || null);
+                setUserData(data.user || null);
 
 
                 if (data.loggedIn) {
@@ -48,6 +50,7 @@ export function useAuth() {
                 setLoggedIn(false);
                 setUserType(null);
                 setInitials("");
+                setUserData(null);
             } finally {
                 if (mounted) setLoading(false);
             }
@@ -69,5 +72,5 @@ export function useAuth() {
         };
     }, []);
 
-    return { loggedIn, userType, loading, initials, name };
+    return { loggedIn, userType, loading, initials, name, userData };
 }

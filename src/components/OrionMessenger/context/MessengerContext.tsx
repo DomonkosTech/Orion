@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import React, { createContext, useContext, useEffect, useMemo, useState, useRef, type ReactNode } from "react";
 import {
     type CompanyChatPartner,
     type UserChatPartner,
@@ -8,8 +8,9 @@ import {
     getMessagesForUser,
     getMessagesForCompany,
     sendUserMessage,
-    sendCompanyMessage
-} from "../../../api/messageApi.ts";
+    sendCompanyMessage,
+} from "../../../Api/messageApi.ts";
+import {wbsocket} from "../../../api/apiConfig.ts";
 import { useAuth } from "../../../hooks/useAuth";
 
 export interface ChatPartner {
@@ -37,7 +38,7 @@ interface MessengerContextType {
 const MessengerContext = createContext<MessengerContextType | undefined>(undefined);
 
 export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const { userType, loading: authLoading } = useAuth();
+    const { userType, loading: authLoading, userData } = useAuth();
 
     const [partners, setPartners] = useState<ChatPartner[]>([]);
     const [partnersLoading, setPartnersLoading] = useState(false);
@@ -147,6 +148,126 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
         };
     }, [selectedPartnerId, userType, authLoading]);
 
+    // WebSocket ref és state refek a stabil kapcsolathoz (hogy ne kelljen újracsatlakozni váltáskor)
+    const ws = useRef<WebSocket | null>(null);
+    const selectedPartnerIdRef = useRef(selectedPartnerId);
+    const userRef = useRef(userData);
+    const userTypeRef = useRef(userType);
+
+    useEffect(() => {
+        selectedPartnerIdRef.current = selectedPartnerId;
+        userRef.current = userData;
+        userTypeRef.current = userType;
+    }, [selectedPartnerId, userData, userType]);
+
+    // WebSocket connection with auto-reconnect
+    useEffect(() => {
+        if (authLoading || !userData) return;
+
+        let reconnectTimeout: ReturnType<typeof setTimeout>;
+        let isMounted = true;
+
+        const connect = () => {
+            if (!isMounted) return;
+            // Ha már van aktív kapcsolat, ne csináljunk újat
+            if (ws.current && (ws.current.readyState === WebSocket.OPEN || ws.current.readyState === WebSocket.CONNECTING)) {
+                return;
+            }
+
+            console.log("Attempting to connect to WebSocket...");
+            const socket = new WebSocket(wbsocket);
+            ws.current = socket;
+
+            socket.onopen = () => {
+                console.log("Connected to WebSocket");
+            };
+
+            socket.onmessage = (event) => {
+                console.log("WS Raw Message:", event.data);
+                try {
+                    const data = JSON.parse(event.data);
+                    if (data.type === 'NEW_MESSAGE') {
+                        const rawMessage = data.payload;
+                        console.log("New message payload:", rawMessage);
+                        
+                        // Normalize message structure (handle camelCase vs snake_case)
+                        const newMessage: Message = {
+                            ...rawMessage,
+                            user_id: rawMessage.user_id || rawMessage.userId,
+                            company_id: rawMessage.company_id || rawMessage.companyId,
+                        };
+
+                        // A refekből olvassuk ki az aktuális állapotot
+                        const currentPartnerId = selectedPartnerIdRef.current;
+                        const currentUser = userRef.current;
+                        const currentUserType = userTypeRef.current;
+
+                        // Check if the message belongs to the current conversation
+                        if (currentPartnerId && currentUser) {
+                            // Try to find the ID in various common properties
+                            const myId = currentUserType === 'user' 
+                                ? (currentUser.userId || currentUser.id || currentUser.user_id) 
+                                : (currentUser.companyId || currentUser.id || currentUser.company_id);
+                            
+                            console.log("WS Check Relevance:", { 
+                                currentUserType, 
+                                currentPartnerId, 
+                                myId, 
+                                newMessage,
+                                matchUser: currentUserType === 'user' && newMessage.company_id == currentPartnerId && newMessage.user_id == myId,
+                                matchCompany: currentUserType === 'company' && newMessage.user_id == currentPartnerId && newMessage.company_id == myId
+                            });
+                            
+                            // Use loose equality (==) to handle string/number mismatch
+                            const isRelevant = 
+                                (currentUserType === 'user' && newMessage.company_id == currentPartnerId && newMessage.user_id == myId) ||
+                                (currentUserType === 'company' && newMessage.user_id == currentPartnerId && newMessage.company_id == myId);
+
+                            if (isRelevant) {
+                                setMessages((prev) => {
+                                    // Avoid duplicates
+                                    if (prev.some(m => m.id === newMessage.id)) return prev;
+                                    return [...prev, newMessage];
+                                });
+                            }
+                        } else {
+                            console.log("WS: Missing partner or user info", { currentPartnerId, currentUser });
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error processing WebSocket message:", error);
+                }
+            };
+
+            socket.onclose = () => {
+                console.log("WebSocket disconnected");
+                ws.current = null;
+                if (isMounted) {
+                    console.log("Reconnecting in 3s...");
+                    reconnectTimeout = setTimeout(connect, 3000);
+                }
+            };
+
+            socket.onerror = (err) => {
+                console.error("WebSocket error:", err);
+                socket.close(); // This will trigger onclose
+            };
+        };
+
+        connect();
+
+        return () => {
+            isMounted = false;
+            clearTimeout(reconnectTimeout);
+            if (ws.current) {
+                // Remove listeners to avoid side effects during closing
+                ws.current.onclose = null; 
+                ws.current.close();
+                ws.current = null;
+            }
+        };
+    }, [userData, authLoading]); // Reconnect when user changes
+
     const sendMessage = async (text: string) => {
         if (!selectedPartnerId || !userType) return;
         const trimmedText = text.trim();
@@ -181,22 +302,14 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
             if (created && typeof created.id === "number") {
                 setMessages((prev) => prev.map((m) => (m.id === tempId ? created : m)));
             } else {
-                try {
-                    let json;
-                    if (userType === "user") {
-                        json = await getMessagesForUser(selectedPartnerId);
-                    } else {
-                        json = await getMessagesForCompany(selectedPartnerId);
-                    }
-                    const data: Message[] = json?.data ?? [];
-                    setMessages(data);
-                } catch {
-                    // ignore
-                }
+                // If we don't get the created message back directly, we might rely on the websocket or re-fetch
+                // But usually the API returns the created message.
+                // If not, we keep the optimistic one until a refresh or WS update.
             }
-        } catch (e: any) {
+        } catch (e) {
             setMessages((prev) => prev.filter((m) => m.id !== tempId));
-            setSendError(e?.message || "Nem sikerült elküldeni az üzenetet. Próbáld újra.");
+            const errorMessage = e instanceof Error ? e.message : "Nem sikerült elküldeni az üzenetet. Próbáld újra.";
+            setSendError(errorMessage);
         } finally {
             setSending(false);
         }
