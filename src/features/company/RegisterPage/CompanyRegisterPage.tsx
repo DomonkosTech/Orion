@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { registerCompany } from "../../../api/companyApi.ts";
+import { registerCompany } from "../../../Api/companyApi.ts";
 import { companyRegisterObject, companyRegisterSchema, passwordConfirmRefinement } from "../../../validation/Validation.ts";
 import RegisterPage from "../../../components/RegisterPage/RegisterPage.tsx";
 import InputField from "../../../components/InputField/InputField";

@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig";
+import { API_BASE_URL } from "./ApiConfig.ts";
 
 export const verifyUserEmail = async (token: string) => {
     const response = await fetch(`${API_BASE_URL}/email/user/verification`, {

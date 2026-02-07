@@ -1,5 +1,5 @@
 // src/services/advertisementService.ts
-import { API_BASE_URL } from "./apiConfig";
+import { API_BASE_URL } from "./ApiConfig.ts";
 
 export interface Company {
     name?: string;
