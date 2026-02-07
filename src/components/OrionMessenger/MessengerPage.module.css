@@ -1,21 +1,21 @@
 @keyframes fadeInSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.6;
-  }
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
 }
 
 .pageWrapper {
@@ -23,14 +23,14 @@
     flex-direction: column;
     height: 100vh;
     box-sizing: border-box;
-    background: #f8fafc; /* Softer background to make the white cards pop */
+    background: #f8fafc;
 }
 
 .container {
     display: flex;
     flex: 1;
     min-height: 0;
-    padding: 24px; /* Padding for the card layout */
+    padding: 24px;
     gap: 24px;
     background: transparent;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -42,7 +42,7 @@
     background: #ffffff;
     display: flex;
     flex-direction: column;
-    border-radius: 32px; /* Large rounded corners for the "round down" effect */
+    border-radius: 32px;
     box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     border: none;
@@ -100,7 +100,7 @@
 }
 
 .loadingState {
-  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .partnerItem {
@@ -131,7 +131,7 @@
     height: 48px;
     min-width: 48px;
     border-radius: 18px;
-    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); /* Vibrant purple/indigo gradient */
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
     color: white;
     display: flex;
     align-items: center;
@@ -162,7 +162,7 @@
     display: flex;
     flex-direction: column;
     background: #ffffff;
-    border-radius: 32px; /* Large rounded corners */
+    border-radius: 32px;
     box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
     overflow: hidden;
     position: relative;
@@ -191,6 +191,7 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
+    background-clip: padding-box;
 }
 
 .emptyState {
@@ -222,8 +223,8 @@
 }
 
 .bubble {
-    width: 180px;
-    max-width: 85%;
+    min-width: 180px;
+    max-width: 65%;
     padding: 12px 18px;
     border-radius: 20px;
     font-size: 0.95rem;
@@ -231,18 +232,19 @@
     position: relative;
     font-weight: 500;
     box-sizing: border-box;
+    word-wrap: break-word;
 }
 
 .messageFooter {
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Date left, Seen right */
+    justify-content: space-between;
     margin-top: 4px;
     gap: 8px;
 }
 
 .userBubble {
-    background: #6366f1; /* Modern Indigo */
+    background: #6366f1;
     color: white;
     border-bottom-right-radius: 4px;
     box-shadow: 0 4px 15px rgba(99, 102, 241, 0.15);
@@ -265,13 +267,13 @@
     background: #ffffff;
     display: flex;
     gap: 12px;
-    align-items: center;
+    align-items: flex-end;
     border-top: 1px solid #f1f5f9;
 }
 
 .inputField {
     flex: 1;
-    padding: 14px 24px;
+    padding: 12px 34px 12px 24px;
     border-radius: 18px;
     background: #f8fafc;
     font-size: 0.95rem;
@@ -280,6 +282,13 @@
     color: #1e293b;
     border: 2px solid transparent;
     font-weight: 500;
+    resize: none;
+    min-height: 48px;
+    max-height: 150px;
+    overflow-y: auto;
+    font-family: inherit;
+    line-height: 1.5;
+    box-sizing: border-box;
 }
 
 .inputField:focus {
@@ -336,13 +345,27 @@
 .messagesContainer::-webkit-scrollbar {
     width: 6px;
 }
-.messagesContainer::-webkit-scrollbar-track {
+.inputField::-webkit-scrollbar {
+    width: 12px;
+}
+.messagesContainer::-webkit-scrollbar-track,
+.inputField::-webkit-scrollbar-track {
     background: transparent;
 }
 .messagesContainer::-webkit-scrollbar-thumb {
     background-color: #e2e8f0;
     border-radius: 10px;
 }
-.messagesContainer::-webkit-scrollbar-thumb:hover {
+
+.inputField::-webkit-scrollbar {
+    width: 24px;
+}
+.inputField::-webkit-scrollbar-thumb {
     background-color: #cbd5e1;
+    border-radius: 12px;
+    border: 10px solid transparent;
+    background-clip: padding-box;
+}
+.inputField::-webkit-scrollbar-thumb:hover {
+    background-color: #94a3b8;
 }
