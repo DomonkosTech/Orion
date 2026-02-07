@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import {toast} from "react-hot-toast";
-import { API_BASE_URL } from "./apiConfig";
+import { API_BASE_URL } from "./ApiConfig.ts";
 
 export interface AuthStatus {
     loggedIn: boolean;

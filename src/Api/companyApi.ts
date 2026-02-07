@@ -1,5 +1,5 @@
 // src/services/companyService.ts
-import { API_BASE_URL } from "./apiConfig";
+import { API_BASE_URL } from "./ApiConfig.ts";
 
 export interface CompanyLoginData {
     email: string;

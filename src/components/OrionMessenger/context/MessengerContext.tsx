@@ -10,7 +10,7 @@ import {
     sendUserMessage,
     sendCompanyMessage,
 } from "../../../Api/messageApi.ts";
-import {wbsocket} from "../../../Api/apiConfig.ts";
+import {wbsocket} from "../../../Api/ApiConfig.ts";
 import { useAuth } from "../../../hooks/useAuth";
 
 export interface ChatPartner {

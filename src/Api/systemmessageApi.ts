@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "./apiConfig";
+import { API_BASE_URL } from "./ApiConfig.ts";
 
 
 const handleResponse = async (response: Response) => {
