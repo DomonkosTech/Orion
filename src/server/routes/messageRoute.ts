@@ -96,11 +96,12 @@ router.post("/user/send", verifyToken,verifyUser, async (req: AuthRequest, res) 
 // insert chat(company version) messages
 router.post("/company/send", verifyToken,verifyCompany, async (req: AuthRequest, res) => {
     try {
-        const userId = req.companyId;
-        const companyId = req.body.userId;
+        const userId = req.body.userId;
+        const companyId = req.companyId;
         const message = req.body.message;
         const senderType= "COMPANY";
         if (!userId || !companyId || !message) {
+            console.log(userId, companyId, message)
             return res.status(400).json({ error: "Company access denied" });
         }
         const data = await sendMessage(userId, companyId,message, senderType);

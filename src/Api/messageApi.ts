@@ -101,8 +101,7 @@ export const sendCompanyMessage = async (message: string, userId: number) => {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-
-            companyId: userId,
+            userId: userId,
             message: message,
         }),
         credentials: "include",
