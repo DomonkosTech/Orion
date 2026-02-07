@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { MessageSquare, Users, PlusCircle } from "lucide-react";
 import styles from "./CompanyHomePage.module.css";
 
@@ -11,8 +11,8 @@ import Footer from "../../../components/Footer/Footer.tsx";
 import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 
 // API
-import { getCompanyAdvertisements, type CompanyAdvertisement } from "../../../api/advertisementApi";
-import { getCompanystat, type DashboardStats, type LastApplication } from "../../../api/companyApi";
+import { getCompanyAdvertisements, type CompanyAdvertisement } from "../../../Api/advertisementApi";
+import { getCompanystat, type DashboardStats, type LastApplication } from "../../../Api/companyApi";
 
 const CompanyHomePage: React.FC = () => {
     const navigate = useNavigate();
@@ -143,23 +143,13 @@ const CompanyHomePage: React.FC = () => {
                                 lastActivities.map((activity, index) => (
                                     <div key={index} className={styles.jobItem}>
                                         <div className={styles.jobMeta}>
-                                            <Trans
-                                                i18nKey="home.recentActivity.applied"
-                                                t={t}
-                                                values={{
-                                                    name: `${activity.users?.fname} ${activity.users?.lname}`,
-                                                    title: activity.advertisement?.title
-                                                }}
-                                                components={{ strong: <strong />, i: <i /> }}
-                                            >
-                                                <strong>{{ name: `${activity.users?.fname} ${activity.users?.lname}` }}</strong> jelentkezett: <i>{{ title: activity.advertisement?.title }}</i>
-                                            </Trans>
+                                            <strong>{activity.users?.fname} {activity.users?.lname}</strong> {t('home.recentActivity.applied')} <i>{activity.advertisement?.title}</i>
                                         </div>
                                     </div>
                                 ))
                             ) : (
                                 <div className={styles.jobItem}>
-                                    <div className={styles.jobMeta}>{t('home.recentActivity.empty')}</div>
+                                    <div className={styles.jobMeta}>Nincs legutóbbi aktivitás.</div>
                                 </div>
                             )}
                         </div>

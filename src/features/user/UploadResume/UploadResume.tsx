@@ -2,7 +2,8 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { Upload, FileText, X, Info } from "lucide-react";
-import { uploadResume } from "../../../api/userApi";
+import { toast, Toaster } from "react-hot-toast";
+import { uploadResume } from "../../../Api/userApi";
 import styles from "./UploadResume.module.css";
 
 //components
@@ -27,12 +28,12 @@ const UploadResume = () => {
         if (!selectedFile) return;
 
         if (selectedFile.type !== "application/pdf") {
-            alert(t('uploadResume.alerts.onlyPdf'));
+            toast.error(t('uploadResume.alerts.onlyPdf'));
             return;
         }
 
         if (selectedFile.size > 5 * 1024 * 1024) {
-            alert(t('uploadResume.alerts.sizeLimit'));
+            toast.error(t('uploadResume.alerts.sizeLimit'));
             return;
         }
 
@@ -59,10 +60,10 @@ const UploadResume = () => {
         setSending(true);
         try {
             await uploadResume(file);
-            alert(t('uploadResume.alerts.success'));
+            toast.success(t('uploadResume.alerts.success'));
             navigate("/edituserprofile");
         } catch (err: unknown) {
-            alert(err instanceof Error ? err.message : t('uploadResume.alerts.unknownError'));
+            toast.error(err instanceof Error ? err.message : t('uploadResume.alerts.unknownError'));
         } finally {
             setSending(false);
         }
@@ -70,6 +71,7 @@ const UploadResume = () => {
 
     return (
         <div className={styles.pageWrapper}>
+            <Toaster />
             <Header />
 
             <main className={styles.container}>

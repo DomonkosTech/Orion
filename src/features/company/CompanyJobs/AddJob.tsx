@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { createAdvertisement } from "../../../api/advertisementApi";
+import { createAdvertisement } from "../../../Api/advertisementApi";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "./AddJob.module.css";
 

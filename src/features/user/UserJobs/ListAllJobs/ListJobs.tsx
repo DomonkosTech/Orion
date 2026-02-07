@@ -9,7 +9,7 @@ import FilterBar from "./components/FilterBar.tsx";
 import JobCard from "./components/JobCard.tsx";
 import SkeletonCard from "./components/SkeletonCard.tsx";
 import EmptyState from "./components/EmptyState.tsx";
-import { getAdvertisements, type Job } from "../../../../api/advertisementApi.ts";
+import { getAdvertisements, type Job } from "../../../../Api/advertisementApi.ts";
 import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 import Footer from "../../../../components/Footer/Footer.tsx";
 import Button from "../../../../components/Button/Button.tsx";

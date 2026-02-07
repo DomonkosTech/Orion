@@ -1,5 +1,5 @@
 import React from "react";
-import { sendUserPasswordResetEmail } from "../../../api/emailApi.ts";
+import { sendUserPasswordResetEmail } from "../../../Api/emailApi.ts";
 import PasswordResetRequest from "../../../components/PasswordReset/PasswordResetRequest.tsx";
 
 const UserPasswordResetRequest: React.FC = () => {

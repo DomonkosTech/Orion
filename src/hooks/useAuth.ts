@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { checkAuthStatus } from '../api/authApi.ts';
+import { checkAuthStatus } from '../Api/authApi.ts';
 
 /**
  * Custom hook to manage authentication state and user details.

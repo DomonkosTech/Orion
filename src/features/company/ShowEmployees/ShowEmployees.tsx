@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { getEmployees, deleteEmployee } from "../../../api/advertisementApi.ts";
+import { getEmployees, deleteEmployee } from "../../../Api/advertisementApi.ts";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "./ShowEmployees.module.css";
 
