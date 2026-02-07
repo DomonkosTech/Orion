@@ -9,6 +9,28 @@ import TextArea from "../../../components/TextArea/TextArea";
 import styles from "./CompanyRegisterPage.module.css";
 import registerStyles from "../../../components/RegisterPage/RegisterPage.module.css";
 
+interface CompanyRegisterFormValues {
+    email: string;
+    password: string;
+    confirmPassword: string;
+    name: string;
+    address: string;
+    tax_number: string;
+    contact_person_name: string;
+    activity_scope: string;
+    website: string;
+    short_description: string;
+    phone_number: string;
+    terms_accepted: boolean;
+}
+
+interface RenderProps {
+    formData: CompanyRegisterFormValues;
+    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    handleCheckboxChange: (name: string, checked: boolean) => void;
+    errors: Record<string, string>;
+}
+
 const stepSchemas = [
     companyRegisterObject.pick({ email: true, password: true, confirmPassword: true }).superRefine(passwordConfirmRefinement),
     companyRegisterObject.pick({ name: true, address: true, tax_number: true, website: true }),
@@ -24,7 +46,7 @@ const stepSchemas = [
 const CompanyRegisterPage: React.FC = () => {
     const { t } = useTranslation('company');
 
-    const initialValues = {
+    const initialValues: CompanyRegisterFormValues = {
         email: "",
         password: "",
         confirmPassword: "",
@@ -42,7 +64,7 @@ const CompanyRegisterPage: React.FC = () => {
     const steps = [
         {
             label: t('register.steps.account'),
-            render: ({ formData, handleChange, errors }: any) => {
+            render: ({ formData, handleChange, errors }: RenderProps) => {
                 const password = formData.password || "";
                 const hasMinLength = password.length >= 8;
                 const hasLower = /[a-z]/.test(password);
@@ -95,7 +117,7 @@ const CompanyRegisterPage: React.FC = () => {
         },
         {
             label: t('register.steps.company'),
-            render: ({ formData, handleChange, errors }: any) => (
+            render: ({ formData, handleChange, errors }: RenderProps) => (
                 <>
                     <InputField label={t('register.fields.companyName')} name="name" value={formData.name} onChange={handleChange} error={errors.name} />
                     <InputField label={t('register.fields.address')} name="address" value={formData.address} onChange={handleChange} error={errors.address} />
@@ -108,7 +130,7 @@ const CompanyRegisterPage: React.FC = () => {
         },
         {
             label: t('register.steps.contact'),
-            render: ({ formData, handleChange, handleCheckboxChange, errors }: any) => (
+            render: ({ formData, handleChange, handleCheckboxChange, errors }: RenderProps) => (
                 <>
                     <div className={styles.row}>
                         <InputField label={t('register.fields.contactPerson')} name="contact_person_name" value={formData.contact_person_name} onChange={handleChange} error={errors.contact_person_name} />
@@ -126,7 +148,7 @@ const CompanyRegisterPage: React.FC = () => {
         }
     ];
 
-    const handleCompanyRegister = async (data: any) => {
+    const handleCompanyRegister = async (data: CompanyRegisterFormValues) => {
         await registerCompany({
             email: data.email,
             password: data.password,

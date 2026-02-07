@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { sendCompanyPasswordResetEmail } from "../../../api/emailApi.ts";
+import { sendCompanyPasswordResetEmail } from "../../../Api/emailApi.ts";
 import PasswordResetRequest from "../../../components/PasswordReset/PasswordResetRequest.tsx";
 
 const CompanyPasswordResetRequest: React.FC = () => {

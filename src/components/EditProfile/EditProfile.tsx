@@ -10,12 +10,12 @@ import {
     deleteResume,
     type UserProfileData,
     type Documents,
-} from "../../api/userApi.ts";
+} from "../../Api/userApi.ts";
 import {
     getCompanyProfile,
     updateCompanyProfile,
     type CompanyProfile
-} from "../../api/companyApi.ts";
+} from "../../Api/companyApi.ts";
 import styles from "./EditProfile.module.css";
 import { toast, Toaster } from "react-hot-toast";
 import { userUpdateProfileSchema, companyUpdateProfileSchema } from "../../validation/Validation.ts";
@@ -149,14 +149,14 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
     };
 
     const handleDeleteResume = () => {
-        toast((t) => (
+        toast((toastInstance) => (
             <div className={styles.toastConfirm}>
                 <p>{t('editProfile.deleteResumeConfirmation')}</p>
                 <div className={styles.toastActions}>
                     <Button
                         variant="secondary"
                         color="gray"
-                        onClick={() => toast.dismiss(t.id)}
+                        onClick={() => toast.dismiss(toastInstance.id)}
                         style={{ padding: '4px 12px', fontSize: '0.9rem' }}
                     >
                         {t('editProfile.cancel')}
@@ -165,7 +165,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                         variant="primary"
                         color="danger"
                         onClick={async () => {
-                            toast.dismiss(t.id);
+                            toast.dismiss(toastInstance.id);
                             try {
                                 const data = await deleteResume();
                                 if (data.success) {

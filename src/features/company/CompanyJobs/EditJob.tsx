@@ -11,7 +11,7 @@ import {
     updateAdvertisement,
     updateAdvertisementStatus,
     type UpdateAdvertisementData
-} from "../../../api/advertisementApi.ts";
+} from "../../../Api/advertisementApi.ts";
 
 import styles from "./EditJob.module.css";
 

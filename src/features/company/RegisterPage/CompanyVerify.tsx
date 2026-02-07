@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { verifyCompanyEmail } from "../../../api/emailApi.ts";
+import { verifyCompanyEmail } from "../../../Api/emailApi.ts";
 import { toast, Toaster } from "react-hot-toast";
 import styles from "../../user/RegisterPage/UserRegisterPage.module.css";
 

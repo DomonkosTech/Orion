@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { MapPin, Hash, Wallet, ClipboardList, Target, Briefcase, ChevronLeft } from "lucide-react";
 import {
     updateviewcounter,
@@ -8,7 +8,7 @@ import {
     submitApplication,
     type AdvertisementDetails,
     ApiError
-} from "../../../../api/advertisementApi";
+} from "../../../../Api/advertisementApi";
 import styles from "./ShowJob.module.css";
 
 //components

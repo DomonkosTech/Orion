@@ -1,7 +1,6 @@
 import React from "react";
-import type {Message} from "../../../api/messageApi.ts";
+import type {Message} from "../../../Api/messageApi.ts";
 import styles from "../MessengerPage.module.css";
-import { useTranslation } from "react-i18next";
 import { CheckCheck } from "lucide-react";
 
 interface MessageBubbleProps {
@@ -29,8 +28,7 @@ function formatDateTime(value?: string | null) {
     }
 }
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isMyMessage, initials, isLastRead, style }) => {
-    const { t } = useTranslation('components');
+const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isMyMessage, isLastRead, style }) => {
     const text = message.content ?? message.message ?? "";
     const rowClass = isMyMessage ? `${styles.bubbleRow} ${styles.bubbleRowUser}` : `${styles.bubbleRow} ${styles.bubbleRowCompany}`;
     const bubbleClass = isMyMessage ? `${styles.bubble} ${styles.userBubble}` : `${styles.bubble} ${styles.companyBubble}`;
@@ -42,7 +40,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isMyMessage, ini
                 <div className={styles.messageFooter}>
                     <div className={styles.smallMuted}>{formatDateTime(message.created_at)}</div>
                     {isMyMessage && isLastRead && (
-                        <CheckCheck size={14} className={styles.seenIcon} title={t('messageBubble.seenByCompany')} />
+                        <CheckCheck size={14} className={styles.seenIcon}  />
                     )}
                 </div>
             </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './OrionAI.css';
-import { OrionAI as OrionAIApi, type Job } from '../../api/advertisementApi';
+import { OrionAI as OrionAIApi, type Job } from '../../Api/advertisementApi';
 import { useNavigate } from 'react-router-dom';
 
 interface OrionAIProps {

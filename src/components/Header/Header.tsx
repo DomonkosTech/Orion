@@ -8,7 +8,7 @@ import ProfileDropdown from "../ProfileDropdown/ProfileDropdown.tsx";
 import LanguageSelector from "../LanguageSelector/LanguageSelector.tsx";
 
 // Server / hooks
-import { useLogout } from "../../api/authApi.ts";
+import { useLogout } from "../../Api/authApi.ts";
 import { useAuth } from "../../hooks/useAuth";
 
 interface NavItem {

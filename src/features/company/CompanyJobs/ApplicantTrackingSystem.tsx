@@ -19,7 +19,7 @@ import {
     rejectApplication,
     getResumeUrl,
     type Applicant
-} from "../../../api/applicationApi.ts";
+} from "../../../Api/applicationApi.ts";
 
 export const ApplicantTrackingSystem: React.FC = () => {
     const { t } = useTranslation('company');

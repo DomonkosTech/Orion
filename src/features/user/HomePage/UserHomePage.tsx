@@ -25,8 +25,8 @@ import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
 import { useAuth } from "../../../hooks/useAuth";
-import { getTop3Advertisements, type Job} from "../../../api/advertisementApi.ts";
-import {getUserStatistics, type DashboardStats} from "../../../api/userApi.ts"
+import { getTop3Advertisements, type Job} from "../../../Api/advertisementApi.ts";
+import {getUserStatistics, type DashboardStats} from "../../../Api/userApi.ts"
 
 function UserHomePage() {
     const navigate = useNavigate();
