@@ -165,7 +165,6 @@ router.get("/advertisements2", async (req, res) => {
 
 
         const { advertisements } = await getAllAdvertisements2(q , location, position, hourly_wage, page, limit);
-        console.log(advertisements)
         res.json({
             success: true,
             advertisements,

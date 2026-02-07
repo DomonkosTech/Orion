@@ -13,6 +13,7 @@ import { getAdvertisements, type Job } from "../../../../api/advertisementApi.ts
 import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 import Footer from "../../../../components/Footer/Footer.tsx";
 import Button from "../../../../components/Button/Button.tsx";
+import OrionAI from "../../../../components/OrionAI/OrionAI.tsx";
 
 
 // Helper for formatting currency
@@ -32,6 +33,7 @@ const ListJobs: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
     const [totalCount, setTotalCount] = useState<number>(0);
+    const [isOrionAIOpen, setIsOrionAIOpen] = useState(false);
 
     // Filters
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -170,7 +172,7 @@ const ListJobs: React.FC = () => {
                             <p className={styles.heroSubtitle}>
                                 {totalCount > 0 ? (
                                     <Trans i18nKey="jobs.list.subtitle" values={{ count: totalCount }}>
-                                        Fedezzen fel <strong>{{ count: totalCount }}</strong> nyitott pozíciót vezető cégeknél.
+                                        Fedezzen fel <strong>{totalCount}</strong> nyitott pozíciót vezető cégeknél.
                                     </Trans>
                                 ) : (
                                     <Trans i18nKey="jobs.list.subtitleDefault">
@@ -178,6 +180,16 @@ const ListJobs: React.FC = () => {
                                     </Trans>
                                 )}
                             </p>
+                        </div>
+                        <div className={styles.aiButtonWrapper}>
+                            <Button 
+                                onClick={() => setIsOrionAIOpen(true)}
+                                variant="primary"
+                                color="orion-blue"
+                                style={{ background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', border: 'none' }}
+                            >
+                                ✨ Orion AI
+                            </Button>
                         </div>
                     </div>
 
@@ -247,6 +259,7 @@ const ListJobs: React.FC = () => {
                 </div>
             </main>
             <Footer />
+            <OrionAI isOpen={isOrionAIOpen} onClose={() => setIsOrionAIOpen(false)} />
         </div>
     );
 };
