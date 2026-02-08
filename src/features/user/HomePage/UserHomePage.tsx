@@ -25,46 +25,56 @@ import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
 import { useAuth } from "../../../hooks/useAuth";
-import { getTop3Advertisements, type Job} from "../../../Api/advertisementApi.ts";
-import {getUserStatistics, type DashboardStats} from "../../../Api/userApi.ts"
+import { getAdvertisementById, type AdvertisementDetails } from "../../../Api/advertisementApi.ts";
+import { getUserStatistics, type DashboardStats } from "../../../Api/userApi.ts"
 
 function UserHomePage() {
-    const navigate = useNavigate();
-    const { t } = useTranslation('user');
-    const { name } = useAuth();
-    const [bestMatch, setBestMatch] = useState<Job | null>(null);
-    const [stats, setStats] = useState<DashboardStats>({
-        total_applications: 0,
-        profile_views: 0,
-        resume_views: 0,
-        accepted_applications: 0
-    });
-    const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+  const { t } = useTranslation("user");
+  const { name } = useAuth();
 
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            try {
-                const [topAdsData, statsData] = await Promise.all([
-                    getTop3Advertisements(),
-                    getUserStatistics()
-                ]);
+  const [featuredAdvertisement, setFeaturedAdvertisement] = useState<
+    (AdvertisementDetails & { id: string }) | null
+  >(null);
 
-                if(statsData.success){
-                    setStats(statsData.data.stats || {})
-                }
+  const [stats, setStats] = useState<DashboardStats>({
+    total_applications: 0,
+    profile_views: 0,
+    resume_views: 0,
+    accepted_applications: 0
+  });
 
-                if (topAdsData.success && topAdsData.advertisements && topAdsData.advertisements.length > 0) {
-                    setBestMatch(topAdsData.advertisements[0]);
-                }
-            } catch (err) {
-                console.error("Hiba az adatok lekérésekor:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
+  const [loading, setLoading] = useState(true);
 
-        fetchDashboardData();
-    }, []);
+  useEffect(() => {
+    const fetchDashboardData = async () => {
+      try {
+        const featuredAdvertisementId = "1";
+
+        const [featuredAdResponse, statsResponse] = await Promise.all([
+          getAdvertisementById(featuredAdvertisementId),
+          getUserStatistics(),
+        ]);
+
+        if (statsResponse.success) {
+          setStats(statsResponse.data.stats || {});
+        }
+
+        if (featuredAdResponse.success && featuredAdResponse.advertisement) {
+          setFeaturedAdvertisement({
+            ...featuredAdResponse.advertisement,
+            id: featuredAdvertisementId,
+          });
+        }
+      } catch (err) {
+        console.error("Hiba az adatok lekérésekor:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, []);
 
     const navigationItems = [
         {
@@ -176,33 +186,30 @@ function UserHomePage() {
                                 <div className={styles.cardBody}>
                                     {loading ? (
                                         <div className={styles.skeleton}></div>
-                                    ) : bestMatch ? (
+                                    ) : featuredAdvertisement ? (
                                         <>
-                                            <h2 className={styles.matchTitle}>{bestMatch.title}</h2>
+                                            <h2 className={styles.matchTitle}>{featuredAdvertisement.title}</h2>
                                             <div className={styles.matchDetails}>
                                                 <div className={styles.detailItem}>
                                                     <Building2 size={20} />
-                                                    <span>{bestMatch.position || t('featured.defaultPosition')}</span>
+                                                    <span>
+                                                        {featuredAdvertisement.position || t("featured.defaultPosition")}
+                                                    </span>
                                                 </div>
                                                 <div className={styles.detailItem}>
                                                     <MapPin size={20} />
-                                                    <span>{bestMatch.location}</span>
+                                                    <span>{featuredAdvertisement.location}</span>
                                                 </div>
                                             </div>
-                                            <p className={styles.matchDescription}>
-                                                {t('featured.description')}
-                                                {" "}
-                                                {bestMatch.tasks 
-                                                    ? t('featured.descriptionDynamic', { wage: bestMatch.hourly_wage }) 
-                                                    : t('featured.descriptionDefault')}
-                                            </p>
+                                            <p className={styles.matchDescription}>{featuredAdvertisement.tasks}</p>
                                             <Button
-                                                onClick={() => navigate(`/job/show/${bestMatch.id}`)}
+                                                onClick={() => navigate(`/job/show/${featuredAdvertisement.id}`)}
                                                 variant="primary"
                                                 color="orion-blue"
                                                 className={styles.matchBtn}
                                             >
-                                                {t('featured.detailsButton')} <ArrowRight size={20} style={{ marginLeft: '12px' }} />
+                                                {t("featured.detailsButton")}{" "}
+                                                <ArrowRight size={20} style={{ marginLeft: "12px" }} />
                                             </Button>
                                         </>
                                     ) : (
