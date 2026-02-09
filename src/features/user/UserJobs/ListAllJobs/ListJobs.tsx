@@ -9,11 +9,10 @@ import FilterBar from "./components/FilterBar.tsx";
 import JobCard from "./components/JobCard.tsx";
 import SkeletonCard from "./components/SkeletonCard.tsx";
 import EmptyState from "./components/EmptyState.tsx";
-import { getAdvertisements, type Job } from "../../../../Api/advertisementApi.ts";
+import { getAdvertisements, type Job, OrionAI as OrionAIApi } from "../../../../Api/advertisementApi.ts";
 import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 import Footer from "../../../../components/Footer/Footer.tsx";
 import Button from "../../../../components/Button/Button.tsx";
-import OrionAI from "../../../../components/OrionAI/OrionAI.tsx";
 
 
 // Helper for formatting currency
@@ -33,7 +32,7 @@ const ListJobs: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
     const [totalCount, setTotalCount] = useState<number>(0);
-    const [isOrionAIOpen, setIsOrionAIOpen] = useState(false);
+    const [isAISearchActive, setIsAISearchActive] = useState(false);
 
     // Filters
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -46,7 +45,8 @@ const ListJobs: React.FC = () => {
         searchTerm: "",
         locationFilter: "",
         positionFilter: "",
-        minWage: ""
+        minWage: "",
+        isAI: false
     });
 
     const navigate = useNavigate();
@@ -54,6 +54,27 @@ const ListJobs: React.FC = () => {
     // Navigation handlers
     const handleshowClick = (adId: number) => {
         navigate(`/job/show/${adId}`);
+    };
+
+    const fetchAIJobs = async (input: string, wage: string) => {
+        setLoading(true);
+        setError(null);
+        try {
+            const numericWage = parseInt(wage) || 2000;
+            const response = await OrionAIApi(input, numericWage);
+            if (response.success && Array.isArray(response.data)) {
+                setJobs(response.data);
+                setTotalCount(response.data.length);
+            } else {
+                setJobs([]);
+                setTotalCount(0);
+            }
+        } catch (err) {
+            console.error(err);
+            setError(t('jobs.list.ai.error'));
+        } finally {
+            setLoading(false);
+        }
     };
 
     const fetchJobs = async (
@@ -101,7 +122,7 @@ const ListJobs: React.FC = () => {
 
     // Load more when page increases
     useEffect(() => {
-        if (page > 1) {
+        if (page > 1 && !appliedFilters.isAI) {
             fetchJobs(
                 appliedFilters.searchTerm,
                 appliedFilters.locationFilter,
@@ -120,9 +141,15 @@ const ListJobs: React.FC = () => {
             searchTerm,
             locationFilter,
             positionFilter,
-            minWage
+            minWage,
+            isAI: isAISearchActive
         });
-        fetchJobs(searchTerm, locationFilter, positionFilter, minWage, 1);
+        
+        if (isAISearchActive) {
+            fetchAIJobs(searchTerm, minWage);
+        } else {
+            fetchJobs(searchTerm, locationFilter, positionFilter, minWage, 1);
+        }
     };
 
     const clearFilters = () => {
@@ -136,8 +163,10 @@ const ListJobs: React.FC = () => {
             searchTerm: "",
             locationFilter: "",
             positionFilter: "",
-            minWage: ""
+            minWage: "",
+            isAI: false
         });
+        setIsAISearchActive(false);
         fetchJobs("", "", "", "", 1);
     };
 
@@ -148,9 +177,9 @@ const ListJobs: React.FC = () => {
     // Determine if we should show the "Load More" button
     // If totalCount is available, use it.
     // Fallback: If totalCount is missing (0), check if we have a full page of results.
-    const showLoadMore = totalCount > 0
+    const showLoadMore = !appliedFilters.isAI && (totalCount > 0
         ? jobs.length < totalCount
-        : (jobs.length > 0 && jobs.length % PAGE_SIZE === 0);
+        : (jobs.length > 0 && jobs.length % PAGE_SIZE === 0));
 
     return (
         <div className={styles.pageWrapper}>
@@ -165,49 +194,39 @@ const ListJobs: React.FC = () => {
                                 <BannerKicker>{t('jobs.list.kicker')}</BannerKicker>
                             </div>
                             <h1 className={styles.heroTitle}>
-                                <Trans i18nKey="jobs.list.title">
+                                <Trans t={t} i18nKey="jobs.list.title">
                                     Találja meg a <span className={styles.accent}>jövőjét!</span>
                                 </Trans>
                             </h1>
                             <p className={styles.heroSubtitle}>
                                 {totalCount > 0 ? (
-                                    <Trans i18nKey="jobs.list.subtitle" values={{ count: totalCount }}>
+                                    <Trans t={t} i18nKey={appliedFilters.isAI ? "jobs.list.ai.subtitle" : "jobs.list.subtitle"} values={{ count: totalCount }}>
                                         Fedezzen fel <strong>{totalCount}</strong> nyitott pozíciót vezető cégeknél.
                                     </Trans>
                                 ) : (
-                                    <Trans i18nKey="jobs.list.subtitleDefault">
+                                    <Trans t={t} i18nKey="jobs.list.subtitleDefault">
                                         Fedezzen fel <strong>több száz</strong> nyitott pozíciót vezető cégeknél.
                                     </Trans>
                                 )}
                             </p>
                         </div>
-                        <div className={styles.aiButtonWrapper}>
-                            <Button 
-                                onClick={() => setIsOrionAIOpen(true)}
-                                variant="primary"
-                                color="orion-blue"
-                                style={{ background: 'linear-gradient(135deg, #6366f1 0%, #a855f7 100%)', border: 'none' }}
-                            >
-                                ✨ Orion AI
-                            </Button>
-                        </div>
                     </div>
 
                     {/* Filter Section */}
-                    <div className={styles.searchForm}>
-                        <FilterBar
-                            searchTerm={searchTerm}
-                            onSearchChange={setSearchTerm}
-                            locationFilter={locationFilter}
-                            onLocationChange={setLocationFilter}
-                            positionFilter={positionFilter}
-                            onPositionChange={setPositionFilter}
-                            minWage={minWage}
-                            onMinWageChange={setMinWage}
-                            onClear={clearFilters}
-                            onSubmit={handleSearch}
-                        />
-                    </div>
+                    <FilterBar
+                        searchTerm={searchTerm}
+                        onSearchChange={setSearchTerm}
+                        locationFilter={locationFilter}
+                        onLocationChange={setLocationFilter}
+                        positionFilter={positionFilter}
+                        onPositionChange={setPositionFilter}
+                        minWage={minWage}
+                        onMinWageChange={setMinWage}
+                        onClear={clearFilters}
+                        onSubmit={handleSearch}
+                        isAISearchActive={isAISearchActive}
+                        onToggleAISearch={() => setIsAISearchActive(!isAISearchActive)}
+                    />
 
                     {/* Jobs Grid */}
                     {error && (
@@ -231,6 +250,7 @@ const ListJobs: React.FC = () => {
                                             job={job}
                                             onOpen={() => handleshowClick(job.id)}
                                             formatCurrency={formatCurrency}
+                                            isAI={appliedFilters.isAI}
                                         />
                                     ))}
                                     {loading && [1, 2, 3].map((n) => <SkeletonCard key={n} />)}
@@ -259,7 +279,6 @@ const ListJobs: React.FC = () => {
                 </div>
             </main>
             <Footer />
-            <OrionAI isOpen={isOrionAIOpen} onClose={() => setIsOrionAIOpen(false)} />
         </div>
     );
 };

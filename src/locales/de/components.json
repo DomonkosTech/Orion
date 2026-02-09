@@ -7,7 +7,11 @@
     "applications": "Bewerbungen",
     "profile": "Profil",
     "contact": "Kontakt",
-    "copyright": "© {{year}} Orion. Alle Rechte vorbehalten."
+    "copyright": "© {{year}} Orion. Alle Rechte vorbehalten.",
+    "login": "Anmelden",
+    "register": "Registrieren",
+    "dashboard": "Dashboard",
+    "postJob": "Stelle ausschreiben"
   },
   "header": {
     "home": "Startseite",

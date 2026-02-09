@@ -55,7 +55,20 @@
       "subtitleDefault": "Discover <1>hundreds</1> of open positions at leading companies.",
       "errorTitle": "An error occurred",
       "loadMore": "Show more",
-      "loading": "Loading..."
+      "loading": "Loading...",
+      "ai": {
+        "toggleLabel": "OrionAI",
+        "inputPlaceholder": "Describe in your own words what kind of job you are looking for...",
+        "inputPlaceholderDefault": "What kind of job are you looking for? (e.g. Java developer, Accountant)",
+        "buttonLabel": "AI Search",
+        "buttonLabelDefault": "Search",
+        "subtitle": "OrionAI found <1>{{count}}</1> jobs for you.",
+        "badge": "Recommended by OrionAI",
+        "error": "OrionAI is currently unavailable.",
+        "locationPlaceholder": "Location",
+        "positionPlaceholder": "Position",
+        "wagePlaceholder": "Min. Wage"
+      }
     },
     "show": {
       "loading": "Loading...",

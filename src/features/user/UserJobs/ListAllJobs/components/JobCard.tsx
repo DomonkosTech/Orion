@@ -1,5 +1,6 @@
 import React from "react";
 import { MapPin, Heart, ArrowRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import styles from "../ListJobs.module.css";
 import Button from "../../../../../components/Button/Button.tsx";
 
@@ -16,11 +17,19 @@ type Props = {
     job: Job;
     onOpen: () => void;
     formatCurrency: (amount: number) => string;
+    isAI?: boolean;
 };
 
-const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency }) => {
+const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency, isAI }) => {
+    const { t } = useTranslation('user');
+
     return (
         <div className={styles.card} onClick={onOpen}>
+            {isAI && (
+                <div className={styles.aiBadge}>
+                    <span>{t('jobs.list.ai.badge')}</span>
+                </div>
+            )}
             <div className={styles.cardTopRow}>
                 <div className={styles.logoPlaceholder}>
                     {job.title.charAt(0).toUpperCase()}

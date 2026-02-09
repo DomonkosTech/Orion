@@ -67,18 +67,6 @@
         "tasksPlaceholder": "Liste der täglichen Aufgaben...",
         "requirements": "Anforderungen",
         "requirementsPlaceholder": "Erfahrung, Sprachkenntnisse..."
-      },
-      "benefits": {
-        "title": "Zusätzliche Vorteile",
-        "hint": "Wählen Sie aus, was Sie den Bewerbern bieten:",
-        "options": {
-          "homeOffice": "Home-Office",
-          "cafeteria": "Cafeteria",
-          "bonus": "Bonus",
-          "companyCar": "Firmenwagen",
-          "flexibleHours": "Flexible Arbeitszeiten",
-          "modernTools": "Moderne Arbeitsmittel"
-        }
       }
     },
     "sidebar": {
