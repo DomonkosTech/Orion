@@ -1,0 +1,7 @@
+regex
+uvicorn
+fastapi
+nltk
+sentence-transformers
+supabase
+python-dotenv
