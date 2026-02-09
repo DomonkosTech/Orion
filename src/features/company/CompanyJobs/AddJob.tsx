@@ -17,15 +17,6 @@ const AddJob: React.FC = () => {
     const { t } = useTranslation('company');
     const navigate = useNavigate();
 
-    const BENEFITS_OPTIONS = [
-        { key: "Home Office", label: t('addJob.sections.benefits.options.homeOffice') },
-        { key: "Cafeteria", label: t('addJob.sections.benefits.options.cafeteria') },
-        { key: "Bónusz", label: t('addJob.sections.benefits.options.bonus') },
-        { key: "Céges autó", label: t('addJob.sections.benefits.options.companyCar') },
-        { key: "Rugalmas munkaidő", label: t('addJob.sections.benefits.options.flexibleHours') },
-        { key: "Modern eszközök", label: t('addJob.sections.benefits.options.modernTools') }
-    ];
-
     const [formData, setFormData] = useState({
         title: "",
         position: "",
@@ -36,7 +27,6 @@ const AddJob: React.FC = () => {
         job_description: "",
         job_type: "Full-time",
         category: "Physical Work",
-        benefits: [] as string[],
         is_active: true,
     });
 
@@ -57,15 +47,6 @@ const AddJob: React.FC = () => {
         setFormData(prev => ({
             ...prev,
             [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
-        }));
-    };
-
-    const toggleBenefit = (benefitKey: string) => {
-        setFormData(prev => ({
-            ...prev,
-            benefits: prev.benefits.includes(benefitKey)
-                ? prev.benefits.filter(b => b !== benefitKey)
-                : [...prev.benefits, benefitKey]
         }));
     };
 
@@ -170,24 +151,6 @@ const AddJob: React.FC = () => {
                                         onChange={handleInputChange}
                                     />
                                 </div>
-                            </div>
-                        </section>
-
-                        {/* Section 3: Extra Juttatások (Interactive Tags) */}
-                        <section className={styles.card}>
-                            <h2 className={styles.cardTitle}><span>3</span> {t('addJob.sections.benefits.title')}</h2>
-                            <p className={styles.hint}>{t('addJob.sections.benefits.hint')}</p>
-                            <div className={styles.benefitsGrid}>
-                                {BENEFITS_OPTIONS.map(benefit => (
-                                    <button
-                                        key={benefit.key}
-                                        type="button"
-                                        className={`${styles.benefitTag} ${formData.benefits.includes(benefit.key) ? styles.activeBenefit : ""}`}
-                                        onClick={() => toggleBenefit(benefit.key)}
-                                    >
-                                        {benefit.label}
-                                    </button>
-                                ))}
                             </div>
                         </section>
                     </div>

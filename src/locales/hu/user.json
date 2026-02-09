@@ -55,7 +55,20 @@
       "subtitleDefault": "Fedezzen fel <1>több száz</1> nyitott pozíciót vezető cégeknél.",
       "errorTitle": "Hiba történt",
       "loadMore": "Mutass többet",
-      "loading": "Betöltés..."
+      "loading": "Betöltés...",
+      "ai": {
+        "toggleLabel": "OrionAI",
+        "inputPlaceholder": "Írja le saját szavaival milyen munkát keres...",
+        "inputPlaceholderDefault": "Milyen munkát keres? (pl. Java fejlesztő, Könyvelő)",
+        "buttonLabel": "AI Keresés",
+        "buttonLabelDefault": "Keresés",
+        "subtitle": "Az OrionAI <1>{{count}}</1> állást talált Önnek.",
+        "badge": "OrionAI ajánlása",
+        "error": "Az OrionAI jelenleg nem érhető el.",
+        "locationPlaceholder": "Helyszín",
+        "positionPlaceholder": "Pozíció",
+        "wagePlaceholder": "Min. Bér"
+      }
     },
     "show": {
       "loading": "Betöltés...",

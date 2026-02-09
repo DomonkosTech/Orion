@@ -67,18 +67,6 @@
         "tasksPlaceholder": "Napi teendők listája...",
         "requirements": "Követelmények",
         "requirementsPlaceholder": "Tapasztalat, nyelvtudás..."
-      },
-      "benefits": {
-        "title": "Extra Juttatások",
-        "hint": "Válassza ki, mit kínál a jelentkezőknek:",
-        "options": {
-          "homeOffice": "Home Office",
-          "cafeteria": "Cafeteria",
-          "bonus": "Bónusz",
-          "companyCar": "Céges autó",
-          "flexibleHours": "Rugalmas munkaidő",
-          "modernTools": "Modern eszközök"
-        }
       }
     },
     "sidebar": {

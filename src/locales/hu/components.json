@@ -7,7 +7,11 @@
     "applications": "Jelentkezések",
     "profile": "Profil",
     "contact": "Kapcsolat",
-    "copyright": "© {{year}} Orion. Minden jog fenntartva."
+    "copyright": "© {{year}} Orion. Minden jog fenntartva.",
+    "login": "Bejelentkezés",
+    "register": "Regisztráció",
+    "dashboard": "Vezérlőpult",
+    "postJob": "Hirdetés feladása"
   },
   "header": {
     "home": "Kezdőlap",

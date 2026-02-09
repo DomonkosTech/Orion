@@ -224,8 +224,7 @@ export const deleteEmployee = async (id: number) => {
     return handleResponse(response);
 }
 
-export const OrionAI = async (userinput: string) => {
-    const wage = 2000;
+export const OrionAI = async (userinput: string, wage: number = 2000) => {
     const response = await fetch(`${API_BASE_URL}/OrionAI`, {
         method: "POST",
         credentials: "include",

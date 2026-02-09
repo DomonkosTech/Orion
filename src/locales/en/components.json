@@ -7,7 +7,11 @@
     "applications": "Applications",
     "profile": "Profile",
     "contact": "Contact",
-    "copyright": "© {{year}} Orion. All rights reserved."
+    "copyright": "© {{year}} Orion. All rights reserved.",
+    "login": "Login",
+    "register": "Register",
+    "dashboard": "Dashboard",
+    "postJob": "Post a Job"
   },
   "header": {
     "home": "Home",

@@ -67,18 +67,6 @@
         "tasksPlaceholder": "List of daily tasks...",
         "requirements": "Requirements",
         "requirementsPlaceholder": "Experience, language skills..."
-      },
-      "benefits": {
-        "title": "Extra Benefits",
-        "hint": "Select what you offer to applicants:",
-        "options": {
-          "homeOffice": "Home Office",
-          "cafeteria": "Cafeteria",
-          "bonus": "Bonus",
-          "companyCar": "Company Car",
-          "flexibleHours": "Flexible Hours",
-          "modernTools": "Modern Tools"
-        }
       }
     },
     "sidebar": {
