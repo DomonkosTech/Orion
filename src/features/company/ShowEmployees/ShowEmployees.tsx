@@ -69,57 +69,59 @@ const ShowEmployees = () => {
     if (loading) return <div className={styles.loading}>{t('employees.loading')}</div>;
 
     return (
-        <div className={styles.page}>
+        <>
             <Header />
-            <Toaster position="top-center" />
+            <div className={styles.page}>
+                <Toaster position="top-center" />
 
-            <main className={styles.container}>
-                <header className={styles.header}>
-                    <BannerKicker>{t('addJob.banner')}</BannerKicker>
-                    <h1 className={styles.title}>{t('employees.title')}</h1>
-                    <p className={styles.subtitle}>{t('employees.subtitle')}</p>
-                </header>
+                <main className={styles.container}>
+                    <header className={styles.header}>
+                        <BannerKicker>{t('addJob.banner')}</BannerKicker>
+                        <h1 className={styles.title}>{t('employees.title')}</h1>
+                        <p className={styles.subtitle}>{t('employees.subtitle')}</p>
+                    </header>
 
-                <div className={styles.card}>
-                    <div className={styles.tableWrapper}>
-                        <table className={styles.employeeTable}>
-                            <thead>
-                            <tr>
-                                <th>{t('employees.table.name')}</th>
-                                <th>{t('employees.table.email')}</th>
-                                <th>{t('employees.table.position')}</th>
-                                <th>{t('employees.table.wage')}</th>
-                                <th style={{ textAlign: 'right' }}>{t('employees.table.actions')}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {employees.map((employee) => (
-                                <tr key={employee.id}>
-                                    <td className={styles.nameCell}>
-                                        {employee.users?.lname} {employee.users?.fname}
-                                    </td>
-                                    <td className={styles.emailCell}>{employee.users?.email}</td>
-                                    <td>{employee.position}</td>
-                                    <td className={styles.wageCell}>{employee.hourly_wage} Ft/óra</td>
-                                    <td style={{ textAlign: 'right' }}>
-                                        <Button
-                                            variant="secondary"
-                                            color="danger"
-                                            onClick={() => handleDelete(employee.id)}
-                                            style={{ padding: '6px 12px', fontSize: '0.85rem' }}
-                                        >
-                                            {t('employees.fire')}
-                                        </Button>
-                                    </td>
+                    <div className={styles.card}>
+                        <div className={styles.tableWrapper}>
+                            <table className={styles.employeeTable}>
+                                <thead>
+                                <tr>
+                                    <th>{t('employees.table.name')}</th>
+                                    <th>{t('employees.table.email')}</th>
+                                    <th>{t('employees.table.position')}</th>
+                                    <th>{t('employees.table.wage')}</th>
+                                    <th style={{ textAlign: 'right' }}>{t('employees.table.actions')}</th>
                                 </tr>
-                            ))}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                {employees.map((employee) => (
+                                    <tr key={employee.id}>
+                                        <td className={styles.nameCell}>
+                                            {employee.users?.lname} {employee.users?.fname}
+                                        </td>
+                                        <td className={styles.emailCell}>{employee.users?.email}</td>
+                                        <td>{employee.position}</td>
+                                        <td className={styles.wageCell}>{employee.hourly_wage} Ft/óra</td>
+                                        <td style={{ textAlign: 'right' }}>
+                                            <Button
+                                                variant="secondary"
+                                                color="danger"
+                                                onClick={() => handleDelete(employee.id)}
+                                                style={{ padding: '6px 12px', fontSize: '0.85rem' }}
+                                            >
+                                                {t('employees.fire')}
+                                            </Button>
+                                        </td>
+                                    </tr>
+                                ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            </main>
+                </main>
+            </div>
             <Footer />
-        </div>
+        </>
     );
 };
 

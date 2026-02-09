@@ -4,14 +4,23 @@
   line-height: 1.5;
   font-weight: 400;
 
-    color-scheme: light;
-    color: #0f172a;
-    background-color: #ffffff;
+  color-scheme: light;
+  color: #0f172a;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  --orion-blue: #2c5aa0;
+  --orion-blue-dark: #1e3d6f;
+  --bg: #f8fafc;
+  --panel: #ffffff;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --accent: var(--orion-blue);
 }
 
 html,
@@ -34,8 +43,6 @@ a:hover {
 body {
   min-width: 320px;
 }
-
-
 
 h1 {
   font-size: 3.2em;
