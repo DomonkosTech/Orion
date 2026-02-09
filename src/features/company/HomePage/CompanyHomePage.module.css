@@ -1,13 +1,4 @@
 .page {
-    --orion-blue: #2c5aa0;
-    --orion-blue-dark: #1e3d6f;
-    --bg: #f8fafc;
-    --panel: #ffffff;
-    --text: #0f172a;
-    --muted: #64748b;
-    --border: #e2e8f0;
-    --accent: var(--orion-blue);
-
     min-height: 100vh;
     background: var(--bg);
     color: var(--text);

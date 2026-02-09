@@ -10,7 +10,7 @@
     --danger: #ef4444;
     --danger-hover: #dc2626;
 
-    min-height: 100vh;
+    min-height: 140vh;
     background: var(--bg);
     color: var(--text);
     font-family: 'Inter', system-ui, sans-serif;

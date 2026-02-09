@@ -40,68 +40,70 @@ const ShowListedJobs: React.FC = () => {
     };
 
     return (
-        <div className={styles.page}>
+        <>
             <Header />
+            <div className={styles.page}>
 
-            <main className={styles.container}>
-                <header className={styles.header}>
-                    <div>
-                        <BannerKicker>{t('showJobs.banner')}</BannerKicker>
-                        <h1 className={styles.title}>{t('showJobs.title')}</h1>
-                    </div>
-                    <div className={styles.actions}>
-                        <Button
-                            variant="secondary"
-                            onClick={() => navigate("/company")}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <ArrowLeft size={18} /> {t('showJobs.back')}
-                            </div>
-                        </Button>
-                        <Button
-                            color="orion-blue"
-                            onClick={() => navigate("/AddJob")}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                <Plus size={18} /> {t('showJobs.add')}
-                            </div>
-                        </Button>
-                    </div>
-                </header>
-
-                <div className={styles.jobList}>
-                    {ads.length > 0 ? (
-                        ads.map((ad) => (
-                            <div
-                                key={ad.id}
-                                className={styles.jobCard}
-                                onClick={() => navigate(`/company/ATS/${ad.id}`)}
+                <main className={styles.container}>
+                    <header className={styles.header}>
+                        <div>
+                            <BannerKicker>{t('showJobs.banner')}</BannerKicker>
+                            <h1 className={styles.title}>{t('showJobs.title')}</h1>
+                        </div>
+                        <div className={styles.actions}>
+                            <Button
+                                variant="secondary"
+                                onClick={() => navigate("/company")}
                             >
-                                <div className={styles.jobMainInfo}>
-                                    <h2>{ad.title}</h2>
-                                    <p className={styles.jobSubInfo}>{ad.position}</p>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <ArrowLeft size={18} /> {t('showJobs.back')}
                                 </div>
-
-                                <div className={styles.controls}>
-                                    <span className={styles.statusBadge}>{ad.is_active ? t('showJobs.active') : t('showJobs.inactive')}</span>
-                                    <button
-                                        className={styles.editButton}
-                                        onClick={(e) => handleEditClick(e, ad.id)}
-                                        title={t('showJobs.edit')}
-                                    >
-                                        <Settings size={20}/>
-                                    </button>
+                            </Button>
+                            <Button
+                                color="orion-blue"
+                                onClick={() => navigate("/AddJob")}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <Plus size={18} /> {t('showJobs.add')}
                                 </div>
-                            </div>
-                        ))
-                    ) : (
-                        <p className={styles.jobSubInfo}>{t('showJobs.noJobs')}</p>
-                    )}
-                </div>
-            </main>
+                            </Button>
+                        </div>
+                    </header>
 
-            <Footer />
-        </div>
+                    <div className={styles.jobList}>
+                        {ads.length > 0 ? (
+                            ads.map((ad) => (
+                                <div
+                                    key={ad.id}
+                                    className={styles.jobCard}
+                                    onClick={() => navigate(`/company/ATS/${ad.id}`)}
+                                >
+                                    <div className={styles.jobMainInfo}>
+                                        <h2>{ad.title}</h2>
+                                        <p className={styles.jobSubInfo}>{ad.position}</p>
+                                    </div>
+
+                                    <div className={styles.controls}>
+                                        <span className={styles.statusBadge}>{ad.is_active ? t('showJobs.active') : t('showJobs.inactive')}</span>
+                                        <button
+                                            className={styles.editButton}
+                                            onClick={(e) => handleEditClick(e, ad.id)}
+                                            title={t('showJobs.edit')}
+                                        >
+                                            <Settings size={20}/>
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className={styles.jobSubInfo}>{t('showJobs.noJobs')}</p>
+                        )}
+                    </div>
+                </main>
+
+            </div>
+            <Footer/>
+        </>
     );
 };
 
