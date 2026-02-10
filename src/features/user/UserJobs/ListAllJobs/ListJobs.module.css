@@ -101,15 +101,16 @@
     display: flex;
     flex-direction: column;
     gap: 20px;
-    transition: all 0.3s ease-in-out;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    overflow: hidden;
 }
 
 .aiFormActive {
     border-color: #6366f1;
     box-shadow: 0 10px 30px rgba(99, 102, 241, 0.08);
     background: #fdfdff;
-    padding: 32px; /* Reduced padding */
+    padding: 32px;
 }
 
 .topBar {
@@ -121,7 +122,7 @@
 .searchBarWrapper {
     position: relative;
     flex: 1;
-    transition: flex 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .searchBarWrapper .filterControl,
@@ -130,27 +131,27 @@
     height: 56px;
     font-size: 1.1rem;
     box-sizing: border-box;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .aiActiveInput {
     border-color: #6366f1 !important;
     box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
-    height: 60px !important; /* Reduced height */
-    font-size: 1.15rem !important; /* Reduced font size */
-    padding-left: 60px !important; /* Reduced padding */
-    padding-right: 60px !important; /* Reduced padding */
-    border-radius: 14px !important; /* Slightly reduced radius */
+    height: 60px !important;
+    font-size: 1.15rem !important;
+    padding-left: 60px !important;
+    padding-right: 60px !important;
+    border-radius: 14px !important;
 }
 
 .aiSearchSubmit {
     position: absolute;
-    right: 8px; /* Adjusted position */
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    width: 40px; /* Smaller button */
-    height: 40px; /* Smaller button */
-    border-radius: 10px; /* Adjusted radius */
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     background: #6366f1;
     color: white;
     border: none;
@@ -158,8 +159,16 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     z-index: 10;
+    opacity: 0;
+    animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation-delay: 0.1s;
+}
+
+@keyframes popIn {
+    from { opacity: 0; transform: translateY(-50%) scale(0.5); }
+    to { opacity: 1; transform: translateY(-50%) scale(1); }
 }
 
 .aiSearchSubmit svg {
@@ -171,7 +180,8 @@
 
 .aiSearchSubmit:hover {
     background: #4f46e5;
-    transform: translateY(-50%) scale(1.05);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
 }
 
 .aiSuggestions {
@@ -181,6 +191,12 @@
     margin-top: 4px;
     padding-bottom: 4px;
     justify-content: center;
+    animation: slideDownFade 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideDownFade {
+    from { opacity: 0; transform: translateY(-10px); max-height: 0; }
+    to { opacity: 1; transform: translateY(0); max-height: 200px; }
 }
 
 .suggestionChip {
@@ -192,13 +208,26 @@
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    animation: fadeInChip 0.4s ease forwards;
+}
+
+.suggestionChip:nth-child(1) { animation-delay: 0.1s; }
+.suggestionChip:nth-child(2) { animation-delay: 0.15s; }
+.suggestionChip:nth-child(3) { animation-delay: 0.2s; }
+.suggestionChip:nth-child(4) { animation-delay: 0.25s; }
+
+@keyframes fadeInChip {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .suggestionChip:hover {
     background: #f5f3ff;
     border-color: #6366f1;
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
 }
 
 .aiToggleWrapper {
@@ -217,7 +246,7 @@
     font-weight: 700;
     font-size: 0.95rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     height: 56px;
 }
 
@@ -233,18 +262,25 @@
     color: #ffffff !important;
     border-color: #6366f1 !important;
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-    height: 60px; /* Match input height */
+    height: 60px;
 }
 
 .aiToggleActive:hover {
     background: #4f46e5 !important;
     transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
 }
 
 .filtersBar {
     display: flex;
     gap: 16px;
     align-items: flex-start;
+    animation: fadeInFilters 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeInFilters {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .collapsibleGrid {
@@ -291,6 +327,15 @@
     color: var(--muted2);
     pointer-events: none;
     z-index: 10;
+    transition: color 0.3s ease;
+}
+
+.searchBarWrapper:focus-within .inputIcon {
+    color: var(--orion-blue);
+}
+
+.aiFormActive .inputIcon {
+    color: #6366f1;
 }
 
 .filterControl {
@@ -329,6 +374,15 @@
     transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.searchButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 90, 160, 0.2);
+}
+
+.searchButton:active {
+    transform: translateY(0);
+}
+
 .clearButton {
     background: none;
     border: none;
@@ -338,15 +392,20 @@
     align-items: center;
     padding: 8px;
     border-radius: 50%;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
 }
 
 .clearButton:hover {
     background: var(--orion-blue-soft);
+    color: #ef4444;
+    transform: rotate(90deg);
 }
 
 .clearButton:disabled {
     opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+    transform: none;
 }
 
 .filterControl {
@@ -373,45 +432,6 @@
     outline: none;
     border-color: var(--orion-blue);
     box-shadow: 0 0 0 4px var(--orion-blue-light);
-}
-
-.actions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    justify-content: flex-end;
-    flex-shrink: 0;
-}
-
-.searchButton {
-    height: 48px;
-    width: 160px; /* Fixed width to prevent layout shift when text changes */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.clearButton {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    border-radius: 50%;
-    transition: background 0.2s;
-}
-
-.clearButton:hover {
-    background: var(--orion-blue-soft);
-}
-
-.clearButton:disabled {
-    opacity: 0.5;
-    cursor: default;
-    pointer-events: none;
 }
 
 /* ---------------- Grid ---------------- */
