@@ -109,6 +109,7 @@
     border-color: #6366f1;
     box-shadow: 0 10px 30px rgba(99, 102, 241, 0.08);
     background: #fdfdff;
+    padding: 32px; /* Reduced padding */
 }
 
 .topBar {
@@ -132,21 +133,63 @@
     transition: all 0.3s ease;
 }
 
+.aiActiveInput {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+    height: 60px !important; /* Reduced height */
+    font-size: 1.15rem !important; /* Reduced font size */
+    padding-left: 60px !important; /* Reduced padding */
+    padding-right: 60px !important; /* Reduced padding */
+    border-radius: 14px !important; /* Slightly reduced radius */
+}
+
+.aiSearchSubmit {
+    position: absolute;
+    right: 8px; /* Adjusted position */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px; /* Smaller button */
+    height: 40px; /* Smaller button */
+    border-radius: 10px; /* Adjusted radius */
+    background: #6366f1;
+    color: white;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+.aiSearchSubmit svg {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    min-height: 20px;
+}
+
+.aiSearchSubmit:hover {
+    background: #4f46e5;
+    transform: translateY(-50%) scale(1.05);
+}
+
 .aiSuggestions {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
     margin-top: 4px;
     padding-bottom: 4px;
+    justify-content: center;
 }
 
 .suggestionChip {
     background: #fff;
     color: #6366f1;
     border: 1px solid #e0e7ff;
-    padding: 6px 14px;
-    border-radius: 8px;
-    font-size: 0.85rem;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -155,6 +198,7 @@
 .suggestionChip:hover {
     background: #f5f3ff;
     border-color: #6366f1;
+    transform: translateY(-2px);
 }
 
 .aiToggleWrapper {
@@ -189,31 +233,12 @@
     color: #ffffff !important;
     border-color: #6366f1 !important;
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+    height: 60px; /* Match input height */
 }
 
 .aiToggleActive:hover {
     background: #4f46e5 !important;
     transform: translateY(-1px);
-}
-
-/* AI Search Button specific override to prevent white hover */
-.searchButtonAI {
-    background: #6366f1 !important;
-    color: #ffffff !important;
-    border: none !important;
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
-}
-
-.searchButtonAI:hover {
-    background: #4f46e5 !important;
-    color: #ffffff !important;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.3);
-}
-
-.aiActiveInput {
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
 }
 
 .filtersBar {
@@ -229,13 +254,6 @@
                 opacity 0.3s ease, 
                 margin 0.4s ease;
     flex: 2;
-}
-
-.collapsibleGrid.collapsed {
-    grid-template-columns: 0fr;
-    opacity: 0;
-    margin-right: -16px;
-    pointer-events: none;
 }
 
 .collapsibleContent {
@@ -259,21 +277,6 @@
     flex: 1;
     max-width: 200px;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.wageGroupAI {
-    max-width: 250px;
-}
-
-.constraintLabel {
-    position: absolute;
-    top: -20px;
-    left: 4px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: #6366f1;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
 }
 
 .filterGroup .filterControl {
