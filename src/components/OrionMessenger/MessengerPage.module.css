@@ -18,6 +18,17 @@
     }
 }
 
+@keyframes slideInFromLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
 .pageWrapper {
     display: flex;
     flex-direction: column;
@@ -61,7 +72,7 @@
 }
 
 .headerBackButton {
-    display: flex !important;
+    display: flex;
     align-items: center;
     justify-content: center;
     background-color: #f1f5f9 !important;
@@ -88,6 +99,27 @@
     background-color: #e2e8f0;
     color: #1e293b;
     transform: translateX(-2px);
+}
+
+.chatBackButton {
+    background-color: transparent !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #475569 !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+}
+
+.chatBackButton:hover {
+    background-color: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: #1e293b !important;
+    transform: scale(1.05);
+}
+
+.mobileHeaderBackButton {
+    display: none;
 }
 
 .sidebarState {
@@ -176,6 +208,7 @@
     font-size: 1.15rem;
     display: flex;
     align-items: center;
+    line-height: 1;
     background: rgba(255, 255, 255, 0.8);
     backdrop-filter: blur(12px);
     z-index: 10;
@@ -368,4 +401,81 @@
 }
 .inputField::-webkit-scrollbar-thumb:hover {
     background-color: #94a3b8;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        padding: 0;
+        gap: 0;
+    }
+
+    .sidebar {
+        width: 100%;
+        border-radius: 0;
+        display: flex;
+        height: 100%;
+        animation: slideInFromLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .chatPane {
+        width: 100%;
+        border-radius: 0;
+        display: none;
+        position: fixed;
+        top: 60px; /* Adjusted to account for header height */
+        left: 0;
+        height: calc(100% - 60px); /* Adjusted height */
+        z-index: 50;
+    }
+
+    /* When chat is active (selectedCompanyId is present) */
+    .chatActive .sidebar {
+        display: none;
+    }
+
+    .chatActive .chatPane {
+        display: flex;
+    }
+
+    .sidebarHeader {
+        padding: 20px 20px 16px;
+    }
+
+    .partnerItem {
+        margin: 4px 12px;
+    }
+
+    .chatHeader {
+        padding: 16px 20px;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        line-height: 1;
+    }
+
+    .mobileHeaderBackButton {
+        display: flex;
+        position: relative;
+        top: 1px; /* subtle optical alignment fix */
+    }
+
+    .messagesContainer {
+        padding: 16px;
+    }
+
+    .inputBar {
+        padding: 16px;
+    }
+
+    .bubble {
+        max-width: 85%;
+    }
+
+    .headerBackButton {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        min-height: 36px !important;
+    }
 }

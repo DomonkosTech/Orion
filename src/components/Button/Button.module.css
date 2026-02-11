@@ -52,13 +52,13 @@
 }
 
 .btn[data-color="fire-red"] {
-    --btn-main-color: #D32F2F;
-    --btn-hover-color: #B71C1C;
+    --btn-main-color: #b91c1c;
+    --btn-hover-color: #991b1b;
 }
 
 .btn[data-color="leaf-green"] {
-    --btn-main-color: #2ab32f;
-    --btn-hover-color: #22a527;
+    --btn-main-color: #15803d;
+    --btn-hover-color: #166534;
 }
 
 .btn[data-color="black"] {
