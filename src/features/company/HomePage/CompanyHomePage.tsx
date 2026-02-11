@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { MessageSquare, Users, PlusCircle } from "lucide-react";
+import { MessageSquare, Users, PlusCircle, Eye, UserCheck, TrendingUp } from "lucide-react";
 import styles from "./CompanyHomePage.module.css";
 
 // Components
@@ -62,6 +62,46 @@ const CompanyHomePage: React.FC = () => {
                     </div>
                 </header>
 
+                {/* Statisztikai Sáv */}
+                <section className={styles.statsGrid}>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIconWrapper} ${styles.iconBlue}`}>
+                            <Eye size={32} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statLabel}>{t('home.stats.views')}</div>
+                            <div className={styles.statValue}>{stats.views || 0}</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIconWrapper} ${styles.iconPurple}`}>
+                            <UserCheck size={32} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statLabel}>{t('home.stats.applicants')}</div>
+                            <div className={styles.statValue}>{stats.applicants || 0}</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIconWrapper} ${styles.iconGreen}`}>
+                            <Users size={32} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statLabel}>{t('home.stats.employees')}</div>
+                            <div className={styles.statValue}>{stats.employees || "-"}</div>
+                        </div>
+                    </div>
+                    <div className={styles.statCard}>
+                        <div className={`${styles.statIconWrapper} ${styles.iconOrange}`}>
+                            <TrendingUp size={32} />
+                        </div>
+                        <div className={styles.statContent}>
+                            <div className={styles.statLabel}>{t('home.stats.conversion')}</div>
+                            <div className={styles.statValue}>{stats.conversion ? stats.conversion + "%" : "-"}</div>
+                        </div>
+                    </div>
+                </section>
+
                 {/* Gyorsműveletek Sáv */}
                 <section className={styles.quickActions}>
                     <div className={styles.actionCard} onClick={() => navigate("/AddJob")}>
@@ -90,26 +130,6 @@ const CompanyHomePage: React.FC = () => {
                             <h3>{t('home.quickActions.employees.title')}</h3>
                             <p>{t('home.quickActions.employees.description')}</p>
                         </div>
-                    </div>
-                </section>
-
-                {/* Statisztikai Sáv */}
-                <section className={styles.statsGrid}>
-                    <div className={styles.statCard}>
-                        <div className={styles.statLabel}>{t('home.stats.views')}</div>
-                        <div className={styles.statValue}>{stats.views || 0}</div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={styles.statLabel}>{t('home.stats.applicants')}</div>
-                        <div className={styles.statValue}>{stats.applicants || 0}</div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={styles.statLabel}>{t('home.stats.employees')}</div>
-                        <div className={styles.statValue}>{stats.employees || "-"}</div>
-                    </div>
-                    <div className={styles.statCard}>
-                        <div className={styles.statLabel}>{t('home.stats.conversion')}</div>
-                        <div className={styles.statValue}>{stats.conversion ? stats.conversion + "%" : "-"}</div>
                     </div>
                 </section>
 

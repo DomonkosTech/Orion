@@ -153,6 +153,18 @@
     "back": "Vissza",
     "loading": "Betöltés...",
     "empty": "Nincsenek új jelentkezők ehhez a hirdetéshez.",
+    "details": {
+      "nationality": "Nemzetiség",
+      "address": "Lakcím",
+      "birthDate": "Születési dátum",
+      "birthPlace": "Születési hely",
+      "qualifications": "Képzettségek",
+      "bio": "Rövid bemutatkozás",
+      "contact": "Elérhetőség",
+      "email": "Email",
+      "phone": "Telefon",
+      "personal": "Személyes adatok"
+    },
     "actions": {
       "cv": "CV",
       "accept": "Felvétel",

@@ -67,7 +67,9 @@
         "error": "OrionAI ist derzeit nicht verfügbar.",
         "locationPlaceholder": "Standort",
         "positionPlaceholder": "Position",
-        "wagePlaceholder": "Min. Lohn"
+        "wagePlaceholder": "Min. Lohn",
+        "working": "OrionAI arbeitet...",
+        "aiWait": "Dies kann ein paar Sekunden dauern..."
       }
     },
     "show": {

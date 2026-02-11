@@ -36,31 +36,31 @@ app.use(cors({
 // --- Routes Configuration ---
 
 // Auth Routes (Login, Register, Logout, Check Auth)
-app.use("/api", authRoutes);
+app.use("/Api", authRoutes);
 
 // User Routes (Profile, Resume)
-app.use("/api", userRoutes);
+app.use("/Api", userRoutes);
 
 // Company Routes (Profile)
-app.use("/api", companyRoutes);
+app.use("/Api", companyRoutes);
 
 // Advertisement Routes (Create, Read, Update, Delete)
-app.use("/api", advertisementRoutes);
+app.use("/Api", advertisementRoutes);
 
 // Applicant Routes (Submit, Track, Accept/Reject)
-app.use("/api", applicantRoutes);
+app.use("/Api", applicantRoutes);
 
 // systemmessage Routes (Read, Update)
-app.use("/api", systemmessageRoute);
+app.use("/Api", systemmessageRoute);
 
 // Email Routes (Send Email)
-app.use("/api/email", emailRoute);
+app.use("/Api/email", emailRoute);
 
 // Message Routes (Send Message, Read Messages, Delete Messages)
-app.use("/api/chat", messageRoute);
+app.use("/Api/chat", messageRoute);
 
 // OrionAI Routes
-app.use("/api", OrionAIRoute);
+app.use("/Api", OrionAIRoute);
 
 // Create an HTTP server
 const server = createServer(app);

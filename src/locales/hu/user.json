@@ -67,7 +67,9 @@
         "error": "Az OrionAI jelenleg nem érhető el.",
         "locationPlaceholder": "Helyszín",
         "positionPlaceholder": "Pozíció",
-        "wagePlaceholder": "Min. Bér"
+        "wagePlaceholder": "Min. Bér",
+        "working": "Az OrionAI dolgozik...",
+        "aiWait": "Ez eltarthat pár másodpercig..."
       }
     },
     "show": {
