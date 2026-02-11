@@ -100,13 +100,7 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
 
                 if (!cancelled) {
                     setPartners(data);
-                    // Only set initial partner if none is selected
-                    if (data.length > 0) {
-                        setSelectedPartnerId((prev) => {
-                            if (prev !== null) return prev;
-                            return data[0].id;
-                        });
-                    }
+                    // Auto-selection removed for better mobile UX
                 }
             } catch {
                 if (!cancelled) setPartnersError("hiba történt");

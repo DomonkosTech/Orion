@@ -65,14 +65,6 @@ const ListJobs: React.FC = () => {
             if (response.success && Array.isArray(response.data)) {
                 setJobs(response.data);
                 setTotalCount(response.data.length);
-                // Mark that current results are AI-driven only after successful fetch
-                setAppliedFilters({
-                    searchTerm: input,
-                    locationFilter: "",
-                    positionFilter: "",
-                    minWage: wage,
-                    isAI: true
-                });
             } else {
                 setJobs([]);
                 setTotalCount(0);
@@ -145,19 +137,17 @@ const ListJobs: React.FC = () => {
         if (e) e.preventDefault();
         setError(null);
         setPage(1);
-
+        setAppliedFilters({
+            searchTerm,
+            locationFilter,
+            positionFilter,
+            minWage,
+            isAI: isAISearchActive
+        });
+        
         if (isAISearchActive) {
-            // For AI search, only set the AI flag after successful fetch to avoid
-            // showing AI badge on stale results
             fetchAIJobs(searchTerm, minWage);
         } else {
-            setAppliedFilters({
-                searchTerm,
-                locationFilter,
-                positionFilter,
-                minWage,
-                isAI: false
-            });
             fetchJobs(searchTerm, locationFilter, positionFilter, minWage, 1);
         }
     };
@@ -190,8 +180,6 @@ const ListJobs: React.FC = () => {
     const showLoadMore = !appliedFilters.isAI && (totalCount > 0
         ? jobs.length < totalCount
         : (jobs.length > 0 && jobs.length % PAGE_SIZE === 0));
-
-    const isLoadingAI = loading && isAISearchActive;
 
     return (
         <div className={styles.pageWrapper}>
@@ -237,24 +225,7 @@ const ListJobs: React.FC = () => {
                         onClear={clearFilters}
                         onSubmit={handleSearch}
                         isAISearchActive={isAISearchActive}
-                        onToggleAISearch={() => {
-                            const newActive = !isAISearchActive;
-                            setIsAISearchActive(newActive);
-                            if (!newActive) {
-                                // Switching back to normal search
-                                setSearchTerm(""); // Clear the input field as requested
-                                setAppliedFilters({
-                                    searchTerm: "",
-                                    locationFilter,
-                                    positionFilter,
-                                    minWage,
-                                    isAI: false
-                                });
-                                fetchJobs("", locationFilter, positionFilter, minWage, 1);
-                            }
-                        }}
-                        onAISuggestionSelect={(text) => { setSearchTerm(text); handleSearch(); }}
-                        isLoadingAI={loading && isAISearchActive}
+                        onToggleAISearch={() => setIsAISearchActive(!isAISearchActive)}
                     />
 
                     {/* Jobs Grid */}
@@ -271,14 +242,7 @@ const ListJobs: React.FC = () => {
 
                     {!error && (
                         <>
-                            {isLoadingAI && (
-                                <div className={styles.aiLoadingContainer}>
-                                    <div className={styles.overlaySpinner}></div>
-                                    <span className={styles.overlayText}>{t('jobs.list.ai.aiWait')}</span>
-                                </div>
-                            )}
-
-                            {!isLoadingAI && jobs.length > 0 && (
+                            {jobs.length > 0 && (
                                 <div className={styles.grid}>
                                     {jobs.map((job) => (
                                         <JobCard
@@ -292,14 +256,13 @@ const ListJobs: React.FC = () => {
                                     {loading && [1, 2, 3].map((n) => <SkeletonCard key={n} />)}
                                 </div>
                             )}
-
-                            {jobs.length === 0 && loading && !isLoadingAI && (
+                            {jobs.length === 0 && loading && (
                                 <div className={styles.grid}>
                                     {[1, 2, 3, 4, 5, 6].map((n) => <SkeletonCard key={n} />)}
                                 </div>
                             )}
 
-                            {!isLoadingAI && showLoadMore && (
+                            {showLoadMore && (
                                 <div className={styles.pagination}>
                                     <Button
                                         onClick={handleLoadMore}

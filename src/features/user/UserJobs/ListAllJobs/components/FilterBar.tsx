@@ -15,11 +15,9 @@ type Props = {
     minWage: string;
     onMinWageChange: (value: string) => void;
     onClear: () => void;
-    onSubmit: (e?: React.FormEvent) => void;
+    onSubmit: (e: React.FormEvent) => void;
     isAISearchActive: boolean;
     onToggleAISearch: () => void;
-    onAISuggestionSelect?: (text: string) => void;
-    isLoadingAI?: boolean;
 };
 
 const FilterBar: React.FC<Props> = ({
@@ -35,8 +33,6 @@ const FilterBar: React.FC<Props> = ({
     onSubmit,
     isAISearchActive,
     onToggleAISearch,
-    onAISuggestionSelect,
-    isLoadingAI,
 }) => {
     const { t } = useTranslation('user');
     const hasActiveFilters = Boolean(searchTerm || locationFilter || positionFilter || minWage);
@@ -61,12 +57,8 @@ const FilterBar: React.FC<Props> = ({
                         className={`${styles.searchInput} ${isAISearchActive ? styles.aiActiveInput : ""}`}
                     />
                     {isAISearchActive && (
-                        <button type="submit" className={styles.aiSearchSubmit} disabled={isLoadingAI}>
-                            {isLoadingAI ? (
-                                <div className={styles.aiLoader}></div>
-                            ) : (
-                                <ArrowRight size={20} />
-                            )}
+                        <button type="submit" className={styles.aiSearchSubmit}>
+                            <ArrowRight size={20} />
                         </button>
                     )}
                 </div>
@@ -76,41 +68,25 @@ const FilterBar: React.FC<Props> = ({
                         onClick={onToggleAISearch}
                         className={`${styles.aiToggle} ${isAISearchActive ? styles.aiToggleActive : ""}`}
                         title={t('jobs.list.ai.toggleLabel')}
-                        disabled={isLoadingAI}
                     >
-                        <Sparkles size={18} className={isLoadingAI ? styles.sparklePulse : ""} />
+                        <Sparkles size={18} />
                         <span>{t('jobs.list.ai.toggleLabel')}</span>
                     </button>
                 </div>
             </div>
 
             {isAISearchActive && (
-                <div className={`${styles.aiSuggestions} ${isLoadingAI ? styles.aiSuggestionsDisabled : ""}`}>
+                <div className={styles.aiSuggestions}>
                     {suggestions.map((text, i) => (
                         <button 
                             key={i} 
                             type="button" 
                             className={styles.suggestionChip}
-                            disabled={isLoadingAI}
-                            onClick={() => {
-                                onSearchChange(text);
-                                if (onAISuggestionSelect) {
-                                    onAISuggestionSelect(text);
-                                } else {
-                                    onSubmit();
-                                }
-                            }}
+                            onClick={() => onSearchChange(text)}
                         >
                             {text}
                         </button>
                     ))}
-                </div>
-            )}
-            
-            {isAISearchActive && isLoadingAI && (
-                <div className={styles.aiWorkingOverlay}>
-                    <Sparkles size={24} className={styles.aiWorkingIcon} />
-                    <span className={styles.aiWorkingText}>{t('jobs.list.ai.working')}</span>
                 </div>
             )}
 
