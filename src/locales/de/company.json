@@ -153,6 +153,18 @@
     "back": "Zurück",
     "loading": "Laden...",
     "empty": "Keine neuen Bewerber für diese Anzeige.",
+    "details": {
+      "nationality": "Nationalität",
+      "address": "Adresse",
+      "birthDate": "Geburtsdatum",
+      "birthPlace": "Geburtsort",
+      "qualifications": "Qualifikationen",
+      "bio": "Kurzbiografie",
+      "contact": "Kontaktinformationen",
+      "email": "E-Mail",
+      "phone": "Telefon",
+      "personal": "Persönliche Daten"
+    },
     "actions": {
       "cv": "Lebenslauf",
       "accept": "Einstellen",

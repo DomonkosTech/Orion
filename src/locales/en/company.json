@@ -153,6 +153,18 @@
     "back": "Back",
     "loading": "Loading...",
     "empty": "No new applicants for this ad.",
+    "details": {
+      "nationality": "Nationality",
+      "address": "Address",
+      "birthDate": "Date of Birth",
+      "birthPlace": "Place of Birth",
+      "qualifications": "Qualifications",
+      "bio": "Short Bio",
+      "contact": "Contact Information",
+      "email": "Email",
+      "phone": "Phone",
+      "personal": "Personal Details"
+    },
     "actions": {
       "cv": "CV",
       "accept": "Hire",
