@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import type { ChatPartner } from "../context/MessengerContext";
+import type { ChatPartner } from "../context/MessengerContextInstance";
 import styles from "../MessengerPage.module.css";
 
 interface ConversationItemProps {

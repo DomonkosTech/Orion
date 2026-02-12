@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useMemo, useState, useRef, type ReactNode } from "react";
+import React, { useEffect, useMemo, useState, useRef, type ReactNode } from "react";
 import {
     type CompanyChatPartner,
     type UserChatPartner,
@@ -12,30 +12,8 @@ import {
 } from "../../../Api/messageApi.ts";
 import {wbsocket} from "../../../Api/ApiConfig.ts";
 import { useAuth } from "../../../hooks/useAuth";
+import { MessengerContext, type ChatPartner } from "./MessengerContextInstance";
 
-export interface ChatPartner {
-    id: number;
-    name: string;
-    last_message_at: string | null;
-}
-
-interface MessengerContextType {
-    partners: ChatPartner[];
-    partnersLoading: boolean;
-    partnersError: string | null;
-    selectedPartnerId: number | null;
-    setSelectedPartnerId: (id: number | null) => void;
-    selectedPartner: ChatPartner | null;
-    messages: Message[];
-    messagesLoading: boolean;
-    messagesError: string | null;
-    sendMessage: (text: string) => Promise<void>;
-    sending: boolean;
-    sendError: string | null;
-    lastReadUserMessageId: number | null;
-}
-
-const MessengerContext = createContext<MessengerContextType | undefined>(undefined);
 
 export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { userType, loading: authLoading, userData } = useAuth();
@@ -330,12 +308,4 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
             {children}
         </MessengerContext.Provider>
     );
-};
-
-export const useMessengerContext = () => {
-    const context = useContext(MessengerContext);
-    if (context === undefined) {
-        throw new Error("useMessengerContext must be used within a MessengerProvider");
-    }
-    return context;
 };
