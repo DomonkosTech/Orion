@@ -155,6 +155,10 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 
 @media (max-width: 768px) {
-    .itemRow { grid-template-columns: 1fr 1fr; gap: 16px; }
+    .itemRow { grid-template-columns: 1fr; gap: 16px; }
     .headerSection { flex-direction: column; align-items: flex-start; }
+    .headerSection button { width: 100%; justify-content: center; }
+    .titleGroup h1 { font-size: 1.75rem; }
+    .sectionCard { padding: 20px; }
+    .centeredInfo { align-items: flex-start; }
 }

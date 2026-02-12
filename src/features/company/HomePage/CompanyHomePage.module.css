@@ -268,4 +268,8 @@
     .badge {
         align-self: flex-start;
     }
+
+    .quickActions {
+        grid-template-columns: 1fr;
+    }
 }
