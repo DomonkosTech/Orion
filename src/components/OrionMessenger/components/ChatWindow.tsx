@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useMessenger } from "../hooks/useMessenger";
+import type { Message } from "../../../Api/messageApi";
 import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
 import styles from "../MessengerPage.module.css";
@@ -39,7 +40,7 @@ const ChatWindow: React.FC = () => {
     const [delayedLoading, setDelayedLoading] = useState(false);
 
     useEffect(() => {
-        let timer: NodeJS.Timeout;
+        let timer: ReturnType<typeof setTimeout>;
         if (messagesLoading) {
             timer = setTimeout(() => setDelayedLoading(true), 150);
         } else {
@@ -110,7 +111,7 @@ const ChatWindow: React.FC = () => {
                                 <div><Trans i18nKey="chatWindow.noMessages" t={t} /></div>
                             </div>
                         ) : (
-                            messages.map((m, index) => {
+                            messages.map((m: Message, index: number) => {
                                 const isUserMessage = m.sender_type === "USER";
                                 const isMyMessage = (userType === "user" && isUserMessage) || (userType === "company" && !isUserMessage);
                                 const initials = getInitials(selectedCompany?.company_name);

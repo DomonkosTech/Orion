@@ -1,4 +1,4 @@
-import { useMessengerContext } from "../context/MessengerContext";
+import { useMessengerContext } from "../context/MessengerContextInstance";
 
 export const useMessenger = () => {
     const context = useMessengerContext();
@@ -8,6 +8,7 @@ export const useMessenger = () => {
         partnersError: context.partnersError,
         selectedCompanyId: context.selectedPartnerId,
         setSelectedCompanyId: context.setSelectedPartnerId,
+        setNewChatPartner: context.setNewChatPartner,
         selectedCompany: context.selectedPartner ? {
             company_id: context.selectedPartner.id,
             company_name: context.selectedPartner.name,
