@@ -29,52 +29,52 @@ import { getAdvertisementById, type AdvertisementDetails } from "../../../Api/ad
 import { getUserStatistics, type DashboardStats } from "../../../Api/userApi.ts"
 
 function UserHomePage() {
-  const navigate = useNavigate();
-  const { t } = useTranslation("user");
-  const { name } = useAuth();
+    const navigate = useNavigate();
+    const { t } = useTranslation("user");
+    const { name } = useAuth();
 
-  const [featuredAdvertisement, setFeaturedAdvertisement] = useState<
-    (AdvertisementDetails & { id: string }) | null
-  >(null);
+    const [featuredAdvertisement, setFeaturedAdvertisement] = useState<
+        (AdvertisementDetails & { id: string }) | null
+    >(null);
 
-  const [stats, setStats] = useState<DashboardStats>({
-    total_applications: 0,
-    profile_views: 0,
-    resume_views: 0,
-    accepted_applications: 0
-  });
+    const [stats, setStats] = useState<DashboardStats>({
+        total_applications: 0,
+        profile_views: 0,
+        resume_views: 0,
+        accepted_applications: 0
+    });
 
-  const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const featuredAdvertisementId = "1";
+    useEffect(() => {
+        const fetchDashboardData = async () => {
+            try {
+                const featuredAdvertisementId = "1";
 
-        const [featuredAdResponse, statsResponse] = await Promise.all([
-          getAdvertisementById(featuredAdvertisementId),
-          getUserStatistics(),
-        ]);
+                const [featuredAdResponse, statsResponse] = await Promise.all([
+                    getAdvertisementById(featuredAdvertisementId),
+                    getUserStatistics(),
+                ]);
 
-        if (statsResponse.success) {
-          setStats(statsResponse.data.stats || {});
-        }
+                if (statsResponse.success) {
+                    setStats(statsResponse.data.stats || {});
+                }
 
-        if (featuredAdResponse.success && featuredAdResponse.advertisement) {
-          setFeaturedAdvertisement({
-            ...featuredAdResponse.advertisement,
-            id: featuredAdvertisementId,
-          });
-        }
-      } catch (err) {
-        console.error("Hiba az adatok lekérésekor:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+                if (featuredAdResponse.success && featuredAdResponse.advertisement) {
+                    setFeaturedAdvertisement({
+                        ...featuredAdResponse.advertisement,
+                        id: featuredAdvertisementId,
+                    });
+                }
+            } catch (err) {
+                console.error("Hiba az adatok lekérésekor:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    fetchDashboardData();
-  }, []);
+        fetchDashboardData();
+    }, []);
 
     const navigationItems = [
         {
@@ -145,28 +145,28 @@ function UserHomePage() {
                         {/* Stats Row */}
                         <section className={styles.statsRow}>
                             <div className={styles.statCard}>
-                                <div className={styles.statIcon}><Target size={28} /></div>
+                                <div className={styles.statIcon}><Target size={32} /></div>
                                 <div className={styles.statInfo}>
                                     <span className={styles.statLabel}>{t('stats.applications')}</span>
                                     <span className={styles.statValue}>{stats.total_applications}</span>
                                 </div>
                             </div>
                             <div className={styles.statCard}>
-                                <div className={styles.statIcon}><FileUser size={28} /></div>
+                                <div className={styles.statIcon}><FileUser size={32} /></div>
                                 <div className={styles.statInfo}>
                                     <span className={styles.statLabel}>{t('stats.resumeViews')}</span>
                                     <span className={styles.statValue}>{stats.resume_views}</span>
                                 </div>
                             </div>
                             <div className={styles.statCard}>
-                                <div className={styles.statIcon}><TrendingUp size={28} /></div>
+                                <div className={styles.statIcon}><TrendingUp size={32} /></div>
                                 <div className={styles.statInfo}>
                                     <span className={styles.statLabel}>{t('stats.profileViews')}</span>
                                     <span className={styles.statValue}>{stats.profile_views}</span>
                                 </div>
                             </div>
                             <div className={styles.statCard} title={t('stats.matchRateTooltip')}>
-                                <div className={styles.statIcon}><Sparkles size={28} /></div>
+                                <div className={styles.statIcon}><Sparkles size={32} /></div>
                                 <div className={styles.statInfo}>
                                     <span className={styles.statLabel}>{t('stats.matchRate')}</span>
                                     <span className={styles.statValue}>{matchRate}%</span>

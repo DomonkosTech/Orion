@@ -157,7 +157,12 @@
     padding: 14px 0;
 }
 
-.buttonGroup { margin-top: 32px; }
+.buttonGroup { 
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
 .applyBtn {
     width: 100%;
@@ -165,6 +170,13 @@
     font-size: 1.1rem !important;
     font-weight: 700 !important;
     box-shadow: 0 4px 14px rgba(44, 90, 160, 0.4);
+}
+
+.messageBtn {
+    width: 100%;
+    padding: 14px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
 }
 
 .trustCard {

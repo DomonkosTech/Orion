@@ -65,7 +65,7 @@ const CompanyHomePage: React.FC = () => {
                 {/* Statisztikai Sáv */}
                 <section className={styles.statsGrid}>
                     <div className={styles.statCard}>
-                        <div className={`${styles.statIconWrapper} ${styles.iconBlue}`}>
+                        <div className={styles.statIconWrapper}>
                             <Eye size={32} />
                         </div>
                         <div className={styles.statContent}>
@@ -74,7 +74,7 @@ const CompanyHomePage: React.FC = () => {
                         </div>
                     </div>
                     <div className={styles.statCard}>
-                        <div className={`${styles.statIconWrapper} ${styles.iconPurple}`}>
+                        <div className={styles.statIconWrapper}>
                             <UserCheck size={32} />
                         </div>
                         <div className={styles.statContent}>
@@ -83,7 +83,7 @@ const CompanyHomePage: React.FC = () => {
                         </div>
                     </div>
                     <div className={styles.statCard}>
-                        <div className={`${styles.statIconWrapper} ${styles.iconGreen}`}>
+                        <div className={styles.statIconWrapper}>
                             <Users size={32} />
                         </div>
                         <div className={styles.statContent}>
@@ -92,7 +92,7 @@ const CompanyHomePage: React.FC = () => {
                         </div>
                     </div>
                     <div className={styles.statCard}>
-                        <div className={`${styles.statIconWrapper} ${styles.iconOrange}`}>
+                        <div className={styles.statIconWrapper}>
                             <TrendingUp size={32} />
                         </div>
                         <div className={styles.statContent}>
