@@ -212,6 +212,18 @@ const ShowJob = () => {
                             >
                                 {isSubmitting ? t('jobs.show.applyingButton') : t('jobs.show.applyButton')}
                             </Button>
+                            <Button
+                                type="button"
+                                color="orion-blue"
+                                variant="secondary"
+                                onClick={() => {
+                                    console.log("Navigating to messenger for company:", advertisement.company_id);
+                                    navigate(`/messenger?companyId=${advertisement.company_id}&companyName=${encodeURIComponent("Orion Partner")}`);
+                                }}
+                                className={styles.messageBtn}
+                            >
+                                {t('help.button')}
+                            </Button>
                         </div>
 
                         {applicationStatus && (

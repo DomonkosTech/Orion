@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, useRef, type ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 import {
     type CompanyChatPartner,
     type UserChatPartner,
@@ -17,6 +18,7 @@ import { MessengerContext, type ChatPartner } from "./MessengerContextInstance";
 
 export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const { userType, loading: authLoading, userData } = useAuth();
+    const location = useLocation();
 
     const [partners, setPartners] = useState<ChatPartner[]>([]);
     const [partnersLoading, setPartnersLoading] = useState(false);
@@ -34,6 +36,15 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
 
     const [sending, setSending] = useState(false);
     const [sendError, setSendError] = useState<string | null>(null);
+
+    const setNewChatPartner = (partner: ChatPartner | null) => {
+        if (!partner) return;
+        setPartners(prev => {
+            if (prev.find(p => p.id === partner.id)) return prev;
+            return [partner, ...prev];
+        });
+        setSelectedPartnerId(partner.id);
+    };
 
     const lastReadUserMessageId = useMemo(() => {
         const mySenderType = userType === "company" ? "COMPANY" : "USER";
@@ -53,7 +64,7 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
         if (authLoading) return;
 
         let cancelled = false;
-        async function loadPartners() {
+        async function loadPartnersAndHandleUrl() {
             setPartnersLoading(true);
             setPartnersError(null);
             try {
@@ -77,8 +88,32 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                 }
 
                 if (!cancelled) {
+                    const params = new URLSearchParams(location.search);
+                    const companyIdStr = params.get("companyId");
+                    const companyName = params.get("companyName") || "Orion Partner";
+
+                    console.log("Messenger: URL parameters:", { companyIdStr, companyName });
+                    console.log("Messenger: API loaded partners:", data);
+
+                    if (companyIdStr && userType === "user") {
+                        const targetId = Number(companyIdStr);
+                        if (!isNaN(targetId)) {
+                            const existingIdx = data.findIndex(p => p.id === targetId);
+                            if (existingIdx === -1) {
+                                console.log("Messenger: Adding new partner from URL:", targetId);
+                                data.unshift({
+                                    id: targetId,
+                                    name: companyName,
+                                    last_message_at: null
+                                });
+                            } else {
+                                console.log("Messenger: Partner exists in API data:", targetId);
+                            }
+                            setSelectedPartnerId(targetId);
+                        }
+                    }
+
                     setPartners(data);
-                    // Auto-selection removed for better mobile UX
                 }
             } catch {
                 if (!cancelled) setPartnersError("hiba történt");
@@ -86,11 +121,11 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                 if (!cancelled) setPartnersLoading(false);
             }
         }
-        loadPartners();
+        loadPartnersAndHandleUrl();
         return () => {
             cancelled = true;
         };
-    }, [userType, authLoading]);
+    }, [userType, authLoading, location.search]);
 
     useEffect(() => {
         if (selectedPartnerId === null || authLoading) return;
@@ -242,6 +277,7 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
 
     const sendMessage = async (text: string) => {
         if (!selectedPartnerId || !userType) return;
+        console.log("Messenger: Sending message to:", selectedPartnerId, "as", userType);
         const trimmedText = text.trim();
         if (!trimmedText) return;
         setSendError(null);
@@ -303,6 +339,7 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                 sending,
                 sendError,
                 lastReadUserMessageId,
+                setNewChatPartner,
             }}
         >
             {children}

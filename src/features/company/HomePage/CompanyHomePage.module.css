@@ -51,30 +51,12 @@
     width: 64px;
     height: 64px;
     border-radius: 16px;
+    background: #eef2f8;
+    color: var(--orion-blue);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-}
-
-.iconBlue {
-    background: rgba(59, 130, 246, 0.1);
-    color: #3b82f6;
-}
-
-.iconPurple {
-    background: rgba(139, 92, 246, 0.1);
-    color: #8b5cf6;
-}
-
-.iconGreen {
-    background: rgba(16, 185, 129, 0.1);
-    color: #10b981;
-}
-
-.iconOrange {
-    background: rgba(249, 115, 22, 0.1);
-    color: #f97316;
 }
 
 .statContent {
