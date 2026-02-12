@@ -656,9 +656,37 @@
     .container { padding: 0 20px; }
     .dashboardHeader { flex-direction: column; align-items: flex-start; gap: 20px; }
     .grid { grid-template-columns: 1fr; }
-    .filtersBar { grid-template-columns: 1fr; }
-    .actions { justify-content: stretch; }
+    .filtersBar { 
+        flex-direction: column; 
+    }
+    .collapsibleGrid {
+        width: 100%;
+    }
+    .collapsibleContent {
+        flex-direction: column;
+    }
+    .wageGroup {
+        max-width: none;
+    }
+    .actions { 
+        justify-content: stretch; 
+        width: 100%;
+    }
     .actions button { flex: 1; }
+    
+    .topBar {
+        flex-direction: column;
+    }
+    .aiToggleWrapper {
+        width: 100%;
+    }
+    .aiToggle {
+        width: 100%;
+        justify-content: center;
+    }
+    .searchForm {
+        padding: 20px;
+    }
 }
 
 /* Maintain some old classes to avoid breakage if they are used elsewhere or until refactored */

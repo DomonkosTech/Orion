@@ -364,3 +364,71 @@
     border-top: 1px solid var(--border);
     flex-shrink: 0;
 }
+
+@media (max-width: 900px) {
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+    
+    .applicantCard {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .actions {
+        width: 100%;
+        justify-content: stretch;
+    }
+    
+    .btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .expandedCard {
+        top: 20px;
+        bottom: 20px;
+        width: 95%;
+        padding: 20px;
+    }
+
+    .expandedBody {
+        flex-direction: column;
+        overflow-y: auto;
+    }
+
+    .leftPanel {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding-right: 0;
+        padding-bottom: 24px;
+        overflow-y: visible;
+    }
+
+    .rightPanel {
+        overflow-y: visible;
+        padding-right: 0;
+    }
+    
+    .expandedActions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 600px) {
+    .details {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .title {
+        font-size: 1.5rem;
+    }
+    
+    .expandedActions .btn {
+        width: 100%;
+    }
+}

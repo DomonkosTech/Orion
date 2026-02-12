@@ -423,10 +423,10 @@
         border-radius: 0;
         display: none;
         position: fixed;
-        top: 60px; /* Adjusted to account for header height */
+        top: 0; 
         left: 0;
-        height: calc(100% - 60px); /* Adjusted height */
-        z-index: 50;
+        height: 100%;
+        z-index: 1000;
     }
 
     /* When chat is active (selectedCompanyId is present) */

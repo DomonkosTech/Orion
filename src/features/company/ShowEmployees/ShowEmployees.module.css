@@ -123,3 +123,36 @@
     font-weight: 600;
     color: var(--orion-blue);
 }
+
+@media (max-width: 768px) {
+    .title {
+        font-size: 1.75rem;
+    }
+    
+    .employeeTable thead {
+        display: none;
+    }
+    
+    .employeeTable tr {
+        display: block;
+        padding: 16px;
+        border-bottom: 8px solid var(--bg);
+    }
+    
+    .employeeTable td {
+        display: block;
+        padding: 8px 0;
+        border: none;
+        text-align: left !important;
+    }
+    
+    .employeeTable td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        margin-right: 10px;
+        color: var(--muted);
+    }
+}

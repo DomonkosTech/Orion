@@ -232,3 +232,27 @@
     .jobCard { flex-direction: column; align-items: flex-start; gap: 16px; }
     .callout { flex-direction: column; text-align: center; }
 }
+
+@media (max-width: 600px) {
+    .hero {
+        padding: 40px 0;
+    }
+    .heroTitle {
+        font-size: 2.2rem;
+    }
+    .heroSubtitle {
+        font-size: 1rem;
+    }
+    .heroActions {
+        flex-direction: column;
+    }
+    .heroActions > button {
+        width: 100%;
+    }
+    .section {
+        padding: 40px 0;
+    }
+    .sectionTitle {
+        font-size: 1.75rem;
+    }
+}
