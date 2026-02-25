@@ -274,3 +274,14 @@ export const getFavorites = async (includeAdvertisement: boolean = false) => {
 
     return handleResponse(response);
 };
+
+export const removeFavorite = async (advertisementId: number) => {
+    const response = await fetch(`${API_BASE_URL}/favorites/${advertisementId}`, {
+        method: "DELETE",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    return handleResponse(response);
+}

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import styles from "../ListJobs.module.css";
 import Button from "../../../../../components/Button/Button.tsx";
-import { addFavorite } from "../../../../../Api/advertisementApi.ts";
+import { addFavorite, removeFavorite } from "../../../../../Api/advertisementApi.ts";
 
 type Job = {
     id: number;
@@ -22,23 +22,36 @@ type Props = {
     isAI?: boolean;
     isFavorite?: boolean;
     onFavoriteAdded?: (jobId: number) => void;
+    onFavoriteRemoved?: (jobId: number) => void;
 };
 
-const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency, isAI, isFavorite, onFavoriteAdded }) => {
+const JobCard: React.FC<Props> = ({
+    job,
+    onOpen,
+    formatCurrency,
+    isAI,
+    isFavorite,
+    onFavoriteAdded,
+    onFavoriteRemoved,
+}) => {
     const { t } = useTranslation('user');
 
-    const handleAddFavorite: React.MouseEventHandler<SVGSVGElement> = async (e) => {
+    const handleToggleFavorite: React.MouseEventHandler<SVGSVGElement> = async (e) => {
         e.stopPropagation();
 
-        if (isFavorite) return;
-
         try {
-            await addFavorite(job.id);
-            onFavoriteAdded?.(job.id);
-            toast.success("sikeresen hozzáadva a kedvencekhez");
+            if (isFavorite) {
+                await removeFavorite(job.id);
+                onFavoriteRemoved?.(job.id);
+                toast.success("sikeresen törölve a kedvencek közül");
+            } else {
+                await addFavorite(job.id);
+                onFavoriteAdded?.(job.id);
+                toast.success("sikeresen hozzáadva a kedvencekhez");
+            }
         } catch (err) {
-            console.error("addFavorite failed:", err);
-            toast.error("sikertelen hozzáadás a kedvencekhez");
+            console.error("toggleFavorite failed:", err);
+            toast.error("sikertelen művelet a kedvencekkel");
         }
     };
 
@@ -58,9 +71,9 @@ const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency, isAI, isFavorit
                     className={`${styles.bookmarkIcon} ${isFavorite ? styles.favorite : ''}`}
                     size={20}
                     fill={isFavorite ? "currentColor" : "none"}
-                    onClick={handleAddFavorite}
+                    onClick={handleToggleFavorite}
                     role="button"
-                    aria-label="Kedvencekhez adás"
+                    aria-label="Kedvenc"
                     tabIndex={0}
                 />
             </div>
