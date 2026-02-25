@@ -238,3 +238,17 @@ export const OrionAI = async (userinput: string, wage: number = 2000) => {
     });
     return handleResponse(response);
 }
+
+export const addFavorite = async (advertisementId: number) => {
+    const response = await fetch(`${API_BASE_URL}/favorites`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+            },
+        body: JSON.stringify({
+            advertisementId: advertisementId,
+        })
+    });
+    return handleResponse(response)
+}
