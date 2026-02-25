@@ -232,3 +232,29 @@ export const addFavorite = async (userId: number, advertisementId: number) => {
 
     if (error) throw error;
 }
+
+export const getFavorites = async (userId: number, includeAdvertisement: boolean) => {
+    let favorites;
+
+    if (includeAdvertisement) {
+        const { data, error } = await supabase
+            .from("favorites")
+            .select(
+                "advertisement(id,title,position,location,hourly_wage,tasks,requirements,job_description)"
+            )
+            .eq("user_id", userId);
+
+        if (error) throw error;
+        favorites = data;
+    } else {
+        const { data, error } = await supabase
+            .from("favorites")
+            .select("advertisement_id")
+            .eq("user_id", userId);
+
+        if (error) throw error;
+        favorites = data;
+    }
+
+    return favorites;
+};

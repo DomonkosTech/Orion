@@ -9,7 +9,7 @@ import FilterBar from "./components/FilterBar.tsx";
 import JobCard from "./components/JobCard.tsx";
 import SkeletonCard from "./components/SkeletonCard.tsx";
 import EmptyState from "./components/EmptyState.tsx";
-import { getAdvertisements, type Job, OrionAI as OrionAIApi } from "../../../../Api/advertisementApi.ts";
+import { getAdvertisements, type Job, OrionAI as OrionAIApi, getFavorites } from "../../../../Api/advertisementApi.ts";
 import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 import Footer from "../../../../components/Footer/Footer.tsx";
 import Button from "../../../../components/Button/Button.tsx";
@@ -33,6 +33,11 @@ const ListJobs: React.FC = () => {
     const [page, setPage] = useState<number>(1);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [isAISearchActive, setIsAISearchActive] = useState(false);
+    const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
+
+    const handleFavoriteAdded = (jobId: number) => {
+        setFavoriteIds((prev) => (prev.includes(jobId) ? prev : [...prev, jobId]));
+    };
 
     // Filters
     const [searchTerm, setSearchTerm] = useState<string>("");
@@ -115,9 +120,26 @@ const ListJobs: React.FC = () => {
         }
     };
 
+    const fetchFavorites = async () => {
+        try {
+            const favorites = await getFavorites(false);
+
+            console.log("Favorites:", favorites);
+
+            setFavoriteIds(
+                favorites
+                    .map((fav: { advertisement_id: number | string }) => Number(fav.advertisement_id))
+                    .filter((id: number) => Number.isFinite(id))
+            );
+        } catch (error) {
+            console.error("Failed to fetch favorites:", error);
+        }
+    };
+
     // Initial fetch
     useEffect(() => {
         fetchJobs();
+        fetchFavorites();
     }, []);
 
     // Load more when page increases
@@ -251,6 +273,8 @@ const ListJobs: React.FC = () => {
                                             onOpen={() => handleshowClick(job.id)}
                                             formatCurrency={formatCurrency}
                                             isAI={appliedFilters.isAI}
+                                            isFavorite={favoriteIds.includes(job.id)}
+                                            onFavoriteAdded={handleFavoriteAdded}
                                         />
                                     ))}
                                     {loading && [1, 2, 3].map((n) => <SkeletonCard key={n} />)}
