@@ -258,3 +258,14 @@ export const getFavorites = async (userId: number, includeAdvertisement: boolean
 
     return favorites;
 };
+
+
+export const removeFavorite = async (userId: number, advertisementId: number) => {
+    const { error } = await supabase
+        .from("favorites")
+        .delete()
+        .eq("user_id", userId)
+        .eq("advertisement_id", advertisementId);
+
+    if (error) throw error
+}

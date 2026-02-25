@@ -39,6 +39,10 @@ const ListJobs: React.FC = () => {
         setFavoriteIds((prev) => (prev.includes(jobId) ? prev : [...prev, jobId]));
     };
 
+    const handleFavoriteRemoved = (jobId: number) => {
+        setFavoriteIds((prev) => prev.filter((id) => id !== jobId));
+    };
+
     // Filters
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [locationFilter, setLocationFilter] = useState<string>("");
@@ -275,6 +279,7 @@ const ListJobs: React.FC = () => {
                                             isAI={appliedFilters.isAI}
                                             isFavorite={favoriteIds.includes(job.id)}
                                             onFavoriteAdded={handleFavoriteAdded}
+                                            onFavoriteRemoved={handleFavoriteRemoved}
                                         />
                                     ))}
                                     {loading && [1, 2, 3].map((n) => <SkeletonCard key={n} />)}

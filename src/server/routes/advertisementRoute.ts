@@ -263,11 +263,15 @@ router.delete("/employees/:id", verifyToken, verifyCompany, async (req: AuthRequ
 router.post("/favorites", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
         const userId = req.userId;
-        const advertisementId = req.body.advertisementId;
+        const advertisementId = Number(req.body.advertisementId);
 
-        if (!userId || !advertisementId) {
-            return res.status(401)
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
         }
+        if (!req.body.advertisementId || Number.isNaN(advertisementId) || advertisementId <= 0) {
+            return res.status(400).json({ error: "Invalid advertisement id" });
+        }
+
         await advertisementService.addFavorite(userId, advertisementId);
         res.json({ success: true });
     }
@@ -295,6 +299,26 @@ router.get("/favorites", verifyToken, verifyUser, async (req: AuthRequest, res)=
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+
+router.delete("/favorites/:id", verifyToken, verifyUser, async (req: AuthRequest, res)=>{
+    try {
+        const userId = req.userId;
+        const advertisementId = Number(req.params.id);
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+        if (!req.params.id || Number.isNaN(advertisementId) || advertisementId <= 0) {
+            return res.status(400).json({ error: "Invalid advertisement id" });
+        }
+
+        await advertisementService.removeFavorite(userId, advertisementId);
+        res.json({ success: true });
+    }
+    catch (error){
+        console.error("Remove favorite failed:", error);
+    }
+})
 
 
 export default router;
