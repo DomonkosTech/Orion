@@ -259,5 +259,21 @@ router.delete("/employees/:id", verifyToken, verifyCompany, async (req: AuthRequ
 });
 
 
+//add favorite
+router.post("/favorites", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+    try {
+        const userId = req.userId;
+        const advertisementId = req.body.advertisementId;
 
+        if (!userId || !advertisementId) {
+            return res.status(401)
+        }
+        await advertisementService.addFavorite(userId, advertisementId);
+        res.json({ success: true });
+    }
+    catch (error){
+        console.error("Add favorite failed:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
 export default router;

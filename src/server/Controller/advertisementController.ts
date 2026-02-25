@@ -224,3 +224,11 @@ export const getAllAdvertisements2 = async (q: string, location: string, positio
     if (error) throw error;
     return { advertisements};
 };
+
+export const addFavorite = async (userId: number, advertisementId: number) => {
+    const { error } = await supabase
+        .from("favorites")
+        .insert({ user_id: userId, advertisement_id: advertisementId });
+
+    if (error) throw error;
+}

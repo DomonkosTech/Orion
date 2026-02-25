@@ -1,8 +1,10 @@
 import React from "react";
 import { MapPin, Heart, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 import styles from "../ListJobs.module.css";
 import Button from "../../../../../components/Button/Button.tsx";
+import { addFavorite } from "../../../../../Api/advertisementApi.ts";
 
 type Job = {
     id: number;
@@ -23,6 +25,17 @@ type Props = {
 const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency, isAI }) => {
     const { t } = useTranslation('user');
 
+    const handleAddFavorite: React.MouseEventHandler<SVGSVGElement> = async (e) => {
+        e.stopPropagation();
+        try {
+            await addFavorite(job.id);
+            toast.success("sikeresen hozzáadva a kedvencekhez");
+        } catch (err) {
+            console.error("addFavorite failed:", err);
+            toast.error("sikertelen hozzáadás a kedvencekhez");
+        }
+    };
+
     return (
         <div className={styles.card} onClick={onOpen}>
             {isAI && (
@@ -34,7 +47,15 @@ const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency, isAI }) => {
                 <div className={styles.logoPlaceholder}>
                     {job.title.charAt(0).toUpperCase()}
                 </div>
-                <Heart className={styles.bookmarkIcon} size={20} />
+
+                <Heart
+                    className={styles.bookmarkIcon}
+                    size={20}
+                    onClick={handleAddFavorite}
+                    role="button"
+                    aria-label="Kedvencekhez adás"
+                    tabIndex={0}
+                />
             </div>
 
             <div>
