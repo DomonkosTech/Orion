@@ -77,7 +77,7 @@ export const getCompanyAdvertisements = async (companyId: number) => {
 export const getAdvertisementById = async (id: string) => {
     const { data: advertisement, error } = await supabase
         .from("advertisement")
-        .select("*")
+        .select('id, title, position, location, hourly_wage, tasks, requirements, is_active, created_at, company_id, job_description, click_count, company:companies(name)')
         .eq("id", id)
         .maybeSingle();
 

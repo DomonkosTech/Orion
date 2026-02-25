@@ -26,7 +26,8 @@ import UserPasswordResetRequest from "./features/user/EditProfile/UserPasswordRe
 import UserPasswordResetSave from "./features/user/EditProfile/UserPasswordResetSave.tsx";
 import CompanyPasswordResetRequest from "./features/company/EditProfile/CompanyPasswordResetRequest.tsx";
 import CompanyPasswordResetSave from "./features/company/EditProfile/CompanyPasswordResetSave.tsx";
-import Messenger from "./features/user/messenger/messenger.tsx"
+import Messenger from "./features/user/messenger/messenger.tsx";
+import ShowFavoritesJobs from "./features/user/UserJobs/Favorites/ShowFavoritesJobs.tsx";
 
 function App() {
     return (
@@ -84,6 +85,14 @@ function App() {
                     element={
                         <IsLoggedIn mode="user">
                             <UserHomePage />
+                        </IsLoggedIn>
+                    }
+                />
+                <Route
+                    path="/favorites"
+                    element={
+                        <IsLoggedIn mode="user">
+                            <ShowFavoritesJobs />
                         </IsLoggedIn>
                     }
                 />

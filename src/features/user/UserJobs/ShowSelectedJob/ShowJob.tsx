@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { MapPin, Hash, Wallet, ClipboardList, Target, Briefcase, ChevronLeft } from "lucide-react";
+import { MapPin, Hash, Wallet, ClipboardList, Target, Briefcase, ChevronLeft, Building2 } from "lucide-react";
 import {
     updateviewcounter,
     getAdvertisementById,
@@ -34,6 +34,7 @@ const ShowJob = () => {
             try {
                 const data = await getAdvertisementById(id);
                 if (data.success) {
+                    console.log("advertisement:", data);
                     setAdvertisement(data.advertisement);
                     // Update view counter after successful fetch
                     try {
@@ -199,6 +200,12 @@ const ShowJob = () => {
                                 </div>
                                 <span className={styles.value}>#{id}</span>
                             </div>
+                            <div className={styles.infoRow}>
+                                <div className={styles.infoLabel}>
+                                    <Building2 size={16} /> {t('jobs.show.companyNameLabel')}
+                                </div>
+                                <span className={styles.value}>{advertisement?.company?.name}</span>
+                            </div>
                         </div>
 
                         <div className={styles.buttonGroup}>
@@ -217,8 +224,8 @@ const ShowJob = () => {
                                 color="orion-blue"
                                 variant="secondary"
                                 onClick={() => {
-                                    console.log("Navigating to messenger for company:", advertisement.company_id);
-                                    navigate(`/messenger?companyId=${advertisement.company_id}&companyName=${encodeURIComponent("Orion Partner")}`);
+                                    console.log("Navigating to messenger for company:", advertisement?.company?.name);
+                                    navigate(`/messenger?companyId=${advertisement.company_id}&companyName=${advertisement?.company?.name}`);
                                 }}
                                 className={styles.messageBtn}
                             >

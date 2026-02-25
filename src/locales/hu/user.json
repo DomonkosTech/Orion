@@ -85,6 +85,7 @@
       "wageLabel": "Bruttó órabér",
       "locationLabel": "Helyszín",
       "referenceLabel": "Referencia",
+      "companyNameLabel": "Cég",
       "applyButton": "Jelentkezés most",
       "applyingButton": "Jelentkezés...",
       "successMessage": "Sikeres jelentkezés!",
