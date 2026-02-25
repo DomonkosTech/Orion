@@ -85,6 +85,7 @@
       "wageLabel": "Bruttostundenlohn",
       "locationLabel": "Standort",
       "referenceLabel": "Referenz",
+      "companyNameLabel": "Firma",
       "applyButton": "Jetzt bewerben",
       "applyingButton": "Bewerbung wird gesendet...",
       "successMessage": "Bewerbung erfolgreich!",

@@ -28,14 +28,17 @@ export interface Job {
 }
 
 export interface AdvertisementDetails {
+    id: number;
     title: string;
     position: string;
     location: string;
     hourly_wage: string;
     tasks: string;
     requirements: string;
+    company_id: number;
     job_description: string;
     is_active: boolean;
+    company?: Company;
 }
 
 export interface CreateAdvertisementData {
