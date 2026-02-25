@@ -252,3 +252,25 @@ export const addFavorite = async (advertisementId: number) => {
     });
     return handleResponse(response)
 }
+
+export const getFavorites = async (includeAdvertisement: boolean = false) => {
+    const params = new URLSearchParams();
+
+    if (includeAdvertisement) {
+        params.append("includeAdvertisement", "true");
+    }
+
+    const url = params.toString()
+        ? `${API_BASE_URL}/favorites?${params.toString()}`
+        : `${API_BASE_URL}/favorites`;
+
+    const response = await fetch(url, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+
+    return handleResponse(response);
+};

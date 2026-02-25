@@ -276,4 +276,25 @@ router.post("/favorites", verifyToken, verifyUser, async (req: AuthRequest, res)
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
+
+router.get("/favorites", verifyToken, verifyUser, async (req: AuthRequest, res)=>{
+    try {
+        const userId = req.userId
+        const includeAdvertisement = req.query.includeAdvertisement === "true";
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        const favorites = await advertisementService.getFavorites(userId, includeAdvertisement);
+        res.json(favorites);
+
+    }
+    catch (error){
+        console.error("Get favorites failed:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
 export default router;

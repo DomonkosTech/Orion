@@ -20,15 +20,21 @@ type Props = {
     onOpen: () => void;
     formatCurrency: (amount: number) => string;
     isAI?: boolean;
+    isFavorite?: boolean;
+    onFavoriteAdded?: (jobId: number) => void;
 };
 
-const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency, isAI }) => {
+const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency, isAI, isFavorite, onFavoriteAdded }) => {
     const { t } = useTranslation('user');
 
     const handleAddFavorite: React.MouseEventHandler<SVGSVGElement> = async (e) => {
         e.stopPropagation();
+
+        if (isFavorite) return;
+
         try {
             await addFavorite(job.id);
+            onFavoriteAdded?.(job.id);
             toast.success("sikeresen hozzáadva a kedvencekhez");
         } catch (err) {
             console.error("addFavorite failed:", err);
@@ -49,8 +55,9 @@ const JobCard: React.FC<Props> = ({ job, onOpen, formatCurrency, isAI }) => {
                 </div>
 
                 <Heart
-                    className={styles.bookmarkIcon}
+                    className={`${styles.bookmarkIcon} ${isFavorite ? styles.favorite : ''}`}
                     size={20}
+                    fill={isFavorite ? "currentColor" : "none"}
                     onClick={handleAddFavorite}
                     role="button"
                     aria-label="Kedvencekhez adás"
