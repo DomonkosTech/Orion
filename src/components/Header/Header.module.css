@@ -22,12 +22,11 @@
     max-width: 94.5vw;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 1fr auto 1fr; /* Logo | Nav | Actions */
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
 }
 
-/* Ensure logo stays on the left */
-.logo { 
+.logo {
     display: flex; 
     align-items: center; 
     gap: 0.5rem; 
@@ -37,17 +36,14 @@
     justify-self: start; 
 }
 
-/* Ensure actions stay on the right */
-.actions { 
+.actions {
     display: flex; 
     align-items: center; 
     gap: 16px; 
     justify-self: end;
-    /* Use row-reverse so profile anchors right and expands left pushing notification */
-    flex-direction: row-reverse; 
+    flex-direction: row-reverse;
 }
 
-/* Nav centered by grid */
 .nav {
     display: flex;
     align-items: center;

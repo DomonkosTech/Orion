@@ -67,7 +67,9 @@
         "error": "Az OrionAI jelenleg nem érhető el.",
         "locationPlaceholder": "Helyszín",
         "positionPlaceholder": "Pozíció",
-        "wagePlaceholder": "Min. Bér"
+        "wagePlaceholder": "Min. Bér",
+        "loadingTitle": "Az Orion AI elemzi a lehetőségeket...",
+        "loadingSubtitle": "Hamarosan mutatjuk a legjobb találatokat! Ez akár egy percet is igénybe vehet."
       }
     },
     "show": {

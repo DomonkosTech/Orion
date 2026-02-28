@@ -67,7 +67,9 @@
         "error": "OrionAI is currently unavailable.",
         "locationPlaceholder": "Location",
         "positionPlaceholder": "Position",
-        "wagePlaceholder": "Min. Wage"
+        "wagePlaceholder": "Min. Wage",
+        "loadingTitle": "Orion AI is analyzing opportunities...",
+        "loadingSubtitle": "We'll show you the best matches soon! This may take up to a minute."
       }
     },
     "show": {
