@@ -13,6 +13,7 @@ import { getAdvertisements, type Job, OrionAI as OrionAIApi, getFavorites } from
 import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 import Footer from "../../../../components/Footer/Footer.tsx";
 import Button from "../../../../components/Button/Button.tsx";
+import AILoadingState from "./components/AILoadingState.tsx";
 
 
 // Helper for formatting currency
@@ -262,46 +263,52 @@ const ListJobs: React.FC = () => {
                         </div>
                     )}
 
-                    {!loading && !error && jobs.length === 0 && (
-                        <EmptyState onClear={clearFilters} />
-                    )}
-
-                    {!error && (
+                    {loading && appliedFilters.isAI ? (
+                        <AILoadingState />
+                    ) : (
                         <>
-                            {jobs.length > 0 && (
-                                <div className={styles.grid}>
-                                    {jobs.map((job) => (
-                                        <JobCard
-                                            key={job.id}
-                                            job={job}
-                                            onOpen={() => handleshowClick(job.id)}
-                                            formatCurrency={formatCurrency}
-                                            isAI={appliedFilters.isAI}
-                                            isFavorite={favoriteIds.includes(job.id)}
-                                            onFavoriteAdded={handleFavoriteAdded}
-                                            onFavoriteRemoved={handleFavoriteRemoved}
-                                        />
-                                    ))}
-                                    {loading && [1, 2, 3].map((n) => <SkeletonCard key={n} />)}
-                                </div>
-                            )}
-                            {jobs.length === 0 && loading && (
-                                <div className={styles.grid}>
-                                    {[1, 2, 3, 4, 5, 6].map((n) => <SkeletonCard key={n} />)}
-                                </div>
+                            {!loading && !error && jobs.length === 0 && (
+                                <EmptyState onClear={clearFilters} />
                             )}
 
-                            {showLoadMore && (
-                                <div className={styles.pagination}>
-                                    <Button
-                                        onClick={handleLoadMore}
-                                        disabled={loading}
-                                        variant="secondary"
-                                        color="orion-blue"
-                                    >
-                                        {loading ? t('jobs.list.loading') : t('jobs.list.loadMore')}
-                                    </Button>
-                                </div>
+                            {!error && (
+                                <>
+                                    {jobs.length > 0 && (
+                                        <div className={styles.grid}>
+                                            {jobs.map((job) => (
+                                                <JobCard
+                                                    key={job.id}
+                                                    job={job}
+                                                    onOpen={() => handleshowClick(job.id)}
+                                                    formatCurrency={formatCurrency}
+                                                    isAI={appliedFilters.isAI}
+                                                    isFavorite={favoriteIds.includes(job.id)}
+                                                    onFavoriteAdded={handleFavoriteAdded}
+                                                    onFavoriteRemoved={handleFavoriteRemoved}
+                                                />
+                                            ))}
+                                            {loading && [1, 2, 3].map((n) => <SkeletonCard key={n} />)}
+                                        </div>
+                                    )}
+                                    {jobs.length === 0 && loading && (
+                                        <div className={styles.grid}>
+                                            {[1, 2, 3, 4, 5, 6].map((n) => <SkeletonCard key={n} />)}
+                                        </div>
+                                    )}
+
+                                    {showLoadMore && (
+                                        <div className={styles.pagination}>
+                                            <Button
+                                                onClick={handleLoadMore}
+                                                disabled={loading}
+                                                variant="secondary"
+                                                color="orion-blue"
+                                            >
+                                                {loading ? t('jobs.list.loading') : t('jobs.list.loadMore')}
+                                            </Button>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </>
                     )}

@@ -1,6 +1,7 @@
 import React from "react";
-import styles from "../ListJobs.module.css";
+import styles from "./EmptyState.module.css";
 import Button from "../../../../../components/Button/Button.tsx";
+import { Trans } from "react-i18next";
 
 type Props = {
     onClear: () => void;
@@ -8,16 +9,27 @@ type Props = {
 
 const EmptyState: React.FC<Props> = ({ onClear }) => {
     return (
-        <div className={styles.emptyState}>
-            <span className={styles.emptyStateIcon}>🔍</span>
-            <h3>Nincs találat.</h3>
-            <p style={{ color: '#6b7280' }}>
-                Próbálja meg módosítani a szűrőket vagy a keresési feltételeket.
+        <div className={styles.container}>
+            <div className={styles.iconWrapper}>
+                🔍
+            </div>
+            <h3 className={styles.title}>
+                <Trans i18nKey="jobs.list.empty.title">
+                    Nincs találat a keresésre
+                </Trans>
+            </h3>
+            <p className={styles.description}>
+                <Trans i18nKey="jobs.list.empty.description">
+                    Sajnos nem találtunk olyan állást, ami megfelelne a beállított szűrőknek.
+                    Próbálja meg módosítani a keresési feltételeket vagy törölje a szűrőket.
+                </Trans>
             </p>
 
-            <div style={{ marginTop: '20px', display: 'inline-block' }}>
-                <Button type="button" variant="primary" onClick={onClear}>
-                    Szűrők törlése
+            <div className={styles.buttonWrapper}>
+                <Button type="button" variant="secondary" onClick={onClear}>
+                    <Trans i18nKey="jobs.list.empty.clearFilters">
+                        Szűrők törlése
+                    </Trans>
                 </Button>
             </div>
         </div>
