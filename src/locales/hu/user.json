@@ -56,6 +56,11 @@
       "errorTitle": "Hiba történt",
       "loadMore": "Mutass többet",
       "loading": "Betöltés...",
+      "empty": {
+        "title": "Nincs találat a keresésre",
+        "description": "Sajnos nem találtunk olyan állást, ami megfelelne a beállított szűrőknek. Próbálja meg módosítani a keresési feltételeket vagy törölje a szűrőket.",
+        "clearFilters": "Szűrők törlése"
+      },
       "ai": {
         "toggleLabel": "OrionAI",
         "inputPlaceholder": "Írja le saját szavaival milyen munkát keres...",
