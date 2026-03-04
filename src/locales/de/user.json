@@ -56,6 +56,11 @@
       "errorTitle": "Ein Fehler ist aufgetreten",
       "loadMore": "Mehr anzeigen",
       "loading": "Laden...",
+      "empty": {
+        "title": "Keine Ergebnisse für Ihre Suche",
+        "description": "Leider konnten wir keine Stellen finden, die Ihren Filterkriterien entsprechen. Versuchen Sie, Ihre Suchkriterien zu ändern oder die Filter zu löschen.",
+        "clearFilters": "Filter löschen"
+      },
       "ai": {
         "toggleLabel": "OrionAI",
         "inputPlaceholder": "Beschreiben Sie in Ihren eigenen Worten, welche Art von Job Sie suchen...",

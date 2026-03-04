@@ -56,6 +56,11 @@
       "errorTitle": "An error occurred",
       "loadMore": "Show more",
       "loading": "Loading...",
+      "empty": {
+        "title": "No results for your search",
+        "description": "Unfortunately, we couldn't find any jobs that match your filter settings. Try changing your search criteria or clearing the filters.",
+        "clearFilters": "Clear filters"
+      },
       "ai": {
         "toggleLabel": "OrionAI",
         "inputPlaceholder": "Describe in your own words what kind of job you are looking for...",
