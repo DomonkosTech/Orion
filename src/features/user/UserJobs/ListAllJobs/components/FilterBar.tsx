@@ -1,9 +1,8 @@
 import React from "react";
-import { Search, MapPin, Briefcase, X, Sparkles, ArrowRight } from "lucide-react";
+import { Search, MapPin, Briefcase, X, Sparkles, ArrowRight, Wallet } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import styles from "../ListJobs.module.css";
 import InputField from "../../../../../components/InputField/InputField.tsx";
-import Button from "../../../../../components/Button/Button.tsx";
 
 type Props = {
     searchTerm: string;
@@ -56,11 +55,20 @@ const FilterBar: React.FC<Props> = ({
                         onChange={(e) => onSearchChange(e.target.value)}
                         className={`${styles.searchInput} ${isAISearchActive ? styles.aiActiveInput : ""}`}
                     />
-                    {isAISearchActive && (
-                        <button type="submit" className={styles.aiSearchSubmit}>
-                            <ArrowRight size={20} />
-                        </button>
-                    )}
+                    <button 
+                        type="submit" 
+                        className={`${styles.mainSubmitButton} ${isAISearchActive ? styles.aiSearchSubmit : ""}`}
+                    >
+                        <div className={styles.buttonContentWrapper}>
+                            <span className={`${styles.buttonText} ${isAISearchActive ? styles.hidden : ""}`}>
+                                {t('jobs.list.ai.buttonLabelDefault')}
+                            </span>
+                            <ArrowRight 
+                                size={20} 
+                                className={`${styles.buttonIcon} ${!isAISearchActive ? styles.hidden : ""}`} 
+                            />
+                        </div>
+                    </button>
                 </div>
                 <div className={styles.aiToggleWrapper}>
                     <button
@@ -75,7 +83,7 @@ const FilterBar: React.FC<Props> = ({
                 </div>
             </div>
 
-            {isAISearchActive && (
+            <div className={`${styles.collapsibleWrapper} ${isAISearchActive ? styles.expanded : ""}`}>
                 <div className={styles.aiSuggestions}>
                     {suggestions.map((text, i) => (
                         <button 
@@ -88,68 +96,55 @@ const FilterBar: React.FC<Props> = ({
                         </button>
                     ))}
                 </div>
-            )}
+            </div>
 
-            {!isAISearchActive && (
+            <div className={`${styles.collapsibleWrapper} ${!isAISearchActive ? styles.expanded : ""}`}>
                 <div className={styles.filtersBar}>
-                    <div className={styles.collapsibleGrid}>
-                        <div className={styles.collapsibleContent}>
-                            <div className={styles.filterGroup}>
-                                <MapPin size={18} className={styles.inputIcon} />
-                                <InputField
-                                    type="text"
-                                    placeholder={t('jobs.list.ai.locationPlaceholder')}
-                                    value={locationFilter}
-                                    onChange={(e) => onLocationChange(e.target.value)}
-                                    className={styles.filterControl}
-                                />
-                            </div>
+                    <div className={styles.filterGroup}>
+                        <MapPin size={18} className={styles.inputIcon} />
+                        <InputField
+                            type="text"
+                            placeholder={t('jobs.list.ai.locationPlaceholder')}
+                            value={locationFilter}
+                            onChange={(e) => onLocationChange(e.target.value)}
+                            className={styles.filterControl}
+                        />
+                    </div>
 
-                            <div className={styles.filterGroup}>
-                                <Briefcase size={18} className={styles.inputIcon} />
-                                <InputField
-                                    type="text"
-                                    placeholder={t('jobs.list.ai.positionPlaceholder')}
-                                    value={positionFilter}
-                                    onChange={(e) => onPositionChange(e.target.value)}
-                                    className={styles.filterControl}
-                                />
-                            </div>
-                        </div>
+                    <div className={styles.filterGroup}>
+                        <Briefcase size={18} className={styles.inputIcon} />
+                        <InputField
+                            type="text"
+                            placeholder={t('jobs.list.ai.positionPlaceholder')}
+                            value={positionFilter}
+                            onChange={(e) => onPositionChange(e.target.value)}
+                            className={styles.filterControl}
+                        />
                     </div>
 
                     <div className={`${styles.filterGroup} ${styles.wageGroup}`}>
-                        <Search size={20} className={styles.inputIcon} />
+                        <Wallet size={18} className={styles.inputIcon} />
                         <InputField
                             type="number"
                             min={0}
                             placeholder={t('jobs.list.ai.wagePlaceholder')}
                             value={minWage}
                             onChange={(e) => onMinWageChange(e.target.value)}
-                            className={styles.filterControl}
+                            className={`${styles.filterControl} ${styles.wageInput}`}
                         />
+                        <span className={styles.wageSuffix}>Ft</span>
                     </div>
 
-                    <div className={styles.actions}>
-                        <Button 
-                            type="submit" 
-                            color={"orion-blue"} 
-                            className={styles.searchButton}
-                        >
-                            {t('jobs.list.ai.buttonLabelDefault')}
-                        </Button>
-
-                        <button
-                            type="button"
-                            onClick={onClear}
-                            className={styles.clearButton}
-                            disabled={!hasActiveFilters}
-                        >
-                            <X size={20} />
-                        </button>
-                    </div>
+                    <button
+                        type="button"
+                        onClick={onClear}
+                        className={styles.clearButton}
+                        disabled={!hasActiveFilters}
+                    >
+                        <X/>
+                    </button>
                 </div>
-            )}
+            </div>
         </form>
     );
 };
