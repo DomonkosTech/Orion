@@ -1,4 +1,5 @@
 import React from "react";
+import { motion } from "framer-motion";
 import { MessengerProvider } from "./context/MessengerContext";
 import ConversationList from "./components/ConversationList";
 import ChatWindow from "./components/ChatWindow";
@@ -10,22 +11,29 @@ const MessengerLayout: React.FC = () => {
     const { selectedCompanyId } = useMessenger();
 
     return (
-        <div className={`${styles.container} ${selectedCompanyId ? styles.chatActive : ''}`}>
+        <motion.div 
+            layout
+            className={`${styles.container} ${selectedCompanyId ? styles.chatActive : ''}`}
+        >
             <ConversationList />
             <ChatWindow />
-        </div>
+        </motion.div>
     );
 };
 
 const MessengerPage: React.FC = () => {
 
     return (
-        <div className={styles.pageWrapper}>
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={styles.pageWrapper}
+        >
             <MessengerProvider>
                 <Header/>
                 <MessengerLayout />
             </MessengerProvider>
-        </div>
+        </motion.div>
     );
 };
 
