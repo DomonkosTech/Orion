@@ -318,3 +318,37 @@
 .viewAll:hover {
     background-color: #f1f5f9;
 }
+
+@media (max-width: 768px) {
+    .dropdown {
+        position: fixed;
+        top: 76px;
+        right: 16px;
+        width: calc(100vw - 32px);
+        max-width: 380px;
+    }
+    
+    .list {
+        max-height: calc(100vh - 150px);
+    }
+
+    .trigger:hover,
+    .trigger.expanded {
+        padding: 0 12px;
+        transform: none;
+    }
+    
+    .trigger:hover .triggerLabel,
+    .trigger.expanded .triggerLabel {
+        max-width: 0;
+        opacity: 0;
+        margin-left: 0;
+    }
+    
+    .trigger:hover .arrow,
+    .trigger.expanded .arrow {
+        max-width: 0;
+        opacity: 0;
+        margin-left: 0;
+    }
+}

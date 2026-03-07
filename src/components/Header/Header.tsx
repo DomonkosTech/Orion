@@ -82,6 +82,9 @@ export function Header({
 
                 {/* Right: Actions */}
                 <div className={styles.actions}>
+                    {actions}
+                    <LanguageSelector />
+                    <NotificationDropdown />
                     <ProfileDropdown
                         loggedIn={loggedIn}
                         userType={userType}
@@ -89,10 +92,6 @@ export function Header({
                         name={name}
                         initials={initials}
                     />
-
-                    <NotificationDropdown />
-                    <LanguageSelector />
-                    {actions}
                 </div>
             </div>
         </header>

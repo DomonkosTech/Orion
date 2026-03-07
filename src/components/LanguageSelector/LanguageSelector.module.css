@@ -73,7 +73,7 @@
 .trigger.expanded .triggerLabel {
     max-width: 150px;
     opacity: 1;
-    margin-left: 6px;
+    margin-left: 8px;
 }
 
 .arrow {
@@ -126,13 +126,14 @@
     text-decoration: none;
     background: transparent;
     border: none;
-    border-radius: 0; /* Reset global border radius */
+    border-radius: 0;
+    /* Reset global border radius */
     border-bottom: 1px solid #f8fafc;
     cursor: pointer;
     transition: background-color 0.2s ease;
     width: 100%;
     text-align: left;
-    gap: 12px;
+    gap: 8px;
     margin: 0;
 }
 
@@ -140,9 +141,11 @@
     border-bottom: none;
 }
 
-.item:hover, .item.active {
+.item:hover,
+.item.active {
     background-color: #f1f5f9;
-    border-color: #f1f5f9; /* Override global button:hover border-color */
+    border-color: #f1f5f9;
+    /* Override global button:hover border-color */
     outline: none;
 }
 
@@ -154,7 +157,7 @@
     justify-content: center;
     line-height: 1;
     color: #64748b;
-    width: 24px;
+    width: 28px;
 }
 
 .itemTitle {
@@ -169,4 +172,34 @@
 .checkIcon {
     color: #3b82f6;
     margin-left: auto;
+}
+
+@media (max-width: 768px) {
+    .dropdown {
+        position: fixed;
+        top: 76px;
+        right: 16px;
+        width: calc(100vw - 32px);
+        max-width: 200px;
+    }
+
+    .trigger:hover,
+    .trigger.expanded {
+        padding: 0;
+        transform: none;
+    }
+
+    .trigger:hover .triggerLabel,
+    .trigger.expanded .triggerLabel {
+        max-width: 0;
+        opacity: 0;
+        margin-left: 0;
+    }
+
+    .trigger:hover .arrow,
+    .trigger.expanded .arrow {
+        max-width: 0;
+        opacity: 0;
+        margin-left: 0;
+    }
 }

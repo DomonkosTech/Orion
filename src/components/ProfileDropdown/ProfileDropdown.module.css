@@ -173,3 +173,13 @@
 .logoutAction .itemTitle {
     color: #ef4444;
 }
+
+@media (max-width: 768px) {
+    .dropdown {
+        position: fixed;
+        top: 76px;
+        right: 16px;
+        width: calc(100vw - 32px);
+        max-width: 260px;
+    }
+}

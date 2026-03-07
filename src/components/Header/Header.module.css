@@ -41,7 +41,6 @@
     align-items: center; 
     gap: 16px; 
     justify-self: end;
-    flex-direction: row-reverse;
 }
 
 .nav {
@@ -81,7 +80,6 @@
 
     .actions {
         gap: 0.5rem;
-        flex-direction: row;
     }
 }
 
