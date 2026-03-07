@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import type { ChatPartner } from "../context/MessengerContextInstance";
 import styles from "../MessengerPage.module.css";
 
@@ -46,7 +47,7 @@ function formatDateTime(value?: string | null) {
     }
 }
 
-const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, onClick, style }) => {
+const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, onClick }) => {
     const initials = getInitials(partner.name);
     const itemClass = isActive ? `${styles.partnerItem} ${styles.partnerItemActive}` : styles.partnerItem;
 
@@ -57,13 +58,64 @@ const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, 
     }, [partner.id]);
 
     return (
-        <div className={itemClass} onClick={onClick} style={style}>
-            <div className={styles.avatar} style={avatarStyle}>{initials}</div>
+        <motion.div 
+            layout
+            initial={{ opacity: 0, x: -10, filter: "blur(5px)" }}
+            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            whileHover={{ 
+                x: 4,
+                backgroundColor: "rgba(241, 245, 249, 0.8)",
+                transition: { type: "spring", stiffness: 400, damping: 25 }
+            }}
+            whileTap={{ scale: 0.97 }}
+            transition={{
+                type: "spring",
+                stiffness: 260,
+                damping: 20
+            }}
+            className={itemClass} 
+            onClick={onClick}
+        >
+            <motion.div 
+                layoutId={`avatar-${partner.id}`}
+                className={styles.avatar} 
+                style={avatarStyle}
+                transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 30
+                }}
+            >
+                {initials}
+            </motion.div>
             <div style={{ minWidth: 0, flex: 1 }}>
-                <div className={styles.partnerName}>{partner.name}</div>
-                <div className={styles.smallMuted}>{formatDateTime(partner.last_message_at)}</div>
+                <motion.div layout className={styles.partnerName}>{partner.name}</motion.div>
+                <motion.div layout className={styles.smallMuted}>{formatDateTime(partner.last_message_at)}</motion.div>
             </div>
-        </div>
+            <AnimatePresence>
+                {isActive && (
+                    <motion.div 
+                        layoutId="active-indicator"
+                        initial={{ opacity: 0, scale: 0 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0 }}
+                        transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 30
+                        }}
+                        style={{ 
+                            width: 6, 
+                            height: 6, 
+                            backgroundColor: "#6366f1", 
+                            borderRadius: "50%",
+                            marginLeft: 8,
+                            boxShadow: "0 0 8px rgba(99, 102, 241, 0.5)"
+                        }} 
+                    />
+                )}
+            </AnimatePresence>
+        </motion.div>
     );
 };
 
