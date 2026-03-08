@@ -13,10 +13,6 @@ type Job = {
     location: string;
     hourly_wage: number;
     tasks: string;
-    company_name?: string;
-    company?: {
-        name?: string;
-    };
 };
 
 type Props = {
@@ -84,7 +80,7 @@ const JobCard: React.FC<Props> = ({
 
             <div>
                 <h2 className={styles.title}>{job.title}</h2>
-                <p className={styles.companyName}>{job.company?.name || job.company_name || "Orion Partner"}</p>
+                <p className={styles.companyName}>Orion Partner</p>
 
                 <div className={styles.badges}>
                     <span className={`${styles.badge} ${styles.badgePosition}`}>
