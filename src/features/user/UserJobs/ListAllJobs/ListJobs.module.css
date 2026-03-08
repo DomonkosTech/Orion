@@ -611,6 +611,7 @@
     .grid { grid-template-columns: 1fr; }
     .filtersBar { 
         flex-direction: column; 
+        align-items: stretch;
     }
     .collapsibleGrid {
         width: 100%;
@@ -624,6 +625,8 @@
     
     .topBar {
         flex-direction: column;
+        height: auto;
+        align-items: stretch;
     }
     .aiToggleWrapper {
         width: 100%;
@@ -634,6 +637,10 @@
     }
     .searchForm {
         padding: 20px;
+    }
+    .clearButton {
+        width: 100%;
+        background: #f1f5f9;
     }
 }
 
