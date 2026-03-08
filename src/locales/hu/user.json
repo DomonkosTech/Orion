@@ -64,7 +64,9 @@
       "ai": {
         "toggleLabel": "OrionAI",
         "inputPlaceholder": "Írja le saját szavaival milyen munkát keres...",
+        "inputPlaceholderMobile": "Milyen munka?",
         "inputPlaceholderDefault": "Milyen munkát keres? (pl. Java fejlesztő, Könyvelő)",
+        "inputPlaceholderDefaultMobile": "Munkát keres?",
         "buttonLabel": "AI Keresés",
         "buttonLabelDefault": "Keresés",
         "subtitle": "Az OrionAI <1>{{count}}</1> állást talált Önnek.",
