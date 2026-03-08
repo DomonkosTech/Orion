@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
-import styles from "../ListAllJobs/ListJobs.module.css";
+import styles from "./ShowFavoritesJobs.module.css";
+import { Trash2, MapPin, Briefcase, Search } from "lucide-react";
 
 // Components
 import { Header } from "../../../../components/Header/Header.tsx";
-import JobCard from "../ListAllJobs/components/JobCard.tsx";
-import SkeletonCard from "../ListAllJobs/components/SkeletonCard.tsx";
-import EmptyState from "../ListAllJobs/components/EmptyState.tsx";
-import { getFavorites, type Job } from "../../../../Api/advertisementApi.ts";
+import { getFavorites, type Job, removeFavorite } from "../../../../Api/advertisementApi.ts";
 import Footer from "../../../../components/Footer/Footer.tsx";
-import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
+import Button from "../../../../components/Button/Button.tsx";
 
 // Helper for formatting currency
 const formatCurrency = (amount: number) => {
@@ -34,8 +32,15 @@ const ShowFavoritesJobs: React.FC = () => {
         try {
             const favoriteJobsData = await getFavorites(true);
             if (Array.isArray(favoriteJobsData)) {
-                // Assuming the structure is [{ id, user_id, advertisement_id, advertisement: Job }, ...]
-                const extractedJobs = favoriteJobsData.map(fav => fav.advertisement).filter(Boolean);
+                const extractedJobs = favoriteJobsData.map(fav => {
+                    if (fav.advertisement) {
+                        return {
+                            ...fav.advertisement,
+                            company_name: fav.advertisement.company?.name || fav.advertisement.company_name
+                        };
+                    }
+                    return null;
+                }).filter(Boolean);
                 setJobs(extractedJobs);
             } else {
                 setJobs([]);
@@ -57,79 +62,113 @@ const ShowFavoritesJobs: React.FC = () => {
         navigate(`/job/show/${adId}`);
     };
 
-    const handleFavoriteRemoved = (jobId: number) => {
-        setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+    const handleRemoveFavorite = async (e: React.MouseEvent, jobId: number) => {
+        e.stopPropagation();
+        try {
+            const response = await removeFavorite(jobId);
+            if (response.success) {
+                setJobs((prevJobs) => prevJobs.filter((job) => job.id !== jobId));
+            }
+        } catch (err) {
+            console.error("Failed to remove favorite", err);
+        }
     };
 
     return (
         <div className={styles.pageWrapper}>
             <Header />
 
-            <main className={styles.mainContent}>
-                <div className={styles.container}>
-                    <div className={styles.dashboardHeader}>
-                        <div className={styles.welcomeSection}>
-                            <div className={styles.kickerWrapper}>
-                                <BannerKicker>{t('jobs.favorites.kicker', 'Kedvencek')}</BannerKicker>
-                            </div>
-                            <h1 className={styles.heroTitle}>
-                                <Trans t={t} i18nKey="jobs.favorites.title">
-                                    Kedvenc <span className={styles.accent}>állásajánlataid</span>
+            <main className={styles.container}>
+                <header className={styles.header}>
+                    <h1 className={styles.title}>{t('jobs.favorites.title', 'Kedvenc állásajánlataid')}</h1>
+                    <p className={styles.subtitle}>
+                        {jobs.length > 0 && !loading ? (
+                            <Trans t={t} i18nKey="jobs.favorites.subtitle" values={{ count: jobs.length }}>
+                                Jelenleg <strong>{jobs.length}</strong> kedvenc ajánlatod van.
+                            </Trans>
+                        ) : (
+                            !loading && (
+                                <Trans t={t} i18nKey="jobs.favorites.subtitleEmpty">
+                                    Nincsenek még kedvenc ajánlataid.
                                 </Trans>
-                            </h1>
-                             <p className={styles.heroSubtitle}>
-                                {jobs.length > 0 && !loading ? (
-                                    <Trans t={t} i18nKey="jobs.favorites.subtitle" values={{ count: jobs.length }}>
-                                        Jelenleg <strong>{{count: jobs.length}}</strong> kedvenc ajánlatod van.
-                                    </Trans>
-                                ) : (
-                                     !loading && (
-                                    <Trans t={t} i18nKey="jobs.favorites.subtitleEmpty">
-                                        Nincsenek még kedvenc ajánlataid.
-                                    </Trans>
-                                    )
-                                )}
-                            </p>
+                            )
+                        )}
+                    </p>
+                    <div className={styles.headerActions}>
+                        <Button
+                            onClick={() => navigate('/listjobs')}
+                            variant="secondary"
+                            color="orion-blue"
+                            className={styles.searchButton}
+                        >
+                            <Search size={18} />
+                            {t('jobs.favorites.searchMore', 'További állások keresése')}
+                        </Button>
+                    </div>
+                </header>
+
+                {error && (
+                    <div style={{ textAlign: 'center', padding: '40px' }}>
+                        <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{t('jobs.list.errorTitle', 'Hoppá!')}</h3>
+                        <p style={{ color: 'var(--muted)' }}>{error}</p>
+                    </div>
+                )}
+
+                {!loading && !error && jobs.length === 0 && (
+                    <div className={styles.emptyState}>
+                        <h3 className={styles.emptyTitle}>{t('jobs.favorites.noFavorites', 'Még nincsenek kedvenceid')}</h3>
+                        <p>{t('jobs.favorites.emptyDesc', 'Böngéssz az állások között és mentsd el a neked tetszőket!')}</p>
+                        <div className={styles.emptyAction}>
+                            <Button onClick={() => navigate('/listjobs')} variant="primary">
+                                {t('jobs.favorites.browse', 'Böngészés')}
+                            </Button>
                         </div>
                     </div>
+                )}
 
-                    {error && (
-                        <div style={{ textAlign: 'center', padding: '40px' }}>
-                            <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{t('jobs.list.errorTitle', 'Hoppá!')}</h3>
-                            <p style={{ color: 'var(--muted)' }}>{error}</p>
-                        </div>
-                    )}
-
-                    {!loading && !error && jobs.length === 0 && (
-                        <EmptyState onClear={() => navigate('/jobs')} />
-                    )}
-
-                    {!error && (
-                        <>
-                            {jobs.length > 0 && (
-                                <div className={styles.grid}>
-                                    {jobs.map((job) => (
-                                        <JobCard
-                                            key={job.id}
-                                            job={job}
-                                            onOpen={() => handleshowClick(job.id)}
-                                            formatCurrency={formatCurrency}
-                                            isAI={false}
-                                            isFavorite={true}
-                                            onFavoriteAdded={() => {}}
-                                            onFavoriteRemoved={() => handleFavoriteRemoved(job.id)}
-                                        />
-                                    ))}
+                {!error && (
+                    <div className={styles.favoritesList}>
+                        {jobs.map((job) => (
+                            <div
+                                key={job.id}
+                                className={styles.favoriteItem}
+                                onClick={() => handleshowClick(job.id)}
+                            >
+                                <div className={styles.itemLogo}>
+                                    {(job.company?.name || job.company_name || "J").charAt(0)}
                                 </div>
-                            )}
-                            {loading && (
-                                <div className={styles.grid}>
-                                    {[1, 2, 3, 4, 5, 6].map((n) => <SkeletonCard key={n} />)}
+                                <div className={styles.itemContent}>
+                                    <h3 className={styles.itemTitle}>{job.title}</h3>
+                                    <div className={styles.itemMeta}>
+                                        <span><Briefcase size={16} /> {job.company?.name || job.company_name || "Orion Partner"}</span>
+                                        <span><MapPin size={16} /> {job.location}</span>
+                                    </div>
+                                    <div className={styles.itemWage}>
+                                        {formatCurrency(job.hourly_wage)}
+                                    </div>
                                 </div>
-                            )}
-                        </>
-                    )}
-                </div>
+                                <div className={styles.itemActions}>
+                                    <button
+                                        className={styles.removeButton}
+                                        onClick={(e) => handleRemoveFavorite(e, job.id)}
+                                        title={t('jobs.favorites.remove', 'Eltávolítás')}
+                                    >
+                                        <Trash2 size={20} />
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                        {loading && [1, 2, 3].map(n => (
+                            <div key={n} className={styles.favoriteItem} style={{ opacity: 0.5 }}>
+                                <div className={styles.itemLogo} style={{ background: '#eee' }} />
+                                <div className={styles.itemContent}>
+                                    <div style={{ height: '20px', width: '200px', background: '#eee', marginBottom: '8px' }} />
+                                    <div style={{ height: '16px', width: '150px', background: '#eee' }} />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </main>
             <Footer />
         </div>
