@@ -6,7 +6,7 @@ import { Trash2, MapPin, Briefcase, Search } from "lucide-react";
 
 // Components
 import { Header } from "../../../../components/Header/Header.tsx";
-import { getFavorites, type Job, removeFavorite } from "../../../../Api/advertisementApi.ts";
+import { getFavorites, getAdvertisementById, type Job, removeFavorite } from "../../../../Api/advertisementApi.ts";
 import Footer from "../../../../components/Footer/Footer.tsx";
 import Button from "../../../../components/Button/Button.tsx";
 
@@ -34,14 +34,28 @@ const ShowFavoritesJobs: React.FC = () => {
             if (Array.isArray(favoriteJobsData)) {
                 const extractedJobs = favoriteJobsData.map(fav => {
                     if (fav.advertisement) {
-                        return {
-                            ...fav.advertisement,
-                            company_name: fav.advertisement.company?.name || fav.advertisement.company_name
-                        };
+                        return { ...fav.advertisement };
                     }
                     return null;
-                }).filter(Boolean);
-                setJobs(extractedJobs);
+                }).filter(Boolean) as Job[];
+
+                // The /favorites endpoint doesn't include company data, so we fetch
+                // each advertisement individually (same endpoint ShowJob uses) to get the company name.
+                const enriched = await Promise.all(
+                    extractedJobs.map(async (job) => {
+                        try {
+                            const detail = await getAdvertisementById(String(job.id));
+                            if (detail.success && detail.advertisement?.company) {
+                                return { ...job, company: detail.advertisement.company };
+                            }
+                        } catch {
+                            // silently fall back to job without company
+                        }
+                        return job;
+                    })
+                );
+
+                setJobs(enriched);
             } else {
                 setJobs([]);
                 console.warn("Expected an array of favorite jobs, but received:", favoriteJobsData);

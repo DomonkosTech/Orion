@@ -16,6 +16,9 @@ export interface CompanyAdvertisement {
     is_active: boolean;
 }
 
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//IDE!! kellene még a company name hogy ne legyen csúnya a kód!
 export interface Job {
     id: number;
     title: string;
@@ -25,6 +28,8 @@ export interface Job {
     tasks: string;
     requirements: string;
     job_description: string;
+    company_name?: string;
+    company?: Company;
 }
 
 export interface AdvertisementDetails {
