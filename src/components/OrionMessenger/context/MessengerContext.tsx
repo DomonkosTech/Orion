@@ -90,24 +90,43 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                 if (!cancelled) {
                     const params = new URLSearchParams(location.search);
                     const companyIdStr = params.get("companyId");
-                    const companyName = params.get("companyName") || "Orion Partner";
+                    const companyName = params.get("companyName");
+                    const userIdStr = params.get("userId");
+                    const userName = params.get("userName");
 
-                    console.log("Messenger: URL parameters:", { companyIdStr, companyName });
+                    console.log("Messenger: URL parameters:", { companyIdStr, companyName, userIdStr, userName });
                     console.log("Messenger: API loaded partners:", data);
 
-                    if (companyIdStr && userType === "user") {
+                    if (userType === "user" && companyIdStr) {
                         const targetId = Number(companyIdStr);
                         if (!isNaN(targetId)) {
                             const existingIdx = data.findIndex(p => p.id === targetId);
                             if (existingIdx === -1) {
-                                console.log("Messenger: Adding new partner from URL:", targetId);
+                                console.log("Messenger: Adding new company from URL:", targetId);
                                 data.unshift({
                                     id: targetId,
-                                    name: companyName,
+                                    name: companyName || "Orion Partner",
                                     last_message_at: null
                                 });
-                            } else {
-                                console.log("Messenger: Partner exists in API data:", targetId);
+                            } else if (companyName && data[existingIdx].name === "Orion Partner") {
+                                // Update name if it was previously generic
+                                data[existingIdx].name = companyName;
+                            }
+                            setSelectedPartnerId(targetId);
+                        }
+                    } else if (userType === "company" && userIdStr) {
+                        const targetId = Number(userIdStr);
+                        if (!isNaN(targetId)) {
+                            const existingIdx = data.findIndex(p => p.id === targetId);
+                            if (existingIdx === -1) {
+                                console.log("Messenger: Adding new user from URL:", targetId);
+                                data.unshift({
+                                    id: targetId,
+                                    name: userName || "Orion User",
+                                    last_message_at: null
+                                });
+                            } else if (userName && (data[existingIdx].name === "Orion User" || !data[existingIdx].name)) {
+                                data[existingIdx].name = userName;
                             }
                             setSelectedPartnerId(targetId);
                         }

@@ -77,7 +77,7 @@ const ChatWindow: React.FC = () => {
             >
                 <AnimatePresence mode="wait">
                     <motion.div 
-                        key={selectedCompany?.id || "empty"}
+                        key={selectedCompany?.company_id || "empty"}
                         initial={{ opacity: 0, x: -10, filter: "blur(4px)" }}
                         animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                         exit={{ opacity: 0, x: 10, filter: "blur(4px)" }}
@@ -102,7 +102,7 @@ const ChatWindow: React.FC = () => {
                         {selectedCompany ? (
                             <div style={{ display: "flex", alignItems: "center", gap: "12px", fontWeight: 600 }}>
                                 <motion.div 
-                                    layoutId={`avatar-${selectedCompany.id}`}
+                                    layoutId={`avatar-${selectedCompany.company_id}`}
                                     className={styles.avatar}
                                     style={{ width: 32, height: 32, minWidth: 32, fontSize: "0.8rem", borderRadius: "12px" }}
                                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
@@ -183,7 +183,7 @@ const ChatWindow: React.FC = () => {
                     )}
                     {!showLoader && !messagesError && selectedCompany && (
                         <motion.div
-                            key={`chat-${selectedCompany.id}`}
+                            key={`chat-${selectedCompany.company_id}`}
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}

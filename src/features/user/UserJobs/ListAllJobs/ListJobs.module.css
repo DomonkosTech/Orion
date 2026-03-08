@@ -624,13 +624,175 @@
     }
     
     .topBar {
-        flex-direction: column;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
         height: auto;
-        align-items: stretch;
+        align-items: center;
+        gap: 12px;
     }
+    
+    .searchBarWrapper {
+        flex: 1;
+        min-width: 0;
+        height: 60px; /* Keep height locked to match original desktop and mobile input size */
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    .searchInput {
+        padding-right: 60px !important; /* Matches 44px button + 16px padding */
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .aiActiveInput {
+        padding-right: 16px !important; /* Smooth text expansion after button leaves */
+    }
+
+    /* Style the internal search button correctly directly next to the filter icon */
+    .mainSubmitButton {
+        min-width: 44px; /* Scaled down to not be border-to-border */
+        width: 44px;
+        height: 44px !important; 
+        right: 8px !important; /* 8px padding from the right edge */
+        border-radius: 10px !important;
+        padding: 0;
+        transform: translateY(-50%) scale(1) !important;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mainSubmitButton:hover {
+        transform: translateY(-50%) scale(1.05) !important;
+    }
+
+    .mainSubmitButton.aiSearchSubmit {
+        width: 58px;
+        min-width: 58px;
+        height: 58px !important;
+        border-radius: 12px !important;
+        right: 1px !important; 
+        transform: translate(73px, -50%) !important; 
+    }
+
+    .mainSubmitButton.aiSearchSubmit:hover {
+        transform: translate(73px, -50%) scale(1.05) !important;
+    }
+
+    .buttonText {
+        display: none;
+    }
+
+    .buttonIcon {
+        position: static;
+        opacity: 1;
+        transform: scale(1.1);
+    }
+
+    .mobileFilterIcon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        border: 2px solid var(--border);
+        background: #fff;
+        color: var(--muted);
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow: hidden;
+    }
+    
+    .mobileFilterIconHidden {
+        opacity: 0;
+        pointer-events: none;
+        transform: scale(0.8);
+    }
+
+    .mobileFilterIcon svg {
+        color: var(--orion-blue);
+        transform: scale(1.05);
+    }
+
     .aiToggleWrapper {
         width: 100%;
+        display: block !important;
     }
+
+    .aiToggleWrapperDesktop {
+        display: none !important;
+    }
+
+    .mobileOverlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--panel);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        padding: 24px;
+        animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        overflow-y: auto;
+    }
+
+    @keyframes slideUp {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+    }
+
+    .mobileOverlayHeader {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 32px;
+    }
+
+    .mobileOverlayHeader h3 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #0f172a;
+    }
+
+    .closeOverlayBtn {
+        background: none;
+        border: none;
+        color: var(--muted);
+        cursor: pointer;
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .mobileOverlayContent {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .mobileOverlayContent .filtersBar {
+        border-top: none;
+        margin-top: 0;
+        padding-top: 0;
+        margin-bottom: 24px;
+    }
+
+    .mobileApplyButton {
+        margin-top: auto;
+        width: 100%;
+        padding: 16px;
+        background: var(--orion-blue);
+        color: #fff;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
     .aiToggle {
         width: 100%;
         justify-content: center;
@@ -641,6 +803,7 @@
     .clearButton {
         width: 100%;
         background: #f1f5f9;
+        margin-top: 12px;
     }
 }
 

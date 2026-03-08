@@ -169,10 +169,8 @@ const ShowJob = () => {
                             <Briefcase size={22} className={styles.iconBlue} />
                             {t('jobs.show.requirementsTitle')}
                         </h2>
-                        <div className={styles.tagCloud}>
-                            {advertisement.requirements.split(',').map((req, index) => (
-                                <span key={index} className={styles.tag}>{req.trim()}</span>
-                            ))}
+                        <div className={styles.richText}>
+                            {advertisement.requirements}
                         </div>
                     </section>
                 </div>

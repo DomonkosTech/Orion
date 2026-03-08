@@ -64,7 +64,9 @@
       "ai": {
         "toggleLabel": "OrionAI",
         "inputPlaceholder": "Beschreiben Sie in Ihren eigenen Worten, welche Art von Job Sie suchen...",
+        "inputPlaceholderMobile": "Welcher Job?",
         "inputPlaceholderDefault": "Welche Art von Job suchen Sie? (z.B. Java-Entwickler, Buchhalter)",
+        "inputPlaceholderDefaultMobile": "Jobsuche?",
         "buttonLabel": "AI-Suche",
         "buttonLabelDefault": "Suche",
         "subtitle": "OrionAI hat <1>{{count}}</1> Jobs für Sie gefunden.",
