@@ -53,7 +53,7 @@ const ShowListedJobs: React.FC = () => {
                         <div className={styles.actions}>
                             <Button
                                 variant="secondary"
-                                onClick={() => navigate("/company")}
+                                onClick={() => navigate(-1)}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <ArrowLeft size={18} /> {t('showJobs.back')}

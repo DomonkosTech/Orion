@@ -47,7 +47,7 @@ export const MobileFilterBar: React.FC<Props> = ({
     const mobileOverlay = isMobileFiltersOpen ? (
         <div className={styles.mobileOverlay}>
             <div className={styles.mobileOverlayHeader}>
-                <h3>Szűrők</h3>
+                <h3>{t('jobs.list.filters.title')}</h3>
                 <button type="button" onClick={() => setIsMobileFiltersOpen(false)} className={styles.closeOverlayBtn}>
                     <X size={24} />
                 </button>
@@ -110,7 +110,7 @@ export const MobileFilterBar: React.FC<Props> = ({
                         onSubmit(e as unknown as React.FormEvent);
                     }}
                 >
-                    Szűrés alkalmazása
+                    {t('jobs.list.filters.apply')}
                 </button>
             </div>
         </div>

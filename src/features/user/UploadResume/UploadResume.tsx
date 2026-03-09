@@ -148,7 +148,7 @@ const UploadResume = () => {
                         <Button
                             variant="link"
                             underline
-                            onClick={() => navigate("/usereditprofile")}
+                            onClick={() => navigate(-1)}
                         >
                             {t('uploadResume.buttons.cancel')}
                         </Button>

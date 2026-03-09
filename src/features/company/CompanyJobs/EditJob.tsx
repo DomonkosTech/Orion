@@ -121,7 +121,7 @@ const EditJob: React.FC = () => {
                     <div className={styles.actionGroup}>
                         {!editMode ? (
                             <>
-                                <Button onClick={() => navigate("/company")} variant="secondary">
+                                <Button onClick={() => navigate(-1)} variant="secondary">
                                     <ArrowLeft size={18} style={{marginRight: '8px'}} /> {t('editJob.actions.back')}
                                 </Button>
                                 <Button onClick={() => setEditMode(true)} color="orion-blue">

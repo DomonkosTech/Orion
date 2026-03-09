@@ -9,6 +9,7 @@ import { useTranslation, Trans } from "react-i18next";
 import { useAuth } from "../../../hooks/useAuth";
 import { Menu } from "lucide-react";
 import { Header } from "../../Header/Header";
+import { AVATAR_COLORS } from "../context/MessengerContextInstance";
 
 function getInitials(name?: string) {
     if (!name) return "?";
@@ -102,9 +103,16 @@ const ChatWindow: React.FC = () => {
                         {selectedCompany ? (
                             <div style={{ display: "flex", alignItems: "center", gap: "12px", fontWeight: 600 }}>
                                 <motion.div 
-                                    layoutId={`avatar-${selectedCompany.company_id}`}
+                                    layoutId={`avatar-header-${selectedCompany.company_id}`}
                                     className={styles.avatar}
-                                    style={{ width: 32, height: 32, minWidth: 32, fontSize: "0.8rem", borderRadius: "12px" }}
+                                    style={{ 
+                                        width: 32, 
+                                        height: 32, 
+                                        minWidth: 32, 
+                                        fontSize: "0.8rem", 
+                                        borderRadius: "12px",
+                                        background: AVATAR_COLORS[Math.abs(selectedCompany.company_id) % AVATAR_COLORS.length]
+                                    }}
                                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                                 >
                                     {getInitials(selectedCompany.company_name)}

@@ -40,6 +40,11 @@
     "messages": {
       "title": "Üzenetek",
       "description": "Beszélgessen a munkaadókkal"
+    },
+    "favorites": {
+      "title": "Kedvencek",
+      "description": "Mentett álláshirdetéseid",
+      "back": "Vissza"
     }
   },
   "help": {
@@ -77,6 +82,17 @@
         "wagePlaceholder": "Min. Bér",
         "loadingTitle": "Az Orion AI elemzi a lehetőségeket...",
         "loadingSubtitle": "Hamarosan mutatjuk a legjobb találatokat! Ez akár egy percet is igénybe vehet."
+      },
+      "filters": {
+        "title": "Szűrők",
+        "apply": "Szűrés alkalmazása"
+      },
+      "card": {
+        "hourlyWage": "Órabér",
+        "details": "Részletek",
+        "favoriteAdded": "Sikeresen hozzáadva a kedvencekhez",
+        "favoriteRemoved": "Sikeresen törölve a kedvencek közül",
+        "favoriteError": "Sikertelen művelet a kedvencekkel"
       }
     },
     "show": {

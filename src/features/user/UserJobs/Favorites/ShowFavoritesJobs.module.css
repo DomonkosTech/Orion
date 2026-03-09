@@ -34,8 +34,10 @@
     margin-top: 24px;
     display: flex;
     justify-content: center;
+    gap: 16px;
 }
 
+.backButton,
 .searchButton {
     display: flex;
     align-items: center;
@@ -46,6 +48,7 @@
     transition: all 0.3s ease !important;
 }
 
+.backButton:hover,
 .searchButton:hover {
     background: var(--orion-blue-light) !important;
     transform: translateY(-2px);

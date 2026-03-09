@@ -47,15 +47,15 @@ const JobCard: React.FC<Props> = ({
             if (isFavorite) {
                 await removeFavorite(job.id);
                 onFavoriteRemoved?.(job.id);
-                toast.success("sikeresen törölve a kedvencek közül");
+                toast.success(t('jobs.list.card.favoriteRemoved'));
             } else {
                 await addFavorite(job.id);
                 onFavoriteAdded?.(job.id);
-                toast.success("sikeresen hozzáadva a kedvencekhez");
+                toast.success(t('jobs.list.card.favoriteAdded'));
             }
         } catch (err) {
             console.error("toggleFavorite failed:", err);
-            toast.error("sikertelen művelet a kedvencekkel");
+            toast.error(t('jobs.list.card.favoriteError'));
         }
     };
 
@@ -108,7 +108,7 @@ const JobCard: React.FC<Props> = ({
 
             <div className={styles.cardFooter}>
                 <div className={styles.wageWrapper}>
-                    <span className={styles.wageLabel}>Órabér</span>
+                    <span className={styles.wageLabel}>{t('jobs.list.card.hourlyWage')}</span>
                     <span className={styles.wageValue}>
                         {formatCurrency(job.hourly_wage)}
                     </span>
@@ -116,7 +116,7 @@ const JobCard: React.FC<Props> = ({
 
                 <div onClick={(e) => { e.stopPropagation(); onOpen(); }}>
                     <Button type="button" color={"orion-blue"} variant={"secondary"}>
-                        Részletek <ArrowRight size={16} style={{ marginLeft: '6px' }} />
+                        {t('jobs.list.card.details')} <ArrowRight size={16} style={{ marginLeft: '6px' }} />
                     </Button>
                 </div>
             </div>

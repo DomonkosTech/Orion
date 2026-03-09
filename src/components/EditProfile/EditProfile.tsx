@@ -213,7 +213,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
             ) : (!user && type === "user") || (!company && type === "company") ? (
                 <div className={styles.loadingState}>
                     <p>{t('editProfile.noData')}</p>
-                    <Button onClick={() => navigate(type === "user" ? "/userhomepage" : "/company")} color="orion-blue">{t('editProfile.backToMain')}</Button>
+                    <Button onClick={() => navigate(-1)} color="orion-blue">{t('editProfile.backToMain')}</Button>
                 </div>
             ) : (
                 <>
@@ -227,7 +227,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                         {!editMode ? (
                             <div className={styles.actionGroup}>
                                 <Button
-                                    onClick={() => navigate(type === "user" ? "/userhomepage" : "/company")}
+                                    onClick={() => navigate(-1)}
                                     variant="secondary"
                                     color="black"
                                     className={styles.headerBtn}

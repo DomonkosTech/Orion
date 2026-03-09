@@ -40,6 +40,11 @@
     "messages": {
       "title": "Nachrichten",
       "description": "Chatten Sie mit Arbeitgebern"
+    },
+    "favorites": {
+      "title": "Favoriten",
+      "description": "Ihre gespeicherten Stellenangebote",
+      "back": "Zurück"
     }
   },
   "help": {
@@ -75,6 +80,17 @@
         "locationPlaceholder": "Standort",
         "positionPlaceholder": "Position",
         "wagePlaceholder": "Min. Lohn"
+      },
+      "filters": {
+        "title": "Filter",
+        "apply": "Filter anwenden"
+      },
+      "card": {
+        "hourlyWage": "Stundenlohn",
+        "details": "Details",
+        "favoriteAdded": "Zu Favoriten hinzugefügt",
+        "favoriteRemoved": "Aus Favoriten entfernt",
+        "favoriteError": "Favoriten konnten nicht aktualisiert werden"
       }
     },
     "show": {

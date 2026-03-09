@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import styles from "./ShowFavoritesJobs.module.css";
-import { Trash2, MapPin, Briefcase, Search } from "lucide-react";
+import { Trash2, MapPin, Briefcase, Search, ArrowLeft } from "lucide-react";
 
 // Components
 import { Header } from "../../../../components/Header/Header.tsx";
@@ -109,6 +109,15 @@ const ShowFavoritesJobs: React.FC = () => {
                         )}
                     </p>
                     <div className={styles.headerActions}>
+                        <Button
+                            onClick={() => navigate(-1)}
+                            variant="secondary"
+                            color="orion-blue"
+                            className={styles.backButton}
+                        >
+                            <ArrowLeft size={18} />
+                            {t('navigation.favorites.back')}
+                        </Button>
                         <Button
                             onClick={() => navigate('/listjobs')}
                             variant="secondary"

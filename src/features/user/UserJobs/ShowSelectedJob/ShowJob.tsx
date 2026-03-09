@@ -115,7 +115,7 @@ const ShowJob = () => {
                         type="button"
                         color="orion-blue"
                         variant="secondary"
-                        onClick={() => navigate("/listjobs")}
+                        onClick={() => navigate(-1)}
                     >
                         {t('jobs.show.backToList')}
                     </Button>
@@ -130,7 +130,7 @@ const ShowJob = () => {
 
             <header className={styles.banner}>
                 <div className={styles.bannerInner}>
-                    <button onClick={() => navigate("/listjobs")} className={styles.backButton}>
+                    <button onClick={() => navigate(-1)} className={styles.backButton}>
                         <ChevronLeft size={16} /> {t('jobs.show.backToBrowsing')}
                     </button>
                     <BannerKicker>{t('jobs.show.kicker')}</BannerKicker>
