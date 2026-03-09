@@ -55,10 +55,12 @@ const Footer = () => {
                 {/* Contact Section */}
                 <div className={styles.footerCol}>
                     <div className={styles.footerTitle}>{t('footer.contact')}</div>
-                    <a className={styles.footerLink} href="mailto:info@orion.hu">
-                        info@orion.hu
+                    <a className={styles.footerLink} href={`mailto:${t('footer.email')}`}>
+                        {t('footer.email')}
                     </a>
-                    <div className={styles.footerMuted}>+36 1 234 5678</div>
+                    <a className={styles.footerLink} href={`tel:${t('footer.phone').replace(/\s+/g, '')}`}>
+                        {t('footer.phone')}
+                    </a>
                 </div>
             </div>
 

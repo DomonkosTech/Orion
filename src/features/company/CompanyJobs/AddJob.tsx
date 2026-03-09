@@ -12,6 +12,7 @@ import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
 import TextArea from "../../../components/TextArea/TextArea.tsx";
 import InputField from "../../../components/InputField/InputField.tsx";
+import Checkbox from "../../../components/Checkbox/Checkbox.tsx";
 
 const AddJob: React.FC = () => {
     const { t } = useTranslation('company');
@@ -182,18 +183,16 @@ const AddJob: React.FC = () => {
                             </div>
 
                             <div className={styles.statusBox}>
-                                <label className={styles.checkboxLabel}>
-                                    <input
-                                        type="checkbox"
-                                        name="is_active"
+                                <div className={styles.checkboxLabel}>
+                                    <Checkbox
+                                        label={t('addJob.sidebar.active.label')}
                                         checked={formData.is_active}
-                                        onChange={handleInputChange}
+                                        onChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
                                     />
                                     <div>
-                                        <strong>{t('addJob.sidebar.active.label')}</strong>
                                         <span>{t('addJob.sidebar.active.hint')}</span>
                                     </div>
-                                </label>
+                                </div>
                             </div>
 
                             <div className={styles.sidebarActions}>

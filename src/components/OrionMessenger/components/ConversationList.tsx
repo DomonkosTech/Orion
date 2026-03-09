@@ -1,5 +1,5 @@
 import React from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, type Variants } from "framer-motion";
 import { useMessenger } from "../hooks/useMessenger";
 import ConversationItem from "./ConversationItem";
 import styles from "../MessengerPage.module.css";
@@ -8,7 +8,7 @@ import { useAuth } from "../../../hooks/useAuth";
 import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-const listVariants = {
+const listVariants: Variants = {
   hidden: { opacity: 0 },
   show: {
     opacity: 1,
@@ -26,7 +26,7 @@ const listVariants = {
   }
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, x: -10 },
   show: { 
     opacity: 1, 

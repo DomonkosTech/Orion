@@ -14,7 +14,8 @@
   },
   "featured": {
     "badge": "Kiemelt Ajánlat",
-    "defaultPosition": "Orion Partner",
+    "defaultPosition": "Szakember",
+    "defaultCompany": "Orion Partner",
     "description": "Ez a pozíció 98%-ban egyezik az Ön tapasztalatával és készségeivel.",
     "descriptionDynamic": "A(z) {{wage}} aktívan keresi az új csapattagot.",
     "descriptionDefault": "Egy partnerünk aktívan keresi az új csapattagot.",
@@ -48,9 +49,9 @@
     }
   },
   "help": {
-    "title": "Segítségre van szüksége?",
-    "text": "Karrier tanácsadóink segítenek a legtöbbet kihozni a profiljából.",
-    "button": "Chat indítása"
+    "title": "Kapcsolatfelvétel",
+    "text": "Kérdése van? Küldjön nekünk e-mailt, és a lehető leghamarabb válaszolunk.",
+    "button": "Írjon nekünk"
   },
   "jobs": {
     "list": {

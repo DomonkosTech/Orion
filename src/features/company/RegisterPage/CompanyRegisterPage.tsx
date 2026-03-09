@@ -152,7 +152,6 @@ const CompanyRegisterPage: React.FC = () => {
         await registerCompany({
             email: data.email,
             password: data.password,
-            confirmPassword: data.confirmPassword,
             name: data.name,
             address: data.address,
             tax_number: data.tax_number,
