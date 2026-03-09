@@ -74,7 +74,26 @@
     color: var(--muted);
     font-weight: 600;
     font-size: 0.95rem;
+}
+
+.jobDetailsRow {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     margin-top: 4px;
+}
+
+.cardHint {
+    font-size: 0.85rem;
+    color: var(--orion-blue);
+    font-weight: 700;
+    text-decoration: underline;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.jobCard:hover .cardHint {
+    opacity: 1;
 }
 
 .controls {
@@ -120,4 +139,60 @@
     color: var(--orion-blue);
     text-transform: uppercase;
     letter-spacing: 0.05em;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 20px 16px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .actions button {
+        width: 100%;
+    }
+
+    .title {
+        font-size: 1.75rem;
+    }
+
+    .jobCard {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        padding: 16px;
+    }
+
+    .jobMainInfo h2 {
+        font-size: 1.15rem;
+    }
+
+    .jobDetailsRow {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+
+    .cardHint {
+        font-size: 0.8rem;
+    }
+
+    .controls {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .editButton {
+        width: 44px;
+        height: 44px; /* Slightly larger for better touch target */
+    }
 }

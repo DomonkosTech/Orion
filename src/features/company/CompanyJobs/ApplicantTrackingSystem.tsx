@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import styles from "./ApplicantTrackingSystem.module.css";
 
 // Icons
-import { FileText, Check, X, ArrowLeft, Mail, Calendar, MapPin, User, Briefcase, GraduationCap, Globe } from "lucide-react";
+import { FileText, Check, X, ArrowLeft, Mail, Calendar, MapPin, User, Briefcase, GraduationCap, Globe, ChevronDown } from "lucide-react";
 
 // Shared Components
 import { Header } from "../../../components/Header/Header.tsx";
@@ -30,6 +30,35 @@ export const ApplicantTrackingSystem: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const { id } = useParams<{ id: string }>();
     const [selectedApplicantId, setSelectedApplicantId] = useState<number | null>(null);
+    const [showScrollIndicator, setShowScrollIndicator] = useState(true);
+    const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+
+    const handleScroll = () => {
+        if (scrollContainerRef.current) {
+            const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+            // Hide if scrolled within 20px of bottom
+            setShowScrollIndicator(scrollHeight - scrollTop > clientHeight + 20);
+        }
+    };
+
+    const handleScrollDown = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollBy({
+                top: 200,
+                behavior: 'smooth'
+            });
+        }
+    };
+
+    // Reset indicator when applicant changes
+    useEffect(() => {
+        if (selectedApplicantId) {
+            setShowScrollIndicator(true);
+            // Slight delay to allow DOM to render before checking if scroll is even needed
+            setTimeout(handleScroll, 100);
+        }
+    }, [selectedApplicantId]);
 
     useEffect(() => {
         const fetchApplicants = async () => {
@@ -132,9 +161,11 @@ export const ApplicantTrackingSystem: React.FC = () => {
                             </div>
                         )}
                     </div>
-                    <Button variant="secondary" onClick={() => navigate(-1)}>
-                        <ArrowLeft size={18} /> {t('ats.back')}
-                    </Button>
+                    <div className={styles.actions}>
+                        <Button variant="secondary" onClick={() => navigate(-1)}>
+                            <ArrowLeft size={18} /> {t('ats.back')}
+                        </Button>
+                    </div>
                 </header>
 
                 <Toaster />
@@ -216,6 +247,8 @@ export const ApplicantTrackingSystem: React.FC = () => {
                                 </div>
 
                                 <motion.div 
+                                    ref={scrollContainerRef}
+                                    onScroll={handleScroll}
                                     className={styles.expandedBody}
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
@@ -311,6 +344,21 @@ export const ApplicantTrackingSystem: React.FC = () => {
                                         <X size={16} /> {t('ats.actions.reject')}
                                     </Button>
                                 </motion.div>
+
+                                <AnimatePresence>
+                                    {showScrollIndicator && (
+                                        <motion.div 
+                                            className={styles.scrollIndicator}
+                                            onClick={handleScrollDown}
+                                            initial={{ opacity: 0, y: -10, x: "-50%" }}
+                                            animate={{ opacity: 1, y: 0, x: "-50%" }}
+                                            exit={{ opacity: 0, y: 10, x: "-50%" }}
+                                            transition={{ duration: 0.3 }}
+                                        >
+                                            <ChevronDown size={24} />
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
                             </motion.div>
                         ))}
                     </>

@@ -276,6 +276,7 @@
     "active": "Active",
     "inactive": "Inactive",
     "noJobs": "No ads to display.",
-    "fetchError": "Failed to fetch ads:"
+    "fetchError": "Failed to fetch ads:",
+    "viewApplicants": "View Applicants"
   }
 }

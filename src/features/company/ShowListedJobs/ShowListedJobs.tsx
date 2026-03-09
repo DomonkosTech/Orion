@@ -80,7 +80,10 @@ const ShowListedJobs: React.FC = () => {
                                 >
                                     <div className={styles.jobMainInfo}>
                                         <h2>{ad.title}</h2>
-                                        <p className={styles.jobSubInfo}>{ad.position}</p>
+                                        <div className={styles.jobDetailsRow}>
+                                            <p className={styles.jobSubInfo}>{ad.position}</p>
+                                            <span className={styles.cardHint}>{t('showJobs.viewApplicants')}</span>
+                                        </div>
                                     </div>
 
                                     <div className={styles.controls}>

@@ -276,6 +276,7 @@
     "active": "Aktív",
     "inactive": "Inaktív",
     "noJobs": "Nincsenek megjeleníthető hirdetések.",
-    "fetchError": "Hirdetések lekérése sikertelen:"
+    "fetchError": "Hirdetések lekérése sikertelen:",
+    "viewApplicants": "Jelentkezők megtekintése"
   }
 }

@@ -28,6 +28,11 @@
     margin-bottom: 32px;
 }
 
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
 .title {
     font-size: 2rem;
     font-weight: 950;
@@ -161,19 +166,20 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.2); /* Reduced opacity, no blur */
+    background: rgba(15, 23, 42, 0.4); /* Darker overlay for better contrast */
+    backdrop-filter: blur(8px); /* Premium blur effect */
     z-index: 98;
-    will-change: opacity;
+    will-change: opacity, backdrop-filter;
 }
 
 .expandedCard {
     position: fixed;
-    top: 80px;
-    bottom: 40px;
-    left: 0;
-    right: 0;
+    top: 84px; /* Safe margin below sticky header */
+    bottom: 24px;
+    left: 24px;
+    right: 24px;
     margin: 0 auto;
-    width: 90%;
+    width: auto;
     max-width: 1400px;
     background: var(--panel);
     border-radius: 24px;
@@ -363,6 +369,34 @@
     padding-top: 20px;
     border-top: 1px solid var(--border);
     flex-shrink: 0;
+    position: relative;
+    background: var(--panel);
+    z-index: 2;
+}
+
+.scrollIndicator {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(44, 90, 160, 0.1);
+    backdrop-filter: blur(4px);
+    color: var(--orion-blue);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(44, 90, 160, 0.15);
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+    40% {transform: translateX(-50%) translateY(-10px);}
+    60% {transform: translateX(-50%) translateY(-5px);}
 }
 
 @media (max-width: 900px) {
@@ -371,10 +405,19 @@
         align-items: flex-start;
         gap: 16px;
     }
+
+    .actions {
+        width: 100%;
+    }
+
+    .actions button, .actions div {
+        width: 100%;
+    }
     
     .applicantCard {
         grid-template-columns: 1fr;
         gap: 20px;
+        padding: 16px;
     }
     
     .actions {
@@ -385,18 +428,23 @@
     .btn {
         flex: 1;
         justify-content: center;
+        padding: 12px; /* Slightly larger targets for mobile */
     }
 
     .expandedCard {
-        top: 20px;
-        bottom: 20px;
-        width: 95%;
-        padding: 20px;
+        top: 84px;
+        bottom: 16px;
+        left: 12px;
+        right: 12px;
+        width: auto;
+        padding: 24px; /* More padding on mobile */
+        border-radius: 16px;
     }
 
     .expandedBody {
         flex-direction: column;
         overflow-y: auto;
+        gap: 24px;
     }
 
     .leftPanel {
@@ -412,23 +460,83 @@
         overflow-y: visible;
         padding-right: 0;
     }
+
+    .scrollIndicator {
+        bottom: 180px; /* Adjust for stacked actions on mobile */
+    }
     
     .expandedActions {
         flex-direction: column;
+        gap: 12px;
+        padding-top: 16px;
+    }
+
+    .expandedActions .btn, .expandedActions button {
+        width: 100%;
+    }
+
+    .contentCard {
+        padding: 20px; /* Reduced padding inside cards on mobile */
+    }
+
+    .avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 1.5rem;
+    }
+
+    .infoRow {
+        gap: 2px;
+    }
+
+    .infoValue {
+        font-size: 0.9rem;
     }
 }
 
-@media (max-width: 600px) {
-    .details {
+@media (max-width: 640px) {
+    .header {
+        align-items: stretch;
+    }
+
+    .title {
+        font-size: 1.75rem;
+    }
+
+    .actions {
+        margin-top: 8px;
+    }
+
+    .applicantCard {
+        grid-template-columns: 1fr;
+        padding: 20px;
+    }
+
+    .applicantCard .actions {
         flex-direction: column;
         gap: 8px;
     }
-    
+
+    .applicantCard .btn, 
+    .applicantCard :global(.btn) {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 24px 16px;
+    }
+
     .title {
         font-size: 1.5rem;
     }
-    
-    .expandedActions .btn {
-        width: 100%;
+
+    .expandedCard {
+        top: 84px;
+        bottom: 12px;
+        left: 8px;
+        right: 8px;
+        height: auto;
     }
 }
