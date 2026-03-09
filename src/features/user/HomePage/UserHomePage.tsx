@@ -8,6 +8,7 @@ import {
     ChevronRight,
     Settings,
     MessageSquare,
+    Heart,
     TrendingUp,
     MapPin,
     Building2,
@@ -100,6 +101,12 @@ function UserHomePage() {
             icon: <MessageSquare size={24} />,
             path: "/messenger",
             description: t('navigation.messages.description')
+        },
+        {
+            title: t('navigation.favorites.title'),
+            icon: <Heart size={24} />,
+            path: "/favorites",
+            description: t('navigation.favorites.description')
         }
     ];
 

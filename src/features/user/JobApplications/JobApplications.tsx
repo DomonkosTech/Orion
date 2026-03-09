@@ -70,7 +70,7 @@ const JobApplications = () => {
                             <Button
                                 variant="secondary"
                                 color="orion-blue"
-                                onClick={() => navigate("/userhomepage")}
+                                onClick={() => navigate(-1)}
                             >
                                 <ArrowLeft size={18} style={{marginRight: '8px'}} /> {t('jobApplications.header.back')}
                             </Button>

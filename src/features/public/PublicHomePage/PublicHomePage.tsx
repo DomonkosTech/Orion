@@ -85,7 +85,12 @@ function PublicHomePage() {
                         <div className={styles.featuresGrid}>
                             <article className={styles.feature}>
                                 <div className={styles.featureTop}>
-                                    <div className={styles.featureIcon}>🚀</div>
+                                    <div className={styles.featureIcon}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M7 17L17 7"/>
+                                            <path d="M7 7h10v10"/>
+                                        </svg>
+                                    </div>
                                     <div className={styles.featureBadge}>{t('valuePropositions.features.development.badge')}</div>
                                 </div>
                                 <h3 className={styles.featureTitle}>{t('valuePropositions.features.development.title')}</h3>
@@ -96,7 +101,12 @@ function PublicHomePage() {
 
                             <article className={styles.feature}>
                                 <div className={styles.featureTop}>
-                                    <div className={styles.featureIcon}>🏠</div>
+                                    <div className={styles.featureIcon}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <rect x="3" y="10" width="18" height="11" rx="1"/>
+                                            <path d="M3 10l9-7 9 7"/>
+                                        </svg>
+                                    </div>
                                     <div className={styles.featureBadge}>{t('valuePropositions.features.flexibility.badge')}</div>
                                 </div>
                                 <h3 className={styles.featureTitle}>{t('valuePropositions.features.flexibility.title')}</h3>
@@ -107,7 +117,11 @@ function PublicHomePage() {
 
                             <article className={styles.feature}>
                                 <div className={styles.featureTop}>
-                                    <div className={styles.featureIcon}>💎</div>
+                                    <div className={styles.featureIcon}>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                        </svg>
+                                    </div>
                                     <div className={styles.featureBadge}>{t('valuePropositions.features.value.badge')}</div>
                                 </div>
                                 <h3 className={styles.featureTitle}>{t('valuePropositions.features.value.title')}</h3>

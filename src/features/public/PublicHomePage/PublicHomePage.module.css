@@ -141,7 +141,7 @@
     display: grid;
     place-items: center;
     background: var(--accentSoft);
-    font-size: 1.4rem;
+    color: var(--accent);
 }
 
 .featureBadge {

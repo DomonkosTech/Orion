@@ -40,6 +40,11 @@
     "messages": {
       "title": "Messages",
       "description": "Chat with employers"
+    },
+    "favorites": {
+      "title": "Favorites",
+      "description": "Your saved job offers",
+      "back": "Back"
     }
   },
   "help": {
@@ -77,6 +82,17 @@
         "wagePlaceholder": "Min. Wage",
         "loadingTitle": "Orion AI is analyzing opportunities...",
         "loadingSubtitle": "We'll show you the best matches soon! This may take up to a minute."
+      },
+      "filters": {
+        "title": "Filters",
+        "apply": "Apply Filters"
+      },
+      "card": {
+        "hourlyWage": "Hourly wage",
+        "details": "Details",
+        "favoriteAdded": "Added to favorites",
+        "favoriteRemoved": "Removed from favorites",
+        "favoriteError": "Failed to update favorites"
       }
     },
     "show": {

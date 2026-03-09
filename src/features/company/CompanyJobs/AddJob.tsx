@@ -200,7 +200,7 @@ const AddJob: React.FC = () => {
                                 <Button type="submit" color="orion-blue" disabled={isLoading} className={styles.submitBtn}>
                                     {isLoading ? t('addJob.sidebar.saving') : t('addJob.sidebar.submit')}
                                 </Button>
-                                <button type="button" className={styles.cancelLink} onClick={() => navigate("/company")}>
+                                <button type="button" className={styles.cancelLink} onClick={() => navigate(-1)}>
                                     {t('addJob.sidebar.cancel')}
                                 </button>
                             </div>

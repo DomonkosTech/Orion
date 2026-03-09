@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { ChatPartner } from "../context/MessengerContextInstance";
+import { AVATAR_COLORS } from "../context/MessengerContextInstance";
 import styles from "../MessengerPage.module.css";
 
 interface ConversationItemProps {
@@ -9,14 +10,6 @@ interface ConversationItemProps {
     onClick: () => void;
     style?: React.CSSProperties;
 }
-
-const AVATAR_COLORS = [
-    "linear-gradient(135deg, #6366f1 0%, #a855f7 100%)", // Indigo/Purple
-    "linear-gradient(135deg, #3b82f6 0%, #2dd4bf 100%)", // Blue/Teal
-    "linear-gradient(135deg, #f59e0b 0%, #ef4444 100%)", // Amber/Red
-    "linear-gradient(135deg, #10b981 0%, #3b82f6 100%)", // Emerald/Blue
-    "linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%)", // Pink/Violet
-];
 
 function getInitials(name?: string) {
     if (!name) return "?";
@@ -54,7 +47,10 @@ const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, 
     const avatarStyle = useMemo(() => {
         // Deterministic color based on ID
         const colorIndex = Math.abs(partner.id) % AVATAR_COLORS.length;
-        return { background: AVATAR_COLORS[colorIndex] };
+        return { 
+            background: AVATAR_COLORS[colorIndex],
+            borderRadius: "18px" 
+        };
     }, [partner.id]);
 
     return (
@@ -77,7 +73,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, 
             onClick={onClick}
         >
             <motion.div 
-                layoutId={`avatar-${partner.id}`}
+                layoutId={`avatar-list-${partner.id}`}
                 className={styles.avatar} 
                 style={avatarStyle}
                 transition={{
