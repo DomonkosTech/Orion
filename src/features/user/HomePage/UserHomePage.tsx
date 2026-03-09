@@ -200,6 +200,12 @@ function UserHomePage() {
                                                 <div className={styles.detailItem}>
                                                     <Building2 size={20} />
                                                     <span>
+                                                        {featuredAdvertisement.company?.name || t("featured.defaultCompany")}
+                                                    </span>
+                                                </div>
+                                                <div className={styles.detailItem}>
+                                                    <Briefcase size={20} />
+                                                    <span>
                                                         {featuredAdvertisement.position || t("featured.defaultPosition")}
                                                     </span>
                                                 </div>
@@ -222,7 +228,7 @@ function UserHomePage() {
                                     ) : (
                                         <div className={styles.emptyMatch}>
                                             <Search size={48} className={styles.emptyIcon} />
-                                            <p>{t('featured.empty.message')}</p>
+                                            <p className={styles.emptyMatchText}>{t('featured.empty.message')}</p>
                                             <Button
                                                 variant="secondary"
                                                 color="orion-blue"
@@ -263,7 +269,7 @@ function UserHomePage() {
                                 <Button
                                     variant="secondary"
                                     color="orion-blue"
-                                    onClick={() => navigate("/messenger")}
+                                    onClick={() => window.location.href = "mailto:orion.team.service@gmail.com"}
                                     className={styles.helpBtn}
                                 >
                                     {t('help.button')}

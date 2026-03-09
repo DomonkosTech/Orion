@@ -1,3 +1,28 @@
+/* Disable tap highlights and long-press menus on iOS */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+/* Prevent accidental text selection on interactive elements */
+button, 
+a, 
+input[type="submit"] {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Allow text selection in inputs and text areas only */
+input, 
+textarea {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* Prevent images from being dragged */
+img {
+  -webkit-user-drag: none;
+}
 
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;

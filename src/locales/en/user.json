@@ -14,7 +14,8 @@
   },
   "featured": {
     "badge": "Featured Offer",
-    "defaultPosition": "Orion Partner",
+    "defaultPosition": "Specialist",
+    "defaultCompany": "Orion Partner",
     "description": "This position matches your experience and skills by 98%.",
     "descriptionDynamic": "{{wage}} is actively looking for a new team member.",
     "descriptionDefault": "One of our partners is actively looking for a new team member.",
@@ -48,9 +49,9 @@
     }
   },
   "help": {
-    "title": "Need help?",
-    "text": "Our career advisors will help you get the most out of your profile.",
-    "button": "Start Chat"
+    "title": "Contact us",
+    "text": "Have any questions? Send us an email and we'll get back to you as soon as possible.",
+    "button": "Email Us"
   },
   "jobs": {
     "list": {

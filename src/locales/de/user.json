@@ -14,7 +14,8 @@
   },
   "featured": {
     "badge": "Top-Angebot",
-    "defaultPosition": "Orion-Partner",
+    "defaultPosition": "Fachkraft",
+    "defaultCompany": "Orion-Partner",
     "description": "Diese Position entspricht zu 98 % Ihrer Erfahrung und Ihren Fähigkeiten.",
     "descriptionDynamic": "{{wage}} sucht aktiv nach einem neuen Teammitglied.",
     "descriptionDefault": "Einer unserer Partner sucht aktiv nach einem neuen Teammitglied.",
@@ -48,9 +49,9 @@
     }
   },
   "help": {
-    "title": "Brauchen Sie Hilfe?",
-    "text": "Unsere Karriereberater helfen Ihnen, das Beste aus Ihrem Profil herauszuholen.",
-    "button": "Chat starten"
+    "title": "Kontaktieren Sie uns",
+    "text": "Haben Sie Fragen? Senden Sie uns eine E-Mail und wir werden uns so schnell wie möglich bei Ihnen melden.",
+    "button": "E-Mail schreiben"
   },
   "jobs": {
     "list": {
