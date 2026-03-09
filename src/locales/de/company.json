@@ -276,6 +276,7 @@
     "active": "Aktiv",
     "inactive": "Inaktiv",
     "noJobs": "Keine Anzeigen zum Anzeigen.",
-    "fetchError": "Fehler beim Abrufen der Anzeigen:"
+    "fetchError": "Fehler beim Abrufen der Anzeigen:",
+    "viewApplicants": "Bewerber anzeigen"
   }
 }

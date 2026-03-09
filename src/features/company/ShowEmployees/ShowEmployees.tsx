@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from "react-router-dom";
 import { getEmployees, deleteEmployee } from "../../../Api/advertisementApi.ts";
 import { toast, Toaster } from "react-hot-toast";
+import { ArrowLeft } from "lucide-react";
 import styles from "./ShowEmployees.module.css";
 
 // Shared Components
@@ -29,6 +31,7 @@ interface Employee {
 
 const ShowEmployees = () => {
     const { t } = useTranslation('company');
+    const navigate = useNavigate();
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -76,9 +79,21 @@ const ShowEmployees = () => {
 
         <main className={styles.container}>
             <header className={styles.header}>
-                <BannerKicker>{t('addJob.banner')}</BannerKicker>
-                <h1 className={styles.title}>{t('employees.title')}</h1>
-                <p className={styles.subtitle}>{t('employees.subtitle')}</p>
+                <div className={styles.headerContent}>
+                    <BannerKicker>{t('addJob.banner')}</BannerKicker>
+                    <h1 className={styles.title}>{t('employees.title')}</h1>
+                    <p className={styles.subtitle}>{t('employees.subtitle')}</p>
+                </div>
+                <div className={styles.actions}>
+                    <Button
+                        variant="secondary"
+                        onClick={() => navigate(-1)}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <ArrowLeft size={18} /> {t('showJobs.back')}
+                        </div>
+                    </Button>
+                </div>
             </header>
 
             <div className={styles.card}>

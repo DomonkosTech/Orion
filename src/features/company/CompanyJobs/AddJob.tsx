@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { createAdvertisement } from "../../../Api/advertisementApi";
 import { toast, Toaster } from "react-hot-toast";
+import { ArrowLeft } from "lucide-react";
 import styles from "./AddJob.module.css";
 
 // Components
@@ -80,9 +81,21 @@ const AddJob: React.FC = () => {
 
             <main className={styles.container}>
                 <header className={styles.header}>
-                    <BannerKicker>{t('addJob.banner')}</BannerKicker>
-                    <h1 className={styles.title}>{t('addJob.title')}</h1>
-                    <p className={styles.subtitle}>{t('addJob.subtitle')}</p>
+                    <div className={styles.headerContent}>
+                        <BannerKicker>{t('addJob.banner')}</BannerKicker>
+                        <h1 className={styles.title}>{t('addJob.title')}</h1>
+                        <p className={styles.subtitle}>{t('addJob.subtitle')}</p>
+                    </div>
+                    <div className={styles.actions}>
+                        <Button
+                            variant="secondary"
+                            onClick={() => navigate(-1)}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <ArrowLeft size={18} /> {t('showJobs.back')}
+                            </div>
+                        </Button>
+                    </div>
                 </header>
 
                 <form onSubmit={handleSubmit} className={styles.layout}>
@@ -205,10 +218,6 @@ const AddJob: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className={styles.tipCard}>
-                            <h4>{t('addJob.sidebar.tip.title')}</h4>
-                            <p>{t('addJob.sidebar.tip.text')}</p>
-                        </div>
                     </aside>
                 </form>
             </main>
