@@ -1,4 +1,6 @@
 import { supabase } from "../../lib/supabaseClient.ts";
+import {createsystemmessage} from "./systemmessageController.ts"
+
 
 interface AdvertisementData {
     title: string;
@@ -184,13 +186,15 @@ export const deleteEmployee = async (employeeId: number, companyId: number) => {
         .delete()
         .eq("id", employeeId)
         .eq("company_id", companyId)
-        .select()
+        .select('*')
 
     if (error) throw error
 
     if (!data || data.length === 0) {
         throw new Error("Employee not found")
     }
+
+    createsystemmessage(data[0].user_id, 'Munkaviszony megszűnése!', `Tájékoztatjuk, hogy partnercégünknél a(z) ${data[0].position} pozícióban fennálló munkaviszonya megszűnt. Amennyiben szeretné, segítünk új álláslehetőséget találni.`, 'USER')
 
     return { success: true, deletedEmployee: data[0] }
 }
