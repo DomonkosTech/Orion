@@ -1,0 +1,66 @@
+import React, { useEffect, useRef } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { toast, Toaster } from "react-hot-toast";
+import { useTranslation } from "react-i18next";
+import styles from "./VerifyPage.module.css";
+import {Header} from "../Header/Header.tsx";
+import Footer from "../Footer/Footer.tsx";
+
+interface VerifyPageProps {
+    onVerify: (token: string) => Promise<any>;
+    loginPath: string;
+    translationNamespace: string;
+}
+
+const VerifyPage: React.FC<VerifyPageProps> = ({ 
+    onVerify, 
+    loginPath, 
+    translationNamespace 
+}) => {
+    const { t } = useTranslation(translationNamespace);
+    const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
+    const isVerifying = useRef(false);
+
+    useEffect(() => {
+        const token = searchParams.get("token");
+
+        if (token && !isVerifying.current) {
+            isVerifying.current = true;
+
+            onVerify(token)
+                .then(() => {
+                    toast.success(t('verify.success'));
+                    setTimeout(() => navigate(loginPath), 2000);
+                })
+                .catch((error: any) => {
+                    toast.error(t('verify.error') + (error.message || ""));
+                });
+        }
+    }, [searchParams, navigate, onVerify, loginPath, t]);
+
+    return (
+        <>
+            <Header />
+            <div className={styles.page}>
+                <Toaster />
+                <div className={styles.container}>
+                    <div className={styles.card} style={{ textAlign: 'center' }}>
+                        <header className={styles.header}>
+                            <h1>{t('verify.title')}</h1>
+                            <div className={styles.section}>
+                                <p>{t('verify.verifying')}</p>
+                                <div className={styles.stepper}>
+                                    <div className={`${styles.step} ${styles.active}`} />
+                                </div>
+                            </div>
+                        </header>
+                    </div>
+                </div>
+            </div>
+            <Footer />
+        </>
+    );
+};
+
+export default VerifyPage;

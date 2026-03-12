@@ -125,6 +125,22 @@
     "title": "Felhasználó bejelentkezés",
     "switchViewLabel": "Váltás céges nézetre"
   },
+  "verify": {
+    "title": "Fiók aktiválása",
+    "verifying": "E-mail ellenőrzése folyamatban...",
+    "success": "Sikeres e-mail igazolás!",
+    "error": "Hiba történt: "
+  },
+  "sendVerify": {
+    "title": "E-mail hitelesítés",
+    "description": "Kérjük, adja meg az email címét a hitelesítő link újraküldéséhez.",
+    "emailLabel": "Email cím",
+    "emailPlaceholder": "pelda@email.hu",
+    "button": "Link küldése",
+    "errorEmail": "Kérjük, adjon meg egy email címet!",
+    "errorSend": "Hiba történt a küldés során!",
+    "success": "Hitelesítő link elküldve az email címére!"
+  },
   "profile": {
     "personalData": {
       "title": "Személyes adatok",
