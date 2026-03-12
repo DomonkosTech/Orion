@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import styles from "../VerifyPage/VerifyPage.module.css";
 import InputField from "../InputField/InputField";
@@ -44,7 +44,6 @@ const SendVerifyPage: React.FC<SendVerifyPageProps> = ({
         <>
             <Header />
             <div className={styles.page}>
-                <Toaster />
                 <div className={styles.container}>
                     <div className={styles.card}>
                         <header className={styles.header}>

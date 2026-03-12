@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import styles from "./PasswordResetRequest.module.css";
 import { useTranslation } from "react-i18next";
 
@@ -52,7 +52,6 @@ const PasswordResetRequest: React.FC<PasswordResetRequestProps> = ({
     return (
         <div className={styles.page}>
             <Header />
-            <Toaster />
             <main className={styles.mainContent}>
                 <div className={styles.container}>
                     <div className={styles.card}>

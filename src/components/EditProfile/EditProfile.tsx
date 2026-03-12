@@ -17,7 +17,7 @@ import {
     type CompanyProfile
 } from "../../Api/companyApi.ts";
 import styles from "./EditProfile.module.css";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { userUpdateProfileSchema, companyUpdateProfileSchema } from "../../validation/Validation.ts";
 import { useTranslation } from "react-i18next";
 
@@ -204,7 +204,6 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
 
     return (
         <>
-            <Toaster />
             {loading ? (
                 <div className={styles.loadingState}>
                     <div className={styles.spinner}></div>
