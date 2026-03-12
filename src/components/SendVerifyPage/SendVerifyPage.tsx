@@ -8,7 +8,7 @@ import {Header} from "../Header/Header.tsx";
 import Footer from "../Footer/Footer.tsx";
 
 interface SendVerifyPageProps {
-    onSend: (email: string) => Promise<any>;
+    onSend: (email: string) => Promise<void>;
     translationNamespace: string;
 }
 
@@ -32,7 +32,7 @@ const SendVerifyPage: React.FC<SendVerifyPageProps> = ({
             await onSend(email);
             toast.success(t('sendVerify.success'));
             setEmail("");
-        } catch (error: any) {
+        } catch (error) {
             console.error(error);
             toast.error(t('sendVerify.errorSend'));
         } finally {

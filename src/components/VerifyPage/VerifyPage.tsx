@@ -7,7 +7,7 @@ import {Header} from "../Header/Header.tsx";
 import Footer from "../Footer/Footer.tsx";
 
 interface VerifyPageProps {
-    onVerify: (token: string) => Promise<any>;
+    onVerify: (token: string) => Promise<void>;
     loginPath: string;
     translationNamespace: string;
 }
@@ -33,7 +33,7 @@ const VerifyPage: React.FC<VerifyPageProps> = ({
                     toast.success(t('verify.success'));
                     setTimeout(() => navigate(loginPath), 2000);
                 })
-                .catch((error: any) => {
+                .catch((error: Error) => {
                     toast.error(t('verify.error') + (error.message || ""));
                 });
         }

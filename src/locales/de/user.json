@@ -116,7 +116,11 @@
       "failureMessage": "Bewerbung fehlgeschlagen.",
       "alreadyAppliedMessage": "Sie haben sich bereits beworben!",
       "errorMessage": "Bei der Bewerbung ist ein Fehler aufgetreten.",
-      "trustText": "Haben Sie eine Frage? Kontaktieren Sie uns gerne beim Orion-Kundenservice."
+      "trustText": "Haben Sie eine Frage? Kontaktieren Sie uns gerne beim Orion-Kundenservice.",
+      "wageCalculatorTitle": "Lohnberechner",
+      "hoursPerWeekLabel": "Stunden pro Woche",
+      "monthlyWageLabel": "Voraussichtlicher Monatslohn",
+      "monthlyWageSuffix": "Ft/Monat"
     }
   },
   "login": {

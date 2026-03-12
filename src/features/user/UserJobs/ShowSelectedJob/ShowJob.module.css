@@ -164,6 +164,86 @@
     font-weight: 600 !important;
 }
 
+.calculatorCard {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+.calculatorTitle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--orion-blue-dark);
+    margin-bottom: 16px;
+}
+
+.calculatorInputGroup {
+    margin-bottom: 20px;
+}
+
+.calculatorInputLabel {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.calculatorInputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.calculatorInputWrapper .inputIcon {
+    position: absolute;
+    left: 12px;
+    color: var(--text-muted);
+}
+
+.calculatorInput {
+    width: 100%;
+    padding: 10px 12px 10px 40px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--text-main);
+    background: #f8fafc;
+    transition: all 0.2s;
+}
+
+.calculatorInput:focus {
+    outline: none;
+    border-color: var(--orion-blue);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(44, 90, 160, 0.1);
+}
+
+.monthlyWageResult {
+    background: var(--orion-blue-light);
+    padding: 16px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.monthlyWageLabel {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--orion-blue);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.monthlyWageValue {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--orion-blue-dark);
+}
+
 .trustCard {
     margin-top: 20px;
     background: transparent;
