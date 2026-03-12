@@ -125,6 +125,22 @@
     "title": "User Login",
     "switchViewLabel": "Switch to company view"
   },
+  "verify": {
+    "title": "Activate Account",
+    "verifying": "Verifying email...",
+    "success": "Email verification successful!",
+    "error": "An error occurred: "
+  },
+  "sendVerify": {
+    "title": "Email Verification",
+    "description": "Please enter your email address to resend the verification link.",
+    "emailLabel": "Email Address",
+    "emailPlaceholder": "example@email.com",
+    "button": "Send Link",
+    "errorEmail": "Please enter an email address!",
+    "errorSend": "An error occurred while sending!",
+    "success": "Verification link sent to your email address!"
+  },
   "profile": {
     "personalData": {
       "title": "Personal Data",
