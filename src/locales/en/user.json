@@ -118,7 +118,11 @@
       "failureMessage": "Application failed.",
       "alreadyAppliedMessage": "You have already applied!",
       "errorMessage": "An error occurred during application.",
-      "trustText": "Have a question? Feel free to contact us at Orion customer service."
+      "trustText": "Have a question? Feel free to contact us at Orion customer service.",
+      "wageCalculatorTitle": "Wage Calculator",
+      "hoursPerWeekLabel": "Hours per week",
+      "monthlyWageLabel": "Estimated monthly wage",
+      "monthlyWageSuffix": "Ft/month"
     }
   },
   "login": {

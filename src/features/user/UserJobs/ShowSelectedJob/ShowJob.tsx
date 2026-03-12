@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { MapPin, Hash, Wallet, ClipboardList, Target, Briefcase, ChevronLeft, Building2 } from "lucide-react";
+import { MapPin, Hash, Wallet, ClipboardList, Target, Briefcase, ChevronLeft, Building2, Calculator, Clock } from "lucide-react";
 import {
     updateviewcounter,
     getAdvertisementById,
@@ -25,6 +25,7 @@ const ShowJob = () => {
     const [isSubmitting, setIsSubmitting] = useState(false); // Used for application submission
     const [error, setError] = useState<string | null>(null);
     const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
+    const [hoursPerWeek, setHoursPerWeek] = useState<number>(40);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -203,6 +204,44 @@ const ShowJob = () => {
                                     <Building2 size={16} /> {t('jobs.show.companyNameLabel')}
                                 </div>
                                 <span className={styles.value}>{advertisement?.company?.name}</span>
+                            </div>
+                        </div>
+
+                        <div className={styles.calculatorCard}>
+                            <h3 className={styles.calculatorTitle}>
+                                <Calculator size={18} />
+                                {t('jobs.show.wageCalculatorTitle')}
+                            </h3>
+                            <div className={styles.calculatorInputGroup}>
+                                <label className={styles.calculatorInputLabel}>
+                                    {t('jobs.show.hoursPerWeekLabel')}
+                                </label>
+                                <div className={styles.calculatorInputWrapper}>
+                                    <Clock size={16} className={styles.inputIcon} />
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        max="168"
+                                        value={hoursPerWeek === 0 ? "" : hoursPerWeek}
+                                        placeholder="0"
+                                        onFocus={(e) => e.target.select()}
+                                        onChange={(e) => {
+                                            const val = e.target.value.slice(0, 8);
+                                            if (val === "") {
+                                                setHoursPerWeek(0);
+                                            } else {
+                                                setHoursPerWeek(Number(val));
+                                            }
+                                        }}
+                                        className={styles.calculatorInput}
+                                    />
+                                </div>
+                            </div>
+                            <div className={styles.monthlyWageResult}>
+                                <span className={styles.monthlyWageLabel}>{t('jobs.show.monthlyWageLabel')}</span>
+                                <div className={styles.monthlyWageValue}>
+                                    {(Number(advertisement.hourly_wage) * hoursPerWeek * 4).toLocaleString()} {t('jobs.show.monthlyWageSuffix')}
+                                </div>
                             </div>
                         </div>
 

@@ -118,7 +118,11 @@
       "failureMessage": "A jelentkezés sikertelen.",
       "alreadyAppliedMessage": "Már jelentkeztél!",
       "errorMessage": "Hiba történt a jelentkezés során.",
-      "trustText": "Kérdése van? Keressen minket bizalommal az Orion ügyfélszolgálatán."
+      "trustText": "Kérdése van? Keressen minket bizalommal az Orion ügyfélszolgálatán.",
+      "wageCalculatorTitle": "Bérkalkulátor",
+      "hoursPerWeekLabel": "Heti óraszám",
+      "monthlyWageLabel": "Várható havi bér",
+      "monthlyWageSuffix": "Ft/hó"
     }
   },
   "login": {
