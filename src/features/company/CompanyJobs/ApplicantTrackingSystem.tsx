@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./ApplicantTrackingSystem.module.css";
 
@@ -167,8 +167,6 @@ export const ApplicantTrackingSystem: React.FC = () => {
                         </Button>
                     </div>
                 </header>
-
-                <Toaster />
 
                 <div className={styles.applicantList}>
                     {applicants.length === 0 ? (

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import styles from "./LoginPage.module.css";
 import { useTranslation } from "react-i18next";
 
@@ -94,7 +94,6 @@ const LoginPage: React.FC<LoginPageProps> = ({
         <>
             <Header />
             <div className={styles.container}>
-                <Toaster />
                 <form onSubmit={handleLogin} className={styles.form} noValidate>
                     <h1>{title}</h1>
 

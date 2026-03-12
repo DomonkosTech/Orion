@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import { Upload, FileText, X, Info } from "lucide-react";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { uploadResume } from "../../../Api/userApi";
 import styles from "./UploadResume.module.css";
 
@@ -71,7 +71,6 @@ const UploadResume = () => {
 
     return (
         <div className={styles.pageWrapper}>
-            <Toaster />
             <Header />
 
             <main className={styles.container}>

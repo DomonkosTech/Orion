@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from "react-router-dom";
 import { getEmployees, deleteEmployee } from "../../../Api/advertisementApi.ts";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { ArrowLeft } from "lucide-react";
 import styles from "./ShowEmployees.module.css";
 
@@ -75,7 +75,6 @@ const ShowEmployees = () => {
 
     <div className={styles.page}>
         <Header />
-        <Toaster position="top-center" />
 
         <main className={styles.container}>
             <header className={styles.header}>

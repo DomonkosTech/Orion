@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import styles from "./PasswordResetSave.module.css";
 import InputField from "../InputField/InputField";
 import Button from "../Button/Button";
@@ -54,7 +54,6 @@ const PasswordResetSave: React.FC<PasswordResetSaveProps> = ({
     return (
         <div className={styles.page}>
             <Header />
-            <Toaster />
             <main className={styles.mainContent}>
                 <div className={styles.container}>
                     <div className={styles.card}>
