@@ -1,5 +1,6 @@
 import { supabase } from "../../lib/supabaseClient.ts";
 import {incrementResumeViews} from "./userController.ts"
+import {createsystemmessage} from "./systemmessageController.ts"
 
 export const submitApplication = async (userId: number, advertisementId: string) => {
     // check if application already exists
@@ -280,6 +281,8 @@ export const acceptApplication = async (applicationId: string, companyId: number
         .from("job_applications")
         .update({ status: "accepted" })
         .eq("id", applicationId);
+
+    createsystemmessage(application.user_id, 'Gratulálunk!', `Örömmel értesítjük, hogy partnercégünk kiválasztotta Önt a(z) ${advertisement.position} pozícióra. hamarosan felveszik önnel a kapcsolatot majd a további részletekkel.`, 'USER')
 
     if (updateError) throw updateError;
 

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { createAdvertisement } from "../../../Api/advertisementApi";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { ArrowLeft } from "lucide-react";
 import styles from "./AddJob.module.css";
 
@@ -77,7 +77,6 @@ const AddJob: React.FC = () => {
     return (
         <div className={styles.page}>
             <Header />
-            <Toaster position="top-center" />
 
             <main className={styles.container}>
                 <header className={styles.header}>
@@ -123,7 +122,7 @@ const AddJob: React.FC = () => {
                                     value={formData.position}
                                     onChange={handleInputChange}
                                     required
-                                />
+                                 />
                                 <InputField
                                     label={t('addJob.sections.basicInfo.location')}
                                     name="location"

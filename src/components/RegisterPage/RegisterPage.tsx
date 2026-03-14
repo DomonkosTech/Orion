@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { z, ZodSchema } from "zod";
 import styles from "./RegisterPage.module.css";
 import { useTranslation } from "react-i18next";
@@ -166,7 +166,6 @@ const RegisterPage = <T extends Record<string, any>>({
         <>
             <Header />
             <div className={styles.page}>
-                <Toaster />
                 <div className={styles.container} ref={topRef}>
                     <div className={styles.card}>
                         <header className={styles.header}>

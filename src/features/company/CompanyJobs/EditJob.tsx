@@ -5,7 +5,7 @@ import {
     Briefcase, MapPin, AlignLeft,
     CheckCircle, AlertCircle, Save, XCircle, Edit3, ArrowLeft
 } from "lucide-react";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import {
     getAdvertisementForEdit,
     updateAdvertisement,
@@ -108,7 +108,6 @@ const EditJob: React.FC = () => {
     return (
         <div className={styles.pageWrapper}>
             <Header />
-            <Toaster />
 
             <main className={styles.container}>
                 <header className={styles.header}>
