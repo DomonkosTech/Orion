@@ -80,3 +80,21 @@ export const readsystemmessage = async (targetId: number, messageId: number, tar
     if (error) throw error;
     return true;
 }
+
+
+// create a system message
+export const createsystemmessage = async (targetId: number,title: string, message: string, targetType: string) => {
+    if (targetType ==='ALL' || targetType === 'USER' || targetType === 'COMPANY'){
+        const { error } = await supabase
+            .from("system_messages")
+            .insert({
+                title: title,
+                message: message,
+                target_type: targetType,
+                target_id: targetId
+            });
+        if (error) throw error;
+    }
+
+    return true;
+}

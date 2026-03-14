@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { toast, Toaster } from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import styles from "./VerifyPage.module.css";
 import {Header} from "../Header/Header.tsx";
@@ -43,7 +43,6 @@ const VerifyPage: React.FC<VerifyPageProps> = ({
         <>
             <Header />
             <div className={styles.page}>
-                <Toaster />
                 <div className={styles.container}>
                     <div className={styles.card} style={{ textAlign: 'center' }}>
                         <header className={styles.header}>
