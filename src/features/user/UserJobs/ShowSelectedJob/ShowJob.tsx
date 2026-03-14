@@ -16,6 +16,7 @@ import { Header } from "../../../../components/Header/Header.tsx";
 import Button from "../../../../components/Button/Button.tsx";
 import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
 import Footer from "../../../../components/Footer/Footer.tsx";
+import AnimatedNumber from "../../../../components/AnimatedNumber/AnimatedNumber.tsx";
 
 const ShowJob = () => {
     const { t } = useTranslation('user');
@@ -240,7 +241,10 @@ const ShowJob = () => {
                             <div className={styles.monthlyWageResult}>
                                 <span className={styles.monthlyWageLabel}>{t('jobs.show.monthlyWageLabel')}</span>
                                 <div className={styles.monthlyWageValue}>
-                                    {(Number(advertisement.hourly_wage) * hoursPerWeek * 4).toLocaleString()} {t('jobs.show.monthlyWageSuffix')}
+                                    <AnimatedNumber 
+                                        value={Number(advertisement.hourly_wage) * hoursPerWeek * 4} 
+                                        suffix={t('jobs.show.monthlyWageSuffix')} 
+                                    />
                                 </div>
                             </div>
                         </div>
