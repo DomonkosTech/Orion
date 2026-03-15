@@ -74,6 +74,7 @@ export const getApplicantsForAdvertisement = async (advertisementId: string, com
         .from("job_applications")
         .select(`
             id,
+            user_id,
             last_updated,
             users (
                 email,

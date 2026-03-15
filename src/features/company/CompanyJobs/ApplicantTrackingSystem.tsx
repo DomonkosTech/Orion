@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import styles from "./ApplicantTrackingSystem.module.css";
 
 // Icons
-import { FileText, Check, X, ArrowLeft, Mail, Calendar, MapPin, User, Briefcase, GraduationCap, Globe, ChevronDown } from "lucide-react";
+import { FileText, Check, X, ArrowLeft, Mail, Calendar, MapPin, User, Briefcase, GraduationCap, Globe, ChevronDown, MessageSquare } from "lucide-react";
 
 // Shared Components
 import { Header } from "../../../components/Header/Header.tsx";
@@ -144,6 +144,12 @@ export const ApplicantTrackingSystem: React.FC = () => {
             toast.error(t('ats.notifications.actionError'));
         }
     };
+    
+    const handleMessage = (userId: number, firstName: string, lastName: string, e?: React.MouseEvent) => {
+        e?.stopPropagation();
+        const userName = `${lastName} ${firstName}`;
+        navigate(`/messenger?userId=${userId}&userName=${userName}`);
+    };
 
     if (loading) return <div className={styles.page}><Header /><p className={styles.emptyState}>{t('ats.loading')}</p></div>;
 
@@ -201,18 +207,31 @@ export const ApplicantTrackingSystem: React.FC = () => {
                                     >
                                         <FileText size={16} /> {t('ats.actions.cv')}
                                     </button>
-                                    <Button
-                                        color={"leaf-green"}
+                                    <motion.button
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.9 }}
+                                        onClick={(e) => handleMessage(applicant.user_id, applicant.users.fname, applicant.users.lname, e)}
+                                        className={`${styles.btnMessage} ${styles.btnIconOnly}`}
+                                        title={t('ats.actions.sendMessage')}
+                                    >
+                                        <MessageSquare size={20} />
+                                    </motion.button>
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                         onClick={(e) => handleAccept(applicant.id, e)}
+                                        className={`${styles.btn} ${styles.btnAccept}`}
                                     >
                                         <Check size={16} /> {t('ats.actions.accept')}
-                                    </Button>
-                                    <Button
-                                        color={"fire-red"}
+                                    </motion.button>
+                                    <motion.button
+                                        whileHover={{ scale: 1.05 }}
+                                        whileTap={{ scale: 0.95 }}
                                         onClick={(e) => handleReject(applicant.id, e)}
+                                        className={`${styles.btn} ${styles.btnReject}`}
                                     >
                                         <X size={16} /> {t('ats.actions.reject')}
-                                    </Button>
+                                    </motion.button>
                                 </div>
                             </motion.div>
                         ))
@@ -329,18 +348,32 @@ export const ApplicantTrackingSystem: React.FC = () => {
                                     >
                                         <FileText size={16} /> {t('ats.actions.cv')}
                                     </button>
-                                    <Button
-                                        color={"leaf-green"}
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        onClick={(e) => handleMessage(applicant.user_id, applicant.users.fname, applicant.users.lname, e)}
+                                        className={styles.btnMessageExpanded}
+                                    >
+                                        <MessageSquare size={18} /> {t('ats.actions.sendMessage')}
+                                    </motion.button>
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
                                         onClick={(e) => handleAccept(applicant.id, e)}
+                                        className={`${styles.btn} ${styles.btnAccept}`}
+                                        style={{ padding: '12px 24px', borderRadius: '99px' }}
                                     >
-                                        <Check size={16} /> {t('ats.actions.accept')}
-                                    </Button>
-                                    <Button
-                                        color={"fire-red"}
+                                        <Check size={18} /> {t('ats.actions.accept')}
+                                    </motion.button>
+                                    <motion.button
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
                                         onClick={(e) => handleReject(applicant.id, e)}
+                                        className={`${styles.btn} ${styles.btnReject}`}
+                                        style={{ padding: '12px 24px', borderRadius: '99px' }}
                                     >
-                                        <X size={16} /> {t('ats.actions.reject')}
-                                    </Button>
+                                        <X size={18} /> {t('ats.actions.reject')}
+                                    </motion.button>
                                 </motion.div>
 
                                 <AnimatePresence>

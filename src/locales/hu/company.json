@@ -168,7 +168,8 @@
     "actions": {
       "cv": "CV",
       "accept": "Felvétel",
-      "reject": "Elutasítás"
+      "reject": "Elutasítás",
+      "sendMessage": "Küldj üzenetet"
     },
     "notifications": {
       "noId": "Nincs hirdetés azonosító megadva.",

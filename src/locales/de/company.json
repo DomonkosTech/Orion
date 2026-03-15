@@ -168,7 +168,8 @@
     "actions": {
       "cv": "Lebenslauf",
       "accept": "Einstellen",
-      "reject": "Ablehnen"
+      "reject": "Ablehnen",
+      "sendMessage": "Nachricht senden"
     },
     "notifications": {
       "noId": "Keine Anzeigen-ID angegeben.",
