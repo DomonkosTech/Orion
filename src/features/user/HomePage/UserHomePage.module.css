@@ -238,10 +238,12 @@
 }
 
 .matchBtn {
-    padding: 12px 32px;
-    font-size: 1rem;
+    padding: 10px 24px;
+    font-size: 0.95rem;
     border-radius: 12px;
     font-weight: 700;
+    width: fit-content;
+    align-self: flex-start;
 }
 
 /* Quick Actions / Navigation */
