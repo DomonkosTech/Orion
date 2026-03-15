@@ -134,22 +134,85 @@
 }
 
 .btnAccept {
-    background: var(--success);
-    color: white;
+    background: rgba(34, 197, 94, 0.1);
+    color: #15803d;
+    border: 1px solid rgba(34, 197, 94, 0.15);
 }
 
 .btnAccept:hover {
-    filter: brightness(0.9);
+    background: #15803d;
+    color: white;
+    border-color: #15803d;
+    box-shadow: 0 4px 12px rgba(21, 128, 61, 0.2);
 }
 
 .btnReject {
-    background: #fff1f2;
-    color: var(--danger);
+    background: rgba(239, 68, 68, 0.08);
+    color: #b91c1c;
+    border: 1px solid rgba(239, 68, 68, 0.12);
 }
 
 .btnReject:hover {
-    background: var(--danger);
+    background: #b91c1c;
     color: white;
+    border-color: #b91c1c;
+    box-shadow: 0 4px 12px rgba(185, 28, 28, 0.2);
+}
+
+.btnMessage {
+    background: rgba(44, 90, 160, 0.08);
+    color: var(--orion-blue);
+    padding: 10px 20px;
+    border-radius: 99px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border: 1px solid rgba(44, 90, 160, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btnMessage:hover {
+    transform: translateY(-2px);
+    background: var(--orion-blue);
+    color: white;
+    border-color: var(--orion-blue);
+    box-shadow: 0 4px 12px rgba(44, 90, 160, 0.2);
+}
+
+.btnIconOnly {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.btnMessageExpanded {
+    background: rgba(44, 90, 160, 0.05); /* Even softer for harmony */
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(44, 90, 160, 0.12);
+    color: var(--orion-blue-dark);
+    padding: 12px 24px;
+    border-radius: 99px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+}
+
+.btnMessageExpanded:hover {
+    background: var(--orion-blue);
+    color: white;
+    border-color: var(--orion-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(44, 90, 160, 0.15);
 }
 
 .emptyState {

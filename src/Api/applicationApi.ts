@@ -20,6 +20,7 @@ export interface click_count
 
 export interface Applicant {
     id: number;
+    user_id: number;
     last_updated: string;
     users: ApplicantUser;
     click_count: click_count;

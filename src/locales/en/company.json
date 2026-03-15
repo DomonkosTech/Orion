@@ -168,7 +168,8 @@
     "actions": {
       "cv": "CV",
       "accept": "Hire",
-      "reject": "Reject"
+      "reject": "Reject",
+      "sendMessage": "Send Message"
     },
     "notifications": {
       "noId": "No ad ID provided.",

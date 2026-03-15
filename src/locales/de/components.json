@@ -125,7 +125,7 @@
     "back": "Zurück",
     "title": "Gespräche",
     "loading": "Partner werden geladen…",
-    "noConversations": "Noch keine Gespräche."
+    "empty": "Noch keine Gespräche."
   },
   "profileDropdown": {
     "guest": "Gast",
