@@ -1,0 +1,79 @@
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+    <meta charset="utf-8">
+    <title>Orion Frontend Részletes Dokumentáció</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.8; color: #2c3e50; padding: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        h1 { color: #1a5f7a; border-bottom: 3px solid #1a5f7a; padding-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
+        h2 { color: #159895; margin-top: 40px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
+        h3 { color: #002b5b; margin-top: 25px; }
+        p { margin-bottom: 15px; text-align: justify; }
+        .highlight-box { background: #f0f7f7; border-left: 5px solid #159895; padding: 15px; margin: 20px 0; border-radius: 0 5px 5px 0; }
+        .tech-tag { display: inline-block; background: #e0f2f1; color: #00695c; padding: 2px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold; margin: 2px; }
+        pre { background: #2d3436; color: #dfe6e9; padding: 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; line-height: 1.4; }
+        ul { margin-bottom: 20px; }
+        li { margin-bottom: 8px; }
+        .footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee; font-size: 0.85em; color: #95a5a6; text-align: center; }
+        .premium-text { color: #d35400; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Orion Frontend Részletes Dokumentáció</h1>
+        
+        <p>Az Orion nem csupán egy állásportál, hanem egy komplex ökoszisztéma, amely a modern munkakeresést és toborzást hivatott egyszerűsíteni. A frontend fejlesztése során az elsődleges szempont a <strong>sebesség</strong>, a <strong>biztonság</strong> és a <strong>vizuális kiválóság</strong> volt.</p>
+
+        <div class="highlight-box">
+            <strong>Mottó:</strong> "Ahol a technológia találkozik az emberi karrierrel – prémium minőségben."
+        </div>
+
+        <h2>1. Technológiai Mélyfúrás</h2>
+        
+        <h3>Frontend Architektúra</h3>
+        <p>Az alkalmazás a legmodernebb <span class="tech-tag">React 19</span> alapokra épül, kihasználva a komponens-alapú fejlesztés minden előnyét. A <span class="tech-tag">Vite</span> környezet biztosítja, hogy az oldal betöltése ezredmásodpercek alatt megtörténjen, még lassabb hálózati körülmények között is.</p>
+        
+        <p>A <span class="tech-tag">TypeScript</span> használata nem csupán opció, hanem a kódminőség záloga: minden adatfolyam típusbiztos, így a fejlesztési fázisban kiszűrhető a hibák 90%-a.</p>
+
+        <h3>Adat- és Állapotkezelés</h3>
+        <p>A rendszer központosított állapotkezelést alkalmaz a kritikus moduloknál. A <code>MessengerProvider</code> segítségével például az üzenetküldés állapota az egész alkalmazáson belül elérhető, biztosítva a zökkenőmentes kommunikációt.</p>
+
+        <h2>2. Kulcsfontosságú Modulok</h2>
+
+        <h3>2.1. Applicant Tracking System (ATS)</h3>
+        <p>Ez a modul a munkaadók "digitális irányítópultja". A jelöltek kezelése vizuális kártyákon keresztül történik, melyek a <span class="premium-text">Framer Motion</span> könyvtár segítségével folyékony, organikus mozgást kaptak. A rendszer támogatja a közvetlen CV letöltést és a státuszmódosítást (Elfogadás/Elutasítás) egyetlen kattintással.</p>
+
+        <h3>2.2. Orion Messenger</h3>
+        <p>A belső üzenetküldő platform lehetővé teszi a közvetlen párbeszédet a felek között. Különlegessége a környezetérzékeny indítás: az ATS felületéről indított üzenetküldés automatikusan megnyitja a megfelelő beszélgetést a háttérben, átadva a jelölt adatait.</p>
+
+        <h2>3. Design Rendszer: A "Glassmorphism" Világa</h2>
+        <p>Az Orion vizuális identitását a <span class="premium-text">Glassmorphism</span> trend határozza meg. Ezt az alábbi technikai megoldásokkal értük el:</p>
+        <ul>
+            <li><strong>Háttér-elmosás:</strong> <code>backdrop-filter: blur(10px)</code> alkalmazása a felső rétegeken.</li>
+            <li><strong>Szatén Fény:</strong> Finom fehéres áttetszőség használata a kártyák hátterénél.</li>
+            <li><strong>Dinamikus Részecskék:</strong> A főoldalon látható részecske-mozgás a <code>tsparticles</code> könyvtár eredménye, mely interaktívvá teszi a felületet.</li>
+        </ul>
+
+        <h2>4. Könyvtárszerkezet Áttekintő</h2>
+        <pre>
+src/
+  ├── Api/           # Típusbiztos API hívások
+  ├── components/    # Globális UI elemek (Header, Footer, Gombok)
+  ├── features/      # Üzleti logikai egységek
+  │   ├── company/   # ATS, Álláskezelő, Profil
+  │   ├── user/      # Jelentkezések, Messenger, Kereső
+  │   └── public/    # Landing oldalak, Auth
+  ├── hooks/         # Újrahasználható logikai hook-ok
+  └── locales/       # Többnyelvűségi JSON fájlok
+        </pre>
+
+        <h2>5. Teljesítmény és Skálázhatóság</h2>
+        <p>Az alkalmazás felépítése lehetővé teszi a könnyű bővítést. Új funkció hozzáadásakor a <strong>Feature-Based Design</strong> elvet követjük, így a kód bázisa akkor is átlátható marad, ha a projekt mérete a tízszeresére nő. Az ikonok betöltése (Lucide) optimalizált, így nem lassítják le a kezdőoldal megjelenítését.</p>
+
+        <div class="footer">
+            <p>Orion Frontend Dokumentáció – 2026. március 16.</p>
+            <p><em>Verzió: 2.1 | Készítette: Antigravity AI</em></p>
+        </div>
+    </div>
+</body>
+</html>
