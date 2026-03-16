@@ -29,10 +29,10 @@ const FilterBar: React.FC<Props> = (props) => {
     );
 
     const suggestions = [
-        "Java fejlesztő Budapesten 600e felett",
-        "Részmunkaidős adminisztráció",
-        "Diákmunka amihez nem kell tapasztalat",
-        "Szakács állás Balaton környékén"
+        "Java fejlesztő munkát keresek",
+        "adminisztrátor munkát keresek",
+        "Hostes munkát keresek",
+        "raktáros munka"
     ];
 
     if (isMobile) {
