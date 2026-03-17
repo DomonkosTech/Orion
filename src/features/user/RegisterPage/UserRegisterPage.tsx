@@ -8,6 +8,33 @@ import Checkbox from "../../../components/Checkbox/Checkbox";
 import TextArea from "../../../components/TextArea/TextArea";
 import styles from "./UserRegisterPage.module.css";
 import registerStyles from "../../../components/RegisterPage/RegisterPage.module.css";
+import { BIO_MAX_LENGTH } from "../../../constants/limits.ts";
+
+interface UserRegisterFormValues {
+    email: string;
+    password?: string;
+    confirmPassword?: string;
+    lname: string;
+    fname: string;
+    birth_place: string;
+    birth_date: string;
+    address: string;
+    phone_number: string;
+    tax_number: string;
+    nationality: string;
+    qualifications: string;
+    short_bio: string;
+    personal_id: string;
+    address_card_number: string;
+    terms_accepted: boolean;
+}
+
+interface RenderProps {
+    formData: UserRegisterFormValues;
+    handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    handleCheckboxChange: (name: string, checked: boolean) => void;
+    errors: Record<string, string>;
+}
 
 const stepSchemas = [
     userRegisterObject.pick({ email: true, password: true, confirmPassword: true }).superRefine(passwordConfirmRefinement),
@@ -39,7 +66,7 @@ const UserRegisterPage: React.FC = () => {
     const steps = [
         {
             label: t('register.steps.account'),
-            render: ({ formData, handleChange, errors }: any) => {
+            render: ({ formData, handleChange, errors }: RenderProps) => {
                 const password = formData.password || "";
                 const hasMinLength = password.length >= 8;
                 const hasLower = /[a-z]/.test(password);
@@ -80,7 +107,7 @@ const UserRegisterPage: React.FC = () => {
         },
         {
             label: t('register.steps.personal'),
-            render: ({ formData, handleChange, errors }: any) => (
+            render: ({ formData, handleChange, errors }: RenderProps) => (
                 <>
                     <div className={styles.row}>
                         <InputField label={t('register.fields.lastName')} name="lname" value={formData.lname} onChange={handleChange} error={errors.lname} />
@@ -88,7 +115,7 @@ const UserRegisterPage: React.FC = () => {
                     </div>
                     <div className={styles.row}>
                         <InputField label={t('register.fields.birthPlace')} name="birth_place" value={formData.birth_place} onChange={handleChange} error={errors.birth_place} />
-                        <InputField label={t('register.fields.birthDate')} name="birth_date" type="date" value={formData.birth_date} onChange={handleChange} error={errors.birth_date} />
+                        <InputField label={t('register.fields.birthDate')} name="birth_date" type="date" value={formData.birth_date} onChange={handleChange} error={errors.birth_date} max={new Date().toISOString().split('T')[0]} />
                     </div>
                     <InputField label={t('register.fields.nationality')} name="nationality" value={formData.nationality} onChange={handleChange} error={errors.nationality} />
                     <InputField label={t('register.fields.personalId')} name="personal_id" value={formData.personal_id} onChange={handleChange} error={errors.personal_id} />
@@ -98,7 +125,7 @@ const UserRegisterPage: React.FC = () => {
         },
         {
             label: t('register.steps.professional'),
-            render: ({ formData, handleChange, handleCheckboxChange, errors }: any) => (
+            render: ({ formData, handleChange, handleCheckboxChange, errors }: RenderProps) => (
                 <>
                     <InputField label={t('register.fields.address')} name="address" value={formData.address} onChange={handleChange} error={errors.address} />
                     <div className={styles.row}>
@@ -106,7 +133,7 @@ const UserRegisterPage: React.FC = () => {
                         <InputField label={t('register.fields.taxNumber')} name="tax_number" value={formData.tax_number} onChange={handleChange} error={errors.tax_number} />
                     </div>
                     <InputField label={t('register.fields.qualifications')} name="qualifications" value={formData.qualifications} onChange={handleChange} error={errors.qualifications} />
-                    <TextArea label={t('register.fields.bio')} name="short_bio" value={formData.short_bio} onChange={handleChange} rows={3} error={errors.short_bio} />
+                    <TextArea label={t('register.fields.bio')} name="short_bio" value={formData.short_bio} onChange={handleChange} rows={3} error={errors.short_bio} maxLength={BIO_MAX_LENGTH} />
 
                     <div className={`${styles.terms} ${errors.terms_accepted ? styles.errorShake : ""}`}>
                         <Checkbox label={t('register.fields.terms')} checked={formData.terms_accepted} onChange={(checked) => handleCheckboxChange("terms_accepted", checked)} />

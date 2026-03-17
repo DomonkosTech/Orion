@@ -12,6 +12,7 @@ import Footer from "../../../components/Footer/Footer.tsx";
 import EditProfile, { type EditProfileRenderProps } from "../../../components/EditProfile/EditProfile.tsx";
 import InputField from "../../../components/InputField/InputField.tsx";
 import TextArea from "../../../components/TextArea/TextArea.tsx";
+import { BIO_MAX_LENGTH } from "../../../constants/limits.ts";
 
 const CompanyEditProfile: React.FC = () => {
     const { t } = useTranslation('company');
@@ -100,6 +101,7 @@ const CompanyEditProfile: React.FC = () => {
                                             value={company.short_description}
                                             readOnly={!editMode}
                                             onChange={(e) => setCompany({...company, short_description: e.target.value})}
+                                            maxLength={BIO_MAX_LENGTH}
                                             placeholder={t('editProfile.introduction.placeholder')}
                                         />
                                     </div>

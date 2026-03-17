@@ -8,6 +8,7 @@ import Checkbox from "../../../components/Checkbox/Checkbox";
 import TextArea from "../../../components/TextArea/TextArea";
 import styles from "./CompanyRegisterPage.module.css";
 import registerStyles from "../../../components/RegisterPage/RegisterPage.module.css";
+import { BIO_MAX_LENGTH } from "../../../constants/limits.ts";
 
 interface CompanyRegisterFormValues {
     email: string;
@@ -137,7 +138,7 @@ const CompanyRegisterPage: React.FC = () => {
                         <InputField label={t('register.fields.phone')} name="phone_number" type="tel" value={formData.phone_number} onChange={handleChange} error={errors.phone_number} />
                     </div>
                     <InputField label={t('register.fields.activityScope')} name="activity_scope" value={formData.activity_scope} onChange={handleChange} error={errors.activity_scope} />
-                    <TextArea label={t('register.fields.shortDescription')} name="short_description" value={formData.short_description} onChange={handleChange} rows={3} error={errors.short_description} />
+                    <TextArea label={t('register.fields.shortDescription')} name="short_description" value={formData.short_description} onChange={handleChange} rows={3} error={errors.short_description} maxLength={BIO_MAX_LENGTH} />
 
                     <div className={`${styles.terms} ${errors.terms_accepted ? styles.errorShake : ""}`}>
                         <Checkbox label={t('register.fields.terms')} checked={formData.terms_accepted} onChange={(checked) => handleCheckboxChange("terms_accepted", checked)} />

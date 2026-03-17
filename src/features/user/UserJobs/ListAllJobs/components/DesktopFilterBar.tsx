@@ -52,6 +52,7 @@ export const DesktopFilterBar: React.FC<Props> = ({
                         placeholder={placeholderText}
                         value={searchTerm}
                         onChange={(e) => onSearchChange(e.target.value)}
+                        onKeyDown={(e) => e.key === "Enter" && onSubmit(e as unknown as React.FormEvent)}
                         className={`${styles.searchInput} ${isAISearchActive ? styles.aiActiveInput : ""}`}
                     />
                     <button
@@ -106,6 +107,7 @@ export const DesktopFilterBar: React.FC<Props> = ({
                             placeholder={t('jobs.list.ai.locationPlaceholder')}
                             value={locationFilter}
                             onChange={(e) => onLocationChange(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && onSubmit(e as unknown as React.FormEvent)}
                             className={styles.filterControl}
                         />
                     </div>
@@ -117,6 +119,7 @@ export const DesktopFilterBar: React.FC<Props> = ({
                             placeholder={t('jobs.list.ai.positionPlaceholder')}
                             value={positionFilter}
                             onChange={(e) => onPositionChange(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && onSubmit(e as unknown as React.FormEvent)}
                             className={styles.filterControl}
                         />
                     </div>
@@ -129,6 +132,7 @@ export const DesktopFilterBar: React.FC<Props> = ({
                             placeholder={t('jobs.list.ai.wagePlaceholder')}
                             value={minWage}
                             onChange={(e) => onMinWageChange(e.target.value)}
+                            onKeyDown={(e) => e.key === "Enter" && onSubmit(e as unknown as React.FormEvent)}
                             className={`${styles.filterControl} ${styles.wageInput}`}
                         />
                         <span className={styles.wageSuffix}>Ft</span>

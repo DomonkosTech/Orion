@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { BIO_MAX_LENGTH } from "../constants/limits.ts";
 
 // --- Reusable Logic ---
-export const passwordConfirmRefinement = (data: any, ctx: z.RefinementCtx) => {
+export const passwordConfirmRefinement = (data: { password?: string; confirmPassword?: string }, ctx: z.RefinementCtx) => {
     if (data.confirmPassword !== data.password) {
         ctx.addIssue({
             code: "custom",
@@ -28,13 +29,15 @@ export const userRegisterObject = authBase.extend({
     lname: z.string().min(2, "Vezetéknév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
     fname: z.string().min(2, "Keresztnév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
     birth_place: z.string().min(2, "Születési hely legalább 2 karakter"),
-    birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Érvénytelen dátum"),
+    birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Érvénytelen dátum").refine((date) => {
+        return new Date(date) <= new Date();
+    }, "A születési dátum nem lehet a jövőben"),
     address: z.string().min(5, "A cím legalább 5 karakter"),
     phone_number: z.string().regex(/^[0-9+\s-]{7,20}$/, "Érvénytelen telefonszám"),
     tax_number: z.string().trim().min(1, "Az adószám kötelező").regex(/^[0-9-]+$/i, "Az adószám csak számokat és kötőjelet tartalmazhat"),
     nationality: z.string().min(5, "A nemzetiseg legalább 5 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
     qualifications: z.string().min(10, "A végzettségek legalább 10 karakter"),
-    short_bio: z.string().min(10, "A bemutatkozás legalább 10 karakter").max(250, "A bemutatkozás maximum 250 karakter lehet"),
+    short_bio: z.string().min(10, "A bemutatkozás legalább 10 karakter").max(BIO_MAX_LENGTH, `A bemutatkozás maximum ${BIO_MAX_LENGTH} karakter lehet`),
     personal_id: z.string().length(8, "A személyi igazolvány számnak pontosan 8 karakternek kell lennie").regex(/^\d{6}[A-Z]{2}$/, "Érvénytelen formátum"),
     address_card_number: z.string().length(8, "A lakcímkártya számnak pontosan 8 karakternek kell lennie").regex(/^\d{6}[A-Z]{2}$/, "Érvénytelen formátum"),
     terms_accepted: z.literal(true, { errorMap: () => ({ message: "El kell fogadnia a feltételeket" }) }),
@@ -50,7 +53,7 @@ export const userRegisterSchema = userRegisterObject.superRefine(passwordConfirm
     contact_person_name: z.string().min(2, "Kapcsolattartó neve legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
     activity_scope: z.string().min(15, "Tevékenységi kör megadása kötelező (min. 15 karakter)"),
     website: z.string().trim().optional().refine((v) => !v || /^https?:\/\//i.test(v) || /^[\w.-]+\.[a-z]{2,}$/i.test(v), "Érvénytelen weboldal cím"),
-    short_description: z.string().min(10, "A leírás legalább 10 karakter").max(500, "Maximum 500 karakter"),
+    short_description: z.string().min(10, "A leírás legalább 10 karakter").max(BIO_MAX_LENGTH, `Maximum ${BIO_MAX_LENGTH} karakter`),
     phone_number: z.string().regex(/^[0-9+\s-]{7,20}$/, "Érvénytelen telefonszám"),
     terms_accepted: z.literal(true, { errorMap: () => ({ message: "El kell fogadnia a feltételeket" }) }),
 });
@@ -70,13 +73,16 @@ export const userUpdateProfileSchema = z.object({
     lname: z.string().min(2, "Vezetéknév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat").optional(),
     fname: z.string().min(2, "Keresztnév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat").optional(),
     birth_place: z.string().min(2, "Születési hely legalább 2 karakter").optional(),
-    birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Érvénytelen dátum").optional(),
+    birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Érvénytelen dátum").optional().refine((date) => {
+        if (!date) return true;
+        return new Date(date) <= new Date();
+    }, "A születési dátum nem lehet a jövőben"),
     address: z.string().min(5, "A cím legalább 5 karakter").optional(),
     phone_number: z.string().regex(/^[0-9+\s-]{7,20}$/, "Érvénytelen telefonszám").optional(),
     tax_number: z.string().trim().regex(/^[0-9-]+$/i, "Az adószám csak számokat és kötőjelet tartalmazhat").optional(),
     nationality: z.string().min(5, "A nemzetiseg legalább 5 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat").optional(),
     qualifications: z.string().min(10, "A végzettségek legalább 10 karakter").optional(),
-    short_bio: z.string().min(10, "A bemutatkozás legalább 10 karakter").max(250, "A bemutatkozás maximum 250 karakter lehet").optional(),
+    short_bio: z.string().min(10, "A bemutatkozás legalább 10 karakter").max(BIO_MAX_LENGTH, `A bemutatkozás maximum ${BIO_MAX_LENGTH} karakter lehet`).optional(),
     documents: z.object({
         personal_id: z.string().length(8, "A személyi igazolvány számnak pontosan 8 karakternek kell lennie").regex(/^\d{6}[A-Z]{2}$/, "Érvénytelen formátum"),
         address_card_number: z.string().length(8, "A lakcímkártya számnak pontosan 8 karakternek kell lennie").regex(/^\d{6}[A-Z]{2}$/, "Érvénytelen formátum"),
@@ -91,7 +97,7 @@ export const companyUpdateProfileSchema = z.object({
     contact_person_name: z.string().min(2, "Kapcsolattartó neve legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat").optional(),
     activity_scope: z.string().min(15, "Tevékenységi kör megadása kötelező (min. 15 karakter)").optional(),
     website: z.string().trim().optional().refine((v) => !v || /^https?:\/\//i.test(v) || /^[\w.-]+\.[a-z]{2,}$/i.test(v), "Érvénytelen weboldal cím"),
-    short_description: z.string().min(10, "A leírás legalább 10 karakter").max(500, "Maximum 500 karakter").optional(),
+    short_description: z.string().min(10, "A leírás legalább 10 karakter").max(BIO_MAX_LENGTH, `Maximum ${BIO_MAX_LENGTH} karakter`).optional(),
     phone_number: z.string().regex(/^[0-9+\s-]{7,20}$/, "Érvénytelen telefonszám").optional(),
 });
 
