@@ -26,7 +26,7 @@ const ShowJob = () => {
     const [isSubmitting, setIsSubmitting] = useState(false); // Used for application submission
     const [error, setError] = useState<string | null>(null);
     const [applicationStatus, setApplicationStatus] = useState<string | null>(null);
-    const [hoursPerWeek, setHoursPerWeek] = useState<number>(40);
+    const [hoursPerWeek, setHoursPerWeek] = useState<string>("40");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -220,18 +220,24 @@ const ShowJob = () => {
                                 <div className={styles.calculatorInputWrapper}>
                                     <Clock size={16} className={styles.inputIcon} />
                                     <input
-                                        type="number"
-                                        min="1"
-                                        max="168"
-                                        value={hoursPerWeek === 0 ? "" : hoursPerWeek}
+                                        type="text"
+                                        inputMode="decimal"
+                                        value={hoursPerWeek}
                                         placeholder="0"
                                         onFocus={(e) => e.target.select()}
                                         onChange={(e) => {
-                                            const val = e.target.value.slice(0, 8);
-                                            if (val === "") {
-                                                setHoursPerWeek(0);
-                                            } else {
-                                                setHoursPerWeek(Number(val));
+                                            const val = e.target.value.replace(/,/g, '.');
+                                            // Regex: optional leading digits, optional decimal point and up to 2 decimal places.
+                                            const regex = /^\d*\.?\d{0,2}$/;
+                                            
+                                            if (regex.test(val)) {
+                                                const hasDot = val.includes('.');
+                                                const digitCount = val.replace('.', '').length;
+                                                const limit = hasDot ? 5 : 3;
+
+                                                if (digitCount <= limit) {
+                                                    setHoursPerWeek(val);
+                                                }
                                             }
                                         }}
                                         className={styles.calculatorInput}
@@ -242,7 +248,7 @@ const ShowJob = () => {
                                 <span className={styles.monthlyWageLabel}>{t('jobs.show.monthlyWageLabel')}</span>
                                 <div className={styles.monthlyWageValue}>
                                     <AnimatedNumber 
-                                        value={Number(advertisement.hourly_wage) * hoursPerWeek * 4} 
+                                        value={Number(advertisement.hourly_wage) * (parseFloat(hoursPerWeek) || 0) * 4} 
                                         suffix={t('jobs.show.monthlyWageSuffix')} 
                                     />
                                 </div>

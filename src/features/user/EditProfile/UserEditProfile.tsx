@@ -14,6 +14,7 @@ import EditProfile, { type EditProfileRenderProps } from "../../../components/Ed
 import InputField from "../../../components/InputField/InputField.tsx";
 import TextArea from "../../../components/TextArea/TextArea.tsx";
 import Button from "../../../components/Button/Button.tsx";
+import { BIO_MAX_LENGTH } from "../../../constants/limits.ts";
 
 const UserEditProfile: React.FC = () => {
     const { t } = useTranslation('user');
@@ -49,6 +50,7 @@ const UserEditProfile: React.FC = () => {
                                             value={user.birth_date}
                                             readOnly={!editMode}
                                             onChange={(e) => setUser({ ...user, birth_date: e.target.value })}
+                                            max={new Date().toISOString().split('T')[0]}
                                             containerClassName={formStyles.field}
                                         />
                                         <InputField
@@ -97,7 +99,7 @@ const UserEditProfile: React.FC = () => {
                                                 label={t('profile.professional.bio')}
                                                 value={user.short_bio}
                                                 readOnly={!editMode}
-                                                maxLength={500}
+                                                maxLength={BIO_MAX_LENGTH}
                                                 onChange={(e) => setUser({ ...user, short_bio: e.target.value })}
                                             />
                                         </div>
