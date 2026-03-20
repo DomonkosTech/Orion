@@ -1,0 +1,574 @@
+///////////////////////////
+TÁBLÁK
+///////////////////////////
+
+USER táblák
+
+
+
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  phone_number TEXT NOT NULL,
+  birth_place TEXT NOT NULL,
+  birth_date DATE NOT NULL,
+  address TEXT NOT NULL,
+  tax_number TEXT NOT NULL,
+  nationality TEXT NOT NULL,
+  terms_accepted BOOLEAN DEFAULT FALSE NOT NULL,
+  activated BOOLEAN DEFAULT FALSE NOT NULL,
+  short_bio TEXT NOT NULL,
+  qualifications TEXT NOT NULL,
+  join_date TIMESTAMP DEFAULT NOW() NOT NULL
+);
+
+
+
+
+CREATE TABLE user_credentials (
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  password_hash TEXT NOT NULL,
+  PRIMARY KEY (user_id)
+);
+
+
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE user_documents (
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  personal_id BYTEA NOT NULL,
+  address_card_number BYTEA NOT NULL,
+  PRIMARY KEY (user_id)
+);
+
+
+
+
+
+
+COMPANIES táblák
+
+
+
+-- Cégtábla
+CREATE TABLE companies (
+  id SERIAL PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  address TEXT NOT NULL,
+  tax_number TEXT NOT NULL,
+  contact_person_name TEXT NOT NULL,
+  activity_scope TEXT NOT NULL,
+  website TEXT,
+  short_description TEXT NOT NULL,
+  terms_accepted BOOLEAN DEFAULT FALSE NOT NULL,
+  verified BOOLEAN DEFAULT FALSE NOT NULL,
+  join_date TIMESTAMP DEFAULT NOW() NOT NULL,
+  phone_number TEXT NOT NULL
+);
+
+-- Céges hitelesítő adatok tábla
+CREATE TABLE company_credentials (
+  company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+  password_hash TEXT NOT NULL,
+  PRIMARY KEY (company_id)
+);
+
+
+
+
+
+AD táblák
+
+
+
+
+-- Job advertisements table
+CREATE TABLE advertisement (
+    id SERIAL PRIMARY KEY,
+    position TEXT NOT NULL,                 -- munkakör
+    hourly_wage INT NOT NULL,               -- bér/óra
+    tasks TEXT,                             -- feladatok
+    requirements TEXT,                      -- elvárások
+    is_active BOOLEAN DEFAULT TRUE,         -- aktív?
+    search_start TIMESTAMP DEFAULT NOW(),   -- keresés kezdete
+    company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,  -- idegen kulcs
+    job_description TEXT                    -- munka ismertetése
+);
+
+
+
+
+CREATE TABLE job_applications (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    advertisement_id INTEGER NOT NULL REFERENCES advertisement(id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'submitted',
+    last_updated TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+
+CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    company_id INTEGER NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    position TEXT NOT NULL,
+    job_title TEXT NOT NULL,
+    hourly_wage INT NOT NULL,
+    hire_date TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+
+CREATE TABLE user_email_tokens (
+    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    token TEXT UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL
+);
+
+CREATE TABLE company_email_tokens (
+    company_id INTEGER PRIMARY KEY REFERENCES companies(id) ON DELETE CASCADE,
+    token TEXT UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL
+);
+
+
+System message táblák:
+
+-- Tábla létrehozása
+CREATE TABLE system_messages (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    target_type TEXT NOT NULL,
+    target_id INT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+
+CREATE TABLE system_message_reads (
+    id SERIAL PRIMARY KEY,
+    message_id INT NOT NULL,
+    target_type TEXT NOT NULL,
+    target_id INT NULL,
+    FOREIGN KEY (message_id) REFERENCES system_messages(id)
+);
+
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+
+    company_id INTEGER NOT NULL
+        REFERENCES companies(id),
+
+    user_id INTEGER NOT NULL
+        REFERENCES users(id),
+
+    sender_type TEXT NOT NULL
+        CHECK (sender_type IN ('USER', 'COMPANY')),
+
+    message TEXT NOT NULL,
+
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+
+
+CREATE TABLE user_statistics (
+    user_id INTEGER PRIMARY KEY
+        REFERENCES users(id)
+        ON DELETE CASCADE,
+
+    profile_views INTEGER NOT NULL DEFAULT 0,
+    resume_views INTEGER NOT NULL DEFAULT 0
+);
+
+
+
+CREATE TABLE favorites (
+    user_id INTEGER NOT NULL
+        REFERENCES users(id) ON DELETE CASCADE,
+
+    advertisement_id INTEGER NOT NULL
+        REFERENCES advertisement(id) ON DELETE CASCADE,
+
+    PRIMARY KEY (user_id, advertisement_id)
+);
+
+
+
+
+///////////////////////////
+FÜGVÉNYEK EGYEBEK
+///////////////////////////
+
+CREATE OR REPLACE FUNCTION insert_encrypted_documents(
+    p_user_id integer,
+    p_personal_id text,
+    p_address_card_number text,
+    p_encryption_key text
+)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY definer
+AS $$
+BEGIN
+    INSERT INTO user_documents (user_id, personal_id, address_card_number)
+    VALUES (
+        p_user_id,
+        pgp_sym_encrypt(p_personal_id, p_encryption_key),
+        pgp_sym_encrypt(p_address_card_number, p_encryption_key)
+    );
+END;
+$$;
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION get_decrypted_documents(
+    p_user_id integer,
+    p_encryption_key text
+)
+RETURNS TABLE (
+    personal_id text,
+    address_card_number text
+)
+LANGUAGE plpgsql
+SECURITY definer
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT
+        pgp_sym_decrypt(personal_id::bytea, p_encryption_key)::text AS personal_id,
+        pgp_sym_decrypt(address_card_number::bytea, p_encryption_key)::text AS address_card_number
+    FROM user_documents
+    WHERE user_id = p_user_id;
+END;
+$$;
+
+
+
+DROP FUNCTION IF EXISTS register_user_v1(text,text,text,text,text,text,date,text,text,text,text,text,boolean,text,text,text);
+
+CREATE OR REPLACE FUNCTION register_user_v1(
+    p_email TEXT,
+    p_password_hash TEXT,
+    p_lname TEXT,
+    p_fname TEXT,
+    p_phone_number TEXT,
+    p_birth_place TEXT,
+    p_birth_date DATE,
+    p_address TEXT,
+    p_nationality TEXT,
+    p_short_bio TEXT,
+    p_qualifications TEXT,
+    p_tax_number TEXT,
+    p_terms_accepted BOOLEAN,
+    p_personal_id TEXT,
+    p_address_card_number TEXT,
+    p_encryption_key TEXT
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    -- Itt mostantól a tábla saját típusát használjuk (legyen az UUID vagy Integer)
+    v_user_id users.id%TYPE;
+BEGIN
+    -- 1. LÉPÉS: User beszúrása
+    INSERT INTO users (
+        email, lname, fname, phone_number, birth_place,
+        birth_date, address, nationality, short_bio,
+        qualifications, tax_number, terms_accepted,
+        activated, join_date
+    )
+    VALUES (
+        p_email, p_lname, p_fname, p_phone_number, p_birth_place,
+        p_birth_date, p_address, p_nationality, p_short_bio,
+        p_qualifications, p_tax_number, p_terms_accepted,
+        TRUE, NOW()
+    )
+    RETURNING id INTO v_user_id;
+
+    -- 2. LÉPÉS: Credentials beszúrása
+    INSERT INTO user_credentials (user_id, password_hash)
+    VALUES (v_user_id, p_password_hash);
+
+    -- 3. LÉPÉS: Dokumentumok (RPC hívás)
+    -- Itt is fontos, hogy az insert_encrypted_documents is fogadja el ezt az ID-t!
+    PERFORM insert_encrypted_documents(
+        v_user_id,
+        p_personal_id,
+        p_address_card_number,
+        p_encryption_key
+    );
+
+    RETURN jsonb_build_object('success', true, 'user_id', v_user_id);
+
+EXCEPTION WHEN OTHERS THEN
+    RAISE EXCEPTION 'Adatbázis hiba: %', SQLERRM;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION update_encrypted_documents(
+    p_user_id integer,
+    p_personal_id text,
+    p_address_card_number text,
+    p_encryption_key text
+)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY definer
+AS $$
+BEGIN
+    UPDATE user_documents
+    SET
+        personal_id = pgp_sym_encrypt(p_personal_id, p_encryption_key),
+        address_card_number = pgp_sym_encrypt(p_address_card_number, p_encryption_key)
+    WHERE user_id = p_user_id;
+END;
+$$;
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION register_company_v1(
+    p_email TEXT,
+    p_password_hash TEXT,
+    p_name TEXT,
+    p_address TEXT,
+    p_tax_number TEXT,
+    p_contact_person_name TEXT,
+    p_activity_scope TEXT,
+    p_website TEXT,
+    p_short_description TEXT,
+    p_terms_accepted BOOLEAN,
+    p_phone_number TEXT
+)
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    -- Itt mostantól a tábla saját típusát használjuk (legyen az UUID vagy Integer)
+    v_company_id companies.id%TYPE;
+BEGIN
+    -- 1. LÉPÉS: User beszúrása
+    INSERT INTO companies (
+        email, name, address, tax_number, contact_person_name, activity_scope, website, short_description, terms_accepted, join_date, phone_number
+    )
+    VALUES (
+        p_email, p_name, p_address, p_tax_number, p_contact_person_name, p_activity_scope, p_website, p_short_description, p_terms_accepted, NOW(), p_phone_number
+    )
+    RETURNING id INTO v_company_id;
+
+    -- 2. LÉPÉS: Credentials beszúrása
+    INSERT INTO company_credentials (company_id, password_hash)
+    VALUES (v_company_id, p_password_hash);
+
+
+
+    RETURN jsonb_build_object('success', true, 'company_id', v_company_id);
+
+EXCEPTION WHEN OTHERS THEN
+    RAISE EXCEPTION 'Adatbázis hiba: %', SQLERRM;
+END;
+$$;
+
+
+create or replace function increment_click_count(ad_id int4)
+returns void as $$
+begin
+  update advertisement
+  set click_count = click_count + 1
+  where id = ad_id;
+end;
+$$ language plpgsql;
+
+
+
+
+
+create or replace function get_company_dashboard_stats(target_company_id int)
+returns json as $$
+declare
+    total_views bigint;
+    total_apps bigint;
+    total_emps bigint;
+begin
+    -- 1. Kattintások összeadása
+    select coalesce(sum(click_count), 0) into total_views
+    from advertisement
+    where company_id = target_company_id;
+
+    -- 2. Jelentkezők számolása (JOIN-nal)
+    select count(ja.id) into total_apps
+    from job_applications ja
+    join advertisement adv on ja.advertisement_id = adv.id
+    where adv.company_id = target_company_id;
+
+    -- 3. Alkalmazottak számolása
+    select count(id) into total_emps
+    from employees
+    where company_id = target_company_id;
+
+    -- Az összes adat visszaadása egyetlen JSON objektumként
+    return json_build_object(
+        'views', total_views,
+        'applicants', total_apps,
+        'employees', total_emps,
+        'conversion', case
+            when total_views > 0 then round((total_apps::numeric / total_views::numeric) * 100, 2)
+            else 0
+        end
+    );
+end;
+$$ language plpgsql;
+
+
+
+
+
+CREATE OR REPLACE FUNCTION get_user_chat_partners(p_user_id INT)
+RETURNS TABLE (
+    company_id INT,
+    company_name TEXT,
+    message_id INT,
+    sender_type TEXT,
+    message TEXT,
+    is_read BOOLEAN,
+    created_at TIMESTAMP
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT DISTINCT ON (c.id)
+    c.id as company_id,
+    c.name as company_name,
+    m.id as message_id,
+    m.sender_type,
+    m.message,
+    m.is_read,
+    m.created_at
+  FROM messages m
+  JOIN companies c ON m.company_id = c.id
+  WHERE m.user_id = p_user_id
+  ORDER BY c.id, m.created_at DESC; -- minden cégből a legfrissebb
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+
+CREATE OR REPLACE FUNCTION get_company_chat_partners(p_company_id INT)
+RETURNS TABLE (
+    user_id INT,
+    user_lname TEXT,
+    user_fname TEXT,
+    last_message_at TIMESTAMP
+) AS $$
+BEGIN
+  RETURN QUERY
+  SELECT
+    u.id as user_id,
+    u.lname as user_lname,
+    u.fname as user_fname,
+    MAX(m.created_at) as last_message_at
+  FROM messages m
+  JOIN users u ON m.user_id = u.id
+  WHERE m.company_id = p_company_id
+  GROUP BY u.id, u.lname, u.fname
+  ORDER BY last_message_at DESC;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION create_user_statistics()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO user_statistics (user_id)
+    VALUES (NEW.id);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_create_user_statistics
+AFTER INSERT ON users
+FOR EACH ROW
+EXECUTE FUNCTION create_user_statistics();
+
+
+CREATE OR REPLACE FUNCTION increment_profile_views(p_user_id INT)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE user_statistics
+    SET profile_views = profile_views + 1
+    WHERE user_id = p_user_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE FUNCTION increment_resume_views(p_user_id INT)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE user_statistics
+    SET resume_views = resume_views + 1
+    WHERE user_id = p_user_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+
+
+CREATE OR REPLACE FUNCTION get_user_dashboard_stats(p_user_id INT)
+RETURNS JSON
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    total_applications INT;
+    profile_views INT;
+    resume_views INT;
+    accepted_applications INT;
+BEGIN
+    SELECT
+        COUNT(ja.id)::INT,
+        COALESCE(us.profile_views, 0),
+        COALESCE(us.resume_views, 0),
+        COUNT(
+            CASE
+                WHEN ja.status = 'accepted' THEN 1
+            END
+        )::INT
+    INTO
+        total_applications,
+        profile_views,
+        resume_views,
+        accepted_applications
+    FROM users u
+    LEFT JOIN job_applications ja
+        ON ja.user_id = u.id
+    LEFT JOIN user_statistics us
+        ON us.user_id = u.id
+    WHERE u.id = p_user_id
+    GROUP BY us.profile_views, us.resume_views;
+
+    RETURN json_build_object(
+        'total_applications', total_applications,
+        'profile_views', profile_views,
+        'resume_views', resume_views,
+        'accepted_applications', accepted_applications
+    );
+END;
+$$;
+
+
+
+
