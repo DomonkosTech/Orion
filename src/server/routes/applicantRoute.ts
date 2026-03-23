@@ -102,8 +102,8 @@ router.post("/applications/:id/reject", verifyToken, verifyCompany, async (req: 
 
 // Download resume endpoint fix!!!
 router.get("/applications/:id/resume", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const applicationId = req.params.id; // Application ID from URL
-    const companyId = req.companyId!;      // Authenticated company ID
+    const applicationId = req.params.id;
+    const companyId = req.companyId!;
 
     try {
         const result = await getResumeUrl(applicationId, companyId);

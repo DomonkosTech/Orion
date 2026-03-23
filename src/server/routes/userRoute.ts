@@ -163,4 +163,24 @@ router.get("/user/stat",verifyToken, verifyUser, async (req: AuthRequest, res) =
 })
 
 
+router.get("/resume", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+    try{
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+        const result = await userService.getResumeUrl(userId);
+
+        if (!result) {
+            return res.status(404).json({ error: "Resume not found" });
+        }
+
+        res.json({ success: true, url: result.url });
+    }
+    catch (err) {
+        console.error("get resume error:", err);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+})
+
 export default router;
