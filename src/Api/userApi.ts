@@ -116,6 +116,14 @@ export const getUserStatistics = async () => {
     return handleResponse(response);
 }
 
+export const getUserResume = async () => {
+    const response = await fetch(`${API_BASE_URL}/resume`, {
+        method: "GET",
+        credentials: "include",
+    });
+    return handleResponse(response);
+}
+
 export const incrementProfileViews = async (userId: number) => {
     const response = await fetch(`${API_BASE_URL}/user/profile/views/${userId}`, {
         method: "PATCH",
