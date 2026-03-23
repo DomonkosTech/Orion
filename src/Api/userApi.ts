@@ -49,7 +49,7 @@ export const uploadResume = async (file: File) => {
     const formData = new FormData();
     formData.append("resume", file);
 
-    const response = await fetch(`${API_BASE_URL}/upload-resume`, {
+    const response = await fetch(`${API_BASE_URL}/users/me/resume`, {
         method: "POST",
         body: formData,
         credentials: "include",
@@ -59,7 +59,7 @@ export const uploadResume = async (file: File) => {
 };
 
 export const loginUser = async (loginData: UserLoginData) => {
-    const response = await fetch(`${API_BASE_URL}/user/login`, {
+    const response = await fetch(`${API_BASE_URL}/auth/user/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -69,7 +69,7 @@ export const loginUser = async (loginData: UserLoginData) => {
 }
 
 export const registerUser = async (userData: UserRegistrationData) => {
-    const response = await fetch(`${API_BASE_URL}/user/register`, {
+    const response = await fetch(`${API_BASE_URL}/auth/user/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),
@@ -78,7 +78,7 @@ export const registerUser = async (userData: UserRegistrationData) => {
 };
 
 export const getUserProfile = async () => {
-    const response = await fetch(`${API_BASE_URL}/user/profile`, {
+    const response = await fetch(`${API_BASE_URL}/users/me`, {
         method: "GET",
         credentials: "include",
     });
@@ -91,7 +91,7 @@ export const updateUserProfile = async (profileData: { user: UserProfileData, do
         documents: profileData.documents,
     };
 
-    const response = await fetch(`${API_BASE_URL}/user/profile`, {
+    const response = await fetch(`${API_BASE_URL}/users/me`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -101,7 +101,7 @@ export const updateUserProfile = async (profileData: { user: UserProfileData, do
 };
 
 export const deleteResume = async () => {
-    const response = await fetch(`${API_BASE_URL}/delete-resume`, {
+    const response = await fetch(`${API_BASE_URL}/users/me/resume`, {
         method: "DELETE",
         credentials: "include",
     });
@@ -109,7 +109,7 @@ export const deleteResume = async () => {
 };
 
 export const getUserStatistics = async () => {
-    const response = await fetch(`${API_BASE_URL}/user/stat`, {
+    const response = await fetch(`${API_BASE_URL}/users/me/stats`, {
         method: "GET",
         credentials: "include",
     });
@@ -117,7 +117,7 @@ export const getUserStatistics = async () => {
 }
 
 export const getUserResume = async () => {
-    const response = await fetch(`${API_BASE_URL}/resume`, {
+    const response = await fetch(`${API_BASE_URL}/users/me/resume`, {
         method: "GET",
         credentials: "include",
     });
@@ -125,16 +125,16 @@ export const getUserResume = async () => {
 }
 
 export const incrementProfileViews = async (userId: number) => {
-    const response = await fetch(`${API_BASE_URL}/user/profile/views/${userId}`, {
-        method: "PATCH",
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/views`, {
+        method: "POST",
         credentials: "include",
     });
     return handleResponse(response);
 }
 
 export const incrementResumeViews = async (userId: number) => {
-    const response = await fetch(`${API_BASE_URL}/user/resume/views/${userId}`, {
-        method: "PATCH",
+    const response = await fetch(`${API_BASE_URL}/users/${userId}/resume/views`, {
+        method: "POST",
         credentials: "include",
     });
     return handleResponse(response);

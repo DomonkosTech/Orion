@@ -6,7 +6,7 @@ import {getCompanystat} from "../Controller/companyController.ts";
 const router = express.Router();
 
 // company get info: user profile fix!!!
-router.get("/company/profile", verifyToken, async (req: AuthRequest, res) => {
+router.get("/me", verifyToken, async (req: AuthRequest, res) => {
     const companyId = req.companyId;
 
     try {
@@ -35,7 +35,7 @@ router.get("/company/profile", verifyToken, async (req: AuthRequest, res) => {
 
 
 //update company info endpoint fix!!!
-router.patch("/company/profile", verifyToken, async (req: AuthRequest, res) => {
+router.patch("/me", verifyToken, async (req: AuthRequest, res) => {
     try {
         const companyId = req.companyId;
         // Ensure company ID is present
@@ -58,7 +58,7 @@ router.patch("/company/profile", verifyToken, async (req: AuthRequest, res) => {
 
 
 // get company stats
-router.get("/company/stat",verifyToken, async (req: AuthRequest, res) => {
+router.get("/me/stats",verifyToken, async (req: AuthRequest, res) => {
     const companyId = req.companyId;
 
     try {
@@ -72,6 +72,48 @@ router.get("/company/stat",verifyToken, async (req: AuthRequest, res) => {
     catch (err) {
         console.error("Error while fetching company info:", err);
         res.status(500).json({ error: "Internal server error while fetching company info" });
+    }
+});
+
+//get all employees endpoint for company
+router.get("/me/employees", verifyToken, async (req: AuthRequest, res) => {
+
+    try {
+        const companyId = req.companyId;
+        if (!companyId) {
+            return res.status(403).json({ error: "Company access denied" });
+        }
+
+        const employees = await companyService.getEmployees(companyId);
+
+        res.json({
+            success: true,
+            employees
+        });
+
+    } catch (error) {
+        console.error("Get employees failed:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+//delete employee
+router.delete("/me/employees/:id", verifyToken, async (req: AuthRequest, res) => {
+    try {
+        const employeeId = parseInt(req.params.id);
+        const companyId = req.companyId;
+        if (!companyId) {
+            return res.status(403).json({ error: "Company access denied" });
+        }
+        const { success, deletedEmployee } = await companyService.deleteEmployee(employeeId, companyId);
+
+        if (!deletedEmployee) {
+            return res.status(404).json({ error: "Employee not found" });
+        }
+        res.json({ success });
+    } catch (error) {
+        console.error("Delete employees failed:", error);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
