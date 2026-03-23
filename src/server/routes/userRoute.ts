@@ -11,7 +11,7 @@ const upload = multer({
 });
 
 // user get info: user profile, decrypted documents, and resume status fix!!!
-router.get("/user/profile", verifyToken, async (req: AuthRequest, res) => {
+router.get("/me", verifyToken, async (req: AuthRequest, res) => {
     try {
         if (!req.userId) {
             return res.status(401).json({ error: "Unauthorized" });
@@ -37,7 +37,7 @@ router.get("/user/profile", verifyToken, async (req: AuthRequest, res) => {
 
 
 // update user profile endpoint fix!!!
-router.patch("/user/profile", verifyToken, async (req: AuthRequest, res) => {
+router.patch("/me", verifyToken, async (req: AuthRequest, res) => {
     try {
         if (!req.userId) {
             return res.status(401).json({ error: "Unauthorized" });
@@ -59,7 +59,7 @@ router.patch("/user/profile", verifyToken, async (req: AuthRequest, res) => {
 
 
 // upload resume endpoint fix!!!
-router.post("/upload-resume", verifyToken, upload.single("resume"), async (req: AuthRequest, res) => {
+router.post("/me/resume", verifyToken, upload.single("resume"), async (req: AuthRequest, res) => {
     try {
         const userId = req.userId;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
@@ -86,7 +86,7 @@ router.post("/upload-resume", verifyToken, upload.single("resume"), async (req: 
 
 
 // delete resume endpoint fix!!!
-router.delete("/delete-resume", verifyToken, async (req: AuthRequest, res) => {
+router.delete("/me/resume", verifyToken, async (req: AuthRequest, res) => {
     try {
         const userId = req.userId;
         if (!userId) return res.status(401).json({ error: "Unauthorized" });
@@ -106,7 +106,7 @@ router.delete("/delete-resume", verifyToken, async (req: AuthRequest, res) => {
 });
 
 
-router.patch("/user/profile/views/:id",verifyToken,verifyCompany, async (req, res) => {
+router.post("/:id/views",verifyToken,verifyCompany, async (req, res) => {
     try {
         const userId = req.params.id;
         if (!Number.isInteger(userId)) {
@@ -124,7 +124,7 @@ router.patch("/user/profile/views/:id",verifyToken,verifyCompany, async (req, re
 })
 
 
-router.patch("/user/resume/views/:id",verifyToken,verifyCompany, async (req, res) => {
+router.post("/:id/resume/views",verifyToken,verifyCompany, async (req, res) => {
     try {
         const userId = req.params.id;
         if (!Number.isInteger(userId)) {
@@ -142,7 +142,7 @@ router.patch("/user/resume/views/:id",verifyToken,verifyCompany, async (req, res
 })
 
 
-router.get("/user/stat",verifyToken, verifyUser, async (req: AuthRequest, res) => {
+router.get("/me/stats",verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
         const userId = req.userId;
         if (!userId) {
@@ -163,7 +163,7 @@ router.get("/user/stat",verifyToken, verifyUser, async (req: AuthRequest, res) =
 })
 
 
-router.get("/resume", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+router.get("/me/resume", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try{
         const userId = req.userId;
         if (!userId) {
