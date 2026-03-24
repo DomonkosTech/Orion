@@ -54,7 +54,7 @@ app.use("/Api", applicantRoutes);
 app.use("/Api", systemmessageRoute);
 
 // Email Routes (Send Email)
-app.use("/Api/email", emailRoute);
+app.use("/Api/auth", emailRoute);
 
 // Message Routes (Send Message, Read Messages, Delete Messages)
 app.use("/Api/chat", messageRoute);
