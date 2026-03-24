@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "./ApiConfig.ts";
 
 export const verifyUserEmail = async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}/email/user/verification`, {
+    const response = await fetch(`${API_BASE_URL}/auth/user/verify-email`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -19,7 +19,7 @@ export const verifyUserEmail = async (token: string) => {
 };
 
 export const sendUserPasswordResetEmail = async (email: string) => {
-    const response = await fetch(`${API_BASE_URL}/email/user/password/reset`, {
+    const response = await fetch(`${API_BASE_URL}/auth/user/forgot-password`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -37,7 +37,7 @@ export const sendUserPasswordResetEmail = async (email: string) => {
 
 
 export const sendCompanyPasswordResetEmail = async (email: string) => {
-    const response = await fetch(`${API_BASE_URL}/email/company/password/reset`, {
+    const response = await fetch(`${API_BASE_URL}/auth/company/forgot-password`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -54,7 +54,7 @@ export const sendCompanyPasswordResetEmail = async (email: string) => {
 }
 
 export const saveNewUserPassword = async (token: string, password: string) => {
-    const response = await fetch(`${API_BASE_URL}/email/user/password/reset`, {
+    const response = await fetch(`${API_BASE_URL}/auth/user/reset-password`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -72,7 +72,7 @@ export const saveNewUserPassword = async (token: string, password: string) => {
 
 
 export const saveNewCompanyPassword = async (token: string, password: string) => {
-    const response = await fetch(`${API_BASE_URL}/email/company/password/reset`, {
+    const response = await fetch(`${API_BASE_URL}/auth/company/reset-password`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -89,7 +89,7 @@ export const saveNewCompanyPassword = async (token: string, password: string) =>
 }
 
 export const verifyCompanyEmail = async (token: string) => {
-    const response = await fetch(`${API_BASE_URL}/email/company/verification`, {
+    const response = await fetch(`${API_BASE_URL}/auth/company/verify-email`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -107,7 +107,7 @@ export const verifyCompanyEmail = async (token: string) => {
 };
 
 export const sendUserVerificationEmail = async (email: string) => {
-    const response = await fetch(`${API_BASE_URL}/email/user/verification`, {
+    const response = await fetch(`${API_BASE_URL}/auth/user/verify-email`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -125,7 +125,7 @@ export const sendUserVerificationEmail = async (email: string) => {
 };
 
 export const sendCompanyVerificationEmail = async (email: string) => {
-    const response = await fetch(`${API_BASE_URL}/email/company/verification`, {
+    const response = await fetch(`${API_BASE_URL}/auth/company/verify-email`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
