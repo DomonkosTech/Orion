@@ -89,13 +89,13 @@ router.get("/advertisements/top3", async (_req, res) => {
     }
 );
 
-// get advertisment info endpoint by user fix!!!
+// get advertisement info endpoint by user fix!!!
 router.get("/advertisements/:id", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     const { id } = req.params;
     try {
         const advertisement = await advertisementService.getAdvertisementById(id);
 
-        if (!advertisement) {
+        if (!advertisement || advertisement.is_active === false) {
             return res.status(404).json({ error: "not found" });
         }
 

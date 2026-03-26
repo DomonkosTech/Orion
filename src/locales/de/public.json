@@ -1,39 +1,39 @@
 {
   "hero": {
-    "kicker": "Karriere • Wachstum • Stabilität",
-    "title": "Bauen Sie Ihre Zukunft in unserem <1>Experten</1>-Team.",
-    "subtitle": "Treten Sie einer der dynamischsten Gemeinschaften in Ungarn bei. Wertschöpfende Arbeit, moderne Werkzeuge und echte professionelle Unterstützung erwarten Sie.",
-    "mainCta": "Offene Stellen anzeigen",
-    "secondaryCta": "Warum uns wählen?"
+    "kicker": "Studentenjobs • Karriere • Verdienst",
+    "title": "Finde den <1>perfekten</1> Studentenjob.",
+    "subtitle": "Durchsuche Angebote von Top-Unternehmen und sammle Erfahrungen während des Studiums. Beginne noch heute, deine Karriere aufzubauen!",
+    "mainCta": "Jobs ansehen",
+    "secondaryCta": "Warum wir?"
   },
   "valuePropositions": {
-    "title": "Mitarbeitererfahrung bei uns",
-    "subtitle": "Wir bieten nicht nur einen Job, sondern einen Karriereweg. Wir glauben an kontinuierliches Lernen und eine ausgewogene Work-Life-Balance.",
+    "title": "Warum bei uns nach Studentenjobs suchen?",
+    "subtitle": "Wir helfen dir, wertvolle Berufserfahrung zu sammeln und neben dem Studium Geld zu verdienen. Wir sind keine Studentengenossenschaft: kein Vertrag mit uns, kostenlos zu nutzen und wir nehmen keine Provision von deinem Gehalt.",
     "features": {
       "development": {
-        "badge": "Entwicklung",
-        "title": "Professionelle Schulungen",
-        "text": "Ein jährliches Schulungsbudget und ein internes Mentoring-Programm unterstützen den kontinuierlichen Fortschritt."
+        "badge": "Erfahrung",
+        "title": "Relevante Berufserfahrung",
+        "text": "Finde Studentenjobs, die zu deinem Studium passen und deine zukünftige Karriere fördern."
       },
       "flexibility": {
         "badge": "Flexibilität",
-        "title": "Hybrides Arbeiten",
-        "text": "Die ideale Kombination aus einer modernen Büroumgebung und der Arbeit von zu Hause aus."
+        "title": "Studienfreundlich",
+        "text": "Wähle aus flexiblen, Teilzeit- oder Fernarbeitsmöglichkeiten."
       },
       "value": {
-        "badge": "Wert",
-        "title": "Premium-Vorteile",
-        "text": "Wettbewerbsfähige Gehaltsbänder, Cafeteria und Krankenversicherung für alle unsere Kollegen."
+        "badge": "Geld",
+        "title": "Faire Bezahlung",
+        "text": "Wir haben geprüfte Studentenjob-Angebote von zuverlässigen Unternehmen nur für dich gesammelt."
       }
     }
   },
   "featuredJobs": {
-    "title": "Unsere Top-Möglichkeiten",
-    "subtitle": "Schauen Sie sich unsere neuesten Stellenangebote an und finden Sie das richtige für Sie.",
+    "title": "Ausgewählte Studentenjobs",
+    "subtitle": "Schau dir unsere neuesten Angebote an und bewirb dich mit nur wenigen Klicks.",
     "detailsButton": "Details",
     "callout": {
-      "title": "Haben Sie nicht gefunden, wonach Sie gesucht haben?",
-      "text": "Registrieren Sie sich in unserer Datenbank, und wir benachrichtigen Sie, wenn sich eine passende Gelegenheit ergibt.",
+      "title": "Nicht gefunden, wonach du gesucht hast?",
+      "text": "Registriere dich und speichere deine Suche, um sofort über die neuesten Möglichkeiten benachrichtigt zu werden.",
       "cta": "Registrieren"
     }
   }
