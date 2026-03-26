@@ -1,39 +1,39 @@
 {
   "hero": {
-    "kicker": "Career • Growth • Stability",
-    "title": "Build your future in our <1>expert</1> team.",
-    "subtitle": "Join one of the most dynamically developing communities in Hungary. Value-creating work, modern tools, and real professional support await you.",
-    "mainCta": "View Open Positions",
-    "secondaryCta": "Why choose us?"
+    "kicker": "Student Jobs • Career • Earnings",
+    "title": "Find the <1>perfect</1> student job.",
+    "subtitle": "Browse offers from top companies and gain experience while studying. Start building your career today!",
+    "mainCta": "View Jobs",
+    "secondaryCta": "Why us?"
   },
   "valuePropositions": {
-    "title": "Employee Experience with Us",
-    "subtitle": "We offer not just a job, but a career path. We believe in continuous learning and work-life balance.",
+    "title": "Why search for student jobs with us?",
+    "subtitle": "We help you gain valuable professional experience and earn money alongside your studies. We are not a student cooperative: no contracts with us, free to use, and we take no commission from your salary.",
     "features": {
       "development": {
-        "badge": "Development",
-        "title": "Professional Trainings",
-        "text": "An annual training budget and an internal mentoring program support continuous advancement."
+        "badge": "Experience",
+        "title": "Relevant Experience",
+        "text": "Find student jobs that relate to your studies and help your future career."
       },
       "flexibility": {
         "badge": "Flexibility",
-        "title": "Hybrid Work",
-        "text": "The ideal combination of a modern office environment and working from home."
+        "title": "Study-Friendly",
+        "text": "Choose from flexible, part-time, or remote work opportunities."
       },
       "value": {
-        "badge": "Value",
-        "title": "Premium Benefits",
-        "text": "Competitive salary bands, cafeteria, and health insurance for all our colleagues."
+        "badge": "Money",
+        "title": "Fair Pay",
+        "text": "We have collected verified student job offers from reliable companies just for you."
       }
     }
   },
   "featuredJobs": {
-    "title": "Our Featured Opportunities",
-    "subtitle": "Check out our latest job offers and find the one that's right for you.",
+    "title": "Featured Student Jobs",
+    "subtitle": "Check out our latest offers and apply with just a few clicks.",
     "detailsButton": "Details",
     "callout": {
       "title": "Didn't find what you were looking for?",
-      "text": "Register in our database, and we will notify you when a suitable opportunity arises.",
+      "text": "Register and save your search to get notified immediately about the latest opportunities.",
       "cta": "Register"
     }
   }
