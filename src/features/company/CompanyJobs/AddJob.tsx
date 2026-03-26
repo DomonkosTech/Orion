@@ -7,13 +7,13 @@ import { ArrowLeft } from "lucide-react";
 import styles from "./AddJob.module.css";
 
 // Components
-import { Header } from "../../../components/Header/Header.tsx";
-import Footer from "../../../components/Footer/Footer.tsx";
-import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
-import Button from "../../../components/Button/Button.tsx";
-import TextArea from "../../../components/TextArea/TextArea.tsx";
-import InputField from "../../../components/InputField/InputField.tsx";
-import Checkbox from "../../../components/Checkbox/Checkbox.tsx";
+import { Header } from "../../../components/layout/Header/Header.tsx";
+import Footer from "../../../components/layout/Footer/Footer.tsx";
+import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
+import Button from "../../../components/ui/Button/Button.tsx";
+import TextArea from "../../../components/ui/TextArea/TextArea.tsx";
+import InputField from "../../../components/ui/InputField/InputField.tsx";
+import Checkbox from "../../../components/ui/Checkbox/Checkbox.tsx";
 
 const AddJob: React.FC = () => {
     const { t } = useTranslation('company');

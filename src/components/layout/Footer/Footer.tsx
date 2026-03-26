@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import styles from './Footer.module.css';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../hooks/useAuth';
+import { useAuth } from '../../../hooks/useAuth';
 
 const Footer = () => {
     const { t } = useTranslation('components');

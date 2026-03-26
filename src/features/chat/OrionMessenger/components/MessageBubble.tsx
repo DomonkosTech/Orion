@@ -1,6 +1,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import type {Message} from "../../../Api/messageApi.ts";
+import type {Message} from "../../../../Api/messageApi.ts";
 import styles from "../MessengerPage.module.css";
 import { CheckCheck } from "lucide-react";
 

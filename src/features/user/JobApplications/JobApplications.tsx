@@ -13,10 +13,10 @@ import { getJobApplications, type JobApplicationData } from "../../../Api/advert
 import styles from "./JobApplications.module.css";
 
 // Components
-import { Header } from "../../../components/Header/Header.tsx";
-import Button from "../../../components/Button/Button.tsx";
-import Footer from "../../../components/Footer/Footer.tsx";
-import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
+import { Header } from "../../../components/layout/Header/Header.tsx";
+import Button from "../../../components/ui/Button/Button.tsx";
+import Footer from "../../../components/layout/Footer/Footer.tsx";
+import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
 
 const JobApplications = () => {
     const { t } = useTranslation('user');
@@ -136,7 +136,7 @@ const JobApplications = () => {
                                             : styles.statusDefault;
 
                                         return (
-                                            <div key={submit.id} className={styles.itemRow}>
+                                            <div key={submit.id} className={`${styles.itemRow} ${styles.submissionsRow}`}>
                                                 <div className={styles.infoBlock}>
                                                     <span className={styles.infoLabel}>{t('jobApplications.submissions.advertisement')}</span>
                                                     <span className={styles.infoValue}>{submit.advertisement?.title}</span>
@@ -149,7 +149,7 @@ const JobApplications = () => {
                                                     </span>
                                                 </div>
 
-                                                <div className={styles.infoBlock} style={{gridColumn: 'span 2'}}>
+                                                <div className={styles.infoBlock}>
                                                     <span className={styles.infoLabel}>{t('jobApplications.submissions.lastUpdated')}</span>
                                                     <span className={styles.infoValue}>
                                                         <Clock size={14} style={{display: 'inline', marginRight: '4px'}} />

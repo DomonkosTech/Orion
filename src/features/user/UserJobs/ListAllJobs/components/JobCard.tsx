@@ -3,7 +3,7 @@ import { MapPin, Heart, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import styles from "../ListJobs.module.css";
-import Button from "../../../../../components/Button/Button.tsx";
+import Button from "../../../../../components/ui/Button/Button.tsx";
 import { addFavorite, removeFavorite } from "../../../../../Api/advertisementApi.ts";
 
 type Job = {

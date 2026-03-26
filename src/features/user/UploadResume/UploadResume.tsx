@@ -7,10 +7,10 @@ import { uploadResume, getUserResume, deleteResume } from "../../../Api/userApi"
 import styles from "./UploadResume.module.css";
 
 //components
-import { Header } from "../../../components/Header/Header.tsx";
-import Button from "../../../components/Button/Button.tsx";
-import Footer from "../../../components/Footer/Footer.tsx";
-import ConfirmModal from "../../../components/ConfirmModal/ConfirmModal.tsx";
+import { Header } from "../../../components/layout/Header/Header.tsx";
+import Button from "../../../components/ui/Button/Button.tsx";
+import Footer from "../../../components/layout/Footer/Footer.tsx";
+import ConfirmModal from "../../../components/ui/ConfirmModal/ConfirmModal.tsx";
 
 const UploadResume = () => {
     const { t } = useTranslation('user');

@@ -7,10 +7,10 @@ import styles from "./ShowListedJobs.module.css";
 import { Settings, Plus, ArrowLeft } from "lucide-react";
 
 // Shared Components
-import { Header } from "../../../components/Header/Header.tsx";
-import Button from "../../../components/Button/Button.tsx";
-import Footer from "../../../components/Footer/Footer.tsx";
-import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
+import { Header } from "../../../components/layout/Header/Header.tsx";
+import Button from "../../../components/ui/Button/Button.tsx";
+import Footer from "../../../components/layout/Footer/Footer.tsx";
+import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
 
 // API
 import { getCompanyAdvertisements, type CompanyAdvertisement } from "../../../Api/advertisementApi";

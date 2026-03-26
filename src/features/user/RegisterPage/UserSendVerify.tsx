@@ -1,5 +1,5 @@
 import React from "react";
-import SendVerifyPage from "../../../components/SendVerifyPage/SendVerifyPage.tsx";
+import SendVerifyPage from "../../auth/SendVerifyPage/SendVerifyPage.tsx";
 import { sendUserVerificationEmail } from "../../../Api/emailApi.ts";
 
 const UserSendVerify: React.FC = () => {
@@ -11,4 +11,4 @@ const UserSendVerify: React.FC = () => {
     );
 };
 
-export default UserSendVerify;
+export default UserSendVerify;

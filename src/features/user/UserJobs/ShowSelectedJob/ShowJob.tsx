@@ -12,11 +12,11 @@ import {
 import styles from "./ShowJob.module.css";
 
 //components
-import { Header } from "../../../../components/Header/Header.tsx";
-import Button from "../../../../components/Button/Button.tsx";
-import BannerKicker from "../../../../components/BannerKicker/BannerKicker.tsx";
-import Footer from "../../../../components/Footer/Footer.tsx";
-import AnimatedNumber from "../../../../components/AnimatedNumber/AnimatedNumber.tsx";
+import { Header } from "../../../../components/layout/Header/Header.tsx";
+import Button from "../../../../components/ui/Button/Button.tsx";
+import BannerKicker from "../../../../components/layout/BannerKicker/BannerKicker.tsx";
+import Footer from "../../../../components/layout/Footer/Footer.tsx";
+import AnimatedNumber from "../../../../components/ui/AnimatedNumber/AnimatedNumber.tsx";
 
 const ShowJob = () => {
     const { t } = useTranslation('user');

@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react";
-import type { Message } from "../../../Api/messageApi.ts";
+import type { Message } from "../../../../Api/messageApi.ts";
 
 export interface ChatPartner {
     id: number;

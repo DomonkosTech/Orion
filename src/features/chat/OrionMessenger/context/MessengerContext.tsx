@@ -10,9 +10,9 @@ import {
     getMessagesForCompany,
     sendUserMessage,
     sendCompanyMessage,
-} from "../../../Api/messageApi.ts";
-import {wbsocket} from "../../../Api/ApiConfig.ts";
-import { useAuth } from "../../../hooks/useAuth";
+} from "../../../../Api/messageApi.ts";
+import {wbsocket} from "../../../../Api/ApiConfig.ts";
+import { useAuth } from "../../../../hooks/useAuth";
 import { MessengerContext, type ChatPartner } from "./MessengerContextInstance";
 
 

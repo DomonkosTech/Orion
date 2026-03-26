@@ -11,21 +11,21 @@ import {
     getUserResume,
     type UserProfileData,
     type Documents,
-} from "../../Api/userApi.ts";
+} from "../../../Api/userApi.ts";
 import {
     getCompanyProfile,
     updateCompanyProfile,
     type CompanyProfile
-} from "../../Api/companyApi.ts";
+} from "../../../Api/companyApi.ts";
 import styles from "./EditProfile.module.css";
 import { toast } from "react-hot-toast";
-import { userUpdateProfileSchema, companyUpdateProfileSchema } from "../../validation/Validation.ts";
+import { userUpdateProfileSchema, companyUpdateProfileSchema } from "../../../validation/Validation.ts";
 import { useTranslation } from "react-i18next";
 
 // Components
-import Button from "../Button/Button.tsx";
-import BannerKicker from "../BannerKicker/BannerKicker.tsx";
-import ConfirmModal from "../ConfirmModal/ConfirmModal.tsx";
+import Button from "../../ui/Button/Button.tsx";
+import BannerKicker from "../../layout/BannerKicker/BannerKicker.tsx";
+import ConfirmModal from "../../ui/ConfirmModal/ConfirmModal.tsx";
 
 export interface EditProfileRenderProps {
     user: UserProfileData | null;

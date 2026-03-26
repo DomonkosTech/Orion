@@ -1,5 +1,5 @@
 import React from "react";
-import VerifyPage from "../../../components/VerifyPage/VerifyPage.tsx";
+import VerifyPage from "../../auth/VerifyPage/VerifyPage.tsx";
 import { verifyCompanyEmail } from "../../../Api/emailApi.ts";
 
 const CompanyVerify: React.FC = () => {
@@ -12,4 +12,4 @@ const CompanyVerify: React.FC = () => {
     );
 };
 
-export default CompanyVerify;
+export default CompanyVerify;

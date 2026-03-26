@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useMessenger } from "../hooks/useMessenger";
-import type { Message } from "../../../Api/messageApi";
+import type { Message } from "../../../../Api/messageApi";
 import MessageBubble from "./MessageBubble";
 import MessageInput from "./MessageInput";
 import styles from "../MessengerPage.module.css";
 import { useTranslation, Trans } from "react-i18next";
-import { useAuth } from "../../../hooks/useAuth";
+import { useAuth } from "../../../../hooks/useAuth";
 import { Menu } from "lucide-react";
-import { Header } from "../../Header/Header";
+import { Header } from "../../../../components/layout/Header/Header";
 import { AVATAR_COLORS } from "../context/MessengerContextInstance";
 
 function getInitials(name?: string) {

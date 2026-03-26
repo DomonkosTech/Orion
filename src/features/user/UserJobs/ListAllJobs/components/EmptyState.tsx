@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./EmptyState.module.css";
-import Button from "../../../../../components/Button/Button.tsx";
+import Button from "../../../../../components/ui/Button/Button.tsx";
 import { Trans, useTranslation } from "react-i18next";
 
 type Props = {

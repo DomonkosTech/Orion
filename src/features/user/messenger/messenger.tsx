@@ -1,5 +1,5 @@
 import React from "react";
-import MessengerPage from "../../../components/OrionMessenger/MessengerPage";
+import MessengerPage from "../../chat/OrionMessenger/MessengerPage";
 
 const Messenger: React.FC = () => {
   return <MessengerPage />;
