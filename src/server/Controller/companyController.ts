@@ -1,5 +1,6 @@
 import { supabase } from "../../lib/supabaseClient.ts";
 import { companyUpdateProfileSchema } from "../../validation/Validation.ts";
+import { createsystemmessage } from "./systemmessageController.ts";
 
 interface CompanyProfileData {
     name?: string;
@@ -77,4 +78,36 @@ export const getCompanystat = async (companyId: number) => {
 
     return { stats, lastApplications };
 
+}
+
+// show employees
+export const getEmployees = async (companyId: number) => {
+    const { data: employees, error: error } = await supabase
+        .from("employees")
+        .select("*, users( email, lname, fname)")
+        .eq("company_id", companyId)
+        .order("hire_date", { ascending: false });
+
+    if (error) throw error;
+    return employees;
+}
+
+// delete employee
+export const deleteEmployee = async (employeeId: number, companyId: number) => {
+    const { data, error } = await supabase
+        .from("employees")
+        .delete()
+        .eq("id", employeeId)
+        .eq("company_id", companyId)
+        .select('*')
+
+    if (error) throw error
+
+    if (!data || data.length === 0) {
+        throw new Error("Employee not found")
+    }
+
+    createsystemmessage(data[0].user_id, 'Munkaviszony megszűnése!', `Tájékoztatjuk, hogy partnercégünknél a(z) ${data[0].position} pozícióban fennálló munkaviszonya megszűnt. Amennyiben szeretné, segítünk új álláslehetőséget találni.`, 'USER')
+
+    return { success: true, deletedEmployee: data[0] }
 }

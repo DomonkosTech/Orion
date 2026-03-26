@@ -215,3 +215,35 @@ export const getuserdashboarddata = async (userId: number) => {
     return data;
 }
 
+
+export const getResumeUrl = async (userId: number) => {
+    const BUCKET = "resumes";
+
+    // List files in user's resume folder
+    const { data: files, error: listError } = await supabase
+        .storage
+        .from(BUCKET)
+        .list(`${userId}/`);
+
+    if (listError) throw listError;
+
+    // Find the first valid resume file
+    const resumeFile = files.find(f => f.metadata && f.metadata.size > 0);
+
+    if (!resumeFile) {
+        return null;
+    }
+
+    const filePath = `${userId}/${resumeFile.name}`;
+
+    // Generate signed URL (valid for 60 minutes)
+    const { data, error: urlError } = await supabase
+        .storage
+        .from(BUCKET)
+        .createSignedUrl(filePath, 3600);
+
+    if (urlError) throw urlError;
+
+    return { url: data.signedUrl };
+
+}

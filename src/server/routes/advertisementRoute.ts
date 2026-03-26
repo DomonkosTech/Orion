@@ -216,49 +216,6 @@ router.patch("/advertisements/:id/status", verifyToken, verifyCompany, async (re
     }
 })
 
-//get all employees endpoint for company
-router.get("/employees", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-
-    try {
-        const companyId = req.companyId;
-        if (!companyId) {
-            return res.status(403).json({ error: "Company access denied" });
-        }
-
-        const employees = await advertisementService.getEmployees(companyId);
-
-        res.json({
-            success: true,
-            employees
-        });
-
-    } catch (error) {
-        console.error("Get employees failed:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-//delete employee
-router.delete("/employees/:id", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    try {
-        const employeeId = parseInt(req.params.id);
-        const companyId = req.companyId;
-        if (!companyId) {
-            return res.status(403).json({ error: "Company access denied" });
-        }
-        const { success, deletedEmployee } = await advertisementService.deleteEmployee(employeeId, companyId);
-
-        if (!deletedEmployee) {
-            return res.status(404).json({ error: "Employee not found" });
-        }
-        res.json({ success });
-    } catch (error) {
-        console.error("Delete employees failed:", error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-
 //add favorite
 router.post("/favorites", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {

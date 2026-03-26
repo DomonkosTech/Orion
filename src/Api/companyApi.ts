@@ -59,7 +59,7 @@ const handleResponse = async (response: Response) => {
 };
 
 export const registerCompany = async (registrationData: CompanyRegistrationData) => {
-    const response = await fetch(`${API_BASE_URL}/company/register`, {
+    const response = await fetch(`${API_BASE_URL}/auth/company/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(registrationData),
@@ -68,7 +68,7 @@ export const registerCompany = async (registrationData: CompanyRegistrationData)
 };
 
 export const loginCompany = async (loginData: CompanyLoginData) => {
-    const response = await fetch(`${API_BASE_URL}/company/login`, {
+    const response = await fetch(`${API_BASE_URL}/auth/company/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -78,7 +78,7 @@ export const loginCompany = async (loginData: CompanyLoginData) => {
 }
 
 export const getCompanyProfile = async () => {
-    const response = await fetch(`${API_BASE_URL}/company/profile`, {
+    const response = await fetch(`${API_BASE_URL}/companies/me`, {
         method: "GET",
         credentials: "include",
     });
@@ -86,7 +86,7 @@ export const getCompanyProfile = async () => {
 };
 
 export const updateCompanyProfile = async (companyData: CompanyProfile) => {
-    const response = await fetch(`${API_BASE_URL}/company/profile`, {
+    const response = await fetch(`${API_BASE_URL}/companies/me`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -96,8 +96,24 @@ export const updateCompanyProfile = async (companyData: CompanyProfile) => {
 };
 
 export const getCompanystat = async () => {
-    const response = await fetch(`${API_BASE_URL}/company/stat`, {
+    const response = await fetch(`${API_BASE_URL}/companies/me/stats`, {
         method: "GET",
+        credentials: "include",
+    });
+    return handleResponse(response);
+}
+
+export const getEmployees = async () => {
+    const response = await fetch(`${API_BASE_URL}/companies/me/employees`, {
+        method: "GET",
+        credentials: "include",
+    });
+    return handleResponse(response);
+}
+
+export const deleteEmployee = async (id: number) => {
+    const response = await fetch(`${API_BASE_URL}/companies/me/employees/${id}`, {
+        method: "DELETE",
         credentials: "include",
     });
     return handleResponse(response);

@@ -1,5 +1,5 @@
 import express from "express";
-import { authService } from "../Controller/authController.ts";
+import { loginUser, registerUser, loginCompany, registerCompany, verifyToken } from "../Controller/authController.ts";
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ interface ServiceError {
 router.post("/user/login", async (req, res) => {
     try {
         const { email, password, rememberMe } = req.body;
-        const result = await authService.loginUser(email, password, rememberMe);
+        const result = await loginUser(email, password, rememberMe);
         
         res.cookie("auth_token", result.token, result.cookieOptions);
         res.json({ success: true, message: "Login successful" });
@@ -30,7 +30,7 @@ router.post("/user/login", async (req, res) => {
 //user register endpoint fix!!!
 router.post("/user/register", async (req, res) => {
     try {
-        const result = await authService.registerUser(req.body);
+        const result = await registerUser(req.body);
         res.json(result);
     } catch (err) {
         const error = err as ServiceError;
@@ -45,7 +45,7 @@ router.post("/user/register", async (req, res) => {
 router.post("/company/login", async (req, res) => {
     try {
         const { email, password, rememberMe } = req.body;
-        const result = await authService.loginCompany(email, password, rememberMe);
+        const result = await loginCompany(email, password, rememberMe);
         
         res.cookie("auth_token", result.token, result.cookieOptions);
         res.json({ success: true, message: "Login successful" });
@@ -62,7 +62,7 @@ router.post("/company/login", async (req, res) => {
 //register endpoint fix!!!
 router.post("/company/register", async (req, res) => {
     try {
-        const result = await authService.registerCompany(req.body);
+        const result = await registerCompany(req.body);
         res.json(result);
     } catch (err) {
         const error = err as ServiceError;
@@ -93,9 +93,9 @@ router.post("/logout", (_req, res) => {
 
 
 // Check auth endpoint
-router.get("/auth/status", async (req, res) => {
+router.get("/status", async (req, res) => {
     const token = req.cookies.auth_token;
-    const result = await authService.verifyToken(token);
+    const result = await verifyToken(token);
     res.json(result);
 });
 
