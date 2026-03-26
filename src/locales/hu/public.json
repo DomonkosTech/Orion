@@ -1,39 +1,39 @@
 {
   "hero": {
-    "kicker": "Karrier • Fejlődés • Stabilitás",
-    "title": "Építse a jövőjét <1>szakértő</1> csapatunkban.",
-    "subtitle": "Csatlakozzon Magyarország egyik legdinamikusabban fejlődő közösségéhez. Értékteremtő munka, modern eszközök és valódi szakmai támogatás várja.",
-    "mainCta": "Nyitott pozíciók megtekintése",
-    "secondaryCta": "Miért válasszon minket?"
+    "kicker": "Diákmunka • Karrier • Pénzkereset",
+    "title": "Találd meg a <1>tökéletes</1> diákmunkát.",
+    "subtitle": "Böngéssz a legjobb cégek ajánlatai között, és szerezz tapasztalatot már az egyetem mellett. Kezdd el építeni a karriered még ma!",
+    "mainCta": "Állások megtekintése",
+    "secondaryCta": "Miért mi?"
   },
   "valuePropositions": {
-    "title": "Munkavállalói élmény nálunk",
-    "subtitle": "Nem csak állást, hanem karrierutat kínálunk. Hiszünk a folyamatos tanulásban és a munka-magánélet egyensúlyában.",
+    "title": "Miért velünk keress diákmunkát?",
+    "subtitle": "Segítünk, hogy a tanulmányaid mellett is értékes szakmai tapasztalatot szerezz és pénzt keress. Nem diákszövetkezet vagyunk: nincs velünk szerződéskötés, a használat teljesen ingyenes, és a fizetésedből sem vonunk le semmit.",
     "features": {
       "development": {
-        "badge": "Fejlődés",
-        "title": "Szakmai tréningek",
-        "text": "Éves képzési keret és belső mentorprogram segíti a folyamatos előrelépést."
+        "badge": "Tapasztalat",
+        "title": "Releváns szakmai tapasztalat",
+        "text": "Olyan diákmunkákat találsz, amik kapcsolódnak a tanulmányaidhoz és segítik a későbbi elhelyezkedésedet."
       },
       "flexibility": {
         "badge": "Rugalmasság",
-        "title": "Hibrid munkavégzés",
-        "text": "Modern irodai környezet és otthoni munkavégzés ideális kombinációja."
+        "title": "Tanulmányokhoz igazítva",
+        "text": "Válassz a rugalmas időbeosztású, részmunkaidős vagy akár távmunkában végezhető lehetőségek közül."
       },
       "value": {
-        "badge": "Érték",
-        "title": "Prémium juttatások",
-        "text": "Versenyképes bérsávok, cafeteria és egészségbiztosítás minden kollégánknak."
+        "badge": "Pénz",
+        "title": "Korrekt bérezés",
+        "text": "Kizárólag megbízható cégek ellenőrzött diákmunka ajánlatait gyűjtöttük össze neked."
       }
     }
   },
   "featuredJobs": {
-    "title": "Kiemelt lehetőségeink",
-    "subtitle": "Tekintse meg legfrissebb állásajánlatainkat és találja meg az Önnek megfelelőt.",
+    "title": "Kiemelt diákmunkák",
+    "subtitle": "Nézd meg a legfrissebb ajánlatainkat és jelentkezz pár kattintással.",
     "detailsButton": "Részletek",
     "callout": {
-      "title": "Nem találta meg amit keresett?",
-      "text": "Regisztráljon adatbázisunkba, és értesítjük, ha érkezik Önhöz illő lehetőség.",
+      "title": "Nem találtad meg a neked valót?",
+      "text": "Regisztrálj és mentsd el a keresésed, hogy azonnal értesülj a legújabb lehetőségekről.",
       "cta": "Regisztráció"
     }
   }
