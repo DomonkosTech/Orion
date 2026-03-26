@@ -49,6 +49,7 @@
     "saveSuccess": "Profil erfolgreich aktualisiert!",
     "saveError": "Beim Speichern ist ein Fehler aufgetreten!",
     "deleteResumeConfirmation": "Sind Sie sicher, dass Sie Ihren Lebenslauf löschen möchten?",
+    "deleteResumeWarning": "Diese Aktion kann nicht rückgängig gemacht werden. Ihr Lebenslauf wird aus Ihrem Profil entfernt.",
     "cancel": "Abbrechen",
     "delete": "Löschen",
     "resumeDeleted": "Lebenslauf gelöscht.",
@@ -65,7 +66,8 @@
     "back": "Zurück",
     "changePassword": "Passwort ändern",
     "edit": "Bearbeiten",
-    "save": "Speichern"
+    "save": "Speichern",
+    "resumeViewError": "Beim Öffnen des Lebenslaufs ist ein Fehler aufgetreten."
   },
   "bannerKicker": {
     "text": "Orion • {{children}}"

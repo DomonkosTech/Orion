@@ -49,6 +49,7 @@
     "saveSuccess": "Profil sikeresen frissítve!",
     "saveError": "Hiba történt a mentés során!",
     "deleteResumeConfirmation": "Biztosan törölni szeretné az önéletrajzát?",
+    "deleteResumeWarning": "Ez a művelet nem vonható vissza. Az önéletrajzod törlődik a profilodból.",
     "cancel": "Mégse",
     "delete": "Törlés",
     "resumeDeleted": "Önéletrajz törölve.",
@@ -65,7 +66,8 @@
     "back": "Vissza",
     "changePassword": "Jelszó módosítása",
     "edit": "Szerkesztés",
-    "save": "Mentés"
+    "save": "Mentés",
+    "resumeViewError": "Hiba történt az önéletrajz megnyitása során."
   },
   "bannerKicker": {
     "text": "Orion • {{children}}"

@@ -37,6 +37,11 @@ export interface DashboardStats{
     accepted_applications?: number;
 }
 
+export interface ResumeResponse {
+    success: boolean;
+    url: string;
+}
+
 const handleResponse = async (response: Response) => {
     const data = await response.json();
     if (!response.ok) {
@@ -116,7 +121,7 @@ export const getUserStatistics = async () => {
     return handleResponse(response);
 }
 
-export const getUserResume = async () => {
+export const getUserResume = async (): Promise<ResumeResponse> => {
     const response = await fetch(`${API_BASE_URL}/users/me/resume`, {
         method: "GET",
         credentials: "include",

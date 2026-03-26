@@ -169,13 +169,14 @@
       "taxNumber": "Tax Number",
       "personalId": "Personal ID",
       "addressCard": "Address Card",
-      "resume": {
-        "title": "Resume",
-        "uploaded": "Uploaded and active",
-        "notUploaded": "Not yet uploaded",
-        "delete": "Delete",
-        "upload": "Upload"
-      }
+        "resume": {
+          "title": "Resume",
+          "uploaded": "Uploaded and active",
+          "notUploaded": "Not yet uploaded",
+          "delete": "Delete",
+          "upload": "Upload",
+          "view": "View"
+        }
     }
   },
   "register": {
@@ -219,18 +220,30 @@
     "fileHint": "PDF only (Max. 5MB)",
     "info": {
       "stored": "The uploaded file is stored as part of your profile.",
-      "update": "You can update or delete it at any time."
+      "update": "You can update or delete it at any time.",
+      "storedShort": "Your resume is safe part of your profile.",
+      "deleteWarning": "This action cannot be undone. Your resume will be removed from your profile."
+    },
+    "status": {
+      "active": "Active"
     },
     "buttons": {
       "submit": "Save Resume",
       "submitting": "Uploading...",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "viewCurrent": "View Resume",
+      "replace": "Replace Resume",
+      "delete": "Delete"
     },
+    "existingResume": "Your current resume",
     "alerts": {
       "onlyPdf": "Only PDF files can be uploaded!",
       "sizeLimit": "The file size cannot exceed 5MB!",
       "success": "Resume uploaded successfully!",
-      "unknownError": "Unknown error"
+      "unknownError": "Unknown error",
+      "confirmDelete": "Are you sure you want to delete your resume?",
+      "deleteSuccess": "Resume deleted successfully!",
+      "deleteError": "An error occurred while deleting."
     }
   },
   "jobApplications": {

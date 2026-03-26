@@ -264,6 +264,7 @@
       "actions": "Actions"
     },
     "deleteConfirm": "Are you sure you want to remove this employee?",
+    "deleteWarning": "This action cannot be undone. The employee's data will be removed from the system.",
     "deleteSuccess": "Successfully removed",
     "deleteError": "Deletion failed",
     "deleteErrorGeneric": "An error occurred during deletion",

@@ -264,6 +264,7 @@
       "actions": "Műveletek"
     },
     "deleteConfirm": "Biztosan el akarja távolítani ezt az alkalmazottat?",
+    "deleteWarning": "Ez a művelet nem vonható vissza. Az alkalmazott adatai törlődnek a rendszerből.",
     "deleteSuccess": "Sikeresen eltávolítva",
     "deleteError": "Sikertelen törlés",
     "deleteErrorGeneric": "Hiba történt a törlés során",

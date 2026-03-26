@@ -169,13 +169,14 @@
       "taxNumber": "Adószám",
       "personalId": "Személyi igazolvány",
       "addressCard": "Lakcímkártya",
-      "resume": {
-        "title": "Önéletrajz",
-        "uploaded": "Feltöltve és aktív",
-        "notUploaded": "Még nincs feltöltve",
-        "delete": "Törlés",
-        "upload": "Feltöltés"
-      }
+        "resume": {
+          "title": "Önéletrajz",
+          "uploaded": "Feltöltve és aktív",
+          "notUploaded": "Még nincs feltöltve",
+          "delete": "Törlés",
+          "upload": "Feltöltés",
+          "view": "Megtekintés"
+        }
     }
   },
   "register": {
@@ -219,18 +220,30 @@
     "fileHint": "Csak PDF (Max. 5MB)",
     "info": {
       "stored": "A feltöltött fájlt profilod részeként tároljuk.",
-      "update": "Bármikor frissítheted vagy törölheted."
+      "update": "Bármikor frissítheted vagy törölheted.",
+      "storedShort": "Önéletrajzod biztonságban van a profilodban.",
+      "deleteWarning": "Ez a művelet nem vonható vissza. Az önéletrajzod törlődik a profilodból."
     },
+    "status": {
+      "active": "Aktív"
+    },
+    "existingResume": "Jelenlegi önéletrajzod",
     "buttons": {
       "submit": "Önéletrajz mentése",
       "submitting": "Feltöltés folyamatban...",
-      "cancel": "Mégse"
+      "cancel": "Mégse",
+      "viewCurrent": "Önéletrajz megtekintése",
+      "replace": "Önéletrajz cseréje",
+      "delete": "Törlés"
     },
     "alerts": {
       "onlyPdf": "Csak PDF fájlt lehet feltölteni!",
       "sizeLimit": "A fájl mérete nem lehet nagyobb 5MB-nál!",
       "success": "Önéletrajz sikeresen feltöltve!",
-      "unknownError": "Ismeretlen hiba"
+      "unknownError": "Ismeretlen hiba",
+      "confirmDelete": "Biztosan törölni szeretné az önéletrajzát?",
+      "deleteSuccess": "Önéletrajz sikeresen törölve!",
+      "deleteError": "Hiba történt a törlés során."
     }
   },
   "jobApplications": {
