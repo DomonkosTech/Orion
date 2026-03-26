@@ -150,6 +150,7 @@
     "banner": "Toborzás",
     "title": "Jelentkezők kezelése",
     "views": "Megtekintések száma:",
+    "clickToExpand": "Kattints a profil megtekintéséhez",
     "back": "Vissza",
     "loading": "Betöltés...",
     "empty": "Nincsenek új jelentkezők ehhez a hirdetéshez.",

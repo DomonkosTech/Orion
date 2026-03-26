@@ -150,6 +150,7 @@
     "banner": "Rekrutierung",
     "title": "Bewerber-Tracking",
     "views": "Anzahl der Aufrufe:",
+    "clickToExpand": "Klicken, um das Profil anzuzeigen",
     "back": "Zurück",
     "loading": "Laden...",
     "empty": "Keine neuen Bewerber für diese Anzeige.",

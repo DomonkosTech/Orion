@@ -150,6 +150,7 @@
     "banner": "Recruitment",
     "title": "Applicant Tracking",
     "views": "Number of views:",
+    "clickToExpand": "Click to view profile",
     "back": "Back",
     "loading": "Loading...",
     "empty": "No new applicants for this ad.",

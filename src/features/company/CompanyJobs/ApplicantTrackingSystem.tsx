@@ -198,6 +198,9 @@ export const ApplicantTrackingSystem: React.FC = () => {
                                         <span className={styles.detailItem}><Calendar size={14} /> {new Date(applicant.users.birth_date).toLocaleDateString()}</span>
                                         <span className={styles.detailItem}><MapPin size={14} /> {applicant.users.birth_place}</span>
                                     </div>
+                                    <div className={styles.viewProfile}>
+                                        {t('ats.clickToExpand')} <ChevronDown size={14} style={{ transform: 'rotate(-90deg)' }} />
+                                    </div>
                                 </div>
 
                                 <div className={styles.actions}>
@@ -211,10 +214,11 @@ export const ApplicantTrackingSystem: React.FC = () => {
                                         whileHover={{ scale: 1.1 }}
                                         whileTap={{ scale: 0.9 }}
                                         onClick={(e) => handleMessage(applicant.user_id, applicant.users.fname, applicant.users.lname, e)}
-                                        className={`${styles.btnMessage} ${styles.btnIconOnly}`}
+                                        className={styles.btnMessage}
                                         title={t('ats.actions.sendMessage')}
                                     >
                                         <MessageSquare size={20} />
+                                        <span className={styles.btnText}>{t('ats.actions.sendMessage')}</span>
                                     </motion.button>
                                     <motion.button
                                         whileHover={{ scale: 1.05 }}

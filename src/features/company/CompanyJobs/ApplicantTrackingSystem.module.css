@@ -104,6 +104,23 @@
     gap: 6px;
 }
 
+.viewProfile {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--orion-blue);
+    margin-top: 8px;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+.applicantCard:hover .viewProfile {
+    opacity: 1;
+    transform: translateX(4px);
+}
+
 /* Actions */
 .actions {
     display: flex;
@@ -159,11 +176,20 @@
     box-shadow: 0 4px 12px rgba(185, 28, 28, 0.2);
 }
 
+.btnText {
+    display: none;
+}
+
 .btnMessage {
     background: rgba(44, 90, 160, 0.08);
     color: var(--orion-blue);
-    padding: 10px 20px;
-    border-radius: 99px;
+    width: 42px !important;
+    height: 42px !important;
+    min-width: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    flex: 0 0 42px !important;
+    border-radius: 50%;
     font-weight: 700;
     font-size: 0.85rem;
     cursor: pointer;
@@ -173,6 +199,7 @@
     justify-content: center;
     gap: 8px;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
 }
 
 .btnMessage:hover {
@@ -184,6 +211,7 @@
 }
 
 .btnIconOnly {
+    /* Kept for potential other uses, but btnMessage now handles its own circle state */
     width: 42px;
     height: 42px;
     padding: 0;
@@ -486,12 +514,42 @@
     .actions {
         width: 100%;
         justify-content: stretch;
+        gap: 8px;
+    }
+
+    .btnMessage {
+        width: 100% !important;
+        height: 50px !important;
+        min-height: 50px !important;
+        border-radius: 12px !important;
+        padding: 0 20px !important;
+        aspect-ratio: auto !important;
+        justify-content: center !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 12px !important;
+    }
+
+    .btnMessage .btnText {
+        display: inline !important;
+        text-align: center !important;
+        margin: 0 !important;
     }
     
     .btn {
         flex: 1;
         justify-content: center;
         padding: 12px; /* Slightly larger targets for mobile */
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .btnMessageExpanded {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 14px !important;
+        border-radius: 12px !important;
     }
 
     .expandedCard {
@@ -525,7 +583,11 @@
     }
 
     .scrollIndicator {
-        bottom: 180px; /* Adjust for stacked actions on mobile */
+        bottom: 300px;
+        background: white;
+        border: 1px solid var(--border);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        z-index: 50;
     }
     
     .expandedActions {
