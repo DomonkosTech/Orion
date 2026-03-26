@@ -7,11 +7,11 @@ import { ArrowLeft, Trash2 } from "lucide-react";
 import styles from "./ShowEmployees.module.css";
 
 // Shared Components
-import { Header } from "../../../components/Header/Header.tsx";
-import Footer from "../../../components/Footer/Footer.tsx";
-import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
-import Button from "../../../components/Button/Button.tsx";
-import ConfirmModal from "../../../components/ConfirmModal/ConfirmModal.tsx";
+import { Header } from "../../../components/layout/Header/Header.tsx";
+import Footer from "../../../components/layout/Footer/Footer.tsx";
+import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
+import Button from "../../../components/ui/Button/Button.tsx";
+import ConfirmModal from "../../../components/ui/ConfirmModal/ConfirmModal.tsx";
 
 interface User {
     email: string;

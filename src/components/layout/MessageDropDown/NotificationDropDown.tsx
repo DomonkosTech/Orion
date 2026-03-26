@@ -3,13 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Settings, User, Info, CheckCircle2, RefreshCcw, BellOff } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import styles from './NotificationDropdown.module.css';
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
 import {
     getCompanyMessages,
     getUserMessages,
     readCompanySystemMessage,
     readUserSystemMessage
-} from "../../Api/systemmessageApi.ts";
+} from "../../../Api/systemmessageApi.ts";
 import { useNavigate } from 'react-router-dom';
 
 interface SystemNotification {

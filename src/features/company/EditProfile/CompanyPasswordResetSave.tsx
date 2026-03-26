@@ -1,6 +1,6 @@
 import React from "react";
 import { saveNewCompanyPassword } from "../../../Api/emailApi.ts";
-import PasswordResetSave from "../../../components/PasswordReset/PasswordResetSave.tsx";
+import PasswordResetSave from "../../auth/PasswordReset/PasswordResetSave.tsx";
 
 const CompanyPasswordResetSave: React.FC = () => {
     return (

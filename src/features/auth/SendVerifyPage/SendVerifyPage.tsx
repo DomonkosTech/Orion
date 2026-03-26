@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import styles from "../VerifyPage/VerifyPage.module.css";
-import InputField from "../InputField/InputField";
-import Button from "../Button/Button.tsx";
-import {Header} from "../Header/Header.tsx";
-import Footer from "../Footer/Footer.tsx";
+import InputField from "../../../components/ui/InputField/InputField";
+import Button from "../../../components/ui/Button/Button.tsx";
+import {Header} from "../../../components/layout/Header/Header.tsx";
+import Footer from "../../../components/layout/Footer/Footer.tsx";
 
 interface SendVerifyPageProps {
     onSend: (email: string) => Promise<void>;

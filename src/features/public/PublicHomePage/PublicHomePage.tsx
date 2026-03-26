@@ -4,10 +4,10 @@ import { useTranslation, Trans } from "react-i18next";
 import styles from "./PublicHomePage.module.css";
 
 // components
-import { Header } from "../../../components/Header/Header.tsx";
-import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
-import Button from "../../../components/Button/Button.tsx";
-import Footer from "../../../components/Footer/Footer.tsx";
+import { Header } from "../../../components/layout/Header/Header.tsx";
+import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
+import Button from "../../../components/ui/Button/Button.tsx";
+import Footer from "../../../components/layout/Footer/Footer.tsx";
 import { getTop3Advertisements, type CompanyAdvertisement } from "../../../Api/advertisementApi.ts";
 
 function PublicHomePage() {

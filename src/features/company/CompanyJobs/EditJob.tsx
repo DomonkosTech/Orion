@@ -16,12 +16,12 @@ import {
 import styles from "./EditJob.module.css";
 
 // Shared Components
-import { Header } from "../../../components/Header/Header.tsx";
-import Button from "../../../components/Button/Button.tsx";
-import Footer from "../../../components/Footer/Footer.tsx";
-import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
-import InputField from "../../../components/InputField/InputField.tsx";
-import TextArea from "../../../components/TextArea/TextArea.tsx";
+import { Header } from "../../../components/layout/Header/Header.tsx";
+import Button from "../../../components/ui/Button/Button.tsx";
+import Footer from "../../../components/layout/Footer/Footer.tsx";
+import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
+import InputField from "../../../components/ui/InputField/InputField.tsx";
+import TextArea from "../../../components/ui/TextArea/TextArea.tsx";
 
 const EditJob: React.FC = () => {
     const { t } = useTranslation('company');

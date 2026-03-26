@@ -4,7 +4,7 @@ import { MessengerProvider } from "./context/MessengerContext";
 import ConversationList from "./components/ConversationList";
 import ChatWindow from "./components/ChatWindow";
 import styles from "./MessengerPage.module.css";
-import { Header } from "../Header/Header";
+import { Header } from "../../../components/layout/Header/Header";
 import { useMessenger } from "./hooks/useMessenger";
 
 const MessengerLayout: React.FC = () => {

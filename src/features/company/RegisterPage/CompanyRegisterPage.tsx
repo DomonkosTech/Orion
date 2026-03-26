@@ -2,12 +2,12 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { registerCompany } from "../../../Api/companyApi.ts";
 import { companyRegisterObject, companyRegisterSchema, passwordConfirmRefinement } from "../../../validation/Validation.ts";
-import RegisterPage from "../../../components/RegisterPage/RegisterPage.tsx";
-import InputField from "../../../components/InputField/InputField";
-import Checkbox from "../../../components/Checkbox/Checkbox";
-import TextArea from "../../../components/TextArea/TextArea";
+import RegisterPage from "../../../components/base/RegisterPage/RegisterPage.tsx";
+import InputField from "../../../components/ui/InputField/InputField";
+import Checkbox from "../../../components/ui/Checkbox/Checkbox";
+import TextArea from "../../../components/ui/TextArea/TextArea";
 import styles from "./CompanyRegisterPage.module.css";
-import registerStyles from "../../../components/RegisterPage/RegisterPage.module.css";
+import registerStyles from "../../../components/base/RegisterPage/RegisterPage.module.css";
 import { BIO_MAX_LENGTH } from "../../../constants/limits.ts";
 
 interface CompanyRegisterFormValues {

@@ -3,8 +3,8 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import styles from "./VerifyPage.module.css";
-import {Header} from "../Header/Header.tsx";
-import Footer from "../Footer/Footer.tsx";
+import {Header} from "../../../components/layout/Header/Header.tsx";
+import Footer from "../../../components/layout/Footer/Footer.tsx";
 
 interface VerifyPageProps {
     onVerify: (token: string) => Promise<void>;

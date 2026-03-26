@@ -4,9 +4,9 @@ import styles from "./PasswordResetRequest.module.css";
 import { useTranslation } from "react-i18next";
 
 // components
-import InputField from "../InputField/InputField";
-import Button from "../Button/Button";
-import { Header } from "../Header/Header";
+import InputField from "../../../components/ui/InputField/InputField";
+import Button from "../../../components/ui/Button/Button";
+import { Header } from "../../../components/layout/Header/Header";
 
 interface PasswordResetRequestProps {
     onSendEmail: (email: string) => Promise<void>;

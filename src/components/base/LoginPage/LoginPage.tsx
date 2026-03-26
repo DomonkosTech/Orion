@@ -5,16 +5,16 @@ import styles from "./LoginPage.module.css";
 import { useTranslation } from "react-i18next";
 
 // Import Shared Components and Services
-import InputField from "../InputField/InputField";
-import Checkbox from "../Checkbox/Checkbox";
-import Button from "../Button/Button.tsx";
-import { Header } from "../Header/Header.tsx";
-import Footer from "../Footer/Footer.tsx";
-import { loginSchema } from "../../validation/Validation.ts";
+import InputField from "../../ui/InputField/InputField";
+import Checkbox from "../../ui/Checkbox/Checkbox";
+import Button from "../../ui/Button/Button.tsx";
+import { Header } from "../../layout/Header/Header.tsx";
+import Footer from "../../layout/Footer/Footer.tsx";
+import { loginSchema, type LoginInput } from "../../../validation/Validation.ts";
 
 interface LoginPageProps {
     title: string;
-    onLogin: (data: any) => Promise<any>;
+    onLogin: (data: LoginInput) => Promise<{ success?: boolean; error?: string } | void>;
     onSuccessRedirect: string;
     onVerifyRedirect: string;
     registerPath: string;

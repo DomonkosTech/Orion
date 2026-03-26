@@ -8,8 +8,8 @@ import ProfileDropdown from "../ProfileDropdown/ProfileDropdown.tsx";
 import LanguageSelector from "../LanguageSelector/LanguageSelector.tsx";
 
 // Server / hooks
-import { useLogout } from "../../Api/authApi.ts";
-import { useAuth } from "../../hooks/useAuth";
+import { useLogout } from "../../../Api/authApi.ts";
+import { useAuth } from "../../../hooks/useAuth";
 
 interface NavItem {
     label: string;

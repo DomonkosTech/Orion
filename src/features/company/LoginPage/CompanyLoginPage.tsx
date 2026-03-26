@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import LoginPage from "../../../components/LoginPage/LoginPage.tsx";
+import LoginPage from "../../../components/base/LoginPage/LoginPage.tsx";
 import { loginCompany } from "../../../Api/companyApi.ts";
 
 const CompanyLoginPage: React.FC = () => {

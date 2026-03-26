@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
-import { z, ZodSchema } from "zod";
+import { z, type ZodSchema, type ZodTypeAny } from "zod";
 import styles from "./RegisterPage.module.css";
 import { useTranslation } from "react-i18next";
 
 // Components
-import Button from "../Button/Button.tsx";
-import {Header} from "../Header/Header.tsx";
-import Footer from "../Footer/Footer.tsx";
+import Button from "../../ui/Button/Button.tsx";
+import {Header} from "../../layout/Header/Header.tsx";
+import Footer from "../../layout/Footer/Footer.tsx";
 
 interface Step<T> {
     label: string;
@@ -23,15 +23,15 @@ interface Step<T> {
 interface RegisterPageProps<T> {
     initialValues: T;
     steps: Step<T>[];
-    stepSchemas: ZodSchema<any>[];
-    finalSchema: ZodSchema<any>;
+    stepSchemas: ZodTypeAny[];
+    finalSchema: ZodSchema<T>;
     onSubmit: (data: T) => Promise<void>;
     redirectPath: string;
     title: string;
     loginPath?: string;
 }
 
-const RegisterPage = <T extends Record<string, any>>({
+const RegisterPage = <T extends Record<string, unknown>>({
     initialValues,
     steps,
     stepSchemas,

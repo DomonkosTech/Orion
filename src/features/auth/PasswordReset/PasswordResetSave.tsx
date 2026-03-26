@@ -3,9 +3,9 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-hot-toast";
 import styles from "./PasswordResetSave.module.css";
-import InputField from "../InputField/InputField";
-import Button from "../Button/Button";
-import { Header } from "../Header/Header";
+import InputField from "../../../components/ui/InputField/InputField";
+import Button from "../../../components/ui/Button/Button";
+import { Header } from "../../../components/layout/Header/Header";
 
 interface PasswordResetSaveProps {
     onSavePassword: (token: string, password: string) => Promise<void>;

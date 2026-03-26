@@ -1,17 +1,17 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import pageStyles from "./CompanyEditProfile.module.css";
-import formStyles from "../../../components/EditProfile/EditProfile.module.css";
+import formStyles from "../../../components/base/EditProfile/EditProfile.module.css";
 import {
     Building2, Phone, FileText
 } from "lucide-react";
 
 // Components
-import { Header } from "../../../components/Header/Header.tsx";
-import Footer from "../../../components/Footer/Footer.tsx";
-import EditProfile, { type EditProfileRenderProps } from "../../../components/EditProfile/EditProfile.tsx";
-import InputField from "../../../components/InputField/InputField.tsx";
-import TextArea from "../../../components/TextArea/TextArea.tsx";
+import { Header } from "../../../components/layout/Header/Header.tsx";
+import Footer from "../../../components/layout/Footer/Footer.tsx";
+import EditProfile, { type EditProfileRenderProps } from "../../../components/base/EditProfile/EditProfile.tsx";
+import InputField from "../../../components/ui/InputField/InputField.tsx";
+import TextArea from "../../../components/ui/TextArea/TextArea.tsx";
 import { BIO_MAX_LENGTH } from "../../../constants/limits.ts";
 
 const CompanyEditProfile: React.FC = () => {

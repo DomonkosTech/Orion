@@ -1,5 +1,5 @@
 import React from "react";
-import VerifyPage from "../../../components/VerifyPage/VerifyPage.tsx";
+import VerifyPage from "../../auth/VerifyPage/VerifyPage.tsx";
 import { verifyUserEmail } from "../../../Api/emailApi.ts";
 
 const UserVerify: React.FC = () => {

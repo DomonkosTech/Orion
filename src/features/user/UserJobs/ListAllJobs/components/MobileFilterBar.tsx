@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Search, MapPin, Briefcase, X, Sparkles, ArrowRight, Wallet, SlidersHorizontal } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import styles from "../ListJobs.module.css";
-import InputField from "../../../../../components/InputField/InputField.tsx";
+import InputField from "../../../../../components/ui/InputField/InputField.tsx";
 
 type Props = {
     searchTerm: string;
