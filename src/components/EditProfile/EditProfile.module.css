@@ -154,6 +154,11 @@ input:focus, textarea:focus {
 
 .iconActive { color: var(--orion-blue); }
 .iconMuted { color: var(--text-muted); }
+.resumeActions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
 
 /* --- NEW: LOADING STATE STYLES --- */
 .loadingState {

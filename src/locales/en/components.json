@@ -49,6 +49,7 @@
     "saveSuccess": "Profile updated successfully!",
     "saveError": "An error occurred while saving!",
     "deleteResumeConfirmation": "Are you sure you want to delete your resume?",
+    "deleteResumeWarning": "This action cannot be undone. Your resume will be removed from your profile.",
     "cancel": "Cancel",
     "delete": "Delete",
     "resumeDeleted": "Resume deleted.",
@@ -65,7 +66,8 @@
     "back": "Back",
     "changePassword": "Change Password",
     "edit": "Edit",
-    "save": "Save"
+    "save": "Save",
+    "resumeViewError": "An error occurred while opening the resume."
   },
   "bannerKicker": {
     "text": "Orion • {{children}}"

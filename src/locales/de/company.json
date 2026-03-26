@@ -264,6 +264,7 @@
       "actions": "Aktionen"
     },
     "deleteConfirm": "Sind Sie sicher, dass Sie diesen Mitarbeiter entfernen möchten?",
+    "deleteWarning": "Diese Aktion kann nicht rückgängig gemacht werden. Die Daten des Mitarbeiters werden aus dem System entfernt.",
     "deleteSuccess": "Erfolgreich entfernt",
     "deleteError": "Löschen fehlgeschlagen",
     "deleteErrorGeneric": "Beim Löschen ist ein Fehler aufgetreten",

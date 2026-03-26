@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from "react-router-dom";
 import { getEmployees, deleteEmployee } from "../../../Api/companyApi.ts";
 import { toast } from "react-hot-toast";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
 import styles from "./ShowEmployees.module.css";
 
 // Shared Components
@@ -11,6 +11,7 @@ import { Header } from "../../../components/Header/Header.tsx";
 import Footer from "../../../components/Footer/Footer.tsx";
 import BannerKicker from "../../../components/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/Button/Button.tsx";
+import ConfirmModal from "../../../components/ConfirmModal/ConfirmModal.tsx";
 
 interface User {
     email: string;
@@ -34,6 +35,8 @@ const ShowEmployees = () => {
     const navigate = useNavigate();
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [employeeToDelete, setEmployeeToDelete] = useState<number | null>(null);
 
     useEffect(() => {
         const fetchEmployees = async () => {
@@ -52,13 +55,18 @@ const ShowEmployees = () => {
         fetchEmployees();
     }, []);
 
-    const handleDelete = async (id: number) => {
-        if (!window.confirm(t('employees.deleteConfirm'))) return;
+    const handleDelete = (id: number) => {
+        setEmployeeToDelete(id);
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        if (!employeeToDelete) return;
 
         try {
-            const response = await deleteEmployee(id);
+            const response = await deleteEmployee(employeeToDelete);
             if (response.success) {
-                setEmployees(employees.filter(employee => employee.id !== id));
+                setEmployees(employees.filter(employee => employee.id !== employeeToDelete));
                 toast.success(t('employees.deleteSuccess'));
             } else {
                 toast.error(t('employees.deleteError'));
@@ -66,6 +74,9 @@ const ShowEmployees = () => {
         } catch (error) {
             console.error(error)
             toast.error(t('employees.deleteErrorGeneric'));
+        } finally {
+            setIsDeleteModalOpen(false);
+            setEmployeeToDelete(null);
         }
     };
 
@@ -133,6 +144,19 @@ const ShowEmployees = () => {
                 </div>
             </div>
         </main>
+        <ConfirmModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => {
+                setIsDeleteModalOpen(false);
+                setEmployeeToDelete(null);
+            }}
+            onConfirm={confirmDelete}
+            title={t('employees.deleteConfirm')}
+            message={t('employees.deleteWarning')}
+            confirmText={t('employees.fire')}
+            type="danger"
+            icon={<Trash2 size={24} />}
+        />
         <Footer />
     </div>
     );

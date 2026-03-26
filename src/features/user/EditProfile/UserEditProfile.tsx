@@ -23,7 +23,7 @@ const UserEditProfile: React.FC = () => {
             <Header />
             <main className={pageStyles.container}>
                 <EditProfile type="user">
-                    {({ user, setUser, documents, setDocuments, editMode, resume, handleDeleteResume, navigate }: EditProfileRenderProps) => {
+                    {({ user, setUser, documents, setDocuments, editMode, resume, handleDeleteResume, handleViewResume, navigate }: EditProfileRenderProps) => {
                         if (!user) return null;
                         return (
                             <>
@@ -155,14 +155,25 @@ const UserEditProfile: React.FC = () => {
                                                 </div>
                                             </div>
                                             {resume ? (
-                                                <Button
-                                                    type="button"
-                                                    onClick={handleDeleteResume}
-                                                    color="danger"
-                                                    variant="secondary"
-                                                >
-                                                    <Trash2 size={16} style={{marginRight: '8px'}} /> {t('profile.documents.resume.delete')}
-                                                </Button>
+                                                <div className={formStyles.resumeActions}>
+                                                    <Button
+                                                        type="button"
+                                                        onClick={handleViewResume}
+                                                        color="orion-blue"
+                                                        variant="primary"
+                                                        style={{ marginRight: '10px' }}
+                                                    >
+                                                        <FileText size={16} style={{marginRight: '8px'}} /> {t('profile.documents.resume.view')}
+                                                    </Button>
+                                                    <Button
+                                                        type="button"
+                                                        onClick={handleDeleteResume}
+                                                        color="danger"
+                                                        variant="secondary"
+                                                    >
+                                                        <Trash2 size={16} />
+                                                    </Button>
+                                                </div>
                                             ) : (
                                                 <Button
                                                     type="button"

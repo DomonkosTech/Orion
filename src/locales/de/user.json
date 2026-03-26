@@ -151,13 +151,14 @@
       "taxNumber": "Steuernummer",
       "personalId": "Personalausweis",
       "addressCard": "Adresskarte",
-      "resume": {
-        "title": "Lebenslauf",
-        "uploaded": "Hochgeladen und aktiv",
-        "notUploaded": "Noch nicht hochgeladen",
-        "delete": "Löschen",
-        "upload": "Hochladen"
-      }
+        "resume": {
+          "title": "Lebenslauf",
+          "uploaded": "Hochgeladen und aktiv",
+          "notUploaded": "Noch nicht hochgeladen",
+          "delete": "Löschen",
+          "upload": "Hochladen",
+          "view": "Ansehen"
+        }
     }
   },
   "register": {
@@ -201,18 +202,30 @@
     "fileHint": "Nur PDF (Max. 5MB)",
     "info": {
       "stored": "Die hochgeladene Datei wird als Teil Ihres Profils gespeichert.",
-      "update": "Sie können sie jederzeit aktualisieren oder löschen."
+      "update": "Sie können sie jederzeit aktualisieren oder löschen.",
+      "storedShort": "Ihr Lebenslauf ist als Teil Ihres Profils sicher.",
+      "deleteWarning": "Diese Aktion kann nicht rückgängig gemacht werden. Ihr Lebenslauf wird aus Ihrem Profil entfernt."
+    },
+    "status": {
+      "active": "Aktiv"
     },
     "buttons": {
       "submit": "Lebenslauf speichern",
       "submitting": "Wird hochgeladen...",
-      "cancel": "Abbrechen"
+      "cancel": "Abbrechen",
+      "viewCurrent": "Lebenslauf ansehen",
+      "replace": "Ersetzen",
+      "delete": "Löschen"
     },
+    "existingResume": "Ihr aktueller Lebenslauf",
     "alerts": {
       "onlyPdf": "Es können nur PDF-Dateien hochgeladen werden!",
       "sizeLimit": "Die Dateigröße darf 5 MB nicht überschreiten!",
       "success": "Lebenslauf erfolgreich hochgeladen!",
-      "unknownError": "Unbekannter Fehler"
+      "unknownError": "Unbekannter Fehler",
+      "confirmDelete": "Sind Sie sicher, dass Sie Ihren Lebenslauf löschen möchten?",
+      "deleteSuccess": "Lebenslauf erfolgreich gelöscht!",
+      "deleteError": "Beim Löschen ist ein Fehler aufgetreten."
     }
   },
   "jobApplications": {

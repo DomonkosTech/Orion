@@ -12,7 +12,7 @@ import {
 } from "../../Api/systemmessageApi.ts";
 import { useNavigate } from 'react-router-dom';
 
-interface Notification {
+interface SystemNotification {
     id: number;
     title: string;
     description: string;
@@ -68,8 +68,8 @@ const formatRelativeTime = (dateString?: string, language: string = 'hu') => {
     if (diffSeconds < 60) return `${diffSeconds}s`;
     if (diffMinutes < 60) return `${diffMinutes}m`;
     if (diffHours < 24) return `${diffHours}h`;
-    if (diffDays < 31) return `${diffDays}d`;
-    return date.toLocaleDateString(language, { year: '2-digit', month: 'short', day: 'numeric' });
+    if (diffDays < 7) return `${diffDays}d`;
+    return date.toLocaleDateString(language, { month: 'short', day: 'numeric' });
 };
 
 const NotificationDropdown: React.FC = () => {
@@ -79,7 +79,7 @@ const NotificationDropdown: React.FC = () => {
     const [isAnimating, setIsAnimating] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { userType, loggedIn } = useAuth();
-    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const [notifications, setNotifications] = useState<SystemNotification[]>([]);
     const navigate = useNavigate();
 
     // Close dropdown when clicking outside
@@ -109,7 +109,15 @@ const NotificationDropdown: React.FC = () => {
             const messages = response?.data;
 
             if (Array.isArray(messages)) {
-                const mappedNotifications: Notification[] = messages.map((msg: any) => ({
+                const mappedNotifications: SystemNotification[] = messages.map((msg: { 
+                    id: number; 
+                    subject?: string; 
+                    title?: string; 
+                    message?: string; 
+                    description?: string; 
+                    content?: string; 
+                    created_at?: string; 
+                }) => ({
                     id: msg.id,
                     title: msg.subject || msg.title || t('notificationDropdown.systemMessage'),
                     description: msg.message || msg.description || msg.content || '',

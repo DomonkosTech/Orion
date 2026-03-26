@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     Edit3, Save, XCircle,
-    ArrowLeft
+    ArrowLeft, Trash2
 } from "lucide-react";
 import {
     getUserProfile,
     updateUserProfile,
     deleteResume,
+    getUserResume,
     type UserProfileData,
     type Documents,
 } from "../../Api/userApi.ts";
@@ -24,6 +25,7 @@ import { useTranslation } from "react-i18next";
 // Components
 import Button from "../Button/Button.tsx";
 import BannerKicker from "../BannerKicker/BannerKicker.tsx";
+import ConfirmModal from "../ConfirmModal/ConfirmModal.tsx";
 
 export interface EditProfileRenderProps {
     user: UserProfileData | null;
@@ -35,6 +37,7 @@ export interface EditProfileRenderProps {
     editMode: boolean;
     resume: boolean;
     handleDeleteResume: () => void;
+    handleViewResume: () => void;
     navigate: (path: string) => void;
 }
 
@@ -59,6 +62,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
     const [loading, setLoading] = useState(true);
     const [editMode, setEditMode] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -149,44 +153,34 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
     };
 
     const handleDeleteResume = () => {
-        toast((toastInstance) => (
-            <div className={styles.toastConfirm}>
-                <p>{t('editProfile.deleteResumeConfirmation')}</p>
-                <div className={styles.toastActions}>
-                    <Button
-                        variant="secondary"
-                        color="gray"
-                        onClick={() => toast.dismiss(toastInstance.id)}
-                        style={{ padding: '4px 12px', fontSize: '0.9rem' }}
-                    >
-                        {t('editProfile.cancel')}
-                    </Button>
-                    <Button
-                        variant="primary"
-                        color="danger"
-                        onClick={async () => {
-                            toast.dismiss(toastInstance.id);
-                            try {
-                                const data = await deleteResume();
-                                if (data.success) {
-                                    setResume(false);
-                                    toast.success(t('editProfile.resumeDeleted'));
-                                }
-                            } catch (err) {
-                                console.error(err);
-                                toast.error(t('editProfile.deleteError'));
-                            }
-                        }}
-                        style={{ padding: '4px 12px', fontSize: '0.9rem' }}
-                    >
-                        {t('editProfile.delete')}
-                    </Button>
-                </div>
-            </div>
-        ), {
-            duration: 5000,
-            position: 'top-center',
-        });
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDelete = async () => {
+        try {
+            const data = await deleteResume();
+            if (data.success) {
+                setResume(false);
+                toast.success(t('editProfile.resumeDeleted'));
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error(t('editProfile.deleteError'));
+        }
+    };
+    
+    const handleViewResume = async () => {
+        try {
+            const data = await getUserResume();
+            if (data.success && data.url) {
+                window.open(data.url, "_blank", "noopener,noreferrer");
+            } else {
+                toast.error(t('editProfile.resumeViewError'));
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error(t('editProfile.resumeViewError'));
+        }
     };
 
     const renderProps: EditProfileRenderProps = {
@@ -199,6 +193,7 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
         editMode,
         resume,
         handleDeleteResume,
+        handleViewResume,
         navigate,
     };
 
@@ -275,6 +270,17 @@ const EditProfile: React.FC<EditProfileProps> = ({ type, children }) => {
                     <form className={styles.formGrid}>
                         {children(renderProps)}
                     </form>
+                    <ConfirmModal
+                        isOpen={isDeleteModalOpen}
+                        onClose={() => setIsDeleteModalOpen(false)}
+                        onConfirm={confirmDelete}
+                        title={t('editProfile.deleteResumeConfirmation')}
+                        message={t('editProfile.deleteResumeWarning', { defaultValue: 'This action cannot be undone.' })}
+                        confirmText={t('editProfile.delete')}
+                        cancelText={t('editProfile.cancel')}
+                        type="danger"
+                        icon={<Trash2 size={24} />}
+                    />
                 </>
             )}
         </>
