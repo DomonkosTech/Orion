@@ -36,13 +36,13 @@ app.use(cors({
 // --- Routes Configuration ---
 
 // Auth Routes (Login, Register, Logout, Check Auth)
-app.use("/Api", authRoutes);
+app.use("/Api/auth", authRoutes);
 
 // User Routes (Profile, Resume)
-app.use("/Api", userRoutes);
+app.use("/Api/users", userRoutes);
 
 // Company Routes (Profile)
-app.use("/Api", companyRoutes);
+app.use("/Api/companies", companyRoutes);
 
 // Advertisement Routes (Create, Read, Update, Delete)
 app.use("/Api", advertisementRoutes);
@@ -54,7 +54,7 @@ app.use("/Api", applicantRoutes);
 app.use("/Api", systemmessageRoute);
 
 // Email Routes (Send Email)
-app.use("/Api/email", emailRoute);
+app.use("/Api/auth", emailRoute);
 
 // Message Routes (Send Message, Read Messages, Delete Messages)
 app.use("/Api/chat", messageRoute);

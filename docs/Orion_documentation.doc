@@ -17,9 +17,9 @@
         code { font-family: 'Consolas', 'Courier New', monospace; }
         ul { margin-bottom: 20px; }
         li { margin-bottom: 8px; }
-        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; font-size: 0.9em; }
-        th { background: #1a5f7a; color: white; padding: 10px 12px; text-align: left; }
-        td { padding: 8px 12px; border-bottom: 1px solid #ddd; }
+        th { background: #1a5f7a; color: white; padding: 0px 12px; text-align: left; }
+        td { padding: 0px 12px; border-bottom: 1px solid #ddd; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; font-size: 0.9em; line-height: 1.4; }
         tr:nth-child(even) { background: #f0f7f7; }
         td code { background: #e8f4f8; padding: 1px 5px; border-radius: 4px; font-size: 0.9em; }
         .badge-pk { background: #c0392b; color: white; padding: 1px 6px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
@@ -37,30 +37,47 @@
 </head>
 <body>
     <div class="container">
-        <h1>Orion – Adatbázis Dokumentáció</h1>
+        <h1>Orion – Projekt Dokumentáció</h1>
 
-        <p><em>Ez a dokumentum az Orion rendszer adatbázis-rétegének teljes és hivatalos dokumentációja. Tartalmazza az összes táblát, mezőt, függvényt, triggert és azok kapcsolatrendszerét.</em></p>
+        <p><em>Ez a dokumentum az Orion rendszer teljes és hivatalos dokumentációja. Tartalmazza a projekt bemutatását, az üzleti logikát, valamint az adatbázis-réteg részletes felépítését (táblák, függvények, triggerek).</em></p>
 
         <div class="toc">
             <strong>Tartalomjegyzék</strong>
             <ol>
-                <li><a href="#bevezetes">Bevezetés és Technológia</a></li>
-                <li><a href="#tablak">Táblák részletes leírása</a>
+                <li><a href="#bevezetes">1. Bevezetés</a>
                     <ol>
-                        <li><a href="#users-modul">Felhasználók (Users) Modul</a></li>
-                        <li><a href="#companies-modul">Cégek (Companies) Modul</a></li>
-                        <li><a href="#ads-modul">Álláshirdetések és Munkaviszony</a></li>
-                        <li><a href="#communication-modul">Kommunikáció és Értesítések</a></li>
+                        <li><a href="#projekt-celja">1.1. Projekt célja</a></li>
+                        <li><a href="#problema-bemutatasa">1.2. Probléma bemutatása</a></li>
                     </ol>
                 </li>
-                <li><a href="#kapcsolatok">Táblakapcsolatok (ER összefoglaló)</a></li>
-                <li><a href="#fuggvenyek">Adatbázis Függvények (RPC)</a></li>
-                <li><a href="#triggerek">Triggerek</a></li>
+                <li><a href="#technologia">2. Technológiai Háttér (Supabase / PostgreSQL)</a></li>
+                <li><a href="#tablak">3. Táblák részletes leírása</a>
+                    <ol>
+                        <li><a href="#users-modul">3.1. Felhasználók (Users) Modul</a></li>
+                        <li><a href="#companies-modul">3.2. Cégek (Companies) Modul</a></li>
+                        <li><a href="#ads-modul">3.3. Álláshirdetések és Munkaviszony</a></li>
+                        <li><a href="#communication-modul">3.4. Kommunikáció és Értesítések</a></li>
+                    </ol>
+                </li>
+                <li><a href="#kapcsolatok">4. Táblakapcsolatok (ER összefoglaló)</a></li>
+                <li><a href="#fuggvenyek">5. Adatbázis Függvények (RPC)</a></li>
+                <li><a href="#triggerek">6. Triggerek</a></li>
             </ol>
         </div>
 
         <!-- ===== 1. BEVEZETÉS ===== -->
-        <h2 id="bevezetes">1. Bevezetés és Technológia</h2>
+        <h2 id="bevezetes">1. Bevezetés</h2>
+        
+        <h3 id="projekt-celja">1.1. Projekt célja</h3>
+        <p>Az Orion egy modern diákmunka megosztó és közvetítő platform – hasonlóan a hazai piacon ismert profession.hu-hoz, azonban kifejezetten a diákmunkára és a diákok számára optimalizált változatban.</p>
+        <p>A projekt legfőbb küldetése, hogy egy transzparens, gyors és közvetlen kapcsolatot biztosítson a munkát kereső diákok és az őket foglalkoztatni kívánó cégek között, kihagyva a hagyományos, lassú és gyakran a diákok számára anyagilag hátrányos harmadik feleket (például közvetítő diákszövetkezeteket).</p>
+
+        <h3 id="problema-bemutatasa">1.2. Probléma bemutatása és az Orion megoldása</h3>
+        <p>A jelenlegi diákmunka-piacon a diákok legtöbbször diákszövetkezeteken keresztül helyezkednek el és dolgoznak. Ez a rendszer gyakran kényelmetlen, adminisztrációval és bürokráciával terhelt a bonyolult szerződéskötési folyamatok miatt. Továbbá a közvetítők (szövetkezetek) beiktatása miatt a diákok sok esetben jelentősen alacsonyabb órabért kapnak kézhez ahhoz képest, amit a cégek ténylegesen kifizetnek értük, de sokszor inkorrekt elszámolások és rejtett levonások – népiesen szólva "átverések" – is előfordulnak.</p>
+        <p><strong>A megoldás:</strong> Az Orion rendszerében a diákok és a munkáltató cégek <em>közvetlenül</em> egymással szerződnek és tartják a kapcsolatot. Nem az Orion (mint platform) szerződik velük közvetítőként, hanem mi csupán a piacteret és a biztonságos kommunikációs, illetve adminisztrációs szoftvert biztosítjuk számukra. Ezzel kiküszöböljük a közvetítő hálózatok és szövetkezetek minden hátrányát: jelentősen lecsökken a szerződéskötési, adminisztrációs teher, és ami a legfontosabb, a diákok nem lesznek anyagilag megkárosítva. A cégek pedig egy modern önkiszolgáló felületen oszthatják meg az álláshirdetéseiket, közvetlenül érhetik el a jelentkező diákokat, teljesen maguk dönthetnek a felvételükről, a feladatok kiosztásáról, vagy adott esetben a munkaviszonyuk megszüntetéséről is.</p>
+
+        <!-- ===== 2. TECHNOLÓGIA ===== -->
+        <h2 id="technologia">2. Technológiai Háttér</h2>
 
         <h3>Miért a Supabase / PostgreSQL?</h3>
         <p>A projekt adatbázis-motorjaként és backend szolgáltatásaként a <strong>Supabase</strong> platformot használjuk, amely egy nyílt forráskódú PostgreSQL-alapú megoldás. Főbb indokok:</p>
@@ -76,12 +93,12 @@
             <strong>Kiterjesztés:</strong> <code>CREATE EXTENSION IF NOT EXISTS pgcrypto;</code> — a titkosított dokumentumok tárolásához szükséges kiterjesztés. Minden Supabase projekten aktiválni kell.
         </div>
 
-        <!-- ===== 2. TÁBLÁK ===== -->
-        <h2 id="tablak">2. Táblák részletes leírása</h2>
+        <!-- ===== 3. TÁBLÁK ===== -->
+        <h2 id="tablak">3. Táblák részletes leírása</h2>
         <p>Az adatbázis négy fő logikai modulra bontható: <strong>Felhasználók</strong>, <strong>Cégek</strong>, <strong>Álláshirdetések / Munkaviszony</strong> és <strong>Kommunikáció / Üzenetek</strong>.</p>
 
-        <!-- ===== 2.1 USERS ===== -->
-        <h3 id="users-modul">2.1 Felhasználók (Users) Modul</h3>
+        <!-- ===== 3.1 USERS ===== -->
+        <h3 id="users-modul">3.1 Felhasználók (Users) Modul</h3>
 
         <h4><code>users</code></h4>
         <p>A munkavállalók (álláskeresők) összes alapadatát tároló fő tábla.</p>
@@ -193,8 +210,8 @@
     PRIMARY KEY (user_id, advertisement_id)
 );</code></pre>
 
-        <!-- ===== 2.2 COMPANIES ===== -->
-        <h3 id="companies-modul">2.2 Cégek (Companies) Modul</h3>
+        <!-- ===== 3.2 COMPANIES ===== -->
+        <h3 id="companies-modul">3.2 Cégek (Companies) Modul</h3>
 
         <h4><code>companies</code></h4>
         <p>A munkáltatóként regisztráló cégek összes alapadatát tároló fő tábla.</p>
@@ -257,8 +274,8 @@
     expires_at TIMESTAMP NOT NULL
 );</code></pre>
 
-        <!-- ===== 2.3 ADS & JOBS ===== -->
-        <h3 id="ads-modul">2.3 Álláshirdetések és Munkaviszony (Ads &amp; Jobs)</h3>
+        <!-- ===== 3.3 ADS & JOBS ===== -->
+        <h3 id="ads-modul">3.3 Álláshirdetések és Munkaviszony (Ads &amp; Jobs)</h3>
 
         <h4><code>advertisement</code></h4>
         <p>A cégek által meghirdetett pozíciók adatai. A <code>click_count</code> mező az <code>increment_click_count()</code> RPC függvényen át kerül növelésre, valahányszor egy felhasználó megtekinti a hirdetést.</p>
@@ -328,8 +345,8 @@
     hire_date TIMESTAMP NOT NULL DEFAULT NOW()
 );</code></pre>
 
-        <!-- ===== 2.4 COMMUNICATION ===== -->
-        <h3 id="communication-modul">2.4 Kommunikáció és Értesítések</h3>
+        <!-- ===== 3.4 COMMUNICATION ===== -->
+        <h3 id="communication-modul">3.4 Kommunikáció és Értesítések</h3>
 
         <h4><code>messages</code></h4>
         <p>Kétoldalú, valós idejű privát chat üzenetek tárolása Felhasználó–Cég viszonylatban. A <code>sender_type</code> CHECK constraint garantálja, hogy csak érvényes küldőtípus kerülhessen az adatbázisba.</p>
@@ -393,8 +410,8 @@ CREATE TABLE system_message_reads (
     FOREIGN KEY (message_id) REFERENCES system_messages(id)
 );</code></pre>
 
-        <!-- ===== 3. KAPCSOLATOK ===== -->
-        <h2 id="kapcsolatok">3. Táblakapcsolatok (ER összefoglaló)</h2>
+        <!-- ===== 4. KAPCSOLATOK ===== -->
+        <h2 id="kapcsolatok">4. Táblakapcsolatok (ER összefoglaló)</h2>
         <p>Az alábbi táblázat az összes idegen kulcs kapcsolatot összefoglalja. Minden <code>ON DELETE CASCADE</code> kapcsolat garantálja, hogy egy szülő entitás törlése esetén az összes hozzá tartozó gyermek sor automatikusan törlődik, megőrizve az adatbázis konzisztenciáját.</p>
 
         <table>
@@ -417,8 +434,8 @@ CREATE TABLE system_message_reads (
             <tr><td><code>system_message_reads</code></td><td><code>message_id</code></td><td><code>system_messages</code></td><td><code>id</code></td><td>–</td></tr>
         </table>
 
-        <!-- ===== 4. FÜGGVÉNYEK ===== -->
-        <h2 id="fuggvenyek">4. Adatbázis Függvények (RPC)</h2>
+        <!-- ===== 5. FÜGGVÉNYEK ===== -->
+        <h2 id="fuggvenyek">5. Adatbázis Függvények (RPC)</h2>
         <p>Az üzleti logika egy része közvetlenül PL/pgSQL tárolt eljárásokban él. Ezeket Supabase RPC hívásokon keresztül lehet meghívni a kliensekből. Minden kritikus függvény <code>SECURITY DEFINER</code> módban fut a megfelelő jogosultság-kezelés érdekében.</p>
 
         <h3>Regisztrációs függvények</h3>
@@ -523,8 +540,8 @@ SELECT * FROM get_decrypted_documents(42, 'titkos_kulcs');</code></pre>
         <h4><code>get_company_chat_partners(p_company_id int) → TABLE</code></h4>
         <p>Visszaadja a céggel chat-kapcsolatban álló összes felhasználó listáját, utolsó üzenet időpontja szerint csökkenő sorrendben. Eredmény oszlopai: <code>user_id</code>, <code>user_lname</code>, <code>user_fname</code>, <code>last_message_at</code>.</p>
 
-        <!-- ===== 5. TRIGGEREK ===== -->
-        <h2 id="triggerek">5. Triggerek</h2>
+        <!-- ===== 6. TRIGGEREK ===== -->
+        <h2 id="triggerek">6. Triggerek</h2>
 
         <h4><code>trg_create_user_statistics</code></h4>
         <p>Automatikusan lefut minden új felhasználó regisztrációja után (<code>AFTER INSERT ON users</code>). Létrehozza a hozzá tartozó <code>user_statistics</code> sort alapértékekkel (<code>profile_views = 0</code>, <code>resume_views = 0</code>), így biztosítva, hogy minden felhasználóhoz mindig létezik statisztika sor.</p>

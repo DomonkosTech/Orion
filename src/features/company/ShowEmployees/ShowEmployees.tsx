@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from "react-router-dom";
-import { getEmployees, deleteEmployee } from "../../../Api/advertisementApi.ts";
+import { getEmployees, deleteEmployee } from "../../../Api/companyApi.ts";
 import { toast } from "react-hot-toast";
 import { ArrowLeft } from "lucide-react";
 import styles from "./ShowEmployees.module.css";

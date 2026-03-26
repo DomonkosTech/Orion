@@ -7,7 +7,7 @@ import {
 const router = express.Router();
 
 
-router.post("/user/verification", async (req, res) => {
+router.post("/user/verify-email", async (req, res) => {
     try {
         const { email } = req.body;
 
@@ -27,7 +27,7 @@ router.post("/user/verification", async (req, res) => {
 });
 
 
-router.post("/company/verification", async (req, res) => {
+router.post("/company/verify-email", async (req, res) => {
     try {
         const { email } = req.body;
 
@@ -46,7 +46,7 @@ router.post("/company/verification", async (req, res) => {
     }
 });
 
-router.post("/user/password/reset", async (req, res) => {
+router.post("/user/forgot-password", async (req, res) => {
     try {
         const { email } = req.body;
         if (!email) {
@@ -65,7 +65,7 @@ router.post("/user/password/reset", async (req, res) => {
 })
 
 
-router.post("/company/password/reset", async (req, res) => {
+router.post("/company/forgot-password", async (req, res) => {
     try {
         const { email } = req.body;
         if (!email) {
@@ -83,7 +83,7 @@ router.post("/company/password/reset", async (req, res) => {
     }
 })
 
-router.patch("/user/password/reset", async (req, res) =>{
+router.patch("/user/reset-password", async (req, res) =>{
     try {
 
         const {token, password} = req.body;
@@ -102,7 +102,7 @@ router.patch("/user/password/reset", async (req, res) =>{
     }
 })
 
-router.patch("/company/password/reset", async (req, res) =>{
+router.patch("/company/reset-password", async (req, res) =>{
     try {
 
         const {token, password} = req.body;
@@ -122,10 +122,7 @@ router.patch("/company/password/reset", async (req, res) =>{
 })
 
 
-
-
-
-router.patch("/user/verification", async (req, res) => {
+router.patch("/user/verify-email", async (req, res) => {
     try {
         const {token} = req.body;
         if (!token) {
@@ -143,7 +140,7 @@ router.patch("/user/verification", async (req, res) => {
 })
 
 
-router.patch("/company/verification", async (req, res) => {
+router.patch("/company/verify-email", async (req, res) => {
     try {
         const {token} = req.body;
         if (!token) {

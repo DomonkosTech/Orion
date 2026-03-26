@@ -16,9 +16,6 @@ export interface CompanyAdvertisement {
     is_active: boolean;
 }
 
-
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//IDE!! kellene még a company name hogy ne legyen csúnya a kód!
 export interface Job {
     id: number;
     title: string;
@@ -215,22 +212,6 @@ export const updateAdvertisementStatus = async (id: string, status: boolean)=> {
     });
     return handleResponse(response);
 };
-
-export const getEmployees = async () => {
-    const response = await fetch(`${API_BASE_URL}/employees`, {
-        method: "GET",
-        credentials: "include",
-    });
-    return handleResponse(response);
-}
-
-export const deleteEmployee = async (id: number) => {
-    const response = await fetch(`${API_BASE_URL}/employees/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-    });
-    return handleResponse(response);
-}
 
 export const OrionAI = async (userinput: string, wage: number = 2000) => {
     const response = await fetch(`${API_BASE_URL}/OrionAI`, {
