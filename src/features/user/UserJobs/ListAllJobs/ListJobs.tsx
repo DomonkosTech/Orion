@@ -9,7 +9,9 @@ import FilterBar from "./components/FilterBar.tsx";
 import JobCard from "./components/JobCard.tsx";
 import SkeletonCard from "./components/SkeletonCard.tsx";
 import EmptyState from "./components/EmptyState.tsx";
-import { getAdvertisements, type Job, OrionAI as OrionAIApi, getFavorites } from "../../../../Api/advertisementApi.ts";
+import { getAdvertisements, type Job, OrionAI as OrionAIApi } from "../../../../Api/advertisementApi.ts";
+import {getFavorites} from "../../../../Api/userApi.ts"
+
 import BannerKicker from "../../../../components/layout/BannerKicker/BannerKicker.tsx";
 import Footer from "../../../../components/layout/Footer/Footer.tsx";
 import Button from "../../../../components/ui/Button/Button.tsx";

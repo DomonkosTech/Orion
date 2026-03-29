@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import styles from "../ListJobs.module.css";
 import Button from "../../../../../components/ui/Button/Button.tsx";
-import { addFavorite, removeFavorite } from "../../../../../Api/advertisementApi.ts";
+import { addFavorite, removeFavorite } from "../../../../../Api/userApi.ts";
 
 type Job = {
     id: number;

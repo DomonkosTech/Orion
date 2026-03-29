@@ -6,7 +6,8 @@ import { Trash2, MapPin, Briefcase, Search, ArrowLeft } from "lucide-react";
 
 // Components
 import { Header } from "../../../../components/layout/Header/Header.tsx";
-import { getFavorites, getAdvertisementById, type Job, removeFavorite } from "../../../../Api/advertisementApi.ts";
+import { getAdvertisementById, type Job, } from "../../../../Api/advertisementApi.ts";
+import {removeFavorite, getFavorites} from "../../../../Api/userApi.ts"
 import Footer from "../../../../components/layout/Footer/Footer.tsx";
 import Button from "../../../../components/ui/Button/Button.tsx";
 

@@ -247,3 +247,48 @@ export const getResumeUrl = async (userId: number) => {
     return { url: data.signedUrl };
 
 }
+
+export const addFavorite = async (userId: number, advertisementId: number) => {
+    const { error } = await supabase
+        .from("favorites")
+        .insert({ user_id: userId, advertisement_id: advertisementId });
+
+    if (error) throw error;
+}
+
+export const getFavorites = async (userId: number, includeAdvertisement: boolean) => {
+    let favorites;
+
+    if (includeAdvertisement) {
+        const { data, error } = await supabase
+            .from("favorites")
+            .select(
+                "advertisement(id,title,position,location,hourly_wage,tasks,requirements,job_description)"
+            )
+            .eq("user_id", userId);
+
+        if (error) throw error;
+        favorites = data;
+    } else {
+        const { data, error } = await supabase
+            .from("favorites")
+            .select("advertisement_id")
+            .eq("user_id", userId);
+
+        if (error) throw error;
+        favorites = data;
+    }
+
+    return favorites;
+};
+
+
+export const removeFavorite = async (userId: number, advertisementId: number) => {
+    const { error } = await supabase
+        .from("favorites")
+        .delete()
+        .eq("user_id", userId)
+        .eq("advertisement_id", advertisementId);
+
+    if (error) throw error
+};
