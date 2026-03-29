@@ -57,7 +57,7 @@ router.get("/companies/me/advertisements", verifyToken, verifyCompany, async (re
 // Merges old /advertisements/top3 endpoint - must be before /:id
 router.get("/advertisements/top3", async (_req, res) => {
     try {
-        const advertisements = await advertisementService.gettopAdvertisements();
+        const advertisements = await advertisementService.getTopAdvertisements();
 
         res.json({
             success: true,
@@ -83,7 +83,7 @@ router.get("/advertisements/search", async (req, res) => {
         const page = Number(req.query.page ?? "1");
         const limit = Number(req.query.limit ?? "10");
 
-        const { advertisements } = await advertisementService.getAllAdvertisements2(q, location, position, hourly_wage, page, limit);
+        const { advertisements } = await advertisementService.searchAdvertisements(q, location, position, hourly_wage, page, limit);
         res.json({
             success: true,
             advertisements,

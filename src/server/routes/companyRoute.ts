@@ -1,7 +1,7 @@
 import express from "express";
 import { type AuthRequest, verifyToken } from "../middleware/auth.ts";
 import * as companyService from "../service/companyService.ts";
-import {getCompanystat} from "../service/companyService.ts";
+import {getCompanyStats} from "../service/companyService.ts";
 
 const router = express.Router();
 
@@ -66,7 +66,7 @@ router.get("/me/stats",verifyToken, async (req: AuthRequest, res) => {
             return res.status(401).json({ error: "Unauthorized" });
         }
 
-        const data = await getCompanystat(companyId)
+        const data = await getCompanyStats(companyId)
         return res.json({success: true, data})
     }
     catch (err) {

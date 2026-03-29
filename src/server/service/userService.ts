@@ -206,7 +206,7 @@ export const incrementResumeViews = async (userId: number) => {
 }
 
 
-export const getuserdashboarddata = async (userId: number) => {
+export const getUserDashboardData = async (userId: number) => {
     const { data, error } = await supabase
         .rpc("get_user_dashboard_stats", { p_user_id: userId });
     if (error) throw error;

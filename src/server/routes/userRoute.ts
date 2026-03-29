@@ -148,7 +148,7 @@ router.get("/me/stats",verifyToken, verifyUser, async (req: AuthRequest, res) =>
         if (!userId) {
             return res.status(400).json({ error: "Invalid user id" });
         }
-        const stats = await userService.getuserdashboarddata(userId);
+        const stats = await userService.getUserDashboardData(userId);
 
         return res.json({
             success: true,

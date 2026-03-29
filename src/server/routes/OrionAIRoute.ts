@@ -1,5 +1,5 @@
 import express from "express";
-import { getSelectedJobs } from "../service/advertisementService.ts"
+import { getAdvertisementsByIds } from "../service/advertisementService.ts"
 
 const router = express.Router();
 
@@ -31,7 +31,7 @@ router.post("/OrionAI", async (req, res) => {
         if (result.length === 0){
             return res.json({ success: true, data: [] });
         }
-        const advertisements = await getSelectedJobs(result)
+        const advertisements = await getAdvertisementsByIds(result)
         console.log(advertisements);
         
         return res.json({ success: true, data: advertisements });

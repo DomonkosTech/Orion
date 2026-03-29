@@ -2,7 +2,7 @@ import { supabase } from "../../lib/supabaseClient.ts";
 
 
 
-export const getAllUserChatPartners = async (userId: number) => {
+export const getUserChatPartners = async (userId: number) => {
     const { data: partners, error } = await supabase
         .rpc('get_user_chat_partners', { p_user_id: userId });
 
@@ -11,7 +11,7 @@ export const getAllUserChatPartners = async (userId: number) => {
     return partners
 }
 
-export const getAllCompanyChatPartners = async (companyId: number) => {
+export const getCompanyChatPartners = async (companyId: number) => {
     const { data: partners, error } = await supabase
         .rpc('get_company_chat_partners', { p_company_id: companyId });
 

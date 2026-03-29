@@ -27,7 +27,7 @@ export const sendEmail = async (to: string, subject: string, text: string) => {
 };
 
 
-export const sendUserEmail = async (email: string) => {
+export const sendUserActivationEmail = async (email: string) => {
     const {data, error} = await supabase
         .from('users')
         .select('id')
@@ -57,7 +57,7 @@ export const sendUserEmail = async (email: string) => {
     );
 }
 
-export const sendCompanyEmail = async (email: string) => {
+export const sendCompanyActivationEmail = async (email: string) => {
     const {data, error} = await supabase
         .from('companies')
         .select('id')
@@ -96,7 +96,7 @@ interface ActivationPayload {
     type: string;
 }
 
-export const activateUserEmail = async (token: string) => {
+export const activateUserAccount = async (token: string) => {
     const payload = jwt.verify(
         token,
         process.env.JWT_SECRET!
@@ -122,7 +122,7 @@ export const activateUserEmail = async (token: string) => {
     if(updateError) throw updateError;
 }
 
-export const activateCompanyEmail = async (token: string) => {
+export const activateCompanyAccount = async (token: string) => {
     const payload = jwt.verify(
         token,
         process.env.JWT_SECRET!
@@ -148,7 +148,7 @@ export const activateCompanyEmail = async (token: string) => {
     if(updateError) throw updateError;
 }
 
-export const sendResetUserPassword = async (email: string) => {
+export const sendUserPasswordResetEmail = async (email: string) => {
     const {data, error} = await supabase
         .from('users')
         .select('id')
@@ -178,7 +178,7 @@ export const sendResetUserPassword = async (email: string) => {
 }
 
 
-export const sendResetCompanyPassword = async (email: string) => {
+export const sendCompanyPasswordResetEmail = async (email: string) => {
     const {data, error} = await supabase
         .from('companies')
         .select('id')

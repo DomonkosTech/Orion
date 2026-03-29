@@ -1,6 +1,6 @@
 import express from "express";
 import { type AuthRequest, verifyCompany, verifyToken, verifyUser } from "../middleware/auth.ts";
-import { getcompanysystemmessages, getusersystemmessages, readsystemmessage } from "../service/systemmessageService.ts";
+import { getCompanySystemMessages, getUserSystemMessages, markSystemMessageAsRead } from "../service/systemmessageService.ts";
 
 const router = express.Router();
 
@@ -13,7 +13,7 @@ router.get("/", verifyToken, verifyUser, async (req: AuthRequest, res) => {
         if (!userId) {
             return res.status(403).json({ error: "Access denied" });
         }
-        const data = await getusersystemmessages(userId);
+        const data = await getUserSystemMessages(userId);
         res.json({ success: true, data: data });
     } catch (error) {
         console.error(error);
@@ -28,7 +28,7 @@ router.get("/company", verifyToken, verifyCompany, async (req: AuthRequest, res)
         if (!companyId) {
             return res.status(403).json({ error: "Company access denied" });
         }
-        const data = await getcompanysystemmessages(companyId);
+        const data = await getCompanySystemMessages(companyId);
         res.json({ success: true, data: data });
     } catch (error) {
         console.error(error);
@@ -48,7 +48,7 @@ router.patch("/:id/read", verifyToken, verifyUser, async (req: AuthRequest, res)
             return res.status(400).json({ error: "Missing required fields" });
         }
 
-        await readsystemmessage(targetId, messageId, targetType);
+        await markSystemMessageAsRead(targetId, messageId, targetType);
         res.json({ success: true });
     } catch (error) {
         console.error(error);
@@ -66,7 +66,7 @@ router.patch("/:id/read/company", verifyToken, verifyCompany, async (req: AuthRe
             return res.status(400).json({ error: "Missing required fields" });
         }
 
-        await readsystemmessage(targetId, messageId, targetType);
+        await markSystemMessageAsRead(targetId, messageId, targetType);
         res.json({ success: true });
     } catch (error) {
         console.error(error);

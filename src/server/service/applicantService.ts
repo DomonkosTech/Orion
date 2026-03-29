@@ -1,6 +1,6 @@
 import { supabase } from "../../lib/supabaseClient.ts";
 import {incrementResumeViews} from "./userService.ts"
-import {createsystemmessage} from "./systemmessageService.ts"
+import {createSystemMessage} from "./systemmessageService.ts"
 
 export const submitApplication = async (userId: number, advertisementId: string) => {
     // check if application already exists
@@ -145,7 +145,7 @@ export const rejectApplication = async (applicationId: string, companyId: number
     return { success: true };
 };
 
-export const getResumeUrl = async (applicationId: string, companyId: number) => {
+export const getApplicantResumeUrl = async (applicationId: string, companyId: number) => {
     // Minimal application data needed for access check
     interface ApplicantData {
         user_id: number;
@@ -283,7 +283,7 @@ export const acceptApplication = async (applicationId: string, companyId: number
         .update({ status: "accepted" })
         .eq("id", applicationId);
 
-    createsystemmessage(application.user_id, 'Gratulálunk!', `Örömmel értesítjük, hogy partnercégünk kiválasztotta Önt a(z) ${advertisement.position} pozícióra. hamarosan felveszik önnel a kapcsolatot majd a további részletekkel.`, 'USER')
+    createSystemMessage(application.user_id, 'Gratulálunk!', `Örömmel értesítjük, hogy partnercégünk kiválasztotta Önt a(z) ${advertisement.position} pozícióra. hamarosan felveszik önnel a kapcsolatot majd a további részletekkel.`, 'USER')
 
     if (updateError) throw updateError;
 

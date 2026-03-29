@@ -122,7 +122,7 @@ export const getAllAdvertisements = async () => {
 };
 
 // Get all top active advertisements
-export const gettopAdvertisements = async () => {
+export const getTopAdvertisements = async () => {
     const { data: advertisements, error } = await supabase
         .from("advertisement")
         .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
@@ -135,7 +135,7 @@ export const gettopAdvertisements = async () => {
 };
 
 // get selected jobs
-export const getSelectedJobs = async (ids: number[]) => {
+export const getAdvertisementsByIds = async (ids: number[]) => {
     const { data: advertisements, error } = await supabase
         .from("advertisement")
         .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
@@ -168,7 +168,7 @@ export const updateAdvertisementStatus = async (id: string, status: boolean, com
 }
 
 // Get all active advertisements (for users)
-export const getAllAdvertisements2 = async (q: string, location: string, position: string, hourly_wage: number, page: number, limit: number) => {
+export const searchAdvertisements = async (q: string, location: string, position: string, hourly_wage: number, page: number, limit: number) => {
     let query = supabase
         .from("advertisement")
         .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
