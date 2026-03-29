@@ -29,7 +29,9 @@ export const createAdvertisement = async (companyId: number, data: Advertisement
     const { count, error: counterror } = await supabase
         .from("advertisement")
         .select("*", { count: "exact", head: true })
+        .eq("is_active", true)
         .eq("company_id", companyId);
+
 
     if (counterror) throw counterror;
 

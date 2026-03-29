@@ -5,7 +5,8 @@ import {getAllAdvertisements2} from "../Controller/advertisementController.ts";
 
 const router = express.Router();
 
-// Create advertisement endpoint fix!!!
+// Create advertisement
+// POST /advertisements
 router.post("/advertisements", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const companyId = req.companyId;
 
@@ -20,7 +21,6 @@ router.post("/advertisements", verifyToken, verifyCompany, async (req: AuthReque
     } catch (error) {
         const err = error as Error;
         console.error("Advertisement creation error:", err);
-        // Handle specific business logic errors with 400 Bad Request
         if (err.message.includes("Please fill in") || err.message.includes("Hourly wage") || err.message.includes("maximum limit")) {
             return res.status(400).json({ error: err.message });
         }
@@ -29,8 +29,9 @@ router.post("/advertisements", verifyToken, verifyCompany, async (req: AuthReque
 });
 
 
-// get advertisements by company id endpoint fix!!!
-router.get("/company/advertisements", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+// Get own company advertisements
+// GET /companies/me/advertisements
+router.get("/companies/me/advertisements", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const companyId = req.companyId;
 
     try {
@@ -52,8 +53,55 @@ router.get("/company/advertisements", verifyToken, verifyCompany, async (req: Au
 });
 
 
-// get advertisment info endpoint fix!!!
-router.get("/advertisement/:id", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+// Get top 3 advertisements (public, no auth required)
+// GET /advertisements?sort=top&limit=3
+// Merges old /advertisements/top3 endpoint - must be before /:id
+router.get("/advertisements/top3", async (_req, res) => {
+    try {
+        const advertisements = await advertisementService.gettopAdvertisements();
+
+        res.json({
+            success: true,
+            advertisements,
+        });
+
+    } catch (err) {
+        console.error("get-top-advertisements-info error:", err);
+        res.status(500).json({ error: "Internal Server Error " });
+    }
+});
+
+
+// Search/filter advertisements (public, no auth required)
+// GET /advertisements/search?q=...&location=...&position=...&hourly_wage=...&page=...&limit=...
+// Replaces old /advertisements2 endpoint
+router.get("/advertisements/search", async (req, res) => {
+    try {
+        const q = String(req.query.q ?? "");
+        const location = String(req.query.location ?? "");
+        const position = String(req.query.position ?? "");
+        const hourly_wage = Number(req.query.hourly_wage ?? "");
+        const page = Number(req.query.page ?? "1");
+        const limit = Number(req.query.limit ?? "10");
+
+        const { advertisements } = await getAllAdvertisements2(q, location, position, hourly_wage, page, limit);
+        res.json({
+            success: true,
+            advertisements,
+        });
+
+    } catch (err) {
+        console.error("get-advertisements-info error:", err);
+        res.status(500).json({ error: "Internal Server Error " });
+    }
+});
+
+
+// Get single advertisement by ID
+// GET /advertisements/:id
+// Accessible by both users and companies (verifyToken only)
+// Replaces old /advertisement/:id (company) and /advertisements/:id (user)
+router.get("/advertisements/:id", verifyToken, async (req: AuthRequest, res) => {
     const { id } = req.params;
     try {
         const advertisement = await advertisementService.getAdvertisementById(id);
@@ -73,45 +121,27 @@ router.get("/advertisement/:id", verifyToken, verifyCompany, async (req: AuthReq
     }
 });
 
-router.get("/advertisements/top3", async (_req, res) => {
-        try {
-            const advertisements = await advertisementService.gettopAdvertisements();
 
-            res.json({
-                success: true,
-                advertisements,
-            });
-
-        } catch (err) {
-            console.error("get-top-advertisements-info error:", err);
-            res.status(500).json({ error: "Internal Server Error " });
-        }
-    }
-);
-
-// get advertisement info endpoint by user fix!!!
-router.get("/advertisements/:id", verifyToken, verifyUser, async (req: AuthRequest, res) => {
-    const { id } = req.params;
+// Get all advertisements (for authenticated users)
+// GET /advertisements
+router.get("/advertisements", verifyToken, verifyUser, async (_req, res) => {
     try {
-        const advertisement = await advertisementService.getAdvertisementById(id);
-
-        if (!advertisement || advertisement.is_active === false) {
-            return res.status(404).json({ error: "not found" });
-        }
+        const advertisements = await advertisementService.getAllAdvertisements();
 
         res.json({
             success: true,
-            advertisement,
+            advertisements,
         });
 
     } catch (err) {
-        console.error("Error while fetching advertisement info:", err);
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("get-advertisements-info error:", err);
+        res.status(500).json({ error: "Internal Server Error " });
     }
 });
 
 
-//update advertisment info endpoint fix!!!
+// Update advertisement info
+// PATCH /advertisements/:id
 router.patch("/advertisements/:id", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const id = req.params.id;
     const companyId = req.companyId;
@@ -135,49 +165,9 @@ router.patch("/advertisements/:id", verifyToken, verifyCompany, async (req: Auth
 });
 
 
-//get all advertisments fix!!!
-router.get("/advertisements", verifyToken, verifyUser, async (_req, res) => {
-    try {
-        const advertisements = await advertisementService.getAllAdvertisements();
-
-        res.json({
-            success: true,
-            advertisements,
-        });
-
-    } catch (err) {
-        console.error("get-advertisements-info error:", err);
-        res.status(500).json({ error: "Internal Server Error " });
-    }
-});
-
-//get all advertisments fix!!!
-router.get("/advertisements2", async (req, res) => {
-    try {
-
-        const q = String(req.query.q ?? "");
-        const location = String(req.query.location ?? "");
-        const position = String(req.query.position ?? "");
-        const hourly_wage = Number(req.query.hourly_wage ?? "");
-        const page = Number(req.query.page ?? "1");
-        const limit = Number(req.query.limit ?? "10");
-
-
-
-        const { advertisements } = await getAllAdvertisements2(q , location, position, hourly_wage, page, limit);
-        res.json({
-            success: true,
-            advertisements,
-        });
-
-    } catch (err) {
-        console.error("get-advertisements-info error:", err);
-        res.status(500).json({ error: "Internal Server Error " });
-    }
-});
-
-//update klick number
-router.patch("/advertisements/:id/views",  async (req , res) => {
+// Increment view/click counter
+// PATCH /advertisements/:id/views
+router.patch("/advertisements/:id/views", async (req, res) => {
     try {
         const id = req.params.id;
 
@@ -185,39 +175,38 @@ router.patch("/advertisements/:id/views",  async (req , res) => {
             return res.status(400).json({ success: false, message: "Missing id" });
         }
 
-        await advertisementService.incrementClickCount(id)
+        await advertisementService.incrementClickCount(id);
         res.json({ success: true });
     } catch (err) {
         console.error("Update advertisement counter info error:", err);
         res.status(500).json({ error: "Internal Server Error " });
     }
-})
+});
 
-//update advertisement status
+
+// Update advertisement status (active/inactive)
+// PATCH /advertisements/:id/status
 router.patch("/advertisements/:id/status", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-
     const id = req.params.id;
     const companyId = req.companyId;
-
 
     if (!id || req.body.status === undefined || !companyId) {
         return res.status(400).json({ success: false, message: "Missing id or status" });
     }
 
     try {
-
         await advertisementService.updateAdvertisementStatus(id, req.body.status, companyId);
-        res.json({
-            success: true})
-    }
-    catch (err) {
+        res.json({ success: true });
+    } catch (err) {
         console.error("Update advertisement status error:", err);
         res.status(500).json({ error: "Internal Server Error " });
     }
-})
+});
 
-//add favorite
-router.post("/favorites", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+
+// Add advertisement to favorites
+// POST /users/me/favorites
+router.post("/users/me/favorites", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
         const userId = req.userId;
         const advertisementId = Number(req.body.advertisementId);
@@ -231,17 +220,18 @@ router.post("/favorites", verifyToken, verifyUser, async (req: AuthRequest, res)
 
         await advertisementService.addFavorite(userId, advertisementId);
         res.json({ success: true });
-    }
-    catch (error){
+    } catch (error) {
         console.error("Add favorite failed:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 
-router.get("/favorites", verifyToken, verifyUser, async (req: AuthRequest, res)=>{
+// Get user's favorite advertisements
+// GET /users/me/favorites
+router.get("/users/me/favorites", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
-        const userId = req.userId
+        const userId = req.userId;
         const includeAdvertisement = req.query.includeAdvertisement === "true";
         if (!userId) {
             return res.status(401).json({ error: "Unauthorized" });
@@ -249,16 +239,16 @@ router.get("/favorites", verifyToken, verifyUser, async (req: AuthRequest, res)=
 
         const favorites = await advertisementService.getFavorites(userId, includeAdvertisement);
         res.json(favorites);
-
-    }
-    catch (error){
+    } catch (error) {
         console.error("Get favorites failed:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 
-router.delete("/favorites/:id", verifyToken, verifyUser, async (req: AuthRequest, res)=>{
+// Remove advertisement from favorites
+// DELETE /users/me/favorites/:id
+router.delete("/users/me/favorites/:id", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
         const userId = req.userId;
         const advertisementId = Number(req.params.id);
@@ -271,11 +261,10 @@ router.delete("/favorites/:id", verifyToken, verifyUser, async (req: AuthRequest
 
         await advertisementService.removeFavorite(userId, advertisementId);
         res.json({ success: true });
-    }
-    catch (error){
+    } catch (error) {
         console.error("Remove favorite failed:", error);
     }
-})
+});
 
 
 export default router;
