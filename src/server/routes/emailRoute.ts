@@ -1,7 +1,7 @@
 import express from "express";
 import {
-    sendUserEmail, activateUserEmail, sendCompanyEmail, activateCompanyEmail, sendResetUserPassword,
-    saveNewUserPassword, sendResetCompanyPassword, saveNewCompanyPassword
+    sendUserActivationEmail, activateUserAccount, sendCompanyActivationEmail, activateCompanyAccount, sendUserPasswordResetEmail,
+    saveNewUserPassword, sendCompanyPasswordResetEmail, saveNewCompanyPassword
 } from "../service/emailService.ts"
 
 const router = express.Router();
@@ -16,7 +16,7 @@ router.post("/user/verify-email", async (req, res) => {
             return;
         }
 
-        await sendUserEmail(email);
+        await sendUserActivationEmail(email);
         res.json({success: true});
 
     } catch (error) {
@@ -36,7 +36,7 @@ router.post("/company/verify-email", async (req, res) => {
             return;
         }
 
-        await sendCompanyEmail(email);
+        await sendCompanyActivationEmail(email);
         res.json({success: true});
 
     } catch (error) {
@@ -54,7 +54,7 @@ router.post("/user/forgot-password", async (req, res) => {
             return;
         }
 
-        await sendResetUserPassword(email);
+        await sendUserPasswordResetEmail(email);
         res.json({success: true});
 
     }
@@ -73,7 +73,7 @@ router.post("/company/forgot-password", async (req, res) => {
             return;
         }
 
-        await sendResetCompanyPassword(email);
+        await sendCompanyPasswordResetEmail(email);
         res.json({success: true});
 
     }
@@ -130,7 +130,7 @@ router.patch("/user/verify-email", async (req, res) => {
             return;
         }
 
-        await activateUserEmail(token);
+        await activateUserAccount(token);
         res.json({success: true});
 
     } catch (error) {
@@ -148,7 +148,7 @@ router.patch("/company/verify-email", async (req, res) => {
             return;
         }
 
-        await activateCompanyEmail(token);
+        await activateCompanyAccount(token);
         res.json({success: true});
 
     } catch (error) {

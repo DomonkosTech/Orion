@@ -5,7 +5,7 @@ import {
     getUserApplications,
     getApplicantsForAdvertisement,
     rejectApplication,
-    getResumeUrl,
+    getApplicantResumeUrl,
     acceptApplication
 } from "../service/applicantService.ts";
 
@@ -89,7 +89,7 @@ router.get("/applications/:id/resume", verifyToken, verifyCompany, async (req: A
     const companyId = req.companyId!;
 
     try {
-        const result = await getResumeUrl(applicationId, companyId);
+        const result = await getApplicantResumeUrl(applicationId, companyId);
 
         if ('error' in result) {
             return res.status(result.status || 500).json({ error: result.error });

@@ -1,14 +1,7 @@
 import { supabase } from "../../lib/supabaseClient.ts";
 
-
-
-
-////////////////////////////////////
-//             company            //
-////////////////////////////////////
-
 // get system messages for the company
-export const getcompanysystemmessages = async (companyId: number) => {
+export const getCompanySystemMessages = async (companyId: number) => {
     const { data: readMessages, error: readError } = await supabase
         .from("system_message_reads")
         .select("message_id")
@@ -32,18 +25,8 @@ export const getcompanysystemmessages = async (companyId: number) => {
 };
 
 
-
-
-
-
-
-
-////////////////////////////////////
-//              user              //
-////////////////////////////////////
-
 // get system messages for the user
-export const getusersystemmessages = async (userId: number) => {
+export const getUserSystemMessages = async (userId: number) => {
     const { data: readMessages, error: readError } = await supabase
         .from("system_message_reads")
         .select("message_id")
@@ -68,7 +51,7 @@ export const getusersystemmessages = async (userId: number) => {
 
 
 // read system message
-export const readsystemmessage = async (targetId: number, messageId: number, targetType: string) => {
+export const markSystemMessageAsRead = async (targetId: number, messageId: number, targetType: string) => {
     const { error } = await supabase
         .from("system_message_reads")
         .insert({
@@ -83,7 +66,7 @@ export const readsystemmessage = async (targetId: number, messageId: number, tar
 
 
 // create a system message
-export const createsystemmessage = async (targetId: number,title: string, message: string, targetType: string) => {
+export const createSystemMessage = async (targetId: number, title: string, message: string, targetType: string) => {
     if (targetType ==='ALL' || targetType === 'USER' || targetType === 'COMPANY'){
         const { error } = await supabase
             .from("system_messages")

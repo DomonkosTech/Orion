@@ -1,8 +1,8 @@
 import express from "express";
 import { type AuthRequest, verifyCompany, verifyToken, verifyUser } from "../middleware/auth.ts";
 import {
-    getAllCompanyChatPartners,
-    getAllUserChatPartners,
+    getCompanyChatPartners,
+    getUserChatPartners,
     getChatMessages,
     sendMessage
 } from "../service/messageService.ts";
@@ -17,7 +17,7 @@ router.get("/conversations", verifyToken, verifyUser, async (req: AuthRequest, r
         if (!userId) {
             return res.status(403).json({ error: "User access denied" });
         }
-        const data = await getAllUserChatPartners(userId);
+        const data = await getUserChatPartners(userId);
         res.json({ success: true, data: data });
     } catch (error) {
         console.error(error);
@@ -31,7 +31,7 @@ router.get("/conversations/company", verifyToken, verifyCompany, async (req: Aut
         if (!companyId) {
             return res.status(403).json({ error: "Company access denied" });
         }
-        const data = await getAllCompanyChatPartners(companyId);
+        const data = await getCompanyChatPartners(companyId);
         res.json({ success: true, data: data });
     } catch (error) {
         console.error(error);
