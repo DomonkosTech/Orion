@@ -1,5 +1,5 @@
 import express from "express";
-import { getSelectedJobs } from "../Controller/advertisementService.ts"
+import { getSelectedJobs } from "../service/advertisementService.ts"
 
 const router = express.Router();
 
