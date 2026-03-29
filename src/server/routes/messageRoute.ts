@@ -5,7 +5,7 @@ import {
     getAllUserChatPartners,
     getChatMessages,
     sendMessage
-} from "../Controller/messageController.ts";
+} from "../Controller/messageService.ts";
 const router = express.Router();
 
 // Get all conversations (chat partners) for the logged-in account

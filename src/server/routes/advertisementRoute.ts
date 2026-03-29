@@ -1,7 +1,6 @@
 import express from "express";
 import { type AuthRequest, verifyCompany, verifyToken, verifyUser } from "../middleware/auth.ts";
-import * as advertisementService from "../Controller/advertisementController.ts";
-import {getAllAdvertisements2} from "../Controller/advertisementController.ts";
+import * as advertisementService from "../Controller/advertisementService.ts";
 
 const router = express.Router();
 
@@ -84,7 +83,7 @@ router.get("/advertisements/search", async (req, res) => {
         const page = Number(req.query.page ?? "1");
         const limit = Number(req.query.limit ?? "10");
 
-        const { advertisements } = await getAllAdvertisements2(q, location, position, hourly_wage, page, limit);
+        const { advertisements } = await advertisementService.getAllAdvertisements2(q, location, position, hourly_wage, page, limit);
         res.json({
             success: true,
             advertisements,

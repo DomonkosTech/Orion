@@ -1,6 +1,6 @@
 import { supabase } from "../../lib/supabaseClient.ts";
-import {incrementResumeViews} from "./userController.ts"
-import {createsystemmessage} from "./systemmessageController.ts"
+import {incrementResumeViews} from "./userService.ts"
+import {createsystemmessage} from "./systemmessageService.ts"
 
 export const submitApplication = async (userId: number, advertisementId: string) => {
     // check if application already exists
