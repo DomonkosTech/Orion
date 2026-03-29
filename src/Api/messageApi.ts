@@ -1,5 +1,4 @@
 
-
 const API_BASE_URL = "http://localhost:4000/api"
 
 
@@ -35,8 +34,10 @@ const handleResponse = async (response: Response) => {
     return data;
 };
 
+// Get all conversations (chat partners) for the logged-in user
+// GET /messages/conversations
 export const getUserChatPartners = async () => {
-    const response = await fetch(`${API_BASE_URL}/chat/user`, {
+    const response = await fetch(`${API_BASE_URL}/messages/conversations`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -46,8 +47,10 @@ export const getUserChatPartners = async () => {
     return handleResponse(response);
 };
 
+// Get all conversations (chat partners) for the logged-in company
+// GET /messages/conversations/company
 export const getCompanyChatPartners = async () => {
-    const response = await fetch(`${API_BASE_URL}/chat/company`, {
+    const response = await fetch(`${API_BASE_URL}/messages/conversations/company`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -57,8 +60,10 @@ export const getCompanyChatPartners = async () => {
     return handleResponse(response);
 };
 
+// Get messages in a conversation (user perspective)
+// GET /messages/conversations/:id
 export const getMessagesForUser = async (companyId: number) => {
-    const response = await fetch(`${API_BASE_URL}/chat/user/message/${companyId}`, {
+    const response = await fetch(`${API_BASE_URL}/messages/conversations/${companyId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -68,8 +73,10 @@ export const getMessagesForUser = async (companyId: number) => {
     return handleResponse(response);
 };
 
+// Get messages in a conversation (company perspective)
+// GET /messages/conversations/:id/company
 export const getMessagesForCompany = async (userId: number) => {
-    const response = await fetch(`${API_BASE_URL}/chat/company/message/${userId}`, {
+    const response = await fetch(`${API_BASE_URL}/messages/conversations/${userId}/company`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -79,8 +86,10 @@ export const getMessagesForCompany = async (userId: number) => {
     return handleResponse(response);
 };
 
+// Send a message (user)
+// POST /messages
 export const sendUserMessage = async (message: string, companyId: number) => {
-    const response = await fetch(`${API_BASE_URL}/chat/user/send`, {
+    const response = await fetch(`${API_BASE_URL}/messages`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -95,8 +104,10 @@ export const sendUserMessage = async (message: string, companyId: number) => {
     return handleResponse(response);
 };
 
+// Send a message (company)
+// POST /messages/company
 export const sendCompanyMessage = async (message: string, userId: number) => {
-    const response = await fetch(`${API_BASE_URL}/chat/company/send`, {
+    const response = await fetch(`${API_BASE_URL}/messages/company`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

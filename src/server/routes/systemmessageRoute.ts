@@ -1,10 +1,28 @@
 import express from "express";
-import {type AuthRequest, verifyCompany, verifyToken, verifyUser,} from "../middleware/auth.ts";
+import { type AuthRequest, verifyCompany, verifyToken, verifyUser } from "../middleware/auth.ts";
+import { getcompanysystemmessages, getusersystemmessages, readsystemmessage } from "../Controller/systemmessageController.ts";
+
 const router = express.Router();
-import {getcompanysystemmessages, getusersystemmessages, readsystemmessage} from "../Controller/systemmessageController.ts";
 
 
-router.get("/company/messages",verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+// Get all notifications for the logged-in account
+// GET /notifications  (user version)
+router.get("/", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+    try {
+        const userId = req.userId;
+        if (!userId) {
+            return res.status(403).json({ error: "Access denied" });
+        }
+        const data = await getusersystemmessages(userId);
+        res.json({ success: true, data: data });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+// GET /notifications/company  (company version)
+router.get("/company", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     try {
         const companyId = req.companyId;
         if (!companyId) {
@@ -19,22 +37,9 @@ router.get("/company/messages",verifyToken, verifyCompany, async (req: AuthReque
 });
 
 
-router.get("/user/messages",verifyToken, verifyUser, async (req: AuthRequest, res) => {
-    try {
-        const userId = req.userId;
-        if (!userId) {
-            return res.status(403).json({ error: "Company access denied" });
-        }
-        const data = await getusersystemmessages(userId);
-        res.json({ success: true, data: data });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-
-router.patch("/user/messages/read/:id", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+// Mark a notification as read
+// PATCH /notifications/:id/read  (user version)
+router.patch("/:id/read", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
         const targetId = req.userId;
         const messageId = Number(req.params.id);
@@ -43,18 +48,16 @@ router.patch("/user/messages/read/:id", verifyToken, verifyUser, async (req: Aut
             return res.status(400).json({ error: "Missing required fields" });
         }
 
-        await readsystemmessage(targetId, messageId, targetType)
+        await readsystemmessage(targetId, messageId, targetType);
         res.json({ success: true });
-
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
-
-router.patch("/company/messages/read/:id", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+// PATCH /notifications/:id/read/company  (company version)
+router.patch("/:id/read/company", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     try {
         const targetId = req.companyId;
         const messageId = Number(req.params.id);
@@ -63,18 +66,13 @@ router.patch("/company/messages/read/:id", verifyToken, verifyCompany, async (re
             return res.status(400).json({ error: "Missing required fields" });
         }
 
-        await readsystemmessage(targetId, messageId, targetType)
+        await readsystemmessage(targetId, messageId, targetType);
         res.json({ success: true });
-
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
 
-
 export default router;
-
-

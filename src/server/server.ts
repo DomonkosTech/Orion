@@ -51,13 +51,13 @@ app.use("/Api", advertisementRoutes);
 app.use("/Api", applicantRoutes);
 
 // systemmessage Routes (Read, Update)
-app.use("/Api", systemmessageRoute);
+app.use("/Api/notifications", systemmessageRoute);
 
 // Email Routes (Send Email)
 app.use("/Api/auth", emailRoute);
 
 // Message Routes (Send Message, Read Messages, Delete Messages)
-app.use("/Api/chat", messageRoute);
+app.use("/Api/messages", messageRoute);
 
 // OrionAI Routes
 app.use("/Api", OrionAIRoute);

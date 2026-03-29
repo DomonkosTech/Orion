@@ -1,5 +1,5 @@
 import express from "express";
-import {type AuthRequest, verifyCompany, verifyToken, verifyUser,} from "../middleware/auth.ts";
+import { type AuthRequest, verifyCompany, verifyToken, verifyUser } from "../middleware/auth.ts";
 import {
     getAllCompanyChatPartners,
     getAllUserChatPartners,
@@ -8,8 +8,10 @@ import {
 } from "../Controller/messageController.ts";
 const router = express.Router();
 
-// get all chat partners for the user
-router.get("/user", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+// Get all conversations (chat partners) for the logged-in account
+// GET /messages/conversations
+// verifyToken resolves both user and company — two routes, same URL, different middleware
+router.get("/conversations", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
         const userId = req.userId;
         if (!userId) {
@@ -23,8 +25,7 @@ router.get("/user", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     }
 });
 
-// get all chat partners for the company
-router.get("/company",verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+router.get("/conversations/company", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     try {
         const companyId = req.companyId;
         if (!companyId) {
@@ -38,15 +39,16 @@ router.get("/company",verifyToken, verifyCompany, async (req: AuthRequest, res) 
     }
 });
 
-// get all messages for the user
-router.get("/user/message/:id", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+// Get messages in a specific conversation
+// GET /messages/conversations/:id
+router.get("/conversations/:id", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
         const userId = req.userId;
         const companyId = Number(req.params.id);
-        const readertype= 'USER'
+        const readertype = 'USER';
 
         if (!userId || !companyId) {
-            return res.status(403).json({ error: "Company access denied" });
+            return res.status(403).json({ error: "Access denied" });
         }
         const data = await getChatMessages(userId, companyId, readertype);
         res.json({ success: true, data: data });
@@ -54,17 +56,16 @@ router.get("/user/message/:id", verifyToken, verifyUser, async (req: AuthRequest
         console.error("get chat(user version) messages error:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
-})
+});
 
-// get all messages for the company
-router.get("/company/message/:id",verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+router.get("/conversations/:id/company", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     try {
         const userId = Number(req.params.id);
         const companyId = req.companyId;
-        const readertype= 'COMPANY'
+        const readertype = 'COMPANY';
 
         if (!companyId || !userId) {
-            return res.status(403).json({ error: "Company access denied" });
+            return res.status(403).json({ error: "Access denied" });
         }
         const data = await getChatMessages(userId, companyId, readertype);
         res.json({ success: true, data: data });
@@ -72,42 +73,41 @@ router.get("/company/message/:id",verifyToken, verifyCompany, async (req: AuthRe
         console.error("get chat(company version) messages error:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
-})
+});
 
-// insert chat(user version) messages
-router.post("/user/send", verifyToken,verifyUser, async (req: AuthRequest, res) => {
+// Send a message
+// POST /messages  (user version)
+router.post("/", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
         const userId = req.userId;
         const companyId = req.body.companyId;
         const message = req.body.message;
-        const senderType= "USER";
+        const senderType = "USER";
         if (!userId || !companyId || !message) {
-            return res.status(400).json({ error: "Company access denied" });
+            return res.status(400).json({ error: "Missing required fields" });
         }
-        const data = await sendMessage(userId, companyId,message, senderType);
-        res.json({ success: true, data});
-    }
-    catch (error) {
+        const data = await sendMessage(userId, companyId, message, senderType);
+        res.json({ success: true, data });
+    } catch (error) {
         console.error("insert chat(user version) messages error:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
-// insert chat(company version) messages
-router.post("/company/send", verifyToken,verifyCompany, async (req: AuthRequest, res) => {
+// POST /messages/company  (company version)
+router.post("/company", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     try {
         const userId = req.body.userId;
         const companyId = req.companyId;
         const message = req.body.message;
-        const senderType= "COMPANY";
+        const senderType = "COMPANY";
         if (!userId || !companyId || !message) {
-            console.log(userId, companyId, message)
-            return res.status(400).json({ error: "Company access denied" });
+            console.log(userId, companyId, message);
+            return res.status(400).json({ error: "Missing required fields" });
         }
-        const data = await sendMessage(userId, companyId,message, senderType);
-        res.json({ success: true, data});
-    }
-    catch (error) {
+        const data = await sendMessage(userId, companyId, message, senderType);
+        res.json({ success: true, data });
+    } catch (error) {
         console.error("insert chat(company version) messages error:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
