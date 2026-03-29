@@ -1,6 +1,6 @@
 import { supabase } from "../../lib/supabaseClient.ts";
 import { companyUpdateProfileSchema } from "../../validation/Validation.ts";
-import { createsystemmessage } from "./systemmessageController.ts";
+import { createsystemmessage } from "./systemmessageService.ts";
 
 interface CompanyProfileData {
     name?: string;

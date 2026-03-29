@@ -1,7 +1,7 @@
 import express from "express";
 import { type AuthRequest, verifyToken } from "../middleware/auth.ts";
-import * as companyService from "../Controller/companyController.ts";
-import {getCompanystat} from "../Controller/companyController.ts";
+import * as companyService from "../Controller/companyService.ts";
+import {getCompanystat} from "../Controller/companyService.ts";
 
 const router = express.Router();
 
