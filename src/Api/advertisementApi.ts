@@ -122,7 +122,7 @@ export const getAdvertisements = async (
     params.append("page", String(page));
     params.append("limit", String(limit));
 
-    const response = await fetch(`${API_BASE_URL}/advertisements2?${params.toString()}`, {
+    const response = await fetch(`${API_BASE_URL}/advertisements/search?${params.toString()}`, {
         method: "GET",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -140,7 +140,7 @@ export const getTop3Advertisements = async () => {
 };
 
 export const getCompanyAdvertisements = async () => {
-    const response = await fetch(`${API_BASE_URL}/company/advertisements`, {
+    const response = await fetch(`${API_BASE_URL}/companies/me/advertisements`, {
         method: "GET",
         credentials: "include",
     });
@@ -157,7 +157,7 @@ export const getAdvertisementById = async (id: string) => {
 };
 
 export const getAdvertisementForEdit = async (id: string) => {
-    const response = await fetch(`${API_BASE_URL}/advertisement/${id}`, {
+    const response = await fetch(`${API_BASE_URL}/advertisements/${id}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -229,7 +229,7 @@ export const OrionAI = async (userinput: string, wage: number = 2000) => {
 }
 
 export const addFavorite = async (advertisementId: number) => {
-    const response = await fetch(`${API_BASE_URL}/favorites`, {
+    const response = await fetch(`${API_BASE_URL}/users/me/favorites`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -250,8 +250,8 @@ export const getFavorites = async (includeAdvertisement: boolean = false) => {
     }
 
     const url = params.toString()
-        ? `${API_BASE_URL}/favorites?${params.toString()}`
-        : `${API_BASE_URL}/favorites`;
+        ? `${API_BASE_URL}/users/me/favorites?${params.toString()}`
+        : `${API_BASE_URL}/users/me/favorites`;
 
     const response = await fetch(url, {
         method: "GET",
@@ -265,7 +265,7 @@ export const getFavorites = async (includeAdvertisement: boolean = false) => {
 };
 
 export const removeFavorite = async (advertisementId: number) => {
-    const response = await fetch(`${API_BASE_URL}/favorites/${advertisementId}`, {
+    const response = await fetch(`${API_BASE_URL}/users/me/favorites/${advertisementId}`, {
         method: "DELETE",
         credentials: "include",
         headers: {
