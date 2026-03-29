@@ -183,4 +183,67 @@ router.get("/me/resume", verifyToken, verifyUser, async (req: AuthRequest, res) 
     }
 })
 
+
+
+// Add advertisement to favorites
+// POST /users/me/favorites
+router.post("/me/favorites", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+    try {
+        const userId = req.userId;
+        const advertisementId = Number(req.body.advertisementId);
+
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+        if (!req.body.advertisementId || Number.isNaN(advertisementId) || advertisementId <= 0) {
+            return res.status(400).json({ error: "Invalid advertisement id" });
+        }
+
+        await userService.addFavorite(userId, advertisementId);
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Add favorite failed:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+// Get user's favorite advertisements
+// GET /users/me/favorites
+router.get("/me/favorites", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+    try {
+        const userId = req.userId;
+        const includeAdvertisement = req.query.includeAdvertisement === "true";
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+
+        const favorites = await userService.getFavorites(userId, includeAdvertisement);
+        res.json(favorites);
+    } catch (error) {
+        console.error("Get favorites failed:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
+
+// Remove advertisement from favorites
+// DELETE /users/me/favorites/:id
+router.delete("/me/favorites/:id", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+    try {
+        const userId = req.userId;
+        const advertisementId = Number(req.params.id);
+        if (!userId) {
+            return res.status(401).json({ error: "Unauthorized" });
+        }
+        if (!req.params.id || Number.isNaN(advertisementId) || advertisementId <= 0) {
+            return res.status(400).json({ error: "Invalid advertisement id" });
+        }
+
+        await userService.removeFavorite(userId, advertisementId);
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Remove favorite failed:", error);
+    }
+});
 export default router;
