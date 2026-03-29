@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
 import {type AuthRequest, verifyCompany, verifyToken, verifyUser} from "../middleware/auth.ts";
-import * as userService from "../Controller/userService.ts";
+import * as userService from "../service/userService.ts";
 
 const router = express.Router();
 
