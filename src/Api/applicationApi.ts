@@ -35,7 +35,7 @@ const handleResponse = async (response: Response) => {
 };
 
 export const getApplicantsForAdvertisement = async (advertisementId: string) => {
-    const response = await fetch(`${API_BASE_URL}/advertisements/${advertisementId}/applicants`, {
+    const response = await fetch(`${API_BASE_URL}/advertisements/${advertisementId}/applications`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -45,24 +45,14 @@ export const getApplicantsForAdvertisement = async (advertisementId: string) => 
     return handleResponse(response);
 };
 
-export const acceptApplication = async (applicationId: number) => {
-    const response = await fetch(`${API_BASE_URL}/applications/${applicationId}/accept`, {
-        method: "POST",
+export const updateApplicationStatus = async (applicationId: number, status: "accepted" | "rejected") => {
+    const response = await fetch(`${API_BASE_URL}/applications/${applicationId}/status`, {
+        method: "PATCH",
         headers: {
             "Content-Type": "application/json",
         },
         credentials: "include",
-    });
-    return handleResponse(response);
-};
-
-export const rejectApplication = async (applicationId: number) => {
-    const response = await fetch(`${API_BASE_URL}/applications/${applicationId}/reject`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        credentials: "include",
+        body: JSON.stringify({ status }),
     });
     return handleResponse(response);
 };

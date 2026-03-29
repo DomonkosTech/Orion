@@ -98,7 +98,7 @@ const handleResponse = async (response: Response) => {
 };
 
 export const getJobApplications = async () => {
-    const response = await fetch(`${API_BASE_URL}/user/applications`, {
+    const response = await fetch(`${API_BASE_URL}/users/me/applications`, {
         method: "get",
         credentials: "include",
     });

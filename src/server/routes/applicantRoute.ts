@@ -11,7 +11,8 @@ import {
 
 const router = express.Router();
 
-//submit application endpoint fix!!!
+// Submit application
+// POST /applications
 router.post("/applications", verifyToken, verifyUser, async (req: AuthRequest, res) => {
 
     const { id } = req.body;
@@ -36,8 +37,9 @@ router.post("/applications", verifyToken, verifyUser, async (req: AuthRequest, r
 });
 
 
-// get submitted applications endpoint fix!!!
-router.get("/user/applications", verifyToken, verifyUser, async (req: AuthRequest, res) => {
+// Get own submitted applications (user)
+// GET /users/me/applications
+router.get("/users/me/applications", verifyToken, verifyUser, async (req: AuthRequest, res) => {
     try {
         const userid = req.userId!;
         const result = await getUserApplications(userid);
@@ -55,14 +57,15 @@ router.get("/user/applications", verifyToken, verifyUser, async (req: AuthReques
 });
 
 
-// Applicant tracking endpoint fix!!!
-router.get("/advertisements/:id/applicants", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+// Get applicants for an advertisement (company)
+// GET /advertisements/:id/applications
+router.get("/advertisements/:id/applications", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const advertisementId = req.params.id;
     const companyId = req.companyId!;
 
     try {
         const result = await getApplicantsForAdvertisement(advertisementId, companyId);
-        
+
         if ('error' in result) {
              return res.status(403).json({ error: result.error });
         }
@@ -79,28 +82,8 @@ router.get("/advertisements/:id/applicants", verifyToken, verifyCompany, async (
 });
 
 
-// Reject application endpoint fix!!!
-router.post("/applications/:id/reject", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
-    const applicationId = req.params.id;
-    const companyId = req.companyId!;
-
-    try {
-        const result = await rejectApplication(applicationId, companyId);
-
-        if ('error' in result) {
-            return res.status(result.status || 500).json({ error: result.error });
-        }
-
-        res.json({ success: true });
-
-    } catch (err) {
-        console.error("Reject application error:", err);
-        res.status(500).json({ error: "Internal Server Error" });
-    }
-});
-
-
-// Download resume endpoint fix!!!
+// Download applicant resume
+// GET /applications/:id/resume
 router.get("/applications/:id/resume", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const applicationId = req.params.id;
     const companyId = req.companyId!;
@@ -121,13 +104,27 @@ router.get("/applications/:id/resume", verifyToken, verifyCompany, async (req: A
 });
 
 
-// Accept application endpoint fix!!!
-router.post("/applications/:id/accept", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
+// Accept or reject an application
+// PATCH /applications/:id/status
+// Body: { "status": "accepted" | "rejected" }
+// Replaces POST /applications/:id/accept and POST /applications/:id/reject
+router.patch("/applications/:id/status", verifyToken, verifyCompany, async (req: AuthRequest, res) => {
     const applicationId = req.params.id;
     const companyId = req.companyId!;
+    const { status } = req.body;
+
+    if (!status || !["accepted", "rejected"].includes(status)) {
+        return res.status(400).json({ error: "Invalid status. Must be 'accepted' or 'rejected'." });
+    }
 
     try {
-        const result = await acceptApplication(applicationId, companyId);
+        let result;
+
+        if (status === "accepted") {
+            result = await acceptApplication(applicationId, companyId);
+        } else {
+            result = await rejectApplication(applicationId, companyId);
+        }
 
         if ('error' in result) {
             return res.status(result.status || 500).json({ error: result.error });
@@ -136,9 +133,10 @@ router.post("/applications/:id/accept", verifyToken, verifyCompany, async (req: 
         res.json({ success: true });
 
     } catch (err) {
-        console.error("Accept application error:", err);
+        console.error("Update application status error:", err);
         res.status(500).json({ error: "Internal Server Error" });
     }
 });
+
 
 export default router;
