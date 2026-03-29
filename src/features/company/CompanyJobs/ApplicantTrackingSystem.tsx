@@ -16,8 +16,7 @@ import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.t
 
 import {
     getApplicantsForAdvertisement,
-    acceptApplication,
-    rejectApplication,
+    updateApplicationStatus,
     getResumeUrl,
     type Applicant
 } from "../../../Api/applicationApi.ts";
@@ -105,7 +104,7 @@ export const ApplicantTrackingSystem: React.FC = () => {
     const handleAccept = async (applicationId: number, e?: React.MouseEvent) => {
         e?.stopPropagation();
         try {
-            const data = await acceptApplication(applicationId);
+            const data = await updateApplicationStatus(applicationId, "accepted");
             if (data.success) {
                 toast.success(t('ats.notifications.acceptSuccess'));
                 setApplicants(prev => prev.filter(app => app.id !== applicationId));
@@ -133,7 +132,7 @@ export const ApplicantTrackingSystem: React.FC = () => {
     const handleReject = async (applicationId: number, e?: React.MouseEvent) => {
         e?.stopPropagation();
         try {
-            const data = await rejectApplication(applicationId);
+            const data = await updateApplicationStatus(applicationId, "rejected");
             if (data.success) {
                 toast.success(t('ats.notifications.rejectSuccess'));
                 setApplicants(prev => prev.filter(app => app.id !== applicationId));
