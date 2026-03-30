@@ -1,78 +1,387 @@
 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
 <head>
     <meta charset="utf-8">
-    <title>Orion Frontend Részletes Dokumentáció</title>
+    <title>Orion Frontend - Részletes Fejlesztői Dokumentáció</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; line-height: 1.8; color: #2c3e50; padding: 20px; }
-        .container { max-width: 800px; margin: auto; }
+        .container { max-width: 860px; margin: auto; }
         h1 { color: #1a5f7a; border-bottom: 3px solid #1a5f7a; padding-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
         h2 { color: #159895; margin-top: 40px; border-bottom: 1px solid #ddd; padding-bottom: 5px; }
         h3 { color: #002b5b; margin-top: 25px; }
+        h4 { color: #1a5f7a; margin-top: 20px; }
         p { margin-bottom: 15px; text-align: justify; }
         .highlight-box { background: #f0f7f7; border-left: 5px solid #159895; padding: 15px; margin: 20px 0; border-radius: 0 5px 5px 0; }
+        .warn-box { background: #fff8e1; border-left: 5px solid #f9a825; padding: 15px; margin: 20px 0; border-radius: 0 5px 5px 0; }
         .tech-tag { display: inline-block; background: #e0f2f1; color: #00695c; padding: 2px 8px; border-radius: 12px; font-size: 0.85em; font-weight: bold; margin: 2px; }
-        pre { background: #2d3436; color: #dfe6e9; padding: 20px; border-radius: 8px; font-size: 13px; overflow-x: auto; line-height: 1.4; }
+        pre { background: #2d3436; color: #dfe6e9; padding: 20px; border-radius: 8px; font-size: 12.5px; overflow-x: auto; line-height: 1.5; }
+        code { font-family: 'Consolas', 'Courier New', monospace; }
         ul { margin-bottom: 20px; }
         li { margin-bottom: 8px; }
+        th { background: #1a5f7a; color: white; padding: 0px 12px; text-align: left; }
+        td { padding: 0px 12px; border-bottom: 1px solid #ddd; }
+        table { border-collapse: collapse; width: 100%; margin-bottom: 20px; font-size: 0.9em; line-height: 1.4; }
+        tr:nth-child(even) { background: #f0f7f7; }
+        td code { background: #e8f4f8; padding: 1px 5px; border-radius: 4px; font-size: 0.9em; }
+        .badge-pk { background: #c0392b; color: white; padding: 1px 6px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
+        .badge-fk { background: #2980b9; color: white; padding: 1px 6px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
+        .badge-enc { background: #8e44ad; color: white; padding: 1px 6px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
         .footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee; font-size: 0.85em; color: #95a5a6; text-align: center; }
         .premium-text { color: #d35400; font-weight: bold; }
+        .toc { background: #f8f9fa; border: 1px solid #ddd; padding: 20px 30px; border-radius: 8px; margin-bottom: 30px; }
+        .toc ol { margin: 0; padding-left: 20px; }
+        .toc li { margin-bottom: 4px; }
+        .toc a { color: #1a5f7a; text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        .rel-arrow { color: #159895; font-weight: bold; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Orion Frontend Részletes Dokumentáció</h1>
+        <h1>Orion Frontend: Fejlesztői Dokumentáció</h1>
         
-        <p>Az Orion nem csupán egy állásportál, hanem egy komplex ökoszisztéma, amely a modern munkakeresést és toborzást hivatott egyszerűsíteni. A frontend fejlesztése során az elsődleges szempont a <strong>sebesség</strong>, a <strong>biztonság</strong> és a <strong>vizuális kiválóság</strong> volt.</p>
+        <p>Az Orion egy prémium minőségű állásportál platform, amely a modern webes technológiák legjavát ötvözi. A dokumentáció célja, hogy átfogó képet adjon a frontend architektúráról, a felhasznált technológiákról és a fejlesztési folyamatokról.</p>
 
         <div class="highlight-box">
-            <strong>Mottó:</strong> "Ahol a technológia találkozik az emberi karrierrel – prémium minőségben."
+            <strong>Státusz:</strong> Verzió 2.6 | <span class="premium-text">Production Ready</span> | Utolsó frissítés: 2026. március 30.
         </div>
 
-        <h2>1. Technológiai Mélyfúrás</h2>
-        
-        <h3>Frontend Architektúra</h3>
-        <p>Az alkalmazás a legmodernebb <span class="tech-tag">React 19</span> alapokra épül, kihasználva a komponens-alapú fejlesztés minden előnyét. A <span class="tech-tag">Vite</span> környezet biztosítja, hogy az oldal betöltése ezredmásodpercek alatt megtörténjen, még lassabb hálózati körülmények között is.</p>
-        
-        <p>A <span class="tech-tag">TypeScript</span> használata nem csupán opció, hanem a kódminőség záloga: minden adatfolyam típusbiztos, így a fejlesztési fázisban kiszűrhető a hibák 90%-a.</p>
+        <div class="toc">
+            <h3>Tartalomjegyzék</h3>
+            <ol>
+                <li><a href="#tech-stack">Technológiai Stack</a></li>
+                <li><a href="#project-structure">Projekt Felépítés és Architektúra</a></li>
+                <li><a href="#setup">Környezeti Beállítások és Telepítés</a></li>
+                <li><a href="#core-features">Kulcsfontosságú Modulok</a></li>
+                <li><a href="#state-management">Állapotkezelési Mélymerülés</a></li>
+                <li><a href="#api-layer">API Réteg és Kommunikáció</a></li>
+                <li><a href="#design-system">Stílus és Design Irányelvek</a></li>
+                <li><a href="#testing">Tesztelési Stratégia</a></li>
+                <li><a href="#deployment">Telepítés és CI/CD</a></li>
+                <li><a href="#dependencies">Külső Függőségek és Alrendszerek</a></li>
+                <li><a href="#scripts">Elérhető Scriptek</a></li>
+                <li><a href="#component-catalog">Komponens Katalógus (Storybook)</a></li>
+                <li><a href="#route-registry">Útvonal Regiszter (Sitemap)</a></li>
+                <li><a href="#auth-guard">Védelmi Logika és Szerepkörök</a></li>
+                <li><a href="#layout-integration">Layout Integráció</a></li>
+            </ol>
+        </div>
 
-        <h3>Adat- és Állapotkezelés</h3>
-        <p>A rendszer központosított állapotkezelést alkalmaz a kritikus moduloknál. A <code>MessengerProvider</code> segítségével például az üzenetküldés állapota az egész alkalmazáson belül elérhető, biztosítva a zökkenőmentes kommunikációt.</p>
+        <h2 id="tech-stack">1. Technológiai Stack</h2>
+        <p>Az alkalmazás alapvázát a <span class="tech-tag">React 19</span> és a <span class="tech-tag">Vite</span> környezet alkotja. A teljes kódbázis <span class="tech-tag">TypeScript</span> alapú, biztosítva a típusbiztonságot és a könnyű karbantarthatóságot.</p>
 
-        <h2>2. Kulcsfontosságú Modulok</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Kategória</th>
+                    <th>Technológia / Könyvtár</th>
+                    <th>Szerepkör</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Core Framework</td>
+                    <td><code>React 19</code></td>
+                    <td>UI keretrendszer</td>
+                </tr>
+                <tr>
+                    <td>Build Tool</td>
+                    <td><code>Vite</code></td>
+                    <td>Fejlesztői környezet és bundling</td>
+                </tr>
+                <tr>
+                    <td>Routing</td>
+                    <td><code>react-router-dom</code></td>
+                    <td>Oldalak közötti navigáció</td>
+                </tr>
+                <tr>
+                    <td>Animations</td>
+                    <td><code>framer-motion</code></td>
+                    <td>Prémium animációk és transitions</td>
+                </tr>
+                <tr>
+                    <td>Forms</td>
+                    <td><code>react-hook-form</code> + <code>zod</code></td>
+                    <td>Űrlapkezelő és validáció</td>
+                </tr>
+                <tr>
+                    <td>Database/Auth</td>
+                    <td><code>@supabase/supabase-js</code></td>
+                    <td>Backend-as-a-Service integráció</td>
+                </tr>
+                <tr>
+                    <td>Styling</td>
+                    <td><code>Vanilla CSS</code> + <code>Lucide icons</code></td>
+                    <td>Egyedi arculat és ikonkészlet</td>
+                </tr>
+                <tr>
+                    <td>Visual Effects</td>
+                    <td><code>tsparticles</code></td>
+                    <td>Interaktív vizuális elemek</td>
+                </tr>
+            </tbody>
+        </table>
 
-        <h3>2.1. Applicant Tracking System (ATS)</h3>
-        <p>Ez a modul a munkaadók "digitális irányítópultja". A jelöltek kezelése vizuális kártyákon keresztül történik, melyek a <span class="premium-text">Framer Motion</span> könyvtár segítségével folyékony, organikus mozgást kaptak. A rendszer támogatja a közvetlen CV letöltést és a státuszmódosítást (Elfogadás/Elutasítás) egyetlen kattintással.</p>
+        <h2 id="project-structure">2. Projekt Felépítés és Architektúra</h2>
+        <p>Az Orion a <strong>Feature-Based Architecture</strong> elvet követi. Ez azt jelenti, hogy a kód nem technikai rétegek (pl. components, containers), hanem üzleti funkciók szerint van csoportosítva.</p>
 
-        <h3>2.2. Orion Messenger</h3>
-        <p>A belső üzenetküldő platform lehetővé teszi a közvetlen párbeszédet a felek között. Különlegessége a környezetérzékeny indítás: az ATS felületéről indított üzenetküldés automatikusan megnyitja a megfelelő beszélgetést a háttérben, átadva a jelölt adatait.</p>
-
-        <h2>3. Design Rendszer: A "Glassmorphism" Világa</h2>
-        <p>Az Orion vizuális identitását a <span class="premium-text">Glassmorphism</span> trend határozza meg. Ezt az alábbi technikai megoldásokkal értük el:</p>
-        <ul>
-            <li><strong>Háttér-elmosás:</strong> <code>backdrop-filter: blur(10px)</code> alkalmazása a felső rétegeken.</li>
-            <li><strong>Szatén Fény:</strong> Finom fehéres áttetszőség használata a kártyák hátterénél.</li>
-            <li><strong>Dinamikus Részecskék:</strong> A főoldalon látható részecske-mozgás a <code>tsparticles</code> könyvtár eredménye, mely interaktívvá teszi a felületet.</li>
-        </ul>
-
-        <h2>4. Könyvtárszerkezet Áttekintő</h2>
         <pre>
 src/
-  ├── Api/           # Típusbiztos API hívások
-  ├── components/    # Globális UI elemek (Header, Footer, Gombok)
-  ├── features/      # Üzleti logikai egységek
-  │   ├── company/   # ATS, Álláskezelő, Profil
-  │   ├── user/      # Jelentkezések, Messenger, Kereső
-  │   └── public/    # Landing oldalak, Auth
-  ├── hooks/         # Újrahasználható logikai hook-ok
-  └── locales/       # Többnyelvűségi JSON fájlok
+  ├── Api/           # Típusbiztos API hívások (Application, Jobs, Auth, etc.)
+  ├── components/    # Megosztott UI komponensek
+  │     ├── base/    # Alapszintű elemek (Button, Input)
+  │     ├── layout/  # Elrendezési elemek (Header, Footer, Sidebar)
+  │     └── ui/      # Komplexebb UI modulok
+  ├── features/      # Üzleti logikai egységek (Features)
+  │     ├── company/ # Céges adminisztráció, ATS, Álláskezelés
+  │     ├── user/    # Álláskeresés, Jelentkezések, Messenger
+  │     ├── auth/    # Bejelentkezés és regisztráció folyamatok
+  │     └── public/  # Mindenki számára elérhető kezdőoldalak
+  ├── hooks/         # Egyedi React hook-ok (useAuth, useIsMobile)
+  ├── locales/       # Többnyelvűségi fordítások (i18n)
+  └── validation/    # Globális validációs sémák (Zod)
         </pre>
 
-        <h2>5. Teljesítmény és Skálázhatóság</h2>
-        <p>Az alkalmazás felépítése lehetővé teszi a könnyű bővítést. Új funkció hozzáadásakor a <strong>Feature-Based Design</strong> elvet követjük, így a kód bázisa akkor is átlátható marad, ha a projekt mérete a tízszeresére nő. Az ikonok betöltése (Lucide) optimalizált, így nem lassítják le a kezdőoldal megjelenítését.</p>
+        <h2 id="setup">3. Környezeti Beállítások és Telepítés</h2>
+        <p>A projekt futtatásához az alábbi előfeltételek szükségesek:</p>
+        <ul>
+            <li><strong>Node.js:</strong> Minimum 20.0.0 verzió ajánlott.</li>
+            <li><strong>Csomagkezelő:</strong> A projekt hivatalosan <code>npm</code> alapú (<code>package-lock.json</code> használata kötelező).</li>
+        </ul>
+
+        <h3>Környezeti Változók (.env)</h3>
+        <p>A helyi fejlesztéshez hozzon létre egy <code>.env</code> fájlt az alábbi kötelező kulcsokkal:</p>
+        <pre>
+ENCRYPTION_KEY=...    # Adattitkosítási kulcs
+JWT_SECRET=...        # Hitelesítési token titka
+VITE_API_URL=...      # Backend API címe (alapértelmezett: http://localhost:4000)
+FRONTEND_API_URL=...  # Frontend címe (alapértelmezett: http://localhost:5173)
+SUPABASE_SERVICE_KEY= # Supabase hozzáférési kulcs
+        </pre>
+
+        <h2 id="core-features">4. Kulcsfontosságú Modulok</h2>
+        
+        <h3>4.1. Applicant Tracking System (ATS)</h3>
+        <p>A munkaadók számára kifejlesztett vizuális jelöltkezelő rendszer. Lehetővé teszi a jelentkezők státuszának módosítását, önéletrajzuk megtekintését és az azonnali üzenetküldést. A <span class="premium-text">Framer Motion</span> animációk révén a kártyák mozgatása és a státuszváltás folyamatos élményt nyújt.</p>
+
+        <h3>4.2. Orion Messenger</h3>
+        <p>Valós idejű kommunikációs platform, amely integrálódik az ATS-be. Automatikusan társítja a beszélgetéseket a jelöltekhez és álláshirdetésekhez, megkönnyítve a toborzási folyamatot.</p>
+
+        <div class="warn-box">
+            <strong>Fontos:</strong> Az üzenetküldéshez aktív felhasználói munkamenet szükséges, amelyet a <code>MessengerProvider</code> felügyel globalisan.
+        </div>
+
+        <h2 id="state-management">5. Állapotkezelési Mélymerülés</h2>
+        <p>Az Orion hibrid megoldást alkalmaz az adatok kezelésére, elválasztva a szerveroldali állapotot a lokális felhasználói élménytől.</p>
+
+        <h3>5.1. Szerver Állapot (Server State)</h3>
+        <p>Jelenleg az alkalmazás standard <code>fetch</code> hívásokat és <code>useEffect</code> hook-okat használ az API rétegen (<code>src/Api</code>) keresztül. A jövőbeni tervek között szerepel a <strong>TanStack Query (React Query)</strong> bevezetése a hatékonyabb gyorsítótárazás (caching) érdekében.</p>
+
+        <h3>5.2. Globális Kliens Állapot</h3>
+        <p>A központosított logikát (pl. Messenger munkamenet, felhasználói autentikáció) natív <strong>React Context API</strong> vezérli (pl. <code>MessengerProvider</code>). Ez biztosítja a "prop-drilling" elkerülését anélkül, hogy külső könyvtárat (mint a Redux vagy Zustand) kellene használni, így csökkentve a bundle méretét.</p>
+
+        <h2 id="api-layer">6. API Réteg és Kommunikáció</h2>
+        <p>Minden hálózati kérés egy központosított API rétegen keresztül zajlik, amely TypeScript interfészekkel garantálja a válaszok formátumát.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Szolgáltatás</th>
+                    <th>Típus</th>
+                    <th>Funkció</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>authApi.ts</code></td>
+                    <td><span class="badge-pk">AUTH</span></td>
+                    <td>Login, Register, Password Reset</td>
+                </tr>
+                <tr>
+                    <td><code>advertisementApi.ts</code></td>
+                    <td><span class="badge-fk">JOBS</span></td>
+                    <td>Állás hirdetések listázása és módosítása</td>
+                </tr>
+                <tr>
+                    <td><code>applicationApi.ts</code></td>
+                    <td><span class="badge-enc">ATS</span></td>
+                    <td>Jelentkezések leadása és státuszuk kezelése</td>
+                </tr>
+                <tr>
+                    <td><code>messageApi.ts</code></td>
+                    <td><span class="badge-fk">MSG</span></td>
+                    <td>Üzenetek küldése és lekérése</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="design-system">7. Stílus és Design Irányelvek</h2>
+        <p>A vizuális megjelenés a "Modern Professional" irányzatot követi. A technikai megvalósítás alapja a <strong>Vanilla CSS</strong>, globális változók használatával.</p>
+
+        <h3>7.1. Design Tokens (index.css)</h3>
+        <p>Az arculati elemek központosítva vannak a <code>:root</code> elemben:</p>
+        <ul>
+            <li><code>--orion-blue: #2c5aa0;</code> - Elsődleges márka szín</li>
+            <li><code>--bg: #f8fafc;</code> - Világos hátterek</li>
+            <li><code>--panel: #ffffff;</code> - Kártyák és panelek</li>
+            <li><code>--text: #0f172a;</code> - Tipográfiai alapszín</li>
+        </ul>
+
+        <h3>7.2. CSS Architektúra</h3>
+        <p>A komponensek saját CSS fájlokkal rendelkeznek a jobb modulárisság érdekében. A jövőbeni skálázhatóság érdekében javasolt a <strong>BEM (Block Element Modifier)</strong> elnevezési konvenció szigorúbb követése vagy <strong>CSS Modules</strong> alkalmazása.</p>
+
+        <h2 id="testing">8. Tesztelési Stratégia</h2>
+        <div class="warn-box">
+            <strong>Roadmap:</strong> Jelenleg az automatizált tesztelés implementálása folyamatban van. A "Production Ready" státuszhoz az alábbiak bevezetése tervezett:
+        </div>
+        <ul>
+            <li><strong>Unit & Integration:</strong> <code>Vitest</code> használata a logikai hook-ok és segédfüggvények tesztelésére.</li>
+            <li><strong>End-to-End (E2E):</strong> <code>Playwright</code> integráció a kritikus folyamatokhoz (Messenger, Jelentkezés leadása).</li>
+            <li><strong>Visual Regression:</strong> <code>Chromatic</code> használata a komplex UI animációk és Glassmorphism hatások ellenőrzésére.</li>
+        </ul>
+
+        <h2 id="testing">9. Telepítés és CI/CD</h2>
+        <p>A frontend telepítése statikus build alapú, így bármilyen modern hosting szolgáltatón (Vercel, Netlify, AWS S3) futtatható.</p>
+        <ul>
+            <li><strong>Branching Strategy:</strong> A fejlesztés a <code>GitHub Flow</code> modellt követi (feature ágak, Pull Request alapú merge).</li>
+            <li><strong>CI Pipeline:</strong> Javasolt a GitHub Actions használata a build és lint folyamatok automatizálására minden feltöltésnél.</li>
+        </ul>
+
+        <h2 id="dependencies">10. Külső Függőségek és Alrendszerek</h2>
+        <p>A frontend teljeskörű működéséhez az alábbi alrendszerek párhuzamos futtatása szükséges:</p>
+        
+        <h3>10.1. Local Backend (Express)</h3>
+        <p>A frontend az adatokat a helyi Express szervertől kapja, amely a <code>server.ts</code>-en keresztül kommunikál az adatbázissal.</p>
+
+        <h3>10.2. OrionAI (Python Module)</h3>
+        <p>Az intelligens funkciókért (pl. CV elemzés) felelős Python modul. Futtatásához <strong>Python 3.10+</strong> és dedikált virtuális környezet (<code>.venv</code>) szükséges.</p>
+
+        <h2 id="scripts">11. Elérhető Scriptek</h2>
+        <p>A projekt indításához az alábbi <code>npm</code> parancsok használhatóak:</p>
+
+        <pre>
+# Fejlesztői szerver indítása
+npm run dev
+
+# Backend szerver indítása
+npm run server
+
+# OrionAI (Python) indítása
+npm run OrionAI
+
+# Production build készítése
+npm run build
+        </pre>
+
+        <h2 id="component-catalog">12. Komponens Katalógus</h2>
+        <p>A projekt Feature-Based Architecture-t használ megosztott UI komponensekkel a <code>src/components</code> könyvtárban. A jelenleg elérhető megosztott komponensek:</p>
+
+        <h3>Újrahasználható UI Elemek (<code>src/components/ui</code>)</h3>
+        <ul>
+            <li><code>Button</code> – Egységes gombstílus az egész alkalmazásban</li>
+            <li><code>InputField</code> – Formázott beviteli mező label és validálás támogatással</li>
+            <li><code>TextArea</code> – Többsoros szöveges beviteli mező</li>
+            <li><code>Checkbox</code> – Egyedi jelölőnégyzet komponens</li>
+            <li><code>ConfirmModal</code> – Visszaigazoló modális ablak (pl. törlés előtt)</li>
+            <li><code>AnimatedNumber</code> – Animált számláló vizuális statisztikákhoz</li>
+        </ul>
+
+        <div class="warn-box">
+            <strong>Roadmap – Storybook:</strong> Jelenleg nincs vizuális komponens katalógus. A jövőbeni tervek között szerepel a <strong>Storybook</strong> integrációja, amely lehetővé teszi a <code>base</code> és <code>ui</code> komponensek böngészését és tesztelését az alkalmazás futtatása nélkül.
+        </div>
+
+        <h2 id="route-registry">13. Útvonal Regiszter (Sitemap)</h2>
+        <p>Az összes útvonal az <code>App.tsx</code> fájlban van deklarálva. Az alábbi táblázat tartalmazza a teljes alkalmazás URL térképét és a hozzájuk tartozó hozzáférési szinteket.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>URL Útvonal</th>
+                    <th>Hozzáférés</th>
+                    <th>Leírás</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td><code>/</code></td><td><span class="badge-fk">PUBLIC</span></td><td>Nyilvános kezdőoldal (Landing Page)</td></tr>
+                <tr><td><code>/UserLoginPage</code></td><td><span class="badge-fk">GUEST</span></td><td>Felhasználói bejelentkezés</td></tr>
+                <tr><td><code>/UserRegisterPage</code></td><td><span class="badge-fk">GUEST</span></td><td>Felhasználói regisztráció</td></tr>
+                <tr><td><code>/user/verify</code></td><td><span class="badge-fk">PUBLIC</span></td><td>E-mail cím megerősítése</td></tr>
+                <tr><td><code>/user/sendverify</code></td><td><span class="badge-fk">PUBLIC</span></td><td>Megerősítő e-mail újraküldése</td></tr>
+                <tr><td><code>/user/password/reset</code></td><td><span class="badge-fk">PUBLIC</span></td><td>Jelszó-visszaállítás igénylése</td></tr>
+                <tr><td><code>/user/password</code></td><td><span class="badge-fk">PUBLIC</span></td><td>Új jelszó mentése</td></tr>
+                <tr><td><code>/userhomepage</code></td><td><span class="badge-enc">USER</span></td><td>Felhasználói kezdőlap</td></tr>
+                <tr><td><code>/listjobs</code></td><td><span class="badge-enc">USER</span></td><td>Összes állás böngészése</td></tr>
+                <tr><td><code>/job/show/:id</code></td><td><span class="badge-enc">USER</span></td><td>Kiválasztott állás megtekintése</td></tr>
+                <tr><td><code>/favorites</code></td><td><span class="badge-enc">USER</span></td><td>Kedvenc állások</td></tr>
+                <tr><td><code>/JobApplications</code></td><td><span class="badge-enc">USER</span></td><td>Leadott jelentkezések</td></tr>
+                <tr><td><code>/uploadresume</code></td><td><span class="badge-enc">USER</span></td><td>Önéletrajz feltöltése</td></tr>
+                <tr><td><code>/usereditprofile</code></td><td><span class="badge-enc">USER</span></td><td>Felhasználói profil szerkesztése</td></tr>
+                <tr><td><code>/messenger</code></td><td><span class="badge-fk">PUBLIC</span></td><td>Üzenetküldő felület</td></tr>
+                <tr><td><code>/CompanyLoginPage</code></td><td><span class="badge-fk">GUEST</span></td><td>Cég bejelentkezés</td></tr>
+                <tr><td><code>/CompanyRegisterPage</code></td><td><span class="badge-fk">GUEST</span></td><td>Cég regisztráció</td></tr>
+                <tr><td><code>/company</code></td><td><span class="badge-pk">COMPANY</span></td><td>Cég kezdőlap / dashboard</td></tr>
+                <tr><td><code>/ShowListedJobs</code></td><td><span class="badge-pk">COMPANY</span></td><td>Meghirdetett állások listája</td></tr>
+                <tr><td><code>/AddJob</code></td><td><span class="badge-pk">COMPANY</span></td><td>Új álláshirdetés létrehozása</td></tr>
+                <tr><td><code>/company/edit/:id</code></td><td><span class="badge-pk">COMPANY</span></td><td>Álláshirdetés szerkesztése</td></tr>
+                <tr><td><code>/company/ATS/:id</code></td><td><span class="badge-pk">COMPANY</span></td><td>Jelöltkövetési rendszer (ATS)</td></tr>
+                <tr><td><code>/CompanyEditProfile</code></td><td><span class="badge-pk">COMPANY</span></td><td>Cégprofil szerkesztése</td></tr>
+                <tr><td><code>/employees</code></td><td><span class="badge-pk">COMPANY</span></td><td>Alkalmazottak kezelése</td></tr>
+            </tbody>
+        </table>
+
+        <h2 id="auth-guard">14. Védelmi Logika és Szerepkör-alapú Hozzáférés</h2>
+        <p>A hozzáférés-védelem az <code>IsLoggedIn</code> komponensen keresztül valósul meg (<code>src/IsLoggedIn.tsx</code>), amely egy általános célú <strong>Auth Guard</strong>-ként működik. Minden védett útvonalat ezzel a komponenssel burkolnak be az <code>App.tsx</code>-ben.</p>
+
+        <h3>Működési logika</h3>
+        <p>Az <code>IsLoggedIn</code> komponens a <code>mode</code> prop alapján háromféle viselkedést implementál:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Mode</th>
+                    <th>Feltétel</th>
+                    <th>Átirányítás</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>mode="user"</code></td>
+                    <td>Csak bejelentkezett <strong>felhasználók</strong> érhetik el</td>
+                    <td>Ha nincs bejelentkezve → <code>/UserLoginPage</code></td>
+                </tr>
+                <tr>
+                    <td><code>mode="company"</code></td>
+                    <td>Csak bejelentkezett <strong>cégek</strong> érhetik el</td>
+                    <td>Ha nincs bejelentkezve → <code>/CompanyLoginPage</code></td>
+                </tr>
+                <tr>
+                    <td><code>mode="guest"</code></td>
+                    <td>Minden <strong>Felhasználó</strong> elérheti</td>
+                    <td>Ha be van jelentkezve → a saját kezdőoldalra</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>Szerepkör cross-redirect logika</h3>
+        <p>Az <code>IsLoggedIn</code> nemcsak az autentikációt ellenőrzi, hanem a <strong>szerepkört</strong> is. Ha egy céges felhasználó megpróbál egy <code>mode="user"</code> végpontot elérni, azonnal a <code>/company</code> kezdőlapra irányítódik át (és fordítva). Az autentikációs állapot a backend <code>checkAuthStatus()</code> API hívással ellenőrződik, és a <code>auth-changed</code> window esemény hatására automatikusan frissül.</p>
+
+        <div class="highlight-box">
+            <strong>Implementáció:</strong> Az összes szerepkör-ellenőrzés egyetlen, újrahasználható komponensben van központosítva (<code>IsLoggedIn.tsx</code>), így az új vegyes szabályok hozzáadása minimális kódváltoztatással jár.
+        </div>
+
+        <h2 id="layout-integration">15. Layout Integráció</h2>
+        <p>A layout komponensek (<code>Header</code>, <code>Footer</code>, <code>BannerKicker</code>, stb.) az egyes feature oldalak <strong>belső sablonjaként</strong> vannak beágyazva – nem egy globális wrapper veszi körül az összes útvonalat.</p>
+
+        <h3>Layout stratégia oldalanként</h3>
+        <ul>
+            <li><strong>Public Landing Page (<code>/</code>):</strong> Saját, testreszabott Header és animált háttér (<code>tsparticles</code>). Nem egyezik meg a belső alkalmazás Headerével.</li>
+            <li><strong>Autentikációs oldalak (Login, Register):</strong> Minimális layout – a fókusz az űrlapon van.</li>
+            <li><strong>Felhasználói és Céges oldalak (védett útvonalak):</strong> Teljes alkalmazás-Header (<code>LanguageSelector</code>, <code>ProfileDropdown</code>, <code>MessageDropDown</code> integrálva), Footer és reszponzív Sidebar navigáció.</li>
+            <li><strong>ATS és Admin felületek:</strong> A belső dashboard Header-t alkalmazzák, kiegészítve a visszanavigálási vezérlőkkel (pl. vissza a hirdetések listájához).</li>
+        </ul>
 
         <div class="footer">
-            <p>Orion Frontend Dokumentáció – 2026. március 16.</p>
-            <p><em>Verzió: 2.1 | Készítette: Antigravity AI</em></p>
+            <p>Orion Frontend Dokumentáció – 2026. március 30.</p>
+            <p><em>Készítette: Antigravity AI | Verzió: 2.7 | <span class="premium-text">Enterprise Ready</span></em></p>
         </div>
     </div>
 </body>
