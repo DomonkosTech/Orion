@@ -138,7 +138,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
 
                     {/* Main Actions */}
                     <div className={styles.actions}>
-                        <Button type="submit" isLoading={isLoading} variant="primary">
+                        <Button type="submit" isLoading={isLoading} variant="primary" data-testid="login-submit">
                             {t('loginPage.loginButton')}
                         </Button>
 

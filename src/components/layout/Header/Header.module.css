@@ -39,7 +39,7 @@
 .actions {
     display: flex; 
     align-items: center; 
-    gap: 16px; 
+    gap: 20px; 
     justify-self: end;
 }
 
@@ -79,7 +79,7 @@
     }
 
     .actions {
-        gap: 0.5rem;
+        gap: 1rem;
     }
 }
 

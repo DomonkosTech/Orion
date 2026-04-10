@@ -224,6 +224,7 @@ export const ApplicantTrackingSystem: React.FC = () => {
                                         whileTap={{ scale: 0.95 }}
                                         onClick={(e) => handleAccept(applicant.id, e)}
                                         className={`${styles.btn} ${styles.btnAccept}`}
+                                        data-testid="accept-btn"
                                     >
                                         <Check size={16} /> {t('ats.actions.accept')}
                                     </motion.button>
@@ -232,6 +233,7 @@ export const ApplicantTrackingSystem: React.FC = () => {
                                         whileTap={{ scale: 0.95 }}
                                         onClick={(e) => handleReject(applicant.id, e)}
                                         className={`${styles.btn} ${styles.btnReject}`}
+                                        data-testid="reject-btn"
                                     >
                                         <X size={16} /> {t('ats.actions.reject')}
                                     </motion.button>

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { checkAuthStatus } from "./Api/authApi.ts";
 
 interface Props {
-    children: React.ReactElement;
+    children?: React.ReactElement;
     mode?: "user" | "guest" | "company";
 }
 
@@ -86,7 +86,7 @@ function IsLoggedIn({ children, mode = "user" }: Props) {
         }
     }
 
-    return children;
+    return children ? children : <Outlet />;
 }
 
 export default IsLoggedIn;

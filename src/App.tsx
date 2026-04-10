@@ -34,201 +34,46 @@ function App() {
         <Router>
             <Routes>
                 {/* Mindenkinek elérhető oldalak (PUBLIC) */}
-                <Route
-                    path="/"
-                    element={<PublicHomePage />}
-                />
-                <Route
-                    path="/user/verify"
-                    element={<UserVerify />}
-                />
-                <Route
-                    path="/user/sendverify"
-                    element={<UserSendVerify />}
-                />
-                <Route
-                    path="/company/sendverify"
-                    element={<CompanySendVerify />}
-                />
-                <Route
-                    path="/company/verify"
-                    element={<CompanyVerify />}
-                />
-                <Route
-                    path="/user/password/reset"
-                    element={<UserPasswordResetRequest />}
-                />
-                <Route
-                    path="/user/password"
-                    element={<UserPasswordResetSave />}
-                />
-                <Route
-                    path="/company/password/reset"
-                    element={<CompanyPasswordResetRequest />}
-                />
-                <Route
-                    path="/company/password"
-                    element={<CompanyPasswordResetSave />}
-                />
+                <Route path="/" element={<PublicHomePage />} />
+                <Route path="/user/verify" element={<UserVerify />} />
+                <Route path="/user/sendverify" element={<UserSendVerify />} />
+                <Route path="/company/sendverify" element={<CompanySendVerify />} />
+                <Route path="/company/verify" element={<CompanyVerify />} />
+                <Route path="/user/password/reset" element={<UserPasswordResetRequest />} />
+                <Route path="/user/password" element={<UserPasswordResetSave />} />
+                <Route path="/company/password/reset" element={<CompanyPasswordResetRequest />} />
+                <Route path="/company/password" element={<CompanyPasswordResetSave />} />
+                <Route path="/messenger" element={<Messenger />} />
 
-                <Route
-                    path="/messenger"
-                    element={<Messenger />}
+                {/* Csak USER típusú felhasználóknak */}
+                <Route element={<IsLoggedIn mode="user" />}>
+                    <Route path="/userhomepage" element={<UserHomePage />} />
+                    <Route path="/favorites" element={<ShowFavoritesJobs />} />
+                    <Route path="/uploadresume" element={<UploadResume />} />
+                    <Route path="/JobApplications" element={<JobApplications />} />
+                    <Route path="/job/show/:id" element={<ShowJob />} />
+                    <Route path="/listjobs" element={<ListJobs />} />
+                    <Route path="/usereditprofile" element={<UserEditProfile />} />
+                </Route>
 
-                />
+                {/* Csak COMPANY típusú felhasználóknak */}
+                <Route element={<IsLoggedIn mode="company" />}>
+                    <Route path="/company" element={<CompanyHomePage />} />
+                    <Route path="/ShowListedJobs" element={<ShowListedJobs />} />
+                    <Route path="/company/ATS/:id" element={<ApplicantTrackingSystem />} />
+                    <Route path="/company/edit/:id" element={<EditJob />} />
+                    <Route path="/CompanyEditProfile" element={<CompanyEditProfile />} />
+                    <Route path="/AddJob" element={<AddJob />} />
+                    <Route path="/employees" element={<ShowEmployees />} />
+                </Route>
 
-
-
-                {/* 🔒 Csak USER típusú felhasználóknak */}
-                <Route
-                    path="/userhomepage"
-                    element={
-                        <IsLoggedIn mode="user">
-                            <UserHomePage />
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/favorites"
-                    element={
-                        <IsLoggedIn mode="user">
-                            <ShowFavoritesJobs />
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/uploadresume"
-                    element={
-                        <IsLoggedIn mode="user">
-                            <UploadResume />
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/JobApplications"
-                    element={
-                        <IsLoggedIn mode="user">
-                            <JobApplications />
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/job/show/:id"
-                    element={
-                        <IsLoggedIn mode="user">
-                            <ShowJob/>
-                        </IsLoggedIn>
-                    }
-                />
-
-                <Route
-                    path="/listjobs"
-                    element={
-                        <IsLoggedIn mode="user">
-                            <ListJobs />
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/usereditprofile"
-                    element={
-                        <IsLoggedIn mode="user">
-                            <UserEditProfile />
-                        </IsLoggedIn>
-                    }
-                />
-
-                {/* 🏢 Csak COMPANY típusú felhasználóknak */}
-                <Route
-                    path="/company"
-                    element={
-                        <IsLoggedIn mode="company">
-                            <CompanyHomePage/>
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/ShowListedJobs"
-                    element={
-                        <IsLoggedIn mode="company">
-                            <ShowListedJobs/>
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/company/ATS/:id"
-                    element={
-                        <IsLoggedIn mode="company">
-                            <ApplicantTrackingSystem/>
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/company/edit/:id"
-                    element={
-                        <IsLoggedIn mode="company">
-                            <EditJob/>
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/CompanyEditProfile"
-                    element={
-                        <IsLoggedIn mode="company">
-                            <CompanyEditProfile />
-                        </IsLoggedIn>
-                    }
-                />
-                <Route 
-                    path="/AddJob" 
-                    element={
-                        <IsLoggedIn mode="company">
-                            <AddJob />
-                        </IsLoggedIn>
-                    }
-                />
-
-                {/* 🚫 Csak kijelentkezve elérhető oldalak (GUEST) */}
-                <Route
-                    path="/UserLoginPage"
-                    element={
-                        <IsLoggedIn mode="guest">
-                            <UserLoginPage />
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/UserRegisterPage"
-                    element={
-                        <IsLoggedIn mode="guest">
-                            <UserRegisterPage />
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/CompanyLoginPage"
-                    element={
-                        <IsLoggedIn mode="guest">
-                            <CompanyLoginPage />
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/CompanyRegisterPage"
-                    element={
-                        <IsLoggedIn mode="guest">
-                            <CompanyRegisterPage />
-                        </IsLoggedIn>
-                    }
-                />
-                <Route
-                    path="/employees"
-                    element={
-                        <IsLoggedIn mode="company">
-                            <ShowEmployees/>
-                        </IsLoggedIn>
-                    }
-                />
+                {/* Csak kijelentkezve elérhető oldalak (GUEST) */}
+                <Route element={<IsLoggedIn mode="guest" />}>
+                    <Route path="/UserLoginPage" element={<UserLoginPage />} />
+                    <Route path="/UserRegisterPage" element={<UserRegisterPage />} />
+                    <Route path="/CompanyLoginPage" element={<CompanyLoginPage />} />
+                    <Route path="/CompanyRegisterPage" element={<CompanyRegisterPage />} />
+                </Route>
             </Routes>
         </Router>
     );

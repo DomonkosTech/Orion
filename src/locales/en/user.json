@@ -3,7 +3,8 @@
     "kicker": "Personal Dashboard",
     "welcome": "Hi, <1>{{name}}!</1> 👋",
     "subtitle": "Here's an overview of your career opportunities and processes for today.",
-    "profileSettings": "Profile settings"
+    "profileSettings": "Profile settings",
+    "title": "Dashboard"
   },
   "stats": {
     "applications": "Applications",
@@ -20,6 +21,7 @@
     "descriptionDynamic": "{{wage}} is actively looking for a new team member.",
     "descriptionDefault": "One of our partners is actively looking for a new team member.",
     "detailsButton": "View Details",
+    "detailsButtonAria": "View details for {{job}}",
     "empty": {
       "message": "We currently have no featured offers matching your profile.",
       "button": "Browse all jobs"

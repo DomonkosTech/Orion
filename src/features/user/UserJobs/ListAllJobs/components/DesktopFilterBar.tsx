@@ -58,6 +58,7 @@ export const DesktopFilterBar: React.FC<Props> = ({
                     <button
                         type="submit"
                         className={`${styles.mainSubmitButton} ${isAISearchActive ? styles.aiSearchSubmit : ""}`}
+                        data-testid="search-submit"
                     >
                         <div className={styles.buttonContentWrapper}>
                             <span className={`${styles.buttonText} ${isAISearchActive ? styles.hidden : ""}`}>
@@ -76,6 +77,7 @@ export const DesktopFilterBar: React.FC<Props> = ({
                         onClick={onToggleAISearch}
                         className={`${styles.aiToggle} ${isAISearchActive ? styles.aiToggleActive : ""}`}
                         title={t('jobs.list.ai.toggleLabel')}
+                        data-testid="ai-toggle"
                     >
                         <Sparkles size={18} />
                         <span>{t('jobs.list.ai.toggleLabel')}</span>

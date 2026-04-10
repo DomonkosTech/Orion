@@ -147,6 +147,7 @@
   "notificationDropdown": {
     "newMessage": "{{count}} új üzenet",
     "messages": "Üzenetek",
+    "triggerAria": "Értesítések megnyitása",
     "title": "ÉRTESÍTÉSEK",
     "markAllRead": "Összes olvasott",
     "allRead": "Minden elolvasva!",
