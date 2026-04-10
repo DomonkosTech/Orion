@@ -22,7 +22,7 @@ const LanguageSelector: React.FC = () => {
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     // Get current language object
-    const currentLangCode = i18n.language.split('-')[0]; // Handle 'en-US' -> 'en'
+    const currentLangCode = (i18n.language || 'hu').split('-')[0]; // Handle 'en-US' -> 'en'
     const currentLang = LANGUAGES.find(l => l.code === currentLangCode) || LANGUAGES[0];
 
     const changeLanguage = (lng: string) => {

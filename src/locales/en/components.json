@@ -147,6 +147,7 @@
   "notificationDropdown": {
     "newMessage": "{{count}} new message",
     "messages": "Messages",
+    "triggerAria": "Open notifications",
     "title": "NOTIFICATIONS",
     "markAllRead": "Mark all as read",
     "allRead": "All caught up!",

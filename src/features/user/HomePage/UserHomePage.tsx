@@ -28,11 +28,13 @@ import Footer from "../../../components/layout/Footer/Footer.tsx";
 import { useAuth } from "../../../hooks/useAuth";
 import { getAdvertisementById, type AdvertisementDetails } from "../../../Api/advertisementApi.ts";
 import { getUserStatistics, type DashboardStats } from "../../../Api/userApi.ts"
+import { usePageTitle } from "../../../hooks/usePageTitle.ts";
 
 function UserHomePage() {
     const navigate = useNavigate();
     const { t } = useTranslation("user");
     const { name } = useAuth();
+    usePageTitle(t('dashboard.title') || "Dashboard");
 
     const [featuredAdvertisement, setFeaturedAdvertisement] = useState<
         (AdvertisementDetails & { id: string }) | null
@@ -220,6 +222,7 @@ function UserHomePage() {
                                                 variant="primary"
                                                 color="orion-blue"
                                                 className={styles.matchBtn}
+                                                aria-label={t("featured.detailsButtonAria", { job: featuredAdvertisement.title })}
                                             >
                                                 {t("featured.detailsButton")}{" "}
                                                 <ArrowRight size={20} style={{ marginLeft: "12px" }} />

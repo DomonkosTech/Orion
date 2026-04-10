@@ -3,7 +3,8 @@
     "kicker": "Személyes Vezérlőpult",
     "welcome": "Szia, <1>{{name}}!</1> 👋",
     "subtitle": "Itt egy áttekintés a mai karrierlehetőségeidről és folyamataidról.",
-    "profileSettings": "Profil beállítások"
+    "profileSettings": "Profil beállítások",
+    "title": "Vezérlőpult"
   },
   "stats": {
     "applications": "Jelentkezések",
@@ -20,6 +21,7 @@
     "descriptionDynamic": "A(z) {{wage}} aktívan keresi az új csapattagot.",
     "descriptionDefault": "Egy partnerünk aktívan keresi az új csapattagot.",
     "detailsButton": "Részletek megtekintése",
+    "detailsButtonAria": "Részletek megtekintése: {{job}}",
     "empty": {
       "message": "Jelenleg nincs az Ön profiljához illő kiemelt ajánlatunk.",
       "button": "Összes állás böngészése"

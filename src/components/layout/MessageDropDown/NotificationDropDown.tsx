@@ -181,6 +181,7 @@ const NotificationDropdown: React.FC = () => {
                 className={`${styles.trigger} ${isOpen ? styles.expanded : ''}`}
                 onClick={() => setIsOpen(!isOpen)}
                 aria-expanded={isOpen}
+                aria-label={t('notificationDropdown.triggerAria') || "Notifications"}
             >
                 <div className={styles.iconContainer}>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
