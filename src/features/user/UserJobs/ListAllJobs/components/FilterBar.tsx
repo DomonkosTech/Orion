@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { DesktopFilterBar } from "./DesktopFilterBar.tsx";
 import { MobileFilterBar } from "./MobileFilterBar.tsx";
 import { useIsMobile } from "../../../../../hooks/useIsMobile.ts";
+import { useDebounce } from "../../../../../hooks/useDebounce.ts";
 
 type Props = {
     searchTerm: string;
@@ -20,6 +21,25 @@ type Props = {
 
 const FilterBar: React.FC<Props> = (props) => {
     const isMobile = useIsMobile();
+    const isFirstRender = useRef(true);
+
+    // Debounce all filter inputs
+    const debouncedSearchTerm = useDebounce(props.searchTerm, 500);
+    const debouncedLocation = useDebounce(props.locationFilter, 500);
+    const debouncedPosition = useDebounce(props.positionFilter, 500);
+    const debouncedMinWage = useDebounce(props.minWage, 500);
+
+    // Trigger search when any debounced filter changes
+    useEffect(() => {
+        // Skip the initial mount as ListJobs already fetches data on load
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        // Trigger the onSubmit handler (which is handleSearch in ListJobs)
+        props.onSubmit(undefined as unknown as React.FormEvent);
+    }, [debouncedSearchTerm, debouncedLocation, debouncedPosition, debouncedMinWage]);
 
     const hasActiveFilters = Boolean(
         props.searchTerm ||
