@@ -61,17 +61,22 @@
                 <li><a href="#ch1">1. Hogyan kezdd el?</a></li>
                 <li><a href="#ch2">2. Technológiai háttér és döntések</a></li>
                 <li><a href="#ch3">3. Az alkalmazás felépítése és komponensei</a></li>
-                <li><a href="#ch4">4. Adatkezelés: Hogyan mozognak az adatok?</a></li>
-                <li><a href="#ch5">5. Az alkalmazás működési logikája</a></li>
+                <li><a href="#ch4">4. Az oldal részei és funkciói</a></li>
+                <li><a href="#ch5">5. Adatkezelés: Hogyan mozognak az adatok?</a></li>
                 <li><a href="#ch6">6. Kapcsolat a szerverrel és biztonság</a></li>
-                <li><a href="#ch7">7. Gyorsaság és minőség</a></li>
-                <li><a href="#ch8">8. Fejlesztési folyamat és élesítés</a></li>
-                <li><a href="#ch9">9. Az oldal részei és funkciói</a></li>
+                <li><a href="#ch7">7. Az alkalmazás működési logikája</a></li>
+                <li><a href="#ch8">8. Tesztelés és Minőségbiztosítás</a></li>
+                <li><a href="#ch9">9. Fejlesztési folyamat és élesítés</a></li>
                 <li><a href="#ch10">10. Technikai adatok (API Reference)</a></li>
                 <li><a href="#ch11">11. Többnyelvűség (i18n)</a></li>
-                <li><a href="#ch12">12. Tesztelési Stratégia és Implementáció</a></li>
+                <li><a href="#ch12">12. SEO és Statikus Eszközök</a>
+                    <ul>
+                        <li><a href="#ch12-4">12.4. Lighthouse Audit és Mérőszámok</a></li>
+                    </ul>
+                </li>
             </ol>
         </div>
+
         
         <h2 id="ch1">1. Fejezet: Hogyan kezdd el? (Quick Start)</h2>
         
@@ -203,7 +208,21 @@
 
         <h3>3.1. Hogyan épülnek fel a mappák? (Directory Structure)</h3>
         
-        <p>Az Orion nem a megszokott módon (ahol minden gomb egy helyen, minden logika egy másik helyen van) épül fel. Ehelyett funkciók szerint csoportosítunk (Feature-based). Ez azért jó, mert ha például a csevegőn dolgozunk, minden szükséges fájlt egy helyen találunk, és nem kell tíz különböző mappát átnéznünk. Így a kód sokkal átláthatóbb marad (cohesion), és később is könnyebben bővíthető.</p>
+        <p>Az Orion nem a megszokott módon (ahol minden gomb egy helyen, minden logika egy másik helyen van) épül fel. Ehelyett funkciók szerint csoportosítunk (Feature-based). Ez azért jó, mert ha például a csevegőn dolgozunk, minden szükséges fájlt egy helyen találunk, és nem kell tíz különböző mappát átnéznünk. Így a kód sokkal átláthatóbb marad (cohesion), és később is könnyebben bővíthető. A projekt tényleges mappaszerkezete az alábbi logikát követi:</p>
+
+<pre><code>src/
+├── Api/              # Globális API hívások (native fetch)
+├── components/       # Újrahasznosítható, atomi UI elemek
+├── features/         # Funkció-alapú modulok (Feature-based)
+│   ├── auth/         # Autentikációs folyamatok (Belépés, Regisztráció)
+│   ├── chat/         # Messenger és valós idejű kommunikáció
+│   ├── company/      # Munkaadói irányítópult és toborzás
+│   ├── public/       # Publikus nézetek (Pl. Főoldal)
+│   └── user/         # Álláskeresői profil és jelentkezések
+├── hooks/            # Egyedi React hook-ok
+├── locales/          # Többnyelvűségi JSON fájlok (i18n)
+└── test/             # Tesztelési környezet és segédfájlok</code></pre>
+
 
         <h3>3.2. Komponensek és felelősségek</h3>
         
@@ -238,19 +257,69 @@ function IsLoggedIn({ children, mode = "user" }: Props) {
 
         <p>Fontos tudni, hogy az RBAC védelem a frontend oldalán csak a felhasználói élményt javítja (UX Security): segít abban, hogy a felhasználó ne lásson zavaró, számára szükségtelen menüket. A valódi biztonságot a backend szerver végzi a JWT tokenek ellenőrzésével minden egyes kérésnél.</p>
 
-        <h2 id="ch4">4. Fejezet: Adatkezelés: Hogyan mozognak az adatok? (State Management & Data Flow)</h2>
+        <h2 id="ch4">4. Fejezet: Az oldal részei és funkciói (Functional Decomposition)</h2>
+        <p>Ebben a fejezetben az Orion platform felhasználói felületeit logikai modulokra bontva mutatjuk be, részletezve a konkrét oldalak célját, a fejlesztésük során felmerült technikai kihívásokat és az adathálózati kapcsolataikat.</p>
+
+        <h3>A) Autentikációs és Profil Modul</h3>
+        <div class="highlight-box">
+            <h4>LoginPage & RegisterPage</h4>
+            <p><strong>Cél:</strong> A felhasználók és cégek biztonságos azonosítása, valamint az új hallgatók és munkaadók segítése a csatlakozásban.</p>
+            <p><strong>Technikai kihívás:</strong> Az eltérő regisztrációs folyamatok (más adatok kellenek a diákoknak és a cégeknek), a bejelentkezés biztosítása és a helyes adatok ellenőrzése (Zod).</p>
+            <p><strong>Adatkapcsolat:</strong> Az <code>/auth/login</code> és <code>/auth/register</code> végpontokat hívja, sikeres tranzakció esetén beállítva a biztonságos session-t.</p>
+
+            <h4>EditProfile</h4>
+            <p><strong>Cél:</strong> A felhasználói és céges adatok, önéletrajzok, valamint bemutatkozó profilok karbantartása.</p>
+            <p><strong>Technikai kihívás:</strong> A bonyolultabb adatok (például korábbi munkatapasztalatok) könnyű szerkesztése és a változások azonnali mentése a rendszerbe.</p>
+            <p><strong>Adatkapcsolat:</strong> A <code>/user/profile</code> vagy <code>/company/profile</code> végpontokon keresztül hajt végre lekéréseket és módosításokat.</p>
+        </div>
+
+        <h3>B) Álláskereső Modul</h3>
+        <div class="highlight-box">
+            <h4>Főoldal és Listázó (ListJobs)</h4>
+            <p><strong>Cél:</strong> Az elérhető álláshirdetések hatékony böngészése és szűrése.</p>
+            <p><strong>Technikai kihívás:</strong> A sok szempont szerinti (multi-criteria) szűrés beállítása, a gyors lapozás megoldása, és az OrionAI (mesterséges intelligencia alapú kereső) beépítése.</p>
+            <p><strong>Adatkapcsolat:</strong> A <code>getAdvertisements()</code> hívást használja, amely a <code>/advertisement</code> API-val kommunikál komplex query paraméterek segítségével.</p>
+
+            <h4>Részletes állásadatlap (ShowJob)</h4>
+            <p><strong>Cél:</strong> Egy adott pozíció minden részletének bemutatása és a jelentkezési folyamat elindítása.</p>
+            <p><strong>Technikai kihívás:</strong> A változó adatok (pl. bérsáv kalkulátor) szép megjelenítése, és annak figyelése, hogy a felhasználó jelentkezett-e már az adott állásra.</p>
+            <p><strong>Adatkapcsolat:</strong> A <code>/advertisement/:id</code> végpontról kéri le az adatokat és az <code>/application/apply</code> hívással kezdeményez tranzakciót.</p>
+        </div>
+
+        <h3>C) Toborzási Rendszer (ATS)</h3>
+        <div class="highlight-box">
+            <h4>Céges Dashboard és Jelentkezők kezelése (ATS)</h4>
+            <p><strong>Cél:</strong> A toborzók munkájának támogatása a beküldött pályázatok átlátható kezelésével.</p>
+            <p><strong>Technikai kihívás:</strong> A jelölt-kártyák mozgatása, a folyamatos animációk (Framer Motion) biztosítása, és az önéletrajzok (PDF/DOCX) kezelése.</p>
+            <p><strong>Adatkapcsolat:</strong> Az <code>/application/applicants/:id</code> végpontról kéri le a névsort és az <code>/application/status</code> hívással frissíti a jelöltek státuszát.</p>
+
+            <h4>Hirdetésfeladás (AddJob/EditJob)</h4>
+            <p><strong>Cél:</strong> Új munkaerő-igények gyors és professzionális rögzítése a rendszerben.</p>
+            <p><strong>Technikai kihívás:</strong> A bonyolult űrlap-struktúra (lokációk, követelmények, juttatások) kezelése React Hook Form segítségével, minimalizálva a re-renderelési terhelést.</p>
+            <p><strong>Adatkapcsolat:</strong> A <code>/advertisement/create</code> és <code>/advertisement/update</code> API-kat használja POST/PUT metódusokkal.</p>
+        </div>
+
+        <h3>D) Kommunikációs Modul</h3>
+        <div class="highlight-box">
+            <h4>Messenger / Chat felület</h4>
+            <p><strong>Cél:</strong> Közvetlen interakció biztosítása a munkaadók és a jelöltek között.</p>
+            <p><strong>Technikai kihívás:</strong> A valós idejű üzenetváltások kezelése, és az "Optimista felület" (Optimistic UI) technika alkalmazása, hogy a felhasználó ne érezze a várakozási időt (latency).</p>
+            <p><strong>Adatkapcsolat:</strong> A <code>/chat/partners</code> és <code>/chat/messages</code> API-kkal szinkronizál, biztosítva a perzisztens üzenetváltást.</p>
+        </div>
+
+        <h2 id="ch5">5. Fejezet: Adatkezelés: Hogyan mozognak az adatok? (State Management & Data Flow)</h2>
 
         <div class="tldr-box">
             <strong>💡 Lényeg:</strong> Nem használunk bonyolult külső könyvtárakat (mint a Redux). A React saját megoldásait (Context API) használjuk a globális adatokhoz, és minden mást helyben (Local State) kezelünk, hogy gyors maradjon az oldal.
         </div>
 
-        <h3>4.1. Különbség a helyi és a globális adatok között</h3>
+        <h3>5.1. Különbség a helyi és a globális adatok között</h3>
         
         <p>Nagy hiba lenne minden adatot egyetlen közös helyen tárolni, mert akkor minden apró változástól (például egy mezőbe való gépeléstől) az egész oldal újrafrissülne és lelassulna. Az Orionban ezért szigorúan szétválasztjuk a helyi (Local) és a globális (Global) adatokat.</p>
         
         <p>Az olyan ideiglenes (transient) dolgokat, mint egy lenyíló menü állapota vagy egy űrlap szövege, helyben kezeljük a komponenseken belül (useState). Csak a legszükségesebb adatokat tesszük közösbe (Context API), amikre sok helyen szükség van: például a bejelentkezési adatok (JWT tokenek, szerepkörök) vagy a csevegőrendszer állapota.</p>
 
-        <h3>4.2. Hogyan kérjük le az adatokat?</h3>
+        <h3>5.2. Hogyan kérjük le az adatokat?</h3>
         
         <p>Az adatok mozgása az Orionban mindig egyirányú (Unidirectional Data Flow). Ez segít abban, hogy a rendszer kiszámítható és stabil maradjon. Amikor a felhasználó például beküld egy űrlapot, az adat végigmegy bizonyos lépéseken (stations): a gombnyomástól a hálózati lekérésen át egészen a képernyő frissítéséig.</p>
         
@@ -298,13 +367,30 @@ export const checkAuthStatus = async (): Promise&lt;AuthStatus&gt; =&gt; {
 };</code></pre>
 
         <p>Ez a determinisztikus adatkérési életciklus biztosítja, hogy a vizuális keretrendszer soha nem tartalmaz adathálózati specifikus "spagetti-kódot".</p>
-        <h2 id="ch5">5. Fejezet: Az alkalmazás működési logikája (Core Business Logic)</h2>
 
-        <h3>5.1. Bejelentkezés és munkamenet (Authentication Flow)</h3>
+        <h2 id="ch6">6. Fejezet: Kapcsolat a szerverrel és biztonság (API Integration & Security)</h2>
+
+        <div class="tldr-box">
+            <strong>💡 Lényeg:</strong> <strong>JWT + HttpOnly cookie-k</strong> vigyáznak ránk. A toborzói felületet külön védelmi vonalak (Route Guards) védik, és minden adatot ellenőrzünk (Zod) mielőtt elküldenénk.
+        </div>
+
+        <h3>6.1. Hibák kezelése és visszajelzés (Error Handling & User Feedback)</h3>
+        
+        <p>Egy hálózati rendszernél előfordulhatnak hibák (pl. megszakad a net vagy túlterhelt a szerver). Az Orion 'hibatűrő' (Graceful Degradation) módon működik: felkészültünk a leggyakoribb problémákra. Külön tudjuk választani a felhasználói hibákat (pl. rossz jelszó) és a váratlan szerverhibákat, és ezekről mindig egyértelmű üzenetet küldünk (Toast értesítések formájában).</p>
+
+        <h3>6.2. Biztonsági megoldások (Frontend Security)</h3>
+        
+        <p>Mivel egy állásportálon bárki írhat szövegeket (pl. hirdetéseket), fontos a védelem a kártékony kódok (XSS) ellen. A React keretrendszer automatikusan 'megtisztítja' (escape mechanism) a beírt szövegeket, mielőtt megjelenítené őket. Így senki nem tud kártékony kódot belecsempészni az oldalba.</p>
+
+        <p>A bejelentkezési kulcsokat (JWT tokeneket) nagyon vigyázva kezeljük. Rövid életű (short-lived) kulcsokat használunk, és szigorú ellenőrzéseket végzünk a szerver oldalán is, hogy senki ne lophassa el mások munkamenetét.</p>
+
+        <h2 id="ch7">7. Fejezet: Az alkalmazás működési logikája (Core Business Logic)</h2>
+
+        <h3>7.1. Bejelentkezés és munkamenet (Authentication Flow)</h3>
         
         <p>A felhasználók azonosítása modern, kulcs-alapú (JWT – JSON Web Token) megoldással működik. Amikor sikeresen bejelentkezünk, a rendszer kap egy digitális kulcsot. Ennek segítségével maradhatunk bejelentkezve (Session Persistence). Amikor megnyitjuk az oldalt, a rendszer azonnal ellenőrzi ezt a kulcsot. Ez a folyamat észrevétlen, és megakadályozza, hogy a felület ugráljon vagy villogjon (layout shift) betöltés közben.</p>
 
-        <h3>5.2. Keresés és szűrés (Search & Filtering)</h3>
+        <h3>7.2. Keresés és szűrés (Search & Filtering)</h3>
         
         <p>Az állások közötti keresésnél sok szempont szerint szűrhetünk (pl. bér, helyszín). Mivel nagyon sok hirdetés lehet, nem töltjük le az összeset egyszerre, mert az lelassítaná a telefont vagy a számítógépet. Helyette lapozást (Pagination) használunk: egyszerre csak egy kevés adatot töltünk be, és ahogy a felhasználó lapoz, úgy hozzuk le a következőt.</p>
 
@@ -366,7 +452,7 @@ const fetchJobs = async (
     }
 };</code></pre>
 
-        <h3>5.3. Űrlapok és adatok ellenőrzése (Form Handling & Validation)</h3>
+        <h3>7.3. Űrlapok és adatok ellenőrzése (Form Handling & Validation)</h3>
         
         <p>A nagyobb adatbeviteli felületeknél (például a profil szerkesztésénél vagy álláshirdetés feladásánál) fontos, hogy az oldal ne akadjon meg gépelés közben. Ehhez egy modern technikát (react-hook-form) használunk, ami segít gyorsan tartani a felületet.</p>
         
@@ -412,97 +498,40 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
         </MessengerContext.Provider>
     );
 };</code></pre>
-        <h2 id="ch6">6. Fejezet: Kapcsolat a szerverrel és biztonság (API Integration & Security)</h2>
+
+        <h2 id="ch8">8. Fejezet: Tesztelés és Minőségbiztosítás</h2>
 
         <div class="tldr-box">
-            <strong>💡 Lényeg:</strong> <strong>JWT + HttpOnly cookie-k</strong> vigyáznak ránk. A toborzói felületet külön védelmi vonalak (Route Guards) védik, és minden adatot ellenőrzünk (Zod) mielőtt elküldenénk.
+            <strong>💡 Lényeg:</strong> 
+            A platform stabilitását és gyorsaságát párhuzamosan kezeljük. A kritikus folyamatokat háromszintű tesztelési rendszer (Vitest, RTL, MSW) védi, miközben biztosítjuk a hatékony adatkezelést.
         </div>
 
-        <h3>6.1. Hibák kezelése és visszajelzés (Error Handling & User Feedback)</h3>
-        
-        <p>Egy hálózati rendszernél előfordulhatnak hibák (pl. megszakad a net vagy túlterhelt a szerver). Az Orion 'hibatűrő' (Graceful Degradation) módon működik: felkészültünk a leggyakoribb problémákra. Külön tudjuk választani a felhasználói hibákat (pl. rossz jelszó) és a váratlan szerverhibákat, és ezekről mindig egyértelmű üzenetet küldünk (Toast értesítések formájában).</p>
-
-        <h3>6.2. Biztonsági megoldások (Frontend Security)</h3>
-        
-        <p>Mivel egy állásportálon bárki írhat szövegeket (pl. hirdetéseket), fontos a védelem a kártékony kódok (XSS) ellen. A React keretrendszer automatikusan 'megtisztítja' (escape mechanism) a beírt szövegeket, mielőtt megjelenítené őket. Így senki nem tud kártékony kódot belecsempészni az oldalba.</p>
-
-        <p>A bejelentkezési kulcsokat (JWT tokeneket) nagyon vigyázva kezeljük. Rövid életű (short-lived) kulcsokat használunk, és szigorú ellenőrzéseket végzünk a szerver oldalán is, hogy senki ne lophassa el mások munkamenetét.</p>
-
-        <h2 id="ch7">7. Fejezet: Gyorsaság és minőség (Performance Optimization & QA)</h2>
-
-        <h3>7.1. Adatkezelési hatékonyság és lapozás (Efficiency & Pagination)</h3>
+        <h3>8.1. Adatkezelési hatékonyság és lapozás (Efficiency & Pagination)</h3>
         
         <p>Az Orion a stabil és kiszámítható betöltésre törekszik. Bár az alkalmazás jelenleg egyetlen központi kódegységként (bundle) érkezik a maximális megbízhatóság érdekében, a nagy mennyiségű adat kezelését szerveroldali lapozással (Pagination) optimalizáljuk. Ez biztosítja, hogy a böngésző memóriája ne teljen meg, és az oldal sima maradjon (smooth scrolling) több száz hirdetés böngészése közben is.</p>
 
-        <h3>7.2. Folyamatos tesztelés és minőségbiztosítás (QA Strategy)</h3>
-        
-        <p>Az alkalmazás stabilitását a szigorú TypeScript típusozás mellett egy modern, háromszintű tesztelési rendszer szavatolja. Már nem csupán manuális ellenőrzésekre támaszkodunk: a kritikus üzleti folyamatokat (pl. jelentkezés, toborzás) automatizált tesztek védik a hibáktól. A tesztelési architektúra és az alkalmazott eszközök (Vitest, RTL, MSW) részletes leírása a <b>12. fejezetben</b> található.</p>
+        <h3>8.2. Tesztelési Stratégia és Implementáció</h3>
 
-        <h3>7.3. Könnyű használat és akadálymentesítés (Accessibility / a11y)</h3>
+        <p>Az Orion frontend projekt tesztelési rendszere azt a célt szolgálja, hogy a komplex üzleti folyamatok minden módosítás után is hibátlanul működjenek. A tesztelés három szinten valósul meg:</p>
+        <ul>
+            <li><strong>Egységtesztek (Unit Tests):</strong> Kisebb, izolált logikai egységek (pl. Zod sémák) tesztelése Vitesttel.</li>
+            <li><strong>Komponens tesztek (Component Tests):</strong> Funkcionális egységek vizuális és működési tesztelése (RTL).</li>
+            <li><strong>Integrációs tesztek (Integration Tests):</strong> Több komponens és globális állapot együttműködésének ellenőrzése MSW segítségével, valódihoz közeli hálózati forgalom szimulálásával.</li>
+        </ul>
+
+        <h3>8.3. Könnyű használat és akadálymentesítés (Accessibility / a11y)</h3>
         
         <p>Fontos nekünk, hogy mindenki tudja használni az oldalt, azok is, akik valamilyen segítő szoftvert (pl. képernyőolvasót) használnak. Ezért szabályos (semantic) HTML elemeket használunk, amiket a gépek is értenek. Emellett az egész oldal használható csak billentyűzetről is (Keyboard navigation), egér nélkül.</p>
-        <h2 id="ch8">8. Fejezet: Fejlesztési folyamat és élesítés (Developer Experience & Deployment)</h2>
 
-        <h3>8.1. Helyi fejlesztés és beállítások (Local Setup & Env Variables)</h3>
+        <h2 id="ch9">9. Fejezet: Fejlesztési folyamat és élesítés (Developer Experience & Deployment)</h2>
+
+        <h3>9.1. Helyi fejlesztés és beállítások (Local Setup & Env Variables)</h3>
         
         <p>A fejlesztők munkáját segítő beállítások (Developer Experience - DX) nagyon fontosak. Az Orion projekt beállításai jelenleg központi helyen (pl. <code>ApiConfig.ts</code>) érhetőek el. Később szigorúbb megoldásokat (Environment Variables - <code>.env</code>) használunk majd, hogy még biztonságosabb legyen a rendszer.</p>
 
-        <h3>8.2. Automatikus frissítés és telepítés (CI/CD Pipeline & Deployment)</h3>
+        <h3>9.2. Automatikus frissítés és telepítés (CI/CD Pipeline & Deployment)</h3>
         
         <p>A kód minőségének megőrzéséhez egy automatikus folyamatot (CI/CD csővezeték) használunk. Minden új kódot (Pull Request) automatikusan ellenőriz a rendszer: teszteket futtat és megvizsgálja a kód stílusát (Linting). Csak akkor kerülhet be az éles kódba, ha minden rendben van. Az élesítés (Deployment) pedig egyszerű, mert a React alkalmazás statikus fájlokból áll, amik szinte bárhol (pl. Vercel vagy AWS) gyorsan futtathatóak.</p>
-
-
-
-
-        <h2 id="ch9">9. Fejezet: Funkcionális Dekompozíció és Nézetek</h2>
-        <p>Ebben a fejezetben az Orion platform felhasználói felületeit logikai modulokra bontva mutatjuk be, részletezve a konkrét oldalak célját, a fejlesztésük során felmerült technikai kihívásokat és az adathálózati kapcsolataikat.</p>
-
-        <h3>A) Autentikációs és Profil Modul</h3>
-        <div class="highlight-box">
-            <h4>LoginPage & RegisterPage</h4>
-            <p><strong>Cél:</strong> A felhasználók és cégek biztonságos azonosítása, valamint az új hallgatók és munkaadók segítése a csatlakozásban.</p>
-            <p><strong>Technikai kihívás:</strong> Az eltérő regisztrációs folyamatok (más adatok kellenek a diákoknak és a cégeknek), a bejelentkezés biztosítása és a helyes adatok ellenőrzése (Zod).</p>
-            <p><strong>Adatkapcsolat:</strong> Az <code>/auth/login</code> és <code>/auth/register</code> végpontokat hívja, sikeres tranzakció esetén beállítva a biztonságos session-t.</p>
-
-            <h4>EditProfile</h4>
-            <p><strong>Cél:</strong> A felhasználói és céges adatok, önéletrajzok, valamint bemutatkozó profilok karbantartása.</p>
-            <p><strong>Technikai kihívás:</strong> A bonyolultabb adatok (például korábbi munkatapasztalatok) könnyű szerkesztése és a változások azonnali mentése a rendszerbe.</p>
-            <p><strong>Adatkapcsolat:</strong> A <code>/user/profile</code> vagy <code>/company/profile</code> végpontokon keresztül hajt végre lekéréseket és módosításokat.</p>
-        </div>
-
-        <h3>B) Álláskereső Modul</h3>
-        <div class="highlight-box">
-            <h4>Főoldal és Listázó (ListJobs)</h4>
-            <p><strong>Cél:</strong> Az elérhető álláshirdetések hatékony böngészése és szűrése.</p>
-            <p><strong>Technikai kihívás:</strong> A sok szempont szerinti (multi-criteria) szűrés beállítása, a gyors lapozás megoldása, és az OrionAI (mesterséges intelligencia alapú kereső) beépítése.</p>
-            <p><strong>Adatkapcsolat:</strong> A <code>getAdvertisements()</code> hívást használja, amely a <code>/advertisement</code> API-val kommunikál komplex query paraméterek segítségével.</p>
-
-            <h4>Részletes állásadatlap (ShowJob)</h4>
-            <p><strong>Cél:</strong> Egy adott pozíció minden részletének bemutatása és a jelentkezési folyamat elindítása.</p>
-            <p><strong>Technikai kihívás:</strong> A változó adatok (pl. bérsáv kalkulátor) szép megjelenítése, és annak figyelése, hogy a felhasználó jelentkezett-e már az adott állásra.</p>
-            <p><strong>Adatkapcsolat:</strong> A <code>/advertisement/:id</code> végpontról kéri le az adatokat és az <code>/application/apply</code> hívással kezdeményez tranzakciót.</p>
-        </div>
-
-        <h3>C) Toborzási Rendszer (ATS)</h3>
-        <div class="highlight-box">
-            <h4>Céges Dashboard és Jelentkezők kezelése (ATS)</h4>
-            <p><strong>Cél:</strong> A toborzók munkájának támogatása a beküldött pályázatok átlátható kezelésével.</p>
-            <p><strong>Technikai kihívás:</strong> A jelölt-kártyák mozgatása, a folyamatos animációk (Framer Motion) biztosítása, és az önéletrajzok (PDF/DOCX) kezelése.</p>
-            <p><strong>Adatkapcsolat:</strong> Az <code>/application/applicants/:id</code> végpontról kéri le a névsort és az <code>/application/status</code> hívással frissíti a jelöltek státuszát.</p>
-
-            <h4>Hirdetésfeladás (AddJob/EditJob)</h4>
-            <p><strong>Cél:</strong> Új munkaerő-igények gyors és professzionális rögzítése a rendszerben.</p>
-            <p><strong>Technikai kihívás:</strong> A bonyolult űrlap-struktúra (lokációk, követelmények, juttatások) kezelése React Hook Form segítségével, minimalizálva a re-renderelési terhelést.</p>
-            <p><strong>Adatkapcsolat:</strong> A <code>/advertisement/create</code> és <code>/advertisement/update</code> API-kat használja POST/PUT metódusokkal.</p>
-        </div>
-
-        <h3>D) Kommunikációs Modul</h3>
-        <div class="highlight-box">
-            <h4>Messenger / Chat felület</h4>
-            <p><strong>Cél:</strong> Közvetlen interakció biztosítása a munkaadók és a jelöltek között.</p>
-            <p><strong>Technikai kihívás:</strong> A valós idejű üzenetváltások kezelése, és az "Optimista felület" (Optimistic UI) technika alkalmazása, hogy a felhasználó ne érezze a várakozási időt (latency).</p>
-            <p><strong>Adatkapcsolat:</strong> A <code>/chat/partners</code> és <code>/chat/messages</code> API-kkal szinkronizál, biztosítva a perzisztens üzenetváltást.</p>
-        </div>
 
         <h2 id="ch10">10. Fejezet: Technikai adatok (API Reference)</h2>
         
@@ -639,56 +668,78 @@ return (
     &lt;/button&gt;
 );</code></pre>
 
-        <h2 id="ch12">12. Fejezet: Tesztelési Stratégia és Implementáció</h2>
+        <h2 id="ch12">12. Fejezet: SEO és Statikus Eszközök</h2>
 
         <div class="tldr-box">
-            <strong>💡 Tesztelés Lényeg:</strong> 
-            A megbízhatóságot három szinten garantáljuk: <strong>Vitest</strong> (gyors futtatás), <strong>React Testing Library</strong> (felhasználói interakciók) és <strong>MSW</strong> (API szimuláció).
+            <strong>💡 SEO Lényeg:</strong> 
+            A platform láthatóságát és professzionális megjelenését <strong>valid robots.txt</strong>, <strong>sitemap.xml</strong> és egyedi <strong>favicon</strong> biztosítja, célkitűzésünk a 100%-os Lighthouse SEO pontszám.
         </div>
 
-        <p>Az Orion frontend projekt tesztelési rendszere azt a célt szolgálja, hogy a komplex üzleti folyamatok (pl. jelentkezés, hirdetésfeladás) minden módosítás után is hibátlanul működjenek. A tesztelés nem csupán a hibák kereséséről szól, hanem a kód dokumentálásáról és a fejlesztői önbizalom növeléséről is.</p>
+        <p>Az Orion platform nem csupán funkcionálisan, hanem technikai keresőoptimalizálás (SEO) szempontjából is modern elvárásoknak felel meg. A statikus eszközök megfelelő kezelése kulcsfontosságú a keresőmotorok általi indexeléshez és a jó felhasználói élményhez.</p>
 
-        <h3>12.1. Alkalmazott Eszközök (Tooling)</h3>
+        <h3>12.1. Keresőmotorok kezelése (Robots & Sitemap)</h3>
+        <p>A weboldal gyökerében elhelyezett statikus fájlok segítik a keresőrobotok munkáját:</p>
         <ul>
-            <li><strong>Vitest:</strong> A modern Vite-alapú tesztfuttató, amely villámgyors és kompatibilis a Vite konfigurációval.</li>
-            <li><strong>React Testing Library (RTL):</strong> Segítségével úgy teszteljük a komponenseket, ahogy a felhasználók látják őket (DOM-alapú tesztelés).</li>
-            <li><strong>MSW (Mock Service Worker):</strong> A hálózati kéréseket a böngésző vagy a Node.js szintjén fogja el, így valódi backend nélkül is tesztelhetők az API hívások.</li>
+            <li><strong>robots.txt:</strong> Meghatározza a nyilvános elérést a crawler-ek számára, és közvetlen linket biztosít a sitemap-re.</li>
+            <li><strong>sitemap.xml:</strong> Tartalmazza az oldal struktúráját és a fontosabb útvonalakat (pl. főoldal), segítve a Google és más keresők gyorsabb feltérképezését.</li>
         </ul>
 
-        <h3>12.2. Tesztelési Szintek</h3>
+        <h3>12.2. Branding és Megjelenés (Favicon)</h3>
+        <p>A professzionális arculat része a böngésző fülön megjelenő ikon (favicon). Az Orion egy modern, minimalista, csillagképet idéző logót használ, amely nemcsak vizuális azonosítást tesz lehetővé, hanem javítja a Lighthouse "Best Practices" pontszámát is azáltal, hogy megszünteti a hiányzó ikon miatti hálózati hibákat.</p>
 
-        <h4>A) Egységtesztek (Unit Tests)</h4>
-        <p>Kisebb, izolált logikai egységek tesztelése, mint például a Zod érvényesítési sémák vagy segédfüggvények.</p>
-<pre><code>// Példa: Validációs séma tesztelése (Validation.test.ts)
-it('should reject an invalid email', () => {
-  const result = loginSchema.safeParse({ email: 'invalid-email', password: '...' });
-  expect(result.success).toBe(false);
-});</code></pre>
+        <h3>12.3. Implementáció és Elhelyezés</h3>
+        <p>Minden statikus eszköz a projekt <code>public/</code> könyvtárában található. A Vite építőeszköz ezeket a fájlokat változtatás nélkül másolja a végleges csomagba (dist), így biztosítva, hogy mindig elérhetőek legyenek a domain gyökeréből.</p>
 
-        <h4>B) Komponens tesztek (Component Tests)</h4>
-        <p>Egy-egy funkcionális egység vizuális és működési tesztelése felhasználói események (kattintás, gépelés) szimulálásával.</p>
-<pre><code>// Példa: Bejelentkezési folyamat tesztelése (LoginPage.test.tsx)
-it('should call onLogin and navigate on success', async () => {
-    fireEvent.change(screen.getByLabelText(/emailLabel/i), { target: { value: 'test@example.com' } });
-    fireEvent.click(screen.getByTestId('login-submit'));
-    await waitFor(() => expect(mockedNavigate).toHaveBeenCalledWith('/dashboard'));
-});</code></pre>
+        <h3 id="ch12-4">12.4. Lighthouse Audit és Mérőszámok</h3>
+        <div class="highlight-box">
+            <strong>📊 Legutóbbi Web-Audit Összesítés</strong>
+            <p>Az Orion platform legutóbbi Lighthouse auditja kiváló eredményeket mutat a keresőoptimalizálás és az elérhetőség terén, miközben kijelöli az irányt a további teljesítmény-optimalizáláshoz.</p>
+            
+            <table style="width: 100%; border-collapse: separate; border-spacing: 10px; margin-top: 15px;">
+                <tr>
+                    <td style="background: #2d3436; color: #e67e22; text-align: center; padding: 20px; border-radius: 10px; border: 2px solid #e67e22;">
+                        <div style="font-size: 2em; font-weight: bold;">58</div>
+                        <div style="font-size: 0.8em; color: #fff;">Performance</div>
+                    </td>
+                    <td style="background: #2d3436; color: #2ecc71; text-align: center; padding: 20px; border-radius: 10px; border: 2px solid #2ecc71;">
+                        <div style="font-size: 2em; font-weight: bold;">92</div>
+                        <div style="font-size: 0.8em; color: #fff;">Accessibility</div>
+                    </td>
+                    <td style="background: #2d3436; color: #2ecc71; text-align: center; padding: 20px; border-radius: 10px; border: 2px solid #2ecc71;">
+                        <div style="font-size: 2em; font-weight: bold;">100</div>
+                        <div style="font-size: 0.8em; color: #fff;">Best Practices</div>
+                    </td>
+                    <td style="background: #2d3436; color: #2ecc71; text-align: center; padding: 20px; border-radius: 10px; border: 2px solid #2ecc71;">
+                        <div style="font-size: 2em; font-weight: bold;">100</div>
+                        <div style="font-size: 0.8em; color: #fff;">SEO</div>
+                    </td>
+                </tr>
+            </table>
 
-        <h4>C) Integrációs tesztek (Integration Tests)</h4>
-        <p>Több komponens és globális állapot (Context) együttműködésének ellenőrzése, valódihoz közeli hálózati forgalommal (MSW segítségével).</p>
+            <p style="margin-top: 20px;"><strong>Elemzés és Következtetések:</strong></p>
+            <ul>
+                <li><strong>SEO & Best Practices (100%):</strong> A platform megfelel a legszigorúbb webes szabványoknak és biztonsági protokolloknak.</li>
+                <li><strong>Accessibility (92%):</strong> Az akadálymentesítés magas szintű, néhány aria-label finomhangolása még folyamatban van.</li>
+                <li><strong>Performance (58%):</strong> Ez a mérőszám a projekt korai fázisát és a rendkívül rövid fejlesztési időt tükrözi. A platform jelenleg egyetlen nagy bundle-t használ, és hiányzik a lazy loading (késleltetett betöltés) implementációja. Képeket elvétve használunk, így a lassulást nem médiafájlok, hanem a nagy mennyiségű JavaScript kód egyszerre történő betöltése és a render-blocking szkriptek okozzák.</li>
+            </ul>
+            <p><strong>Kulcsfontosságú Mérőszámok:</strong></p>
+            <ul>
+                <li><strong>FCP (First Contentful Paint):</strong> 2.8 s</li>
+                <li><strong>LCP (Largest Contentful Paint):</strong> 5.2 s</li>
+                <li><strong>Speed Index:</strong> 2.9 s</li>
+                <li><strong>TBT (Total Blocking Time):</strong> 0 ms</li>
+                <li><strong>CLS (Cumulative Layout Shift):</strong> 0.096</li>
+            </ul>
 
-        <h3>12.3. Hálózati Mocking (MSW)</h3>
-        <p>Az <code>src/mocks/handlers.ts</code> fájl tartalmazza az összes szimulált API végpontot. Ez biztosítja, hogy a tesztek stabilak és gyorsak legyenek, függetlenül a valódi backend szerver állapotától.</p>
-
-        <h3>12.4. Teszt Setup és Globális Mockok</h3>
-        <p>A <code>src/test/setup.ts</code> fájl felel a tesztkörnyezet előkészítéséért. Itt kezeljük a globális külső függőségek mockolását is, mint például a <code>react-i18next</code> (többnyelvűség), hogy a tesztek ne álljanak le hiányzó nyelvi konfigurációk miatt.</p>
-
-        <h3>12.5. Tesztek Futtatása</h3>
-        <p>A fejlesztés során a <code>npm test</code> parancs használatos, amely alapértelmezés szerint "Watch Mode"-ban indul el, így minden mentés után automatikusan újrafutnak az érintett tesztek.</p>
+        </div>
 
         <div class="footer">
-            <p>&copy; 2026 Orion Projekt &bull; Frissítve: 2026-04-11 &bull; Verzió: 1.3.0-TS</p>
+            <p>&copy; 2026 Orion Projekt &bull; Frissítve: 2026-04-11 &bull; Verzió: 1.4.0-TS</p>
         </div>
     </div>
 </body>
 </html>
+
+
+
+
