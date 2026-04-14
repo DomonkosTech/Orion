@@ -172,7 +172,7 @@
         
         <h3>2.1. Miért pont React és Vite?</h3>
         
-        <p>Sok más lehetőség is lett volna (például Angular vagy Vue), de ezek túl kötöttek lettek volna az Orionhoz. A React azért jó, mert az összetett felületeket (például az álláskeresőt vagy a jelöltkezelőt) könnyen kisebb, újrahasznosítható egységekre bonthatjuk (decomposition). A React gyorsasága és a Virtual DOM (Virtual DOM) használata biztosítja, hogy a rengeteg adat megjelenítésekor se lassuljon be az oldal.</p>
+        <p>Sok más lehetőség is lett volna (például Angular vagy Vue), de ezek túl kötöttek lettek volna az Orionhoz. A React azért jó, mert az összetett felületeket (például az álláskeresőt vagy a jelöltkezelőt) könnyen kisebb, újrahasznosítható egységekre bonthatjuk (decomposition). A React gyorsasága és a Virtual DOM használata biztosítja, hogy a rengeteg adat megjelenítésekor se lassuljon be az oldal.</p>
         
         <p>Régebben a legtöbb React projekt Webpacket használt, de az egyre lassabb (suboptimal) lett, ahogy nőtt a kód. A Vite viszont egy teljesen új megközelítést (paradigm shift) hozott. Nagyon gyorsan indul el, és a kód módosítása után is azonnal látszik a változás (Hot Module Replacement – HMR). Ez segít abban, hogy a fejlesztés ne lassuljon le akkor sem, ha már óriásira nőtt a projekt.</p>
 
@@ -186,33 +186,36 @@
 
         <p>Az állapotkezelésnél azt akartuk, hogy a rendszer átlátható maradjon, és ne bonyolítsuk feleslegesen újabb könyvtárakkal. Sokan használnak Reduxot vagy MobX-et, de ezekhez rengeteg plusz kódot (boilerplate) kell írni, ami csak lassítja a munkát (development overhead).</p>
 
-        <p>Az Orionban a React saját megoldásait (Context API és Hooks) használjuk. A globális adatokat – például a bejelentkezést vagy a csevegőt – külön részekre bontva kezeljük (pl. <code>MessengerProvider</code>). Minden más adat ott marad a helyén, ahol ténylegesen keletkezik, így a rendszer nem válik nehézkessé a folyamatos központi üzenetküldéstől. Mivel egy állásportál főként adatok lekéréséről szól, ez a megoldás bőven elég, és segít tisztán tartani a kódot.</p>
+        <p>Az Orionban a React saját megoldásait (Context API és Hooks) használjuk. A globális adatokat – például a bejelentkezést vagy az Üzenetküldőt (<strong>OrionMessenger</strong>) – külön részekre bontva kezeljük (pl. <code>MessengerProvider</code>). Minden más adat ott marad a helyén, ahol ténylegesen keletkezik, így a rendszer nem válik nehézkessé a folyamatos központi üzenetküldéstől. Mivel egy állásportál főként adatok lekéréséről szól, ez a megoldás bőven elég, és segít tisztán tartani a kódot.</p>
 
         <h3>2.4. Útvonalválasztás és Hálózat (Routing & Data Fetching)</h3>
 
         <p>Az oldalak közötti mozgást (routing) a <code>react-router-dom</code> 7-es verziója kezeli. Ez nem csak a navigációért felel, hanem a biztonságért is. Mivel az Orionban különböző szerepkörök vannak (keresők, cégek, vendégek), fontos, hogy mindenki csak azt lássa, amihez van joga. Ezt külön védelmi vonalakkal (Route Guards) oldottuk meg: ezek észrevétlenül (transparently) ellenőrzik a jogosultságot, mielőtt betöltenének egy-egy oldalt, így például egy sima álláskereső nem juthat be a cégek admin felületére.</p>
 
-        <p>Az adatok lekéréséhez (data fetching) saját megoldást használunk (native fetch), ami jól elkülönített és átlátható modulokra van bontva. Bárvannak már készen kapható komplex megoldások (például React Query), a mi rendszerünk jelenleg pontosan azt a gyorsaságot és átláthatóságot biztosítja, amire szükségünk van, anélkül, hogy külső csomagoktól függnénk.</p>
+        <p>Az adatok lekéréséhez (data fetching) saját megoldást használunk (native fetch), ami jól elkülönített és átlátható modulokra van bontva. Bár vannak már készen kapható komplex megoldások (például React Query), a mi rendszerünk jelenleg pontosan azt a gyorsaságot és átláthatóságot biztosítja, amire szükségünk van, anélkül, hogy külső csomagoktól függnénk. (nálunk ez a fájl az <strong>IsLoggedIn.tsx<strong/>)</p>
 
         <h3>2.5. Megjelenés és Stílusok (Styling & UI)</h3>
 
         <p>A kinézetnél fontos döntés volt, hogy ne használjunk kész könyvtárakat (mint a Tailwind CSS vagy Material UI). Ezek bár gyorsak az elején, később korlátozhatják a tervezést, és feleslegesen nagyra növelik a letöltendő fájlokat (bundle bloat). Emellett egy 25 000 soros kódnál a Tailwind kódja nehezen olvashatóvá (readability) tette volna a fájlokat.</p>
 
-        <p>Helyette a sima CSS modern lehetőségeit (native CSS) használjuk, amit a Framer Motion animációival egészítettünk ki. Ez teljes szabadságot ad nekünk, hogy pontosan olyan szép és modern felületeket készítsünk, amilyeneket szeretnénk – legyen szó átlátszó üveg-hatású (glassmorphism) elemekről vagy a toborzási rendszer kártyáinak folyamatos animációjáról.</p>
+        <p>Helyette a sima CSS modern lehetőségeit (native CSS) használjuk, amit a Framer Motion animációival egészítettünk ki. Ez teljes szabadságot ad nekünk, hogy pontosan olyan szép és modern felületeket készítsünk, amilyeneket szeretnénk – legyen szó átlátszó üveg-hatású (glassmorphism) elemekről vagy a jelöltkezelő rendszer kártyáinak folyamatos animációjáról.</p>
         
         <h2 id="ch3">3. Fejezet: Az alkalmazás felépítése és komponensei</h2>
 
         <div class="tldr-box">
-            <strong>💡 Lényeg:</strong> Funkciók szerint csoportosítunk (pl. minden csevegéssel kapcsolatos kód egy helyen van). Ez segít abban, hogy átlátható maradjon a rendszer akkor is, ha sokat fejlesztünk rajta.
+            <strong>💡 Lényeg:</strong> Funkciók szerint csoportosítunk (pl. minden üzenetküldéssel (<strong>OrionMessenger</strong>) kapcsolatos kód egy helyen van). Ez segít abban, hogy átlátható maradjon a rendszer akkor is, ha sokat fejlesztünk rajta.
         </div>
 
         <h3>3.1. Hogyan épülnek fel a mappák? (Directory Structure)</h3>
         
-        <p>Az Orion nem a megszokott módon (ahol minden gomb egy helyen, minden logika egy másik helyen van) épül fel. Ehelyett funkciók szerint csoportosítunk (Feature-based). Ez azért jó, mert ha például a csevegőn dolgozunk, minden szükséges fájlt egy helyen találunk, és nem kell tíz különböző mappát átnéznünk. Így a kód sokkal átláthatóbb marad (cohesion), és később is könnyebben bővíthető. A projekt tényleges mappaszerkezete az alábbi logikát követi:</p>
+        <p>Az Orion nem a megszokott módon (ahol minden gomb egy helyen, minden logika egy másik helyen van) épül fel. Ehelyett funkciók szerint csoportosítunk (Feature-based). Ez azért jó, mert ha például az Üzenetküldőn (<strong>OrionMessenger</strong>) dolgozunk, minden szükséges fájlt egy helyen találunk, és nem kell tíz különböző mappát átnéznünk. Így a kód sokkal átláthatóbb marad (cohesion), és később is könnyebben bővíthető. A projekt tényleges mappaszerkezete az alábbi logikát követi:</p>
 
 <pre><code>src/
 ├── Api/              # Globális API hívások (native fetch)
-├── components/       # Újrahasznosítható, atomi UI elemek
+├── components/       # Újrahasznosítható UI elemek csoportosítva
+│   ├── base/         # Nagyobb űrlap és profil komponenensek (pl. LoginPage)
+│   ├── layout/       # Elrendezési elemek (Header, Footer, Navigáció)
+│   └── ui/           # Atomi dizájn elemek (Gombok, Beviteli mezők, Modalok)
 ├── features/         # Funkció-alapú modulok (Feature-based)
 │   ├── auth/         # Autentikációs folyamatok (Belépés, Regisztráció)
 │   ├── chat/         # Messenger és valós idejű kommunikáció
@@ -221,7 +224,8 @@
 │   └── user/         # Álláskeresői profil és jelentkezések
 ├── hooks/            # Egyedi React hook-ok
 ├── locales/          # Többnyelvűségi JSON fájlok (i18n)
-└── test/             # Tesztelési környezet és segédfájlok</code></pre>
+├── test/             # Tesztelési környezet és segédfájlok
+└── validation/       # Zod adatsémák és űrlap validációk (pl. Validation.ts)</code></pre>
 
 
         <h3>3.2. Komponensek és felelősségek</h3>
@@ -258,53 +262,64 @@ function IsLoggedIn({ children, mode = "user" }: Props) {
         <p>Fontos tudni, hogy az RBAC védelem a frontend oldalán csak a felhasználói élményt javítja (UX Security): segít abban, hogy a felhasználó ne lásson zavaró, számára szükségtelen menüket. A valódi biztonságot a backend szerver végzi a JWT tokenek ellenőrzésével minden egyes kérésnél.</p>
 
         <h2 id="ch4">4. Fejezet: Az oldal részei és funkciói (Functional Decomposition)</h2>
-        <p>Ebben a fejezetben az Orion platform felhasználói felületeit logikai modulokra bontva mutatjuk be, részletezve a konkrét oldalak célját, a fejlesztésük során felmerült technikai kihívásokat és az adathálózati kapcsolataikat.</p>
+        <p>Ebben a fejezetben az Orion platform felhasználói felületeit logikai modulokra bontva mutatjuk be, részletezve a konkrét oldalak célját, a fejlesztésük során felmerült technikai kihívásokat és az adathálózati kapcsolataikat. A rendszer funkció-alapú (feature-based) architektúrát követ, így a komponensek a <code>src/features</code> mappában találhatók.</p>
 
-        <h3>A) Autentikációs és Profil Modul</h3>
+        <h3>A) Publikus Modul <code>(src/features/public)</code></h3>
         <div class="highlight-box">
-            <h4>LoginPage & RegisterPage</h4>
-            <p><strong>Cél:</strong> A felhasználók és cégek biztonságos azonosítása, valamint az új hallgatók és munkaadók segítése a csatlakozásban.</p>
-            <p><strong>Technikai kihívás:</strong> Az eltérő regisztrációs folyamatok (más adatok kellenek a diákoknak és a cégeknek), a bejelentkezés biztosítása és a helyes adatok ellenőrzése (Zod).</p>
-            <p><strong>Adatkapcsolat:</strong> Az <code>/auth/login</code> és <code>/auth/register</code> végpontokat hívja, sikeres tranzakció esetén beállítva a biztonságos session-t.</p>
-
-            <h4>EditProfile</h4>
-            <p><strong>Cél:</strong> A felhasználói és céges adatok, önéletrajzok, valamint bemutatkozó profilok karbantartása.</p>
-            <p><strong>Technikai kihívás:</strong> A bonyolultabb adatok (például korábbi munkatapasztalatok) könnyű szerkesztése és a változások azonnali mentése a rendszerbe.</p>
-            <p><strong>Adatkapcsolat:</strong> A <code>/user/profile</code> vagy <code>/company/profile</code> végpontokon keresztül hajt végre lekéréseket és módosításokat.</p>
+            <h4>Kezdőlap (PublicHomePage)</h4>
+            <p><strong>Cél:</strong> A platform bemutatása a nem bejelentkezett felhasználók számára, a regisztráció ösztönzése és az elérhető funkciók (álláskeresés, toborzás) ismertetése.</p>
+            <p><strong>Technikai kihívás:</strong> Gyors betöltési idő és reszponzív, látványos megjelenés biztosítása SEO szempontok (Lighthouse 100%) figyelembevételével.</p>
         </div>
 
-        <h3>B) Álláskereső Modul</h3>
+        <h3>B) Globális Autentikációs Modul <code>(src/features/auth)</code></h3>
         <div class="highlight-box">
-            <h4>Főoldal és Listázó (ListJobs)</h4>
-            <p><strong>Cél:</strong> Az elérhető álláshirdetések hatékony böngészése és szűrése.</p>
-            <p><strong>Technikai kihívás:</strong> A sok szempont szerinti (multi-criteria) szűrés beállítása, a gyors lapozás megoldása, és az OrionAI (mesterséges intelligencia alapú kereső) beépítése.</p>
-            <p><strong>Adatkapcsolat:</strong> A <code>getAdvertisements()</code> hívást használja, amely a <code>/advertisement</code> API-val kommunikál komplex query paraméterek segítségével.</p>
+            <h4>Jelszóvisszaállítás (PasswordReset)</h4>
+            <p><strong>Cél:</strong> Elfelejtett jelszavak biztonságos megújítása egy emailben kapott token segítségével.</p>
+            <p><strong>Adatkapcsolat:</strong> A <code>/auth/reset-password</code> folyamat kezelése.</p>
 
-            <h4>Részletes állásadatlap (ShowJob)</h4>
-            <p><strong>Cél:</strong> Egy adott pozíció minden részletének bemutatása és a jelentkezési folyamat elindítása.</p>
-            <p><strong>Technikai kihívás:</strong> A változó adatok (pl. bérsáv kalkulátor) szép megjelenítése, és annak figyelése, hogy a felhasználó jelentkezett-e már az adott állásra.</p>
-            <p><strong>Adatkapcsolat:</strong> A <code>/advertisement/:id</code> végpontról kéri le az adatokat és az <code>/application/apply</code> hívással kezdeményez tranzakciót.</p>
+            <h4>Fiók Hitelesítés (VerifyPage, SendVerifyPage)</h4>
+            <p><strong>Cél:</strong> A regisztrált email címek megerősítése (diákok és cégek számára egyaránt).</p>
+            <p><strong>Adatkapcsolat:</strong> A <code>/auth/verify</code> endpoint hívása a token validálásához.</p>
         </div>
 
-        <h3>C) Toborzási Rendszer (ATS)</h3>
+        <h3>C) Munkaadói (Céges) Modul <code>(src/features/company)</code></h3>
         <div class="highlight-box">
-            <h4>Céges Dashboard és Jelentkezők kezelése (ATS)</h4>
-            <p><strong>Cél:</strong> A toborzók munkájának támogatása a beküldött pályázatok átlátható kezelésével.</p>
-            <p><strong>Technikai kihívás:</strong> A jelölt-kártyák mozgatása, a folyamatos animációk (Framer Motion) biztosítása, és az önéletrajzok (PDF/DOCX) kezelése.</p>
-            <p><strong>Adatkapcsolat:</strong> Az <code>/application/applicants/:id</code> végpontról kéri le a névsort és az <code>/application/status</code> hívással frissíti a jelöltek státuszát.</p>
+            <h4>Autentikáció (LoginPage, RegisterPage)</h4>
+            <p><strong>Cél:</strong> Céges felhasználók beléptetése és új cégek regisztrációja. (A diákoktól elkülönített, specifikus adatkörrel: pl. adószám).</p>
+            <p><strong>Adatkapcsolat:</strong> Az <code>/auth/company/login</code> és <code>/auth/company/register</code> hívások.</p>
 
-            <h4>Hirdetésfeladás (AddJob/EditJob)</h4>
-            <p><strong>Cél:</strong> Új munkaerő-igények gyors és professzionális rögzítése a rendszerben.</p>
-            <p><strong>Technikai kihívás:</strong> A bonyolult űrlap-struktúra (lokációk, követelmények, juttatások) kezelése React Hook Form segítségével, minimalizálva a re-renderelési terhelést.</p>
-            <p><strong>Adatkapcsolat:</strong> A <code>/advertisement/create</code> és <code>/advertisement/update</code> API-kat használja POST/PUT metódusokkal.</p>
+            <h4>Céges Dashboard (HomePage, EditProfile)</h4>
+            <p><strong>Cél:</strong> A cég profiljának karbantartása, és az alapvető statisztikák áttekintése.</p>
+            
+            <h4>Hirdetéskezelés (ShowListedJobs, CompanyJobs)</h4>
+            <p><strong>Cél:</strong> Új munkakörök kiírása (<code>AddJob</code>), meglévők szerkesztése (<code>EditJob</code>) és az aktív/inaktív hirdetések áttekintése.</p>
+            <p><strong>Technikai kihívás:</strong> Összetett űrlapok kezelése a React Hook Form és Zod validáció segítségével.</p>
+
+            <h4>Jelöltkezelő Rendszer (ATS - Applicant Tracking System)</h4>
+            <p><strong>Cél:</strong> A jelentkezők nyomon követése, státuszuk frissítése egy Kanban-szerű (drag-and-drop vagy gombnyomásos) felületen.</p>
+            <p><strong>Technikai kihívás:</strong> Folyamatos animációk (Framer Motion) és valós idejű státusz frissítések zökkenőmentes megjelenítése.</p>
         </div>
 
-        <h3>D) Kommunikációs Modul</h3>
+        <h3>D) Álláskeresői (Diák) Modul <code>(src/features/user)</code></h3>
         <div class="highlight-box">
-            <h4>Messenger / Chat felület</h4>
-            <p><strong>Cél:</strong> Közvetlen interakció biztosítása a munkaadók és a jelöltek között.</p>
-            <p><strong>Technikai kihívás:</strong> A valós idejű üzenetváltások kezelése, és az "Optimista felület" (Optimistic UI) technika alkalmazása, hogy a felhasználó ne érezze a várakozási időt (latency).</p>
-            <p><strong>Adatkapcsolat:</strong> A <code>/chat/partners</code> és <code>/chat/messages</code> API-kkal szinkronizál, biztosítva a perzisztens üzenetváltást.</p>
+            <h4>Autentikáció (LoginPage, RegisterPage)</h4>
+            <p><strong>Cél:</strong> Diákok/álláskeresők beléptetése és regisztrációja, jelentősen eltérő adatokkal (pl. lakcímkártya, személyi).</p>
+            
+            <h4>Álláskereső Alrendszer (UserJobs)</h4>
+            <p><strong>Cél:</strong> Hirdetések listázása (<code>ListAllJobs</code>), részletes adatlap megtekintése (<code>ShowSelectedJob</code>) és mentett/kedvenc állások (<code>Favorites</code>) kezelése.</p>
+            <p><strong>Technikai kihívás:</strong> Az OrionAI alapú intelligens, természetes nyelvű keresés integrációja és az aszinkron lapozás (pagination) kivitelezése memóriaszivárgás nélkül.</p>
+            <p><strong>Adatkapcsolat:</strong> A <code>/advertisement</code> API és az OrionAI végpont használata.</p>
+
+            <h4>Profil és Jelentkezések (EditProfile, JobApplications, UploadResume)</h4>
+            <p><strong>Cél:</strong> Önéletrajzok (PDF) feltöltése és a felhasználó által benyújtott jelentkezések utólagos visszakövetése.</p>
+        </div>
+
+        <h3>E) Kommunikációs Modul <code>(src/features/chat)</code></h3>
+        <div class="highlight-box">
+            <h4>OrionMessenger</h4>
+            <p><strong>Cél:</strong> Közvetlen, valós idejű interakció biztosítása a munkaadók és a jelöltek között.</p>
+            <p><strong>Technikai kihívás:</strong> Az "Optimista felület" (Optimistic UI) technika alkalmazása, ami a hálózati késleltetést (latency) elrejti a felhasználó elől (vagyis az elküldött üzenet azonnal megjelenik a képernyőn, még mielőtt a szerver fizikailag visszaigazolná az elmentését, gyors és folyamatos élményt nyújtva).</p>
+            <p><strong>Adatkapcsolat:</strong> Globális <code>MessengerProvider</code> által menedzselt WebSocket/szinkronizációs kapcsolat a <code>/chat</code> API-kon keresztül.</p>
         </div>
 
         <h2 id="ch5">5. Fejezet: Adatkezelés: Hogyan mozognak az adatok? (State Management & Data Flow)</h2>
@@ -317,7 +332,7 @@ function IsLoggedIn({ children, mode = "user" }: Props) {
         
         <p>Nagy hiba lenne minden adatot egyetlen közös helyen tárolni, mert akkor minden apró változástól (például egy mezőbe való gépeléstől) az egész oldal újrafrissülne és lelassulna. Az Orionban ezért szigorúan szétválasztjuk a helyi (Local) és a globális (Global) adatokat.</p>
         
-        <p>Az olyan ideiglenes (transient) dolgokat, mint egy lenyíló menü állapota vagy egy űrlap szövege, helyben kezeljük a komponenseken belül (useState). Csak a legszükségesebb adatokat tesszük közösbe (Context API), amikre sok helyen szükség van: például a bejelentkezési adatok (JWT tokenek, szerepkörök) vagy a csevegőrendszer állapota.</p>
+        <p>Az olyan ideiglenes (transient) dolgokat, mint egy lenyíló menü állapota vagy egy űrlap szövege, helyben kezeljük a komponenseken belül (useState). Csak a legszükségesebb adatokat tesszük közösbe (Context API), amikre sok helyen szükség van: például a bejelentkezési adatok (JWT tokenek, szerepkörök) vagy az Üzenetküldő (<strong>OrionMessenger</strong>) rendszer állapota.</p>
 
         <h3>5.2. Hogyan kérjük le az adatokat?</h3>
         
@@ -458,14 +473,23 @@ const fetchJobs = async (
         
         <p>Az adatok helyességét egy sémavalidációs rendszerrel (Zod) ellenőrizzük. Ez lehetővé teszi, hogy még azelőtt figyelmeztessük a felhasználót a hibákra, hogy az adatok elhagynák a böngészőt. Így azonnali visszajelzést kap, ha például elfelejtett kitölteni egy kötelező mezőt.</p>
 
-<pre><code>// Hallgatói regisztráció sémája (Validation.ts)
+<pre><code>// Diák/User regisztráció sémája (Validation.ts)
 export const userRegisterObject = authBase.extend({
-    lname: z.string().min(2, "Vezetéknév legalább 2 karakter"),
-    fname: z.string().min(2, "Keresztnév legalább 2 karakter"),
-    birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((date) => {
+    lname: z.string().min(2, "Vezetéknév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
+    fname: z.string().min(2, "Keresztnév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
+    birth_place: z.string().min(2, "Születési hely legalább 2 karakter"),
+    birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Érvénytelen dátum").refine((date) => {
         return new Date(date) <= new Date();
     }, "A születési dátum nem lehet a jövőben"),
-    tax_number: z.string().trim().min(1, "Az adószám kötelező"),
+    address: z.string().min(5, "A cím legalább 5 karakter"),
+    phone_number: z.string().regex(/^[0-9+\s-]{7,20}$/, "Érvénytelen telefonszám"),
+    tax_number: z.string().trim().min(1, "Az adószám kötelező").regex(/^[0-9-]+$/i, "Az adószám csak számokat és kötőjelet tartalmazhat"),
+    nationality: z.string().min(5, "A nemzetiseg legalább 5 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
+    qualifications: z.string().min(10, "A végzettségek legalább 10 karakter"),
+    short_bio: z.string().min(10, "A bemutatkozás legalább 10 karakter").max(BIO_MAX_LENGTH, `A bemutatkozás maximum ${BIO_MAX_LENGTH} karakter lehet`),
+    personal_id: z.string().length(8, "A személyi igazolvány számnak pontosan 8 karakternek kell lennie").regex(/^\d{6}[A-Z]{2}$/, "Érvénytelen formátum"),
+    address_card_number: z.string().length(8, "A lakcímkártya számnak pontosan 8 karakternek kell lennie").regex(/^\d{6}[A-Z]{2}$/, "Érvénytelen formátum"),
+    terms_accepted: z.literal(true, { errorMap: () => ({ message: "El kell fogadnia a feltételeket" }) }),
 });</code></pre>
 
         <p>A komplex, több képernyőt érintő folyamatokat (mint a Messenger rendszere) dedikált Context Provider-ek kezelik.</p>
@@ -544,7 +568,7 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
             </ul>
         </div>
 
-        <p>Az Orion frontendje és backendje JSON formátumban 'beszélget' egymással. Alább láthatóak azok a technikai leírások (TypeScript interfészek), amik biztosítják, hogy mindkét oldal ugyanazt az adatot értse.</p>
+        <p>Az Orion frontendje és backendje JSON formátumban kommunikál egymással. Alább láthatóak azok a technikai leírások (TypeScript interfészek), amik biztosítják, hogy mindkét oldal ugyanazt az adatot értse.</p>
 
         <h3>10.1. Munkamenet és Autentikáció (Auth & Session)</h3>
         <p>A <code>GET /api/auth/status</code> végpont visszajelzése az aktuális felhasználói állapotról:</p>
@@ -560,8 +584,8 @@ export interface AuthStatus {
     lname?: string;
 }</code></pre>
 
-        <h3>10.2. Felhasználói Profil (Student Profile)</h3>
-        <p>A <code>UserProfileData</code> interfész a hallgatók személyes adatait és dokumentumait írja le:</p>
+        <h3>10.2. Felhasználói Profil (User Profile)</h3>
+        <p>A <code>UserProfileData</code> interfész a felhasználók (diákok) személyes adatait és dokumentumait írja le:</p>
 <pre><code>// userApi.ts részletek
 export interface UserProfileData {
     email: string;
@@ -735,11 +759,7 @@ return (
 
         <div class="footer">
             <p>&copy; 2026 Orion Projekt &bull; Frissítve: 2026-04-11 &bull; Verzió: 1.4.0-TS</p>
-        </div>
+        </div>  
     </div>
 </body>
 </html>
-
-
-
-
