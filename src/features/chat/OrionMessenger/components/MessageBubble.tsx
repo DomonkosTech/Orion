@@ -40,24 +40,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, isMyMessage, isL
     return (
         <motion.div 
             layout
-            initial={{ 
-                opacity: 0, 
-                y: 20, 
-                scale: 0.8,
-                rotate: isMyMessage ? 2 : -2
-            }}
-            animate={{ 
-                opacity: 1, 
-                y: 0, 
-                scale: 1,
-                rotate: 0
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ 
-                type: "spring", 
-                stiffness: 400, 
-                damping: 25,
-                mass: 0.8,
-                opacity: { duration: 0.2 }
+                duration: 0.1,
+                ease: "easeOut"
             }}
             className={rowClass}
         >

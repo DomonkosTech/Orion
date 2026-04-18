@@ -5,6 +5,8 @@ export interface ChatPartner {
     id: number;
     name: string;
     last_message_at: string | null;
+    is_read: boolean;
+    sender_type?: "USER" | "COMPANY";
 }
 
 export const AVATAR_COLORS = [

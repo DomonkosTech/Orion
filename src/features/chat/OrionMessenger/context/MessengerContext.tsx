@@ -75,7 +75,10 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                     data = raw.map(p => ({
                         id: p.company_id,
                         name: p.company_name,
-                        last_message_at: p.last_message_at
+                        last_message_at: p.created_at,
+                        // If I sent the last message, it's "read" for me
+                        is_read: p.sender_type === "USER" ? true : p.is_read,
+                        sender_type: p.sender_type
                     }));
                 } else if (userType === "company") {
                     const json = await getCompanyChatPartners();
@@ -83,7 +86,10 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                     data = raw.map(p => ({
                         id: p.user_id,
                         name: `${p.user_lname} ${p.user_fname}`,
-                        last_message_at: p.last_message_at
+                        last_message_at: p.last_message_at,
+                        // If I sent the last message, it's "read" for me
+                        is_read: p.sender_type === "COMPANY" ? true : p.is_read,
+                        sender_type: p.sender_type
                     }));
                 }
 
@@ -145,6 +151,17 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
             cancelled = true;
         };
     }, [userType, authLoading, location.search]);
+
+    useEffect(() => {
+        if (selectedPartnerId === null || partnersLoading) return;
+        setPartners(prev => {
+            const idx = prev.findIndex(p => p.id === selectedPartnerId);
+            if (idx === -1 || prev[idx].is_read) return prev;
+            const updated = [...prev];
+            updated[idx] = { ...updated[idx], is_read: true };
+            return updated;
+        });
+    }, [selectedPartnerId, partnersLoading]);
 
     useEffect(() => {
         if (selectedPartnerId === null || authLoading) return;
@@ -228,13 +245,31 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                         const currentUser = userRef.current;
                         const currentUserType = userTypeRef.current;
 
-                        // Check if the message belongs to the current conversation
-                        if (currentPartnerId && currentUser) {
-                            // Try to find the ID in various common properties
+                        if (currentUser) {
                             const myId = currentUserType === 'user' 
                                 ? (currentUser.userId || currentUser.id || currentUser.user_id) 
                                 : (currentUser.companyId || currentUser.id || currentUser.company_id);
                             
+                            const partnerId = currentUserType === 'user' ? newMessage.company_id : newMessage.user_id;
+
+                            // 1. Update partners list for sidebar (unread status and timestamp)
+                            setPartners(prev => {
+                                const idx = prev.findIndex(p => p.id == partnerId);
+                                if (idx === -1) return prev; // Should we add a new partner if not found?
+                                
+                                const updatedPartners = [...prev];
+                                const isFromOther = newMessage.sender_type !== (currentUserType === 'user' ? 'USER' : 'COMPANY');
+                                
+                                updatedPartners[idx] = {
+                                    ...updatedPartners[idx],
+                                    last_message_at: newMessage.created_at,
+                                    // Only mark unread if it's from the other person AND NOT in current chat
+                                    is_read: isFromOther && currentPartnerId == partnerId ? true : (isFromOther ? false : updatedPartners[idx].is_read)
+                                };
+                                return updatedPartners;
+                            });
+
+                            // 2. If it belongs to current conversation, add to messages list
                             console.log("WS Check Relevance:", { 
                                 currentUserType, 
                                 currentPartnerId, 
@@ -314,6 +349,19 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
 
         setMessages((prev) => [...prev, optimistic]);
         setSending(true);
+
+        // Update partner's last message and is_read locally
+        setPartners(prev => {
+            const idx = prev.findIndex(p => p.id === selectedPartnerId);
+            if (idx === -1) return prev;
+            const updated = [...prev];
+            updated[idx] = {
+                ...updated[idx],
+                last_message_at: optimistic.created_at,
+                is_read: true // Sent by me, so it's "read" for me
+            };
+            return updated;
+        });
 
         try {
             let res;
