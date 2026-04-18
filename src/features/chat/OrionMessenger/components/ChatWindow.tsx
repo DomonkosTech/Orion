@@ -37,8 +37,18 @@ const ChatWindow: React.FC = () => {
     } = useMessenger();
 
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const prevCompanyIdRef = useRef<number | null>(null);
 
     const [delayedLoading, setDelayedLoading] = useState(false);
+
+    // Reset scroll to top immediately when a new conversation is selected
+    // This prevents "inheriting" the scroll position from the previous chat
+    useEffect(() => {
+        if (selectedCompany?.company_id && containerRef.current) {
+            containerRef.current.scrollTop = 0;
+        }
+    }, [selectedCompany?.company_id]);
 
     useEffect(() => {
         let timer: ReturnType<typeof setTimeout>;
@@ -52,15 +62,39 @@ const ChatWindow: React.FC = () => {
 
     const showLoader = messagesLoading && delayedLoading;
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const scrollToBottom = (behavior: ScrollBehavior = "smooth", delay = 50) => {
+        // Use a timeout to ensure the DOM has updated and Framer Motion layout is ready
+        setTimeout(() => {
+            if (containerRef.current && messagesEndRef.current) {
+                const { scrollHeight, clientHeight } = containerRef.current;
+                
+                // ONLY scroll if the content exceeds the container height
+                if (scrollHeight > clientHeight) {
+                    messagesEndRef.current.scrollIntoView({ behavior });
+                    
+                    // Double-check scroll for 100% reliability on initial load or large updates
+                    if (delay > 100) {
+                        setTimeout(() => {
+                            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+                        }, 150);
+                    }
+                }
+            }
+        }, delay);
     };
 
     useEffect(() => {
-        if (!showLoader) {
-            scrollToBottom();
+        if (!showLoader && selectedCompany && messages.length > 0) {
+            const isNewConversation = prevCompanyIdRef.current !== selectedCompany.company_id;
+            
+            // If it's a new conversation, wait 100ms for a quick but visible transition
+            // Otherwise (new message), use a shorter delay for responsiveness
+            const delay = isNewConversation ? 100 : 50;
+            
+            scrollToBottom("smooth", delay);
+            prevCompanyIdRef.current = selectedCompany.company_id;
         }
-    }, [messages, showLoader]);
+    }, [messages, showLoader, selectedCompany]);
 
     const handleBack = () => {
         setSelectedCompanyId(null);
@@ -79,14 +113,11 @@ const ChatWindow: React.FC = () => {
                 <AnimatePresence mode="wait">
                     <motion.div 
                         key={selectedCompany?.company_id || "empty"}
-                        initial={{ opacity: 0, x: -10, filter: "blur(4px)" }}
-                        animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-                        exit={{ opacity: 0, x: 10, filter: "blur(4px)" }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
                         transition={{ 
-                            type: "spring", 
-                            stiffness: 400, 
-                            damping: 30,
-                            duration: 0.3 
+                            duration: 0.1 
                         }}
                         style={{ display: "flex", alignItems: "center", width: "100%" }}
                     >
@@ -126,7 +157,7 @@ const ChatWindow: React.FC = () => {
                 </AnimatePresence>
             </motion.div>
             
-            <div className={styles.messagesContainer}>
+            <div ref={containerRef} className={styles.messagesContainer}>
                 <AnimatePresence mode="wait">
                     {!selectedCompany && !showLoader && (
                         <motion.div 
@@ -195,7 +226,7 @@ const ChatWindow: React.FC = () => {
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.2 }}
+                            transition={{ duration: 0.1 }}
                             style={{ flex: 1, display: "flex", flexDirection: "column", gap: "12px" }}
                         >
                             {sendError && (
@@ -242,7 +273,7 @@ const ChatWindow: React.FC = () => {
                                         const isUserMessage = m.sender_type === "USER";
                                         const isMyMessage = (userType === "user" && isUserMessage) || (userType === "company" && !isUserMessage);
                                         const initials = getInitials(selectedCompany?.company_name);
-
+ 
                                         return (
                                             <MessageBubble
                                                 key={m.id}

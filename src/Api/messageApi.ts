@@ -5,7 +5,11 @@ const API_BASE_URL = "http://localhost:4000/api"
 export interface CompanyChatPartner {
     company_id: number;
     company_name: string;
-    last_message_at: string | null;
+    message_id: number;
+    sender_type: "USER" | "COMPANY";
+    message: string;
+    is_read: boolean;
+    created_at: string;
 }
 
 export interface UserChatPartner {
@@ -13,6 +17,8 @@ export interface UserChatPartner {
     user_lname: string,
     user_fname: string,
     last_message_at: string | null;
+    is_read: boolean;
+    sender_type: "USER" | "COMPANY";
 }
 
 export interface Message {

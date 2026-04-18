@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import type { ChatPartner } from "../context/MessengerContextInstance";
 import { AVATAR_COLORS } from "../context/MessengerContextInstance";
 import styles from "../MessengerPage.module.css";
@@ -53,21 +53,24 @@ const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, 
         };
     }, [partner.id]);
 
+    const baseBg = isActive ? "#eef2ff" : "#f8fafc";
+
     return (
         <motion.div 
             layout
-            initial={{ opacity: 0, x: -10, filter: "blur(5px)" }}
-            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+            initial={{ opacity: 0 }}
+            animate={{ 
+                opacity: 1, 
+                backgroundColor: baseBg 
+            }}
             whileHover={{ 
                 x: 4,
-                backgroundColor: "rgba(241, 245, 249, 0.8)",
+                backgroundColor: isActive ? "#e2ebf5" : "#f1f5f9",
                 transition: { type: "spring", stiffness: 400, damping: 25 }
             }}
             whileTap={{ scale: 0.97 }}
             transition={{
-                type: "spring",
-                stiffness: 260,
-                damping: 20
+                duration: 0.1
             }}
             className={itemClass} 
             onClick={onClick}
@@ -85,32 +88,19 @@ const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, 
                 {initials}
             </motion.div>
             <div style={{ minWidth: 0, flex: 1 }}>
-                <motion.div layout className={styles.partnerName}>{partner.name}</motion.div>
+                <motion.div layout className={styles.partnerName}>
+                    {partner.name}
+                </motion.div>
                 <motion.div layout className={styles.smallMuted}>{formatDateTime(partner.last_message_at)}</motion.div>
             </div>
-            <AnimatePresence>
-                {isActive && (
-                    <motion.div 
-                        layoutId="active-indicator"
-                        initial={{ opacity: 0, scale: 0 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0 }}
-                        transition={{
-                            type: "spring",
-                            stiffness: 500,
-                            damping: 30
-                        }}
-                        style={{ 
-                            width: 6, 
-                            height: 6, 
-                            backgroundColor: "#6366f1", 
-                            borderRadius: "50%",
-                            marginLeft: 8,
-                            boxShadow: "0 0 8px rgba(99, 102, 241, 0.5)"
-                        }} 
-                    />
-                )}
-            </AnimatePresence>
+            {partner.is_read === false && (
+                <motion.div 
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    className={styles.unreadBadge}
+                    title="New message"
+                />
+            )}
         </motion.div>
     );
 };
