@@ -33,13 +33,11 @@
         <h1>Orion - Teljes Rendszerdokumentáció</h1>
 
         <p><em>
-            Ez a dokumentum a korábbi frontend és backend leírások összevont,
-            újrastrukturált, teljes rendszerre fókuszáló változata.
-            A cél nem pusztán a két forrás összefűzése,
-            hanem egy olyan egységes dokumentáció létrehozása,
-            amely az Orion üzleti céljától indul,
-            majd végigköveti a rendszer működését a felhasználói felülettől
-            a szerveroldali logikán és az adatbázison át egészen az üzemeltetésig.
+            Ez a dokumentum az Orion rendszer teljes és hivatalos dokumentációja.
+            Bemutatja a projekt célját, a rendszer működését,
+            a frontend és backend architektúrát,
+            az adatmodellt, az integrációkat,
+            valamint a fejlesztési és üzemeltetési szempontokat.
         </em></p>
 
         <div class="summary">
@@ -53,71 +51,117 @@
             </ul>
         </div>
 
-        <div class="toc">
-            <strong>Tartalomjegyzék</strong>
-            <ol>
-                <li><a href="#sec1">1. Dokumentum célja és szemlélete</a></li>
-                <li><a href="#sec2">2. Projektkép és üzleti kontextus</a></li>
-                <li><a href="#sec3">3. Rendszerszintű architektúra</a></li>
-                <li><a href="#sec4">4. Technológiai verem és tervezési döntések</a></li>
-                <li><a href="#sec5">5. Frontend architektúra</a></li>
-                <li><a href="#sec6">6. Backend architektúra</a></li>
-                <li><a href="#sec7">7. Adatmodell és adatbázislogika</a></li>
-                <li><a href="#sec8">8. Végpontok, szerveroldali szolgáltatások és integrációk</a></li>
-                <li><a href="#sec9">9. Kulcsfontosságú üzleti folyamatok</a></li>
-                <li><a href="#sec10">10. Biztonság, jogosultság és adatvédelem</a></li>
-                <li><a href="#sec11">11. Minőségbiztosítás, tesztelés és teljesítmény</a></li>
-                <li><a href="#sec12">12. Fejlesztői működés, build és üzemeltetés</a></li>
-                <li><a href="#sec13">13. Fejlesztési ajánlások és következő lépések</a></li>
-                <li><a href="#appendix">14. Mellékletek</a></li>
-            </ol>
+    <div class="toc">
+        <strong>Tartalomjegyzék</strong>
+        <ol>
+            <li>
+                <a href="#sec1">Bevezetés</a>
+                <ol>
+                    <li><a href="#sec1-1">Projekt célja</a></li>
+                    <li><a href="#sec1-2">Probléma bemutatása és az Orion megoldása</a></li>
+                    <li><a href="#sec1-3">Gyors indulás fejlesztőknek</a></li>
+                </ol>
+            </li>
+
+            <li>
+                <a href="#sec2">Projektkép és üzleti kontextus</a>
+            </li>
+
+            <li>
+                <a href="#sec3">Rendszerszintű architektúra</a>
+            </li>
+
+            <li>
+                <a href="#sec4">Technológiai verem és tervezési döntések</a>
+                <ol>
+                    <li>
+                        <a href="#sec4-1">Frontend technológiai döntések</a>
+                        <ol>
+                            <li><a href="#sec4-1-1">Miért React és Vite?</a></li>
+                            <li><a href="#sec4-1-2">Miért TypeScript?</a></li>
+                            <li><a href="#sec4-1-3">Állapotkezelés</a></li>
+                            <li><a href="#sec4-1-4">Routing és adatlekérés</a></li>
+                            <li><a href="#sec4-1-5">Stílusok és UI</a></li>
+                            <li><a href="#sec4-1-6">Összefoglaló</a></li>
+                        </ol>
+                    </li>
+                    <li><a href="#sec4-2">Backend stack</a></li>
+                    <li><a href="#sec4-3">Adatplatform</a></li>
+                    <li><a href="#sec4-4">A választott kombináció előnyei</a></li>
+                </ol>
+            </li>
+
+            <li>
+                <a href="#sec5">Frontend architektúra</a>
+                <ol>
+                    <li><a href="#sec5-1">Könyvtárstruktúra</a></li>
+                    <li><a href="#sec5-2">Feature alapú felosztás</a></li>
+                    <li><a href="#sec5-3">Routing és hozzáférésvédelem</a></li>
+                    <li><a href="#sec5-4">Komponensstratégia</a></li>
+                    <li><a href="#sec5-5">Kliensoldali adatkezelés</a></li>
+                    <li><a href="#sec5-6">Formok és validáció</a></li>
+                    <li><a href="#sec5-7">Többnyelvűség</a></li>
+                    <li><a href="#sec5-8">SEO és statikus elemek</a></li>
+                </ol>
+            </li>
+
+            <li><a href="#sec6">Backend architektúra</a></li>
+
+            <li><a href="#sec7">Adatmodell és adatbázislogika</a></li>
+
+            <li><a href="#sec8">Végpontok és integrációk</a></li>
+
+            <li><a href="#sec9">Kulcsfontosságú üzleti folyamatok</a></li>
+
+            <li><a href="#sec10">Biztonság és adatvédelem</a></li>
+
+            <li>
+                <a href="#sec11">Minőségbiztosítás és teljesítmény</a>
+                <ol>
+                    <li><a href="#sec11-1">Tesztelési eszközök</a></li>
+                    <li><a href="#sec11-2">Kritikus tesztelési területek</a></li>
+                    <li><a href="#sec11-3">Teljesítmény és skálázás</a></li>
+                    <li><a href="#sec11-4">Lighthouse mérőszámok</a></li>
+                    <li><a href="#sec11-5">Akadálymentesítés</a></li>
+                </ol>
+            </li>
+
+            <li><a href="#sec12">Fejlesztés, build és üzemeltetés</a></li>
+
+            <li><a href="#sec13">Ajánlások és következő lépések</a></li>
+
+            <li><a href="#appendix">Mellékletek</a></li>
+        </ol>
+    </div>
+
+        <div class="summary">
+            <strong>lényeg:</strong> Az Orion egy közvetlen diákmunka-platform, amely a bürokrácia csökkentését és a diákok magasabb bérért való foglalkoztatását célozza meg.
         </div>
 
-        <h2 id="sec1">1. Dokumentum célja és szemlélete</h2>
+        <h2 id="sec1">1. Bevezetés</h2>
 
-        <p>
-            A korábbi dokumentációk két jól elkülöníthető nézőpontból íródtak.
-            A frontend dokumentum elsősorban a felhasználói felület, a komponensek,
-            a routing, az adatkezelés és a kliensoldali élmény felől közelítette meg az Oriont.
-            A backend dokumentum ezzel szemben a projekt üzleti küldetését,
-            az adatbázis szerkezetét, a táblák közti kapcsolatokat,
-            a tárolt eljárásokat és az Express szerver architektúráját hangsúlyozta.
-        </p>
+        <h3 id="sec1-1">1.1. Projekt célja</h3>
+        <p>Az Orion egy modern diákmunka megosztó és közvetítő platform, hasonlóan a hazai piacon ismert profession.hu-hoz, azonban kifejezetten a diákmunkára és a diákok számára optimalizált változatban.</p>
+        <p>A projekt legfőbb küldetése, hogy egy transzparens, gyors és közvetlen kapcsolatot biztosítson a munkát kereső diákok és az őket foglalkoztatni kívánó cégek között, kihagyva a hagyományos, lassú és gyakran a diákok számára anyagilag hátrányos harmadik feleket, például a közvetítő diákszövetkezeteket.</p>
 
-        <p>
-            Egy rendszer egészét azonban ritkán a rétegek szétválasztásával lehet a legjobban megérteni.
-            Egy új fejlesztő, üzemeltető vagy technikai döntéshozó általában nem azt szeretné először tudni,
-            hogy hol végződik a frontend és hol kezdődik a backend,
-            hanem azt, hogy milyen problémát old meg a rendszer,
-            milyen szereplők vannak benne,
-            hogyan áramlik az adat,
-            hogyan kapcsolódnak egymáshoz a modulok,
-            és mely pontokon vannak érzékeny, kockázatos vagy stratégiai elemek.
-        </p>
+        <h3 id="sec1-2">1.2. Probléma bemutatása és az Orion megoldása</h3>
+        <p>A jelenlegi diákmunka-piacon a diákok legtöbbször diákszövetkezeteken keresztül helyezkednek el és dolgoznak. Ez a rendszer gyakran kényelmetlen, adminisztrációval és bürokráciával terhelt a bonyolult szerződéskötési folyamatok miatt. Továbbá a közvetítők beiktatása miatt a diákok sok esetben jelentősen alacsonyabb órabért kapnak kézhez ahhoz képest, amit a cégek ténylegesen kifizetnek értük.</p>
+        <p><strong>A megoldás:</strong> Az Orion rendszerében a diákok és a munkáltató cégek <em>közvetlenül</em> egymással szerződnek és tartják a kapcsolatot. A platform piacteret, biztonságos kommunikációt és adminisztrációs támogatást biztosít számukra. Ezzel jelentősen csökken a szerződéskötési és adminisztrációs teher, a diákok pedig nem kerülnek anyagi hátrányba a közvetítői modell miatt. A cégek modern önkiszolgáló felületen oszthatják meg az álláshirdetéseiket, közvetlenül érhetik el a jelentkező diákokat, és maguk dönthetnek a kiválasztási folyamatról.</p>
 
-        <p>
-            Ezért ez az összevont dokumentáció a teljes életciklus mentén lett felépítve.
-            Először definiáljuk a projekt célját és működési modelljét,
-            utána bemutatjuk a magas szintű architektúrát,
-            majd rétegenként lebontjuk a megoldást:
-            frontend,
-            backend,
-            adatbázis,
-            integrációk,
-            üzleti folyamatok,
-            biztonság,
-            tesztelés,
-            végül fejlesztési és üzemeltetési ajánlások.
-        </p>
+        <h3 id="sec1-3">1.3. Gyors indulás fejlesztőknek</h3>
+        <p>Új fejlesztők számára az alábbi három lépés szükséges a helyi fejlesztői környezet konfigurálásához:</p>
+        <ol>
+            <li><strong>Klónozás:</strong> <code>git clone https://github.com/DomonkosTech/Orion.git</code></li>
+            <li><strong>Függőségek:</strong> <code>npm install</code></li>
+            <li><strong>Indítás:</strong> <code>npm run dev</code></li>
+        </ol>
 
         <div class="warning">
-            <strong>Módszertani megjegyzés:</strong>
-            ez a dokumentum a két meglévő dokumentáció tartalmát integrálja,
-            és a jelenlegi projektstruktúrával is összeveti.
-            Ahol a meglévő fájlok részletesek,
-            ott az anyagokat szintetizálja;
-            ahol a régi leírások különböző részletességűek,
-            ott rendszerlogikai szemléletben rendezi újra őket.
+            <strong>Megjegyzés:</strong> A backend szerver indításához szükséges a megfelelő <code>.env</code> konfiguráció, benne például az adatbázis-kapcsolati és titkosítási kulcsokkal.
+        </div>
+
+        <div class="summary">
+            <strong>lényeg:</strong> A rendszer a diákok és cégek közötti transzparens piacot teremti meg, ahol profilkezelés, jelentkezéskövetés és chat támogatja az együttműködést.
         </div>
 
         <h2 id="sec2">2. Projektkép és üzleti kontextus</h2>
@@ -201,6 +245,10 @@
             <li><strong>Biztonsági domén:</strong> auth, tokenek, titkosított személyes adatok, session és route protection.</li>
             <li><strong>Intelligens szolgáltatások:</strong> OrionAI és az ehhez kapcsolódó külön útvonalak.</li>
         </ul>
+
+        <div class="summary">
+            <strong>lényeg:</strong> A projekt modern rétegzett architektúrát követ, ahol a React alapú kliens, az Express szerver és a Supabase adatbázis alkot egységes egészet.
+        </div>
 
         <h2 id="sec3">3. Rendszerszintű architektúra</h2>
 
@@ -304,21 +352,119 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
             tesztelés.
         </p>
 
+        <div class="summary">
+            <strong>lényeg:</strong> A React 19, Vite és TypeScript kombinációja biztosítja a gyors fejlesztést és a skálázható, típusbiztos kódbázist.
+        </div>
+
         <h2 id="sec4">4. Technológiai verem és tervezési döntések</h2>
 
-        <h3>4.1. Frontend stack</h3>
+        <h3 id="sec4-1">4.1. Frontend Technológiai Döntések (Detailed)</h3>
+        
+        <div class="summary">
+            <strong>Lényeg:</strong> Miért a <strong>Vite</strong>-ra esett a választás? (Mert szupergyors a fejlesztés közben). Miért hasznos a <strong>TypeScript</strong>? (Mert egy 25 ezer soros kódnál a típusok nélkül elvesznénk).
+        </div>
+        
+        <p>A modern webes alkalmazások alapjait nem egyszerű kiválasztani. Mérlegelnünk kellett a fejlesztési sebességet, a későbbi karbantarthatóságot és azt, hogy mennyire lesz gyors az oldal (performance). Az Orion frontendjénél az volt a cél, hogy egy stabil, jól bővíthető és szép rendszert építsünk. Ezért választottuk a React 19-et és a Vite-ot.</p>
 
-        <p>
-            A jelenlegi csomagdefiníció alapján a frontend gerincét
-            a <span class="tag">React 19</span>,
-            a <span class="tag">TypeScript</span>
-            és a <span class="tag">Vite</span> alkotja.
-            Ehhez kapcsolódik a <span class="tag">react-router-dom</span> a navigációhoz,
-            a <span class="tag">react-hook-form</span> és a <span class="tag">zod</span> az űrlapokhoz,
-            a <span class="tag">react-i18next</span> a többnyelvűséghez,
-            valamint több UI- és animációs csomag,
-            például a <span class="tag">framer-motion</span> és a <span class="tag">lucide-react</span>.
-        </p>
+        <h4 id="sec4-1-1">4.1.1. Miért pont React és Vite?</h4>
+        
+        <p>Sok más lehetőség is lett volna (például Angular vagy Vue), de ezek túl kötöttek lettek volna az Orionhoz. A React azért jó, mert az összetett felületeket (például az álláskeresőt vagy a jelöltkezelőt) könnyen kisebb, újrahasznosítható egységekre bonthatjuk (decomposition). A React gyorsasága és a Virtual DOM használata biztosítja, hogy a rengeteg adat megjelenítésekor se lassuljon be az oldal.</p>
+        
+        <p>Régebben a legtöbb React projekt Webpacket használt, de az egyre lassabb (suboptimal) lett, ahogy nőtt a kód. A Vite viszont egy teljesen új megközelítést (paradigm shift) hozott. Nagyon gyorsan indul el, és a kód módosítása után is azonnal látszik a változás (Hot Module Replacement – HMR). Ez segít abban, hogy a fejlesztés ne lassuljon le akkor sem, ha már óriásira nőtt a projekt.</p>
+
+        <h4 id="sec4-1-2">4.1.2. Miért jó nekünk a TypeScript?</h4>
+
+        <p>Az egyik legfontosabb döntésünk az volt, hogy sima JavaScript helyett TypeScriptet használunk. Egy ekkora, megközelítőleg 25 000 soros alkalmazásnál sima JS-ben szinte lehetetlen lenne átlátni mindent, és sokkal több váratlan hiba csúszna be (kiszámíthatóság – predictability). A TypeScript használata alapvető váltást hozott: segít a kód szerkezetének pontos leírásában és a hibák korai megtalálásában.</p>
+
+        <p>TypeScript nélkül a kód módosítása (refactoring) nagyon kockázatos lenne, mert egy kis változtatás teljesen máshol is elronthatna dolgokat (side effects). A TypeScript már írás közben segít: figyelmeztet, ha valami nincs összhangban (coherence), például ha egy álláshirdetés adatainál olyasmit akarunk használni, ami nincs is ott (compatibility). Így kevesebb lesz a hiba, és a fejlesztőknek is könnyebb követni, hogy mi hogyan épül fel, ami biztosítja az Orion projekt hosszú távú stabilitását.</p>
+
+        <h4 id="sec4-1-3">4.1.3. Állapotkezelés (State Management)</h4>
+
+        <p>Az állapotkezelésnél azt akartuk, hogy a rendszer átlátható maradjon, és ne bonyolítsuk feleslegesen újabb könyvtárakkal. Sokan használnak Reduxot vagy MobX-et, de ezekhez rengeteg plusz kódot (boilerplate) kell írni, ami csak lassítja a munkát (development overhead).</p>
+
+        <p>Az Orionban a React saját megoldásait (Context API és Hooks) használjuk. A globális adatokat – például a bejelentkezést vagy az Üzenetküldőt (<strong>OrionMessenger</strong>) – külön részekre bontva kezeljük (pl. <code>MessengerProvider</code>). Minden más adat ott marad a helyén, ahol ténylegesen keletkezik, így a rendszer nem válik nehézkessé a folyamatos központi üzenetküldéstől. Mivel egy állásportál főként adatok lekéréséről szól, ez a megoldás bőven elég, és segít tisztán tartani a kódot.</p>
+
+        <h4 id="sec4-1-4">4.1.4. Útvonalválasztás és Hálózat (Routing & Data Fetching)</h4>
+
+        <p>Az oldalak közötti mozgást (routing) a <code>react-router-dom</code> 7-es verziója kezeli. Ez nem csak a navigációért felel, hanem a biztonságért is. Mivel az Orionban különböző szerepkörök vannak (keresők, cégek, vendégek), fontos, hogy mindenki csak azt lássa, amihez van joga. Ezt külön védelmi vonalakkal (Route Guards) oldottuk meg: ezek észrevétlenül (transparently) ellenőrzik a jogosultságot, mielőtt betöltenének egy-egy oldalt, így például egy sima álláskereső nem juthat be a cégek admin felületére.</p>
+
+        <p>Az adatok lekéréséhez (data fetching) saját megoldást használunk (native fetch), ami jól elkülönített és átlátható modulokra van bontva. Bár vannak már készen kapható komplex megoldások (például React Query), a mi rendszerünk jelenleg pontosan azt a gyorsaságot és átláthatóságot biztosítja, amire szükségünk van, anélkül, hogy külső csomagoktól függnénk. (nálunk ez a fájl az <strong>IsLoggedIn.tsx<strong/>)</p>
+
+        <h4 id="sec4-1-5">4.1.5. Megjelenés és Stílusok (Styling & UI)</h4>
+
+        <p>A kinézetnél fontos döntés volt, hogy ne használjunk kész könyvtárakat (mint a Tailwind CSS vagy Material UI). Ezek bár gyorsak az elején, később korlátozhatják a tervezést, és feleslegesen nagyra növelik a letöltendő fájlokat (bundle bloat). Emellett egy 25 000 soros kódnál a Tailwind kódja nehezen olvashatóvá (readability) tette volna a fájlokat.</p>
+
+        <p>Helyette a sima CSS modern lehetőségeit (native CSS) használjuk, amit a Framer Motion animációival egészítettünk ki. Ez teljes szabadságot ad nekünk, hogy pontosan olyan szép és modern felületeket készítsünk, amilyeneket szeretnénk – legyen szó átlátszó üveg-hatású (glassmorphism) elemekről vagy a jelöltkezelő rendszer kártyáinak folyamatos animációjáról.</p>
+
+        <h4 id="sec4-1-6">4.1.6. Technológiai Verem Összefoglaló</h4>
+        <div class="summary">
+            <table style="margin-top: 10px;">
+                <thead>
+                    <tr>
+                        <th>Kategória</th>
+                        <th>Technológia</th>
+                        <th>Leírás / Szerepkör</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Mag (Core)</strong></td>
+                        <td><span class="tag">React 19</span></td>
+                        <td>Komponens-alapú UI könyvtár és deklaratív renderelés.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Build Tool</strong></td>
+                        <td><span class="tag">Vite</span></td>
+                        <td>Native ESM-alapú építőeszköz az extrém gyors fejlesztési ciklusokért.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nyelv</strong></td>
+                        <td><span class="tag">TypeScript</span></td>
+                        <td>Statikus típusbiztonság, IntelliSense és kódstabilitás.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Stílusozás</strong></td>
+                        <td><span class="tag">Vanilla CSS</span></td>
+                        <td>Native CSS Variables, Flexbox és Grid a maximális kontrollért.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Állapotkezelés</strong></td>
+                        <td><span class="tag">Context API</span></td>
+                        <td>Beépített, skálázható állapotkezelés boilerplate nélkül.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Navigáció</strong></td>
+                        <td><span class="tag">React Router 7</span></td>
+                        <td>Kliensoldali útvonalválasztás és Route Guard rendszer.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Animációk</strong></td>
+                        <td><span class="tag">Framer Motion</span></td>
+                        <td>Deklaratív, nagy teljesítményű UI animációk és átmenetek.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Űrlapok</strong></td>
+                        <td><span class="tag">React Hook Form</span></td>
+                        <td>Optimális teljesítményű űrlapkezelés és validáció integráció.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Validáció</strong></td>
+                        <td><span class="tag">Zod</span></td>
+                        <td>Séma-alapú típusbiztonság és adatvalidáció.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Ikonkészlet</strong></td>
+                        <td><span class="tag">Lucide React</span></td>
+                        <td>Modern, könnyűsúlyú SVG ikonrendszer.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Visszajelzés</strong></td>
+                        <td><span class="tag">React Hot Toast</span></td>
+                        <td>Reszponzív, nem blokkoló értesítési rendszer.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
         <h3>4.2. Backend stack</h3>
 
@@ -388,6 +534,10 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
             </tbody>
         </table>
 
+        <div class="summary">
+            <strong>lényeg:</strong> A frontend moduláris, funkció-alapú felosztást követ, egyedi állapotkezeléssel és szigorú hozzáférésvédelemmel.
+        </div>
+
         <h2 id="sec5">5. Frontend architektúra</h2>
 
         <h3>5.1. Könyvtárstruktúra és általános kép</h3>
@@ -410,9 +560,27 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
             különálló API-hívó rétegek,
             lokalizációs erőforrások
             és szervezett validációs szabályok is.
+            A projekt tényleges mappaszerkezete az alábbi logikát követi:
         </p>
 
-        <h3>5.2. Feature alapú felosztás</h3>
+<pre><code>src/
+├── Api/              # Globális API hívások (native fetch)
+├── components/       # Újrahasznosítható UI elemek csoportosítva
+│   ├── base/         # Nagyobb űrlap és profil komponenensek (pl. LoginPage)
+│   ├── layout/       # Elrendezési elemek (Header, Footer, Navigáció)
+│   └── ui/           # Atomi dizájn elemek (Gombok, Beviteli mezők, Modalok)
+├── features/         # Funkció-alapú modulok (Feature-based)
+│   ├── auth/         # Autentikációs folyamatok (Belépés, Regisztráció)
+│   ├── chat/         # Messenger és valós idejű kommunikáció
+│   ├── company/      # Munkaadói irányítópult és toborzás
+│   ├── public/       # Publikus nézetek (Pl. Főoldal)
+│   └── user/         # Álláskeresői profil és jelentkezések
+├── hooks/            # Egyedi React hook-ok
+├── locales/          # Többnyelvűségi JSON fájlok (i18n)
+├── test/             # Tesztelési környezet és segédfájlok
+└── validation/       # Zod adatsémák és űrlap validációk (pl. Validation.ts)</code></pre>
+
+        <h3>5.2. Feature alapú felosztás és Funkcionális dekompozíció</h3>
 
         <table>
             <thead>
@@ -451,29 +619,123 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
             </tbody>
         </table>
 
+        <p>Az Orion platform felhasználói felületeit logikai modulokra bontva mutatjuk be, részletezve a konkrét oldalak célját, a fejlesztésük során felmerült technikai kihívásokat és az adathálózati kapcsolataikat. A rendszer funkció-alapú (feature-based) architektúrát követ, így a komponensek a <code>src/features</code> mappában találhatók.</p>
+
+        <div class="summary">
+            <h4>A) Publikus Modul <code>(src/features/public)</code></h4>
+            <p><strong>Kezdőlap (PublicHomePage)</strong></p>
+            <ul>
+                <li><strong>Cél:</strong> A platform bemutatása a nem bejelentkezett felhasználók számára, a regisztráció ösztönzése és az elérhető funkciók (álláskeresés, toborzás) ismertetése.</li>
+                <li><strong>Technikai kihívás:</strong> Gyors betöltési idő és reszponzív, látványos megjelenés biztosítása SEO szempontok (Lighthouse 100%) figyelembevételével.</li>
+            </ul>
+
+            <h4>B) Globális Autentikációs Modul <code>(src/features/auth)</code></h4>
+            <p><strong>Jelszóvisszaállítás (PasswordReset)</strong></p>
+            <ul>
+                <li><strong>Cél:</strong> Elfelejtett jelszavak biztonságos megújítása egy emailben kapott token segítségével.</li>
+                <li><strong>Adatkapcsolat:</strong> A <code>/auth/reset-password</code> folyamat kezelése.</li>
+            </ul>
+            <p><strong>Fiók Hitelesítés (VerifyPage, SendVerifyPage)</strong></p>
+            <ul>
+                <li><strong>Cél:</strong> A regisztrált email címek megerősítése (diákok és cégek számára egyaránt).</li>
+                <li><strong>Adatkapcsolat:</strong> A <code>/auth/verify</code> endpoint hívása a token validálásához.</li>
+            </ul>
+
+            <h4>C) Munkaadói (Céges) Modul <code>(src/features/company)</code></h4>
+            <p><strong>Autentikáció (LoginPage, RegisterPage)</strong></p>
+            <ul>
+                <li><strong>Cél:</strong> Céges felhasználók beléptetése és új cégek regisztrációja.</li>
+                <li><strong>Adatkapcsolat:</strong> Az <code>/auth/company/login</code> és <code>/auth/company/register</code> hívások.</li>
+            </ul>
+            <p><strong>Céges Dashboard (HomePage, EditProfile)</strong></p>
+            <ul>
+                <li><strong>Cél:</strong> A cég profiljának karbantartása, és az alapvető statisztikák áttekintése.</li>
+            </ul>
+            <p><strong>Hirdetéskezelés (ShowListedJobs, CompanyJobs)</strong></p>
+            <ul>
+                <li><strong>Cél:</strong> Új munkakörök kiírása, meglévők szerkesztése és az aktív/inaktív hirdetések áttekintése.</li>
+                <li><strong>Technikai kihívás:</strong> Összetett űrlapok kezelése a React Hook Form és Zod validáció segítségével.</li>
+            </ul>
+            <p><strong>Jelöltkezelő Rendszer (ATS - Applicant Tracking System)</strong></p>
+            <ul>
+                <li><strong>Cél:</strong> A jelentkezők nyomon követése, státuszuk frissítése egy Kanban-szerű felületen.</li>
+                <li><strong>Technikai kihívás:</strong> Folyamatos animációk (Framer Motion) és valós idejű státusz frissítések zökkenőmentes megjelenítése.</li>
+            </ul>
+
+            <h4>D) Álláskeresői (Diák) Modul <code>(src/features/user)</code></h4>
+            <p><strong>Autentikáció (LoginPage, RegisterPage)</strong></p>
+            <ul>
+                <li><strong>Cél:</strong> Diákok/álláskeresők beléptetése és regisztrációja, jelentősen eltérő adatokkal (pl. lakcímkártya, személyi).</li>
+            </ul>
+            <p><strong>Álláskereső Alrendszer (UserJobs)</strong></p>
+            <ul>
+                <li><strong>Cél:</strong> Hirdetések listázása, részletes adatlap megtekintése és mentett/kedvenc állások kezelése.</li>
+                <li><strong>Technikai kihívás:</strong> Az OrionAI alapú intelligens keresés integrációja és az aszinkron lapozás (pagination) kivitelezése memóriaszivárgás nélkül.</li>
+                <li><strong>Adatkapcsolat:</strong> A <code>/advertisement</code> API és az OrionAI végpont használata.</li>
+            </ul>
+            <p><strong>Profil és Jelentkezések (EditProfile, JobApplications, UploadResume)</strong></p>
+            <ul>
+                <li><strong>Cél:</strong> Önéletrajzok (PDF) feltöltése és a felhasználó által benyújtott jelentkezések utólagos visszakövetése.</li>
+            </ul>
+
+            <h4>E) Kommunikációs Modul <code>(src/features/chat)</code></h4>
+            <p><strong>OrionMessenger</strong></p>
+            <ul>
+                <li><strong>Cél:</strong> Közvetlen, valós idejű interakció biztosítása a munkaadók és a jelöltek között.</li>
+                <li><strong>Technikai kihívás:</strong> Az "Optimista felület" (Optimistic UI) technika alkalmazása a gyors és folyamatos élményért.</li>
+                <li><strong>Adatkapcsolat:</strong> Globális <code>MessengerProvider</code> által menedzselt WebSocket/szinkronizációs kapcsolat.</li>
+            </ul>
+        </div>
+
         <h3>5.3. Routing és hozzáférésvédelem</h3>
 
         <p>
-            A meglévő frontend dokumentáció külön kitér arra,
-            hogy nem minden oldal minden felhasználó számára érhető el.
-            Ez arra utal,
-            hogy a routing nem csak navigációs,
+            Nem minden oldal érhető el minden felhasználó számára.
+            A routing ezért nem csak navigációs,
             hanem jogosultsági kérdés is.
-            Vélhetően külön van kezelve a publikus,
+            Külön kell kezelni a publikus,
             a felhasználói
-            és a céges elérés.
-            Ebből következően a route-védelem a frontend és a backend közös felelőssége:
+            és a céges elérést.
+            A route-védelem a frontend és a backend közös felelőssége:
             a kliensoldal élmény és navigáció szintjén zár le képernyőket,
             a backend pedig ténylegesen érvényesíti az autentikációt és a hozzáférési szabályokat.
         </p>
 
+        <p>
+            Az oldalvédelmet egy központi megoldással (RBAC – Role Based Access Control) kezeljük. Az <code>IsLoggedIn</code> nevű elem folyamatosan figyeli, hogy ki van bejelentkezve, és milyen joga van. Ez egy biztos védelmet (protection) ad, hogy senki ne láthasson olyan oldalakat, amikhez nincs jogosultsága (például egy álláskereső ne juthasson be a cégek kezelőfelületére).
+        </p>
+
+<pre><code>// Részlet az IsLoggedIn.tsx implementációjából
+function IsLoggedIn({ children, mode = "user" }: Props) {
+    const [loading, setLoading] = useState(true);
+    const [loggedIn, setLoggedIn] = useState(false);
+    const [userType, setUserType] = useState&lt;"user" | "company" | null&gt;(null);
+
+    useEffect(() => {
+        const check = async () => {
+            try {
+                const data = await checkAuthStatus();
+                setLoggedIn(Boolean(data.loggedIn));
+                setUserType(data.userType || null);
+            } finally {
+                setLoading(false);
+            }
+        };
+        check();
+    }, []);
+
+    if (loading) return &lt;div&gt;Betöltés...&lt;/div&gt;;
+    // Szerepkör alapú redirect logika...
+}</code></pre>
+
+        <p>Fontos tudni, hogy az RBAC védelem a frontend oldalán csak a felhasználói élményt javítja (UX Security): segít abban, hogy a felhasználó ne lásson zavaró, számára szükségtelen menüket. A valódi biztonságot a backend szerver végzi a JWT tokenek ellenőrzésével minden egyes kérésnél.</p>
+
         <h3>5.4. UI építőelemek és komponensstratégia</h3>
 
         <p>
-            A frontend dokumentáció szerint az Orion jelentős mennyiségű képernyőt kezel,
+            Az Orion jelentős mennyiségű képernyőt kezel,
             és ezeket modulonként bontja fel.
-            Ebből az következik,
-            hogy a komponensarchitektúra sikeressége azon múlik,
+            A komponensarchitektúra sikeressége azon múlik,
             mennyire választja el egymástól a következő szinteket:
         </p>
 
@@ -484,26 +746,66 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
             <li>hookok és segédfüggvények, amelyek adatlekérést, validációt vagy állapotkezelést segítenek.</li>
         </ul>
 
+        <p>A felületek építésénél különválasztjuk az "okos" (Smart) és az "egyszerű" (Dumb/Presentational) komponenseket. Az okos komponensek kezelik az adatokat és az üzleti logikát, míg az egyszerűek (mint egy gomb vagy egy beviteli mező) csak a megjelenítésért felelősek. Ez a szigorú szétválasztás segít abban, hogy az Orion könnyen fejleszthető és tesztelhető maradjon.</p>
+
         <h3>5.5. Kliensoldali adatkezelés</h3>
 
+        <h3>5.5. Kliensoldali adatkezelés (Data Flow & State Management)</h3>
+
+        <div class="summary">
+            <strong>Lényeg:</strong> Nem használunk bonyolult külső könyvtárakat (mint a Redux). A React saját megoldásait (Context API) használjuk a globális adatokhoz, és minden mást helyben (Local State) kezelünk, hogy gyors maradjon az oldal.
+        </div>
+
         <p>
-            A frontend dokumentum egyik fontos gondolata,
-            hogy elkülönül a helyi állapot és a globálisabb alkalmazásállapot.
-            Ez egy olyan rendszerben,
-            ahol többféle felhasználói típus,
-            sok űrlap,
-            számos aszinkron lekérés
-            és képernyők közötti navigáció van jelen,
-            kulcsfontosságú.
-            Az Orion esetében tipikusan helyi állapotnak tekinthetők az aktuális form mezők,
-            modális ablakok állapotai,
-            szűrőmezők,
-            betöltésjelzők.
-            Globálisabb jellegű lehet a bejelentkezett felhasználó,
-            a session állapot,
-            egyes dashboard adatok,
-            illetve a chathez kapcsolódó partner- és üzenetadatok.
+            Az Orionban elkülönül a helyi állapot és a globálisabb alkalmazásállapot. Nagy hiba lenne minden adatot egyetlen közös helyen tárolni, mert akkor minden apró változástól (például egy mezőbe való gépeléstől) az egész oldal újrafrissülne és lelassulna. Az Orionban ezért szigorúan szétválasztjuk a helyi (Local) és a globális (Global) adatokat.
         </p>
+
+        <p>
+            Az olyan ideiglenes (transient) dolgokat, mint egy lenyíló menü állapota vagy egy űrlap szövege, helyben kezeljük a komponenseken belül (useState). Csak a legszükségesebb adatokat tesszük közösbe (Context API), amikre sok helyen szükség van: például a bejelentkezési adatok (JWT tokenek, szerepkörök) vagy az Üzenetküldő (<strong>OrionMessenger</strong>) rendszer állapota.
+        </p>
+
+        <p>Az adatok mozgása az Orionban mindig egyirányú (Unidirectional Data Flow). Ez segít abban, hogy a rendszer kiszámítható és stabil maradjon. Amikor a felhasználó például beküld egy űrlapot, az adat végigmegy bizonyos lépéseken (stations): a gombnyomástól a hálózati lekérésen át egészen a képernyő frissítéséig.</p>
+
+        <div class="summary">
+            <strong>Adatáramlási Modell (Data Flow)</strong>
+<pre><code>[User UI] (Click Application)
+    ↓
+[Smart Component] (Handle Submit)
+    ↓
+[API Service] (src/Api/applicationApi.ts)
+    ↓
+[Native Fetch] (Credentials: include)
+    ↓
+[Backend] (Process JWT & Logic)
+    ↓
+[UI Update] (Reconciliation)</code></pre>
+        </div>
+
+        <div class="summary">
+            <strong>JWT Munkamenet-ellenőrzés (Auth Flow)</strong>
+<pre><code>[Browser] (Request to /auth/status)
+    ↓ (Automatikus 'auth_token' cookie küldés)
+[Express Server] (authRoute.ts)
+    ↓ (jwt.verify(token, secret))
+[Supabase] (Fetch User/Company metadata)
+    ↓ (JSON Response)
+[Frontend] (Update IsLoggedIn state)</code></pre>
+        </div>
+
+        <p>Az adatok áramlása az Orion architektúrájában szigorúan egyirányú. A kliens oldali állapotmegőrzés a httpOnly cookie-kra épül, ami maximális biztonságot garantál az XSS támadásokkal szemben.</p>
+
+<pre><code>// Példa: Autentikációs állapot ellenőrzése (authApi.ts)
+export const checkAuthStatus = async (): Promise&lt;AuthStatus&gt; => {
+    const res = await fetch(`${API_BASE_URL}/auth/status`, {
+        method: "GET",
+        credentials: "include",
+        cache: "no-store",
+    });
+    if (!res.ok) throw new Error("Failed to check auth status");
+    return res.json();
+};</code></pre>
+
+        <p>Ez a determinisztikus adatkérési életciklus biztosítja, hogy a vizuális keretrendszer soha nem tartalmaz adathálózati specifikus "spagetti-kódot".</p>
 
         <h3>5.6. Formok és validáció</h3>
 
@@ -529,7 +831,7 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
         <h3>5.7. Többnyelvűség</h3>
 
         <p>
-            A <code>locales</code> mappa és a korábbi frontend leírás alapján
+            A <code>locales</code> mappa alapján
             az Orion i18n támogatással rendelkezik.
             Ez nem pusztán UI-kényelmi funkció,
             hanem architekturális kérdés is,
@@ -543,11 +845,11 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
         <h3>5.8. SEO, statikus elemek és első benyomás</h3>
 
         <p>
-            A nyilvános oldalaknál a frontend dokumentáció külön említi a SEO és statikus eszközök kezelését,
+            A nyilvános oldalaknál fontos szerepet kap a SEO és a statikus eszközök kezelése,
             például a robots,
             sitemap,
             favicon
-            és Lighthouse audit témákat.
+            és Lighthouse audit témák.
             Ez azt jelzi,
             hogy az Orion nem kizárólag belső dashboard alkalmazásként kezeli a publikus felületeit,
             hanem fontosnak tartja a keresőmotorok számára is megfelelő láthatóságot,
@@ -570,6 +872,10 @@ Kliensoldali állapot frissül
 Kérés a backend felé
     ↓
 Siker vagy hiba állapot vizuális visszajelzése</code></pre>
+
+        <div class="summary">
+            <strong>lényeg:</strong> Az Express szerver doménvezérelt felépítésű, amely a klasszikus API-k mellett valós idejű kommunikációt is kiszolgál.
+        </div>
 
         <h2 id="sec6">6. Backend architektúra</h2>
 
@@ -605,79 +911,56 @@ app.use("/Api", OrionAIRoute)
 setupRealtime(server)
 server.listen(4000)</code></pre>
 
-        <h3>6.2. Szerveroldali modulhatárok</h3>
+        <h3>6.2. Szerveroldali modulok és végpontok</h3>
 
+        <p>A szerver moduláris felépítése lehetővé teszi az egyes üzleti területek elkülönített kezelését. Alább láthatók a főbb modulok és a hozzájuk tartozó API végpontok.</p>
+
+        <h4>Auth Modul</h4>
         <table>
-            <thead>
-                <tr>
-                    <th>Modul</th>
-                    <th>Route fájl</th>
-                    <th>Service fájl</th>
-                    <th>Fő felelősség</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Hitelesítés</td>
-                    <td><code>authRoute.ts</code></td>
-                    <td><code>authService.ts</code></td>
-                    <td>Regisztráció, bejelentkezés, munkamenet, auth ellenőrzések</td>
-                </tr>
-                <tr>
-                    <td>Felhasználó</td>
-                    <td><code>userRoute.ts</code></td>
-                    <td><code>userService.ts</code></td>
-                    <td>Profil, dokumentumok, önéletrajz, felhasználói adatok</td>
-                </tr>
-                <tr>
-                    <td>Cég</td>
-                    <td><code>companyRoute.ts</code></td>
-                    <td><code>companyService.ts</code></td>
-                    <td>Cégprofil, dashboard, céges működés</td>
-                </tr>
-                <tr>
-                    <td>Hirdetések</td>
-                    <td><code>advertisementRoute.ts</code></td>
-                    <td><code>advertisementService.ts</code></td>
-                    <td>Álláshirdetés létrehozás, olvasás, módosítás</td>
-                </tr>
-                <tr>
-                    <td>Jelentkezések</td>
-                    <td><code>applicantRoute.ts</code></td>
-                    <td><code>applicantService.ts</code></td>
-                    <td>Jelentkezési folyamat, ATS, státuszkezelés</td>
-                </tr>
-                <tr>
-                    <td>Üzenetek</td>
-                    <td><code>messageRoute.ts</code></td>
-                    <td><code>messageService.ts</code></td>
-                    <td>Chat, partnerlista, üzenetfolyam</td>
-                </tr>
-                <tr>
-                    <td>Rendszerüzenetek</td>
-                    <td><code>systemmessageRoute.ts</code></td>
-                    <td><code>systemmessageService.ts</code></td>
-                    <td>Platformszintű értesítések és olvasási állapot</td>
-                </tr>
-                <tr>
-                    <td>Email</td>
-                    <td><code>emailRoute.ts</code></td>
-                    <td><code>emailService.ts</code></td>
-                    <td>Email hitelesítés, jelszóval kapcsolatos kommunikáció</td>
-                </tr>
-                <tr>
-                    <td>OrionAI</td>
-                    <td><code>OrionAIRoute.ts</code></td>
-                    <td><code>OrionAI.py</code></td>
-                    <td>AI-specifikus kiszolgálás és kiegészítő feldolgozás</td>
-                </tr>
-            </tbody>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglaló</th></tr>
+            <tr><td><code>/login</code></td><td>login</td><td>Felhasználói bejelentkezés (diák/cég)</td></tr>
+            <tr><td><code>/register</code></td><td>register</td><td>Új regisztráció indítása</td></tr>
+            <tr><td><code>/logout</code></td><td>logout</td><td>Session lezárása</td></tr>
+            <tr><td><code>/status</code></td><td>checkStatus</td><td>JWT token érvényesség ellenőrzése</td></tr>
+        </table>
+
+        <h4>User Modul</h4>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglaló</th></tr>
+            <tr><td><code>/profile</code></td><td>getProfile</td><td>Bejelentkezett diák adatainak lekérése</td></tr>
+            <tr><td><code>/update-profile</code></td><td>updateProfile</td><td>Profiladatok módosítása</td></tr>
+            <tr><td><code>/upload-cv</code></td><td>uploadCV</td><td>Önéletrajz feltöltése és tárolása</td></tr>
+            <tr><td><code>/documents</code></td><td>getDocs</td><td>Titkosított okmányok biztonságos lekérdezése</td></tr>
+        </table>
+
+        <h4>Company Modul</h4>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglaló</th></tr>
+            <tr><td><code>/dashboard</code></td><td>getStats</td><td>Céges statisztikák és dashboard adatok</td></tr>
+            <tr><td><code>/profile</code></td><td>getCompProfile</td><td>Cégadatok lekérése</td></tr>
+            <tr><td><code>/applicants</code></td><td>listApplicants</td><td>Jelentkezők listázása és szűrése</td></tr>
+        </table>
+
+        <h4>Advertisement & Applicant</h4>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglaló</th></tr>
+            <tr><td><code>/ads</code></td><td>listAds</td><td>Hirdetések listázása (lapozással)</td></tr>
+            <tr><td><code>/apply</code></td><td>submitApp</td><td>Jelentkezés elküldése egy hirdetésre</td></tr>
+            <tr><td><code>/status-update</code></td><td>updateStat</td><td>Jelentkezés állapotának módosítása (ATS)</td></tr>
+        </table>
+
+        <h4>Messages & Notifications</h4>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglaló</th></tr>
+            <tr><td><code>/chat-partners</code></td><td>getPartners</td><td>Beszélgetőpartnerek listájának lekérése</td></tr>
+            <tr><td><code>/history</code></td><td>getMessages</td><td>Üzenetváltások előzményeinek betöltése</td></tr>
+            <tr><td><code>/system</code></td><td>getNotifications</td><td>Rendszerüzenetek listázása</td></tr>
         </table>
 
         <h3>6.3. Middleware és kéréséletciklus</h3>
 
         <p>
-            A backend dokumentáció külön kiemeli az <code>auth.ts</code> middleware szerepét.
+            Az <code>auth.ts</code> middleware kiemelt szerepet kap.
             Egy ilyen rendszerben a middleware tipikus feladatai:
             token vagy session ellenőrzés,
             felhasználói identitás kinyerése,
@@ -710,12 +993,16 @@ server.listen(4000)</code></pre>
             <li>Az OrionAI külön modulba szervezése megőrzi a rendszer fő ágának tisztaságát.</li>
         </ul>
 
+        <div class="summary">
+            <strong>lényeg:</strong> A relációs adatbázis-modell és az adatbázis-szintű logikák (RPC, triggerek) garantálják az adatok integritását és biztonságát.
+        </div>
+
         <h2 id="sec7">7. Adatmodell és adatbázislogika</h2>
 
         <h3>7.1. Az adatmodell fő blokkjai</h3>
 
         <p>
-            A backend dokumentáció négy nagy adatbázis-modult különít el:
+            Az adatmodell négy nagy adatbázis-modult különít el:
             felhasználók,
             cégek,
             álláshirdetések és munkaviszony,
@@ -769,6 +1056,113 @@ server.listen(4000)</code></pre>
             </tbody>
         </table>
 
+        <h4><code>users</code></h4>
+        <p>A munkavállalók (álláskeresők) összes alapadatát tároló fő tábla.</p>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>id</code> <span class="tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Automatikusan generált egyedi azonosító</td></tr>
+            <tr><td><code>email</code></td><td>TEXT</td><td>UNIQUE NOT NULL</td><td>Egyedi email cím, belépéshez és értesítésekhez</td></tr>
+            <tr><td><code>lname</code></td><td>TEXT</td><td>NOT NULL</td><td>Felhasználó vezetékneve</td></tr>
+            <tr><td><code>fname</code></td><td>TEXT</td><td>NOT NULL</td><td>Felhasználó keresztneve</td></tr>
+            <tr><td><code>phone_number</code></td><td>TEXT</td><td>NOT NULL</td><td>Telefonszám</td></tr>
+            <tr><td><code>birth_place</code></td><td>TEXT</td><td>NOT NULL</td><td>Születési hely</td></tr>
+            <tr><td><code>birth_date</code></td><td>DATE</td><td>NOT NULL</td><td>Születési dátum</td></tr>
+            <tr><td><code>address</code></td><td>TEXT</td><td>NOT NULL</td><td>Lakcím</td></tr>
+            <tr><td><code>tax_number</code></td><td>TEXT</td><td>NOT NULL</td><td>Adóazonosító szám</td></tr>
+            <tr><td><code>nationality</code></td><td>TEXT</td><td>NOT NULL</td><td>Állampolgárság</td></tr>
+            <tr><td><code>terms_accepted</code></td><td>BOOLEAN</td><td>DEFAULT FALSE NOT NULL</td><td>ÁSZF elfogadásának jelzése</td></tr>
+            <tr><td><code>activated</code></td><td>BOOLEAN</td><td>DEFAULT FALSE NOT NULL</td><td>Fiók aktiváltsági állapot (email megerősítés után TRUE)</td></tr>
+            <tr><td><code>short_bio</code></td><td>TEXT</td><td>NOT NULL</td><td>Rövid bemutatkozás / önéletrajzi szöveg</td></tr>
+            <tr><td><code>qualifications</code></td><td>TEXT</td><td>NOT NULL</td><td>Végzettségek, képesítések</td></tr>
+            <tr><td><code>join_date</code></td><td>TIMESTAMP</td><td>DEFAULT NOW() NOT NULL</td><td>Regisztráció időpontja</td></tr>
+        </table>
+        <pre><code>CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  lname TEXT NOT NULL,
+  fname TEXT NOT NULL,
+  phone_number TEXT NOT NULL,
+  birth_place TEXT NOT NULL,
+  birth_date DATE NOT NULL,
+  address TEXT NOT NULL,
+  tax_number TEXT NOT NULL,
+  nationality TEXT NOT NULL,
+  terms_accepted BOOLEAN DEFAULT FALSE NOT NULL,
+  activated BOOLEAN DEFAULT FALSE NOT NULL,
+  short_bio TEXT NOT NULL,
+  qualifications TEXT NOT NULL,
+  join_date TIMESTAMP DEFAULT NOW() NOT NULL
+);</code></pre>
+
+        <h4><code>user_credentials</code></h4>
+        <p>A felhasználói jelszavak biztonságos, hashelt tárolása. Az alaptáblától elkülönítve, elv: minimális jogosultság elve alapján csak erre a táblára vonatkozó olvasási jog szükséges az autentikációhoz.</p>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>user_id</code> <span class="tag">PK</span> <span class="tag">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
+            <tr><td><code>password_hash</code></td><td>TEXT</td><td>NOT NULL</td><td>Hashelt jelszó (pl. bcrypt)</td></tr>
+        </table>
+        <pre><code>CREATE TABLE user_credentials (
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  password_hash TEXT NOT NULL,
+  PRIMARY KEY (user_id)
+);</code></pre>
+
+        <h4><code>user_documents</code></h4>
+        <p>Személyi okmányok másolatainak <strong>titkosított</strong> tárolója. Az adatokat <code>pgp_sym_encrypt</code> segítségével szimmetrikusan titkosítva tároljuk.</p>
+        <div class="warning">
+            <strong>⚠ Szenzitív adat:</strong> A <code>personal_id</code> és <code>address_card_number</code> mezők <code>BYTEA</code> típusban titkosított ciphertext-et tárolnak.
+        </div>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>user_id</code> <span class="tag">PK</span> <span class="tag">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
+            <tr><td><code>personal_id</code> <span class="tag">ENC</span></td><td>BYTEA</td><td>NOT NULL</td><td>Személyi igazolvány száma – titkosítva</td></tr>
+            <tr><td><code>address_card_number</code> <span class="tag">ENC</span></td><td>BYTEA</td><td>NOT NULL</td><td>Lakcímkártya száma – titkosítva</td></tr>
+        </table>
+        <pre><code>CREATE TABLE user_documents (
+  user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+  personal_id BYTEA NOT NULL,
+  address_card_number BYTEA NOT NULL,
+  PRIMARY KEY (user_id)
+);</code></pre>
+
+        <h4><code>user_email_tokens</code></h4>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>user_id</code> <span class="tag">PK</span> <span class="tag">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
+            <tr><td><code>token</code></td><td>TEXT</td><td>UNIQUE NOT NULL</td><td>Egyedi, véletlenszerű token string</td></tr>
+            <tr><td><code>expires_at</code></td><td>TIMESTAMP</td><td>NOT NULL</td><td>Token lejáratának időpontja</td></tr>
+        </table>
+        <pre><code>CREATE TABLE user_email_tokens (
+    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    token TEXT UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL
+);</code></pre>
+
+        <h4><code>user_statistics</code></h4>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>user_id</code> <span class="tag">PK</span> <span class="tag">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
+            <tr><td><code>profile_views</code></td><td>INTEGER</td><td>NOT NULL DEFAULT 0</td><td>Profiloldal megtekintéseinek száma</td></tr>
+            <tr><td><code>resume_views</code></td><td>INTEGER</td><td>NOT NULL DEFAULT 0</td><td>Önéletrajz megtekintéseinek száma</td></tr>
+        </table>
+        <pre><code>CREATE TABLE user_statistics (
+    user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    profile_views INTEGER NOT NULL DEFAULT 0,
+    resume_views INTEGER NOT NULL DEFAULT 0
+);</code></pre>
+
+        <h4><code>favorites</code></h4>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>user_id</code> <span class="tag">PK</span> <span class="tag">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
+            <tr><td><code>advertisement_id</code> <span class="tag">PK</span> <span class="tag">FK</span></td><td>INTEGER</td><td>REFERENCES advertisement(id) ON DELETE CASCADE</td><td>Hivatkozás az advertisement táblára</td></tr>
+        </table>
+        <pre><code>CREATE TABLE favorites (
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    advertisement_id INTEGER NOT NULL REFERENCES advertisement(id) ON DELETE CASCADE,
+    PRIMARY KEY (user_id, advertisement_id)
+);</code></pre>
+
         <h3>7.3. Céges modul</h3>
 
         <table>
@@ -797,6 +1191,52 @@ server.listen(4000)</code></pre>
                 </tr>
             </tbody>
         </table>
+
+        <h4><code>companies</code></h4>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>id</code> <span class="tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Automatikusan generált egyedi azonosító</td></tr>
+            <tr><td><code>email</code></td><td>TEXT</td><td>UNIQUE NOT NULL</td><td>Egyedi email cím</td></tr>
+            <tr><td><code>name</code></td><td>TEXT</td><td>NOT NULL</td><td>Cég neve</td></tr>
+            <tr><td><code>address</code></td><td>TEXT</td><td>NOT NULL</td><td>Székhely / cím</td></tr>
+            <tr><td><code>tax_number</code></td><td>TEXT</td><td>NOT NULL</td><td>Adószám</td></tr>
+            <tr><td><code>contact_person_name</code></td><td>TEXT</td><td>NOT NULL</td><td>Kapcsolattartó személy neve</td></tr>
+            <tr><td><code>activity_scope</code></td><td>TEXT</td><td>NOT NULL</td><td>Tevékenységi kör / iparág</td></tr>
+            <tr><td><code>website</code></td><td>TEXT</td><td>–</td><td>Cég weboldalának URL-je (opcionális)</td></tr>
+            <tr><td><code>short_description</code></td><td>TEXT</td><td>NOT NULL</td><td>Rövid bemutatkozás / cégismertető</td></tr>
+            <tr><td><code>verified</code></td><td>BOOLEAN</td><td>DEFAULT FALSE NOT NULL</td><td>Admin által manuálisan hitelesített cég</td></tr>
+            <tr><td><code>join_date</code></td><td>TIMESTAMP</td><td>DEFAULT NOW() NOT NULL</td><td>Regisztráció időpontja</td></tr>
+            <tr><td><code>phone_number</code></td><td>TEXT</td><td>NOT NULL</td><td>Telefonszám</td></tr>
+        </table>
+        <pre><code>CREATE TABLE companies (
+  id SERIAL PRIMARY KEY,
+  email TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  address TEXT NOT NULL,
+  tax_number TEXT NOT NULL,
+  contact_person_name TEXT NOT NULL,
+  activity_scope TEXT NOT NULL,
+  website TEXT,
+  short_description TEXT NOT NULL,
+  terms_accepted BOOLEAN DEFAULT FALSE NOT NULL,
+  verified BOOLEAN DEFAULT FALSE NOT NULL,
+  join_date TIMESTAMP DEFAULT NOW() NOT NULL,
+  phone_number TEXT NOT NULL
+);</code></pre>
+
+        <h4><code>company_credentials</code></h4>
+        <pre><code>CREATE TABLE company_credentials (
+  company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+  password_hash TEXT NOT NULL,
+  PRIMARY KEY (company_id)
+);</code></pre>
+
+        <h4><code>company_email_tokens</code></h4>
+        <pre><code>CREATE TABLE company_email_tokens (
+    company_id INTEGER PRIMARY KEY REFERENCES companies(id) ON DELETE CASCADE,
+    token TEXT UNIQUE NOT NULL,
+    expires_at TIMESTAMP NOT NULL
+);</code></pre>
 
         <h3>7.4. Hirdetés és jelentkezés modul</h3>
 
@@ -827,6 +1267,71 @@ server.listen(4000)</code></pre>
             </tbody>
         </table>
 
+        <h4><code>advertisement</code></h4>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>id</code> <span class="tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi azonosító</td></tr>
+            <tr><td><code>position</code></td><td>TEXT</td><td>NOT NULL</td><td>Munkakör megnevezése</td></tr>
+            <tr><td><code>hourly_wage</code></td><td>INT</td><td>NOT NULL</td><td>Órabér (Ft)</td></tr>
+            <tr><td><code>tasks</code></td><td>TEXT</td><td>–</td><td>Elvégzendő feladatok leírása</td></tr>
+            <tr><td><code>requirements</code></td><td>TEXT</td><td>–</td><td>Elvárások a jelöltekkel szemben</td></tr>
+            <tr><td><code>job_description</code></td><td>TEXT</td><td>–</td><td>Részletes munkaköri leírás</td></tr>
+            <tr><td><code>is_active</code></td><td>BOOLEAN</td><td>DEFAULT TRUE</td><td>Aktív-e a hirdetés?</td></tr>
+            <tr><td><code>click_count</code></td><td>INT</td><td>DEFAULT 0</td><td>Hirdetés megtekintéseinek száma</td></tr>
+            <tr><td><code>search_start</code></td><td>TIMESTAMP</td><td>DEFAULT NOW()</td><td>Keresés megkezdésének időpontja</td></tr>
+            <tr><td><code>company_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>REFERENCES companies(id) ON DELETE CASCADE</td><td>Hirdető cég azonosítója</td></tr>
+        </table>
+        <pre><code>CREATE TABLE advertisement (
+    id SERIAL PRIMARY KEY,
+    position TEXT NOT NULL,
+    hourly_wage INT NOT NULL,
+    tasks TEXT,
+    requirements TEXT,
+    is_active BOOLEAN DEFAULT TRUE,
+    click_count INT DEFAULT 0,
+    search_start TIMESTAMP DEFAULT NOW(),
+    company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
+    job_description TEXT
+);</code></pre>
+
+        <h4><code>job_applications</code></h4>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>id</code> <span class="tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi azonosító</td></tr>
+            <tr><td><code>user_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES users(id) ON DELETE CASCADE</td><td>Jelentkező felhasználó</td></tr>
+            <tr><td><code>advertisement_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES advertisement(id) ON DELETE CASCADE</td><td>Érintett álláshirdetés</td></tr>
+            <tr><td><code>status</code></td><td>TEXT</td><td>NOT NULL DEFAULT 'submitted'</td><td>Státusz: <code>submitted</code> / <code>accepted</code> / <code>rejected</code></td></tr>
+            <tr><td><code>last_updated</code></td><td>TIMESTAMP</td><td>NOT NULL DEFAULT NOW()</td><td>Utolsó státuszváltozás időpontja</td></tr>
+        </table>
+        <pre><code>CREATE TABLE job_applications (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    advertisement_id INTEGER NOT NULL REFERENCES advertisement(id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'submitted',
+    last_updated TIMESTAMP NOT NULL DEFAULT NOW()
+);</code></pre>
+
+        <h4><code>employees</code></h4>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>id</code> <span class="tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi azonosító</td></tr>
+            <tr><td><code>user_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES users(id) ON DELETE CASCADE</td><td>Alkalmazott felhasználó</td></tr>
+            <tr><td><code>company_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES companies(id) ON DELETE CASCADE</td><td>Munkáltató cég</td></tr>
+            <tr><td><code>position</code></td><td>TEXT</td><td>NOT NULL</td><td>Pozíció / munkakör kód</td></tr>
+            <tr><td><code>job_title</code></td><td>TEXT</td><td>NOT NULL</td><td>Megjelenített állásTitle</td></tr>
+            <tr><td><code>hourly_wage</code></td><td>INT</td><td>NOT NULL</td><td>Megállapodott órabér (Ft)</td></tr>
+            <tr><td><code>hire_date</code></td><td>TIMESTAMP</td><td>NOT NULL DEFAULT NOW()</td><td>Felvétel dátuma</td></tr>
+        </table>
+        <pre><code>CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    company_id INTEGER NOT NULL REFERENCES companies(id) ON DELETE CASCADE,
+    position TEXT NOT NULL,
+    job_title TEXT NOT NULL,
+    hourly_wage INT NOT NULL,
+    hire_date TIMESTAMP NOT NULL DEFAULT NOW()
+);</code></pre>
+
         <h3>7.5. Kommunikáció és értesítések</h3>
 
         <table>
@@ -855,6 +1360,47 @@ server.listen(4000)</code></pre>
                 </tr>
             </tbody>
         </table>
+
+        <h4><code>messages</code></h4>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>id</code> <span class="tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi üzenet-azonosító</td></tr>
+            <tr><td><code>company_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES companies(id)</td><td>Érintett cég</td></tr>
+            <tr><td><code>user_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES users(id)</td><td>Érintett felhasználó</td></tr>
+            <tr><td><code>sender_type</code></td><td>TEXT</td><td>NOT NULL CHECK IN ('USER', 'COMPANY')</td><td>Ki küldte az üzenetet</td></tr>
+            <tr><td><code>message</code></td><td>TEXT</td><td>NOT NULL</td><td>Az üzenet szöveges tartalma</td></tr>
+            <tr><td><code>is_read</code></td><td>BOOLEAN</td><td>NOT NULL DEFAULT FALSE</td><td>Olvasottsági állapot</td></tr>
+            <tr><td><code>created_at</code></td><td>TIMESTAMP</td><td>NOT NULL DEFAULT NOW()</td><td>Küldés időpontja</td></tr>
+        </table>
+        <pre><code>CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+    company_id INTEGER NOT NULL REFERENCES companies(id),
+    user_id INTEGER NOT NULL REFERENCES users(id),
+    sender_type TEXT NOT NULL CHECK (sender_type IN ('USER', 'COMPANY')),
+    message TEXT NOT NULL,
+    is_read BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);</code></pre>
+
+        <h4><code>system_messages</code></h4>
+        <pre><code>CREATE TABLE system_messages (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    target_type TEXT NOT NULL,
+    target_id INT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE
+);</code></pre>
+
+        <h4><code>system_message_reads</code></h4>
+        <pre><code>CREATE TABLE system_message_reads (
+    id SERIAL PRIMARY KEY,
+    message_id INT NOT NULL,
+    target_type TEXT NOT NULL,
+    target_id INT NULL,
+    FOREIGN KEY (message_id) REFERENCES system_messages(id)
+);</code></pre>
 
         <h3>7.6. Táblakapcsolatok értelmezése</h3>
 
@@ -891,6 +1437,12 @@ server.listen(4000)</code></pre>
 
         <h3>7.8. Fontosabb RPC függvények</h3>
 
+        <p>A rendszer az adatbázis-oldali üzleti logika jelentős részét tárolt eljárásokban (RPC) kezeli. Ez biztosítja a tranzakcionális integritást és a Node.js rétegtől való függetlenséget.</p>
+
+        <h4>7.8.1. Regisztrációs függvények</h4>
+
+        <h5><code>register_user_v1</code></h5>
+        <p>Egyetlen tranzakcióban kezeli az új diák felhasználó regisztrációját és az összes kapcsolódó segédtábla inicializálását.</p>
         <table>
             <thead>
                 <tr>
@@ -962,6 +1514,74 @@ server.listen(4000)</code></pre>
                 </tr>
             </tbody>
         </table>
+        <p><strong>Működési logika:</strong></p>
+        <ol>
+            <li>Beszúrás a <code>users</code> táblába.</li>
+            <li>A generált <code>id</code> lekérése.</li>
+            <li>Jelszó eltárolása a <code>user_credentials</code> táblában.</li>
+            <li>Üres statisztikai sor létrehozása a <code>user_statistics</code> táblában.</li>
+            <li>Válasz JSONB formátumban: <code>{ "success": true, "user_id": ... }</code>.</li>
+        </ol>
+
+        <h5><code>register_company_v1</code></h5>
+        <p>Céges regisztráció tranzakciós lebonyolítása.</p>
+        <table>
+            <tr><th>Paraméter</th><th>Típus</th><th>Leírás</th></tr>
+            <tr><td><code>p_email</code></td><td>TEXT</td><td>Céges kapcsolattartói email</td></tr>
+            <tr><td><code>p_password_hash</code></td><td>TEXT</td><td>Céges jelszó hash</td></tr>
+            <tr><td><code>p_name, p_address, p_tax_number, p_contact_name, p_scope, p_bio, p_phone</code></td><td>TEXT</td><td>Céges profil adatok</td></tr>
+            <tr><td><code>p_website</code></td><td>TEXT</td><td>Opcionális weboldal URL</td></tr>
+        </table>
+
+        <h4>7.8.2. Titkosított dokumentumkezelés</h4>
+
+        <p>Ezek a függvények a <code>pgcrypto</code> kiterjesztést használják az adatok védelmére.</p>
+
+        <h5><code>insert_encrypted_documents</code></h5>
+        <table>
+            <tr><th>Paraméter</th><th>Típus</th><th>Leírás</th></tr>
+            <tr><td><code>p_user_id</code></td><td>INT</td><td>Felhasználó azonosítója</td></tr>
+            <tr><td><code>p_personal_id</code></td><td>TEXT</td><td>Személyi igazolvány száma (plain text)</td></tr>
+            <tr><td><code>p_address_card</code></td><td>TEXT</td><td>Lakcímkártya száma (plain text)</td></tr>
+            <tr><td><code>p_key</code></td><td>TEXT</td><td>Symmetric encryption key (alkalmazásszintről érkezik)</td></tr>
+        </table>
+
+        <h5><code>get_decrypted_documents</code></h5>
+        <p>Visszaadja a titkosított adatokat olvasható formában a megfelelő kulcs birtokában.</p>
+        <pre><code>SELECT * FROM get_decrypted_documents(123, 'encryption_key_here');</code></pre>
+
+        <h4>7.8.3. Statisztikai és Dashboard függvények</h4>
+
+        <h5><code>get_company_dashboard_stats</code></h5>
+        <p>Összesített adatokat szolgáltat a cégvezetői dashboardhoz.</p>
+        <ul>
+            <li>Aktív hirdetések száma.</li>
+            <li>Összes jelentkező száma.</li>
+            <li>Folyamatban lévő jelentkezések (submitted) száma.</li>
+            <li>Összesített hirdetési kattintásszám.</li>
+        </ul>
+
+        <h5><code>get_user_dashboard_stats</code></h5>
+        <p>A diák saját aktivitásának összesítése.</p>
+        <ul>
+            <li>Aktív jelentkezések száma.</li>
+            <li>Profil- és önéletrajz megtekintések (user_statistics alapján).</li>
+        </ul>
+
+        <h5>Számláló függvények:</h5>
+        <ul>
+            <li><code>increment_click_count(p_ad_id)</code>: Növeli az <code>advertisement.click_count</code> értékét.</li>
+            <li><code>increment_profile_views(p_user_id)</code>: Növeli a <code>user_statistics.profile_views</code> értékét.</li>
+            <li><code>increment_resume_views(p_user_id)</code>: Növeli a <code>user_statistics.resume_views</code> értékét.</li>
+        </ul>
+
+        <h4>7.8.4. Chat partnerek lekérdezése</h4>
+
+        <p>A chat modul hatékonyságát segítő függvények, amelyek JSON formátumban adják vissza a beszélgetőpartnerek listáját az utolsó üzenettel együtt.</p>
+        <ul>
+            <li><code>get_user_chat_partners(p_user_id)</code></li>
+            <li><code>get_company_chat_partners(p_company_id)</code></li>
+        </ul>
 
         <h3>7.9. Triggerek</h3>
 
@@ -973,6 +1593,10 @@ server.listen(4000)</code></pre>
             Ez jó tervezési gyakorlat,
             mert csökkenti az alkalmazáskódban a kötelező utólagos inicializálás kockázatát.
         </p>
+
+        <div class="summary">
+            <strong>lényeg:</strong> A rendszer moduláris API-jai mellett külső szolgáltatások, mint az email küldés és az OrionAI is szerves részét képezik a platformnak.
+        </div>
 
         <h2 id="sec8">8. Végpontok, szerveroldali szolgáltatások és integrációk</h2>
 
@@ -1077,46 +1701,51 @@ server.listen(4000)</code></pre>
             A szétválasztás segít fenntartani a fő Node/Express ág stabilitását.
         </p>
 
+        <h4>Működési mechanizmus</h4>
+        <ol>
+            <li><strong>Input:</strong> A felhasználó természetes nyelven megfogalmazott kérése (pl. "Budapesti diákmunka Python programozóknak").</li>
+            <li><strong>Paraméterezés:</strong> A rendszer kiegészíti a kérést az elvárt minimális bérrel.</li>
+            <li><strong>Python ág:</strong> A kérés az Express szerverről a Python alapú OrionAI modulhoz kerül (<code>OrionAI.py</code>).</li>
+            <li><strong>NLP feldolgozás:</strong> A modul elemzi a kérést, kulcsszavakat és szándékot azonosít.</li>
+            <li><strong>Matchmaking:</strong> Az azonosított feltételek alapján a rendszer rangsorolja a meglévő hirdetéseket.</li>
+            <li><strong>Eredmény:</strong> A végpont visszaadja a legrelevánsabb hirdetések listáját JSON formátumban.</li>
+        </ol>
+
+        <div class="summary">
+            <strong>lényeg:</strong> A regisztrációtól a jelentkezésekig tartó folyamatok jól definiált állapotátmenetek mentén valósulnak meg a biztonság és sebesség jegyében.
+        </div>
+
         <h2 id="sec9">9. Kulcsfontosságú üzleti folyamatok</h2>
 
-        <h3>9.1. Diák regisztráció és onboarding</h3>
+        <h3>9.1. Felhasználói bejelentkezési folyamat (Login flow)</h3>
+        <p>A rendszer biztonságos, cookie-alapú munkamenet-kezelést alkalmaz.</p>
+        <ol>
+            <li><strong>Frontend űrlap:</strong> A felhasználó megadja az email címét és jelszavát.</li>
+            <li><strong>Route kérés:</strong> A kérés a <code>/Api/auth/login</code> végpontra érkezik.</li>
+            <li><strong>Validáció és Auth:</strong> A backend ellenőrzi a formátumot, majd összeveti a jelszót a <code>user_credentials</code> vagy <code>company_credentials</code> táblával.</li>
+            <li><strong>Token generálás:</strong> Sikeres azonosítás esetén a szerver egy <code>httpOnly</code> cookie-ba helyezett JWT tokent generál.</li>
+            <li><strong>Válasz:</strong> A frontend megkapja a sikeres státuszt és a felhasználói metaadatokat (szerepkör, név).</li>
+        </ol>
 
-        <p>
-            A diákoldali folyamat jellemzően a regisztrációval indul.
-            A kliens oldali űrlap validáció után a backend felé küldött kérés
-            vagy közvetlen service logikán,
-            vagy RPC-n keresztül létrehozza az alapfelhasználói rekordot,
-            a hitelesítési adatokat,
-            és szükség esetén a kapcsolódó statisztikai vagy token rekordokat is.
-            A folyamat része lehet az email verifikáció,
-            majd az első belépés után a profil kitöltése,
-            önéletrajz és egyéb dokumentumok feltöltése.
-        </p>
+        <h3>9.2. Regisztrációs folyamat (Registration flow)</h3>
+        <p>Többlépcsős, tranzakció-biztos regisztráció.</p>
+        <ol>
+            <li><strong>Adatbeküldés:</strong> A frontend elküldi a kitöltött regisztrációs adatokat (Zod validáció után).</li>
+            <li><strong>RPC hívás:</strong> A backend meghívja a <code>register_user_v1</code> vagy <code>register_company_v1</code> PostgreSQL függvényt.</li>
+            <li><strong>Adatbázis tranzakció:</strong> A tárolt eljárás egyetlen egységben hozza létre a rekordokat (users, credentials, stats).</li>
+            <li><strong>Email kiküldés:</strong> Sikeres mentés után a backend generál egy aktiváló tokent és kiküldi a megerősítő emailt.</li>
+            <li><strong>Befejezés:</strong> A felhasználó a linkre kattintva aktiválja a fiókját (<code>activated = TRUE</code>).</li>
+        </ol>
 
-        <pre><code>Regisztrációs űrlap
-    ↓
-Kliensoldali validáció
-    ↓
-Auth API / regisztrációs route
-    ↓
-DB / RPC: user + credentials + token + stats
-    ↓
-Sikeres account létrehozás
-    ↓
-Email hitelesítés és profilkiegészítés</code></pre>
-
-        <h3>9.2. Cég regisztráció és profilkezelés</h3>
-
-        <p>
-            A céges életciklus hasonló,
-            de üzleti célja eltér.
-            Itt a fő cél nem a munkakeresés,
-            hanem a cégidentitás felépítése,
-            a hirdetések közzététele,
-            valamint a jelentkezők kezelése.
-            Emiatt a cégprofil mezői és a dashboard mögötti aggregációk jellemzően más adatokat hangsúlyoznak,
-            mint a diákoldali profil.
-        </p>
+        <h3>9.3. Dokumentumkezelés és Önéletrajz (CV Upload)</h3>
+        <p>Szenzitív fájlok és adatok kezelésének menete.</p>
+        <ol>
+            <li><strong>Fájl feltöltés:</strong> A diák kiválasztja az önéletrajzát (PDF formátum preferált).</li>
+            <li><strong>Szerveroldali tárolás:</strong> A backend elmenti a fájlt a védett tárolóba, és rögzíti az útvonalat az adatbázisban.</li>
+            <li><strong>Titkosítás:</strong> Személyi okmányok esetén a rendszer bekéri a <code>personal_id</code> és <code>address_card</code> számokat.</li>
+            <li><strong>PGP titkosítás:</strong> Az RPC függvény <code>pgp_sym_encrypt</code> használatával kódolja az értékeket a tárolás előtt.</li>
+            <li><strong>Visszaigazolás:</strong> A felhasználó látja a feltöltött dokumentumok állapotát a profilján.</li>
+        </ol>
 
         <h3>9.3. Álláshirdetés létrehozása és közzététele</h3>
 
@@ -1137,15 +1766,44 @@ Email hitelesítés és profilkiegészítés</code></pre>
         <h3>9.4. Álláskeresés, szűrés és kedvencek</h3>
 
         <p>
-            A diákoldali álláskeresés valószínűleg listázási,
-            szűrési és részletező funkciókon alapul.
-            A frontend dokumentáció kifejezetten említi a keresést és szűrést,
-            ezért itt fontos a jó lekérdezési stratégia,
-            a megfelelő pagination
-            és a gyors visszajelzés.
-            A <code>favorites</code> tábla jelenléte azt mutatja,
-            hogy a felhasználó későbbi döntéshez is elmenthet releváns hirdetéseket.
+            Az állások közötti keresésnél sok szempont szerint szűrhetünk (pl. bér, helyszín). Mivel nagyon sok hirdetés lehet, nem töltjük le az összeset egyszerre, mert az lelassítaná a kliensoldalt. Helyette lapozást (Pagination) használunk: egyszerre csak egy kevés adatot töltünk be, és ahogy a felhasználó lapoz, úgy hozzuk le a következőt.
         </p>
+
+        <p>
+            Az Orionban kétféle keresés van: a hagyományos, szerveroldali szűrés és a modern, mesterséges intelligencia alapú (OrionAI) keresés, ami érti a természetes emberi beszédet is.
+        </p>
+
+<pre><code>// 1. Példa: AI-alapú keresési logika (OrionAI)
+const fetchAIJobs = async (input: string, wage: string) => {
+    setLoading(true);
+    try {
+        const numericWage = parseInt(wage) || 2000;
+        const response = await OrionAIApi(input, numericWage);
+        if (response.success && Array.isArray(response.data)) {
+            setJobs(response.data);
+            setTotalCount(response.data.length);
+        }
+    } catch (err) {
+        console.error(err);
+        setError(t('jobs.list.ai.error'));
+    } finally {
+        setLoading(false);
+    }
+};
+
+// 2. Példa: Hagyományos szűrés és aszinkron lapozás (Pagination)
+const fetchJobs = async (q = "", loc = "", pos = "", wage = "", pg = 1) => {
+    setLoading(true);
+    try {
+        const data = await getAdvertisements(q, loc, pos, wage, pg, PAGE_SIZE);
+        if (data.success) {
+            setJobs((prev) => pg === 1 ? data.advertisements : [...prev, ...data.advertisements]);
+            if (data.totalCount !== undefined) setTotalCount(Number(data.totalCount));
+        }
+    } finally {
+        setLoading(false);
+    }
+};</code></pre>
 
         <h3>9.5. Jelentkezés és ATS folyamat</h3>
 
@@ -1161,6 +1819,23 @@ Email hitelesítés és profilkiegészítés</code></pre>
             az elutasítás
             vagy a továbblépés egy munkaviszony-jellegű állapot felé.
         </p>
+
+        <div class="summary">
+            <strong>Diák/User regisztráció sémája (Validation.ts)</strong>
+            <p>Az adatok helyességét egy sémavalidációs rendszerrel (Zod) ellenőrizzük még a böngészőben.</p>
+<pre><code>export const userRegisterObject = authBase.extend({
+    lname: z.string().min(2, "Vezetéknév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/),
+    fname: z.string().min(2, "Keresztnév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/),
+    birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).refine((date) => {
+        return new Date(date) <= new Date();
+    }, "A születési dátum nem lehet a jövőben"),
+    address: z.string().min(5, "A cím legalább 5 karakter"),
+    phone_number: z.string().regex(/^[0-9+\s-]{7,20}$/),
+    tax_number: z.string().trim().min(1, "Az adószám kötelező"),
+    personal_id: z.string().length(8).regex(/^\d{6}[A-Z]{2}$/),
+    address_card_number: z.string().length(8).regex(/^\d{6}[A-Z]{2}$/),
+});</code></pre>
+        </div>
 
         <pre><code>Diák megnyit egy állást
     ↓
@@ -1202,23 +1877,32 @@ Státuszfrissítés / kapcsolatfelvétel / döntés
             jelentkezések állapota.
         </p>
 
+        <div class="summary">
+            <strong>lényeg:</strong> A JWT és HttpOnly cookie-alapú hitelesítés, valamint a titkosított dokumentumtárolás védi a felhasználók adatait és a platform integritását.
+        </div>
+
         <h2 id="sec10">10. Biztonság, jogosultság és adatvédelem</h2>
 
-        <h3>10.1. Auth és session biztonság</h3>
+        <div class="summary">
+            <strong>Lényeg:</strong> <strong>JWT + HttpOnly cookie-k</strong> vigyáznak ránk. A toborzói felületet külön védelmi vonalakkal (Route Guards) védik, és minden adatot ellenőrzünk (Zod) mielőtt elküldenénk.
+        </div>
 
+        <h3>10.1. Auth és session biztonság</h3>
+        
         <p>
             Az Orion egyszerre kezel személyes adatokat,
             céges hozzáféréseket,
             dokumentumokat
             és kommunikációs tartalmat,
             ezért a hitelesítés minősége alapvető.
-            A szerveroldali auth middleware jelenléte,
-            a JWT titok használata
-            és a cookie parser együtt arra utal,
-            hogy a rendszer azonosítja a felhasználót minden érzékeny művelet előtt.
+            A felhasználók azonosítása modern, kulcs-alapú (JWT – JSON Web Token) megoldással működik. Amikor sikeresen bejelentkezünk, a rendszer kap egy digitális kulcsot. Ennek segítségével maradhatunk bejelentkezve (Session Persistence). Amikor megnyitjuk az oldalt, a rendszer azonnal ellenőrzi ezt a kulcsot. Ez a folyamat észrevétlen, és megakadályozza, hogy a felület ugráljon vagy villogjon (layout shift) betöltés közben.
         </p>
 
-        <h3>10.2. Szerepköralapú hozzáférés</h3>
+        <h3>10.2. Hibák kezelése és visszajelzés</h3>
+        
+        <p>Egy hálózati rendszernél előfordulhatnak hibák (pl. megszakad a net vagy túlterhelt a szerver). Az Orion 'hibatűrő' (Graceful Degradation) módon működik. Külön tudjuk választani a felhasználói hibákat (pl. rossz jelszó) és a váratlan szerverhibákat, és ezekről mindig egyértelmű üzenetet küldünk (Toast értesítések formájában).</p>
+
+        <h3>10.3. Szerepköralapú hozzáférés</h3>
 
         <p>
             Mivel a diák és a cég két külön entitás,
@@ -1239,7 +1923,7 @@ Státuszfrissítés / kapcsolatfelvétel / döntés
         <h3>10.3. Titkosított dokumentumkezelés</h3>
 
         <p>
-            A backend dokumentáció egyik legerősebb pontja a dokumentumtárolás biztonsági modellje.
+            A dokumentumtárolás biztonsági modellje kifejezetten erős.
             A <code>pgcrypto</code> és a dokumentumfüggvények jelenléte alapján
             a személyes azonosító dokumentumok nem sima szövegként kerülnek az adatbázisba.
             Ez különösen fontos,
@@ -1264,8 +1948,7 @@ Státuszfrissítés / kapcsolatfelvétel / döntés
         <h3>10.5. Frontend oldali biztonsági megfontolások</h3>
 
         <p>
-            A frontend dokumentáció önálló biztonsági fejezete arra utal,
-            hogy a kliensoldalon is fontos szerepet kap
+            A kliensoldalon is fontos szerepet kap
             a hibák kezelése,
             a megfelelő visszajelzés,
             a route-védelem,
@@ -1286,20 +1969,33 @@ Státuszfrissítés / kapcsolatfelvétel / döntés
             vagy fejlesztői környezetben gyenge tesztértékekkel tartósan bennmaradniuk.
         </p>
 
+        <div class="summary">
+            <strong>lényeg:</strong> A kódstabilitást egység- és integrációs tesztek garantálják, miközben a teljesítményt Lighthouse mérésekkel monitorozzuk.
+        </div>
+
         <h2 id="sec11">11. Minőségbiztosítás, tesztelés és teljesítmény</h2>
 
-        <h3>11.1. Jelenlegi tesztelési eszközök</h3>
+        <div class="summary">
+            <strong>Lényeg:</strong> 
+            A platform stabilitását és gyorsaságát párhuzamosan kezeljük. A kritikus folyamatokat háromszintű tesztelési rendszer (Vitest, RTL, MSW) védi, miközben biztosítjuk a hatékony adatkezelést a szerveroldali lapozással.
+        </div>
+
+        <h3>11.1. Jelenlegi tesztelési eszközök és stratégia</h3>
+
+        <p>Az Orion frontend projekt tesztelési rendszere azt a célt szolgálja, hogy a komplex üzleti folyamatok minden módosítás után is hibátlanul működjenek. A tesztelés három szinten valósul meg:</p>
+        <ul>
+            <li><strong>Egységtesztek (Unit Tests):</strong> Kisebb, izolált logikai egységek (pl. Zod sémák) tesztelése Vitesttel.</li>
+            <li><strong>Komponens tesztek (Component Tests):</strong> Funkcionális egységek vizuális és működési tesztelése (React Testing Library).</li>
+            <li><strong>Integrációs tesztek (Integration Tests):</strong> Több komponens és globális állapot együttműködésének ellenőrzése MSW segítségével, valódihoz közeli hálózati forgalom szimulálásával.</li>
+        </ul>
 
         <p>
-            A projekt csomaglistája alapján a következő tesztelési rétegek vannak jelen:
+            A projekt csomaglistája alapján a főbb eszközök:
+            <code>vitest</code>, 
+            <code>@testing-library/react</code>, 
+            <code>playwright</code> (e2e) és 
+            <code>msw</code>.
         </p>
-
-        <ul>
-            <li><code>vitest</code> egység- és komponensjellegű tesztekhez,</li>
-            <li><code>@testing-library/react</code> UI viselkedés teszteléséhez,</li>
-            <li><code>playwright</code> végponttól végpontig terjedő folyamatokhoz,</li>
-            <li><code>msw</code> mockolt hálózati viselkedéshez.</li>
-        </ul>
 
         <h3>11.2. Milyen területeket kell mindenképp tesztelni?</h3>
 
@@ -1348,9 +2044,8 @@ Státuszfrissítés / kapcsolatfelvétel / döntés
         <h3>11.3. Teljesítmény és skálázási megfontolások</h3>
 
         <p>
-            A frontend dokumentáció említi a lapozást és a hatékonyságot,
-            ami arra utal,
-            hogy a projekt már most is érzékeny a listanézetek és nagyobb adathalmazok teljesítményére.
+            A lapozás és a hatékonyság különösen fontos,
+            mert a projekt már most is érzékeny a listanézetek és nagyobb adathalmazok teljesítményére.
             A hirdetések,
             jelentkezések,
             chatpartnerek
@@ -1359,19 +2054,50 @@ Státuszfrissítés / kapcsolatfelvétel / döntés
             mind az adatbázis-lekérdezések optimalizálása egyre fontosabb lesz.
         </p>
 
-        <h3>11.4. Lighthouse és felhasználói élmény</h3>
+        <h3 id="sec11-4">11.4. Lighthouse Audit és Mérőszámok</h3>
 
-        <p>
-            A frontend dokumentáció Lighthouse mérésekre is kitér.
-            Ez azért releváns,
-            mert a nyilvános belépési pontok minősége közvetlenül hat a konverzióra:
-            milyen gyorsan tölt be a kezdőoldal,
-            mennyire stabil a layout,
-            mennyire hozzáférhető a felület,
-            és mennyire jól értelmezhetőek a metainformációk a keresők számára.
-        </p>
+        <div class="summary">
+            <strong>Legutóbbi Web-Audit Összesítés</strong>
+            <p>Az Orion platform legutóbbi Lighthouse auditja kiváló eredményeket mutat a keresőoptimalizálás és az elérhetőség terén, miközben kijelöli az irányt a további teljesítmény-optimalizáláshoz.</p>
+            
+            <table style="width: 100%; border-collapse: separate; border-spacing: 10px; margin-top: 15px;">
+                <tr>
+                    <td style="background: #2d3436; color: #e67e22; text-align: center; padding: 20px; border-radius: 10px; border: 2px solid #e67e22;">
+                        <div style="font-size: 2em; font-weight: bold; color: #e67e22;">67</div>
+                        <div style="font-size: 0.8em; color: #fff;">Performance</div>
+                    </td>
+                    <td style="background: #2d3436; color: #2ecc71; text-align: center; padding: 20px; border-radius: 10px; border: 2px solid #2ecc71;">
+                        <div style="font-size: 2em; font-weight: bold; color: #2ecc71;">92</div>
+                        <div style="font-size: 0.8em; color: #fff;">Accessibility</div>
+                    </td>
+                    <td style="background: #2d3436; color: #2ecc71; text-align: center; padding: 20px; border-radius: 10px; border: 2px solid #2ecc71;">
+                        <div style="font-size: 2em; font-weight: bold; color: #2ecc71;">100</div>
+                        <div style="font-size: 0.8em; color: #fff;">Best Practices</div>
+                    </td>
+                    <td style="background: #2d3436; color: #2ecc71; text-align: center; padding: 20px; border-radius: 10px; border: 2px solid #2ecc71;">
+                        <div style="font-size: 2em; font-weight: bold; color: #2ecc71;">100</div>
+                        <div style="font-size: 0.8em; color: #fff;">SEO</div>
+                    </td>
+                </tr>
+            </table>
 
-        <h3>11.5. Akadálymentesítés</h3>
+            <p style="margin-top: 20px;"><strong>Elemzés és Következtetések:</strong></p>
+            <ul>
+                <li><strong>SEO & Best Practices (100%):</strong> A platform megfelel a legszigorúbb webes szabványoknak és biztonsági protokolloknak.</li>
+                <li><strong>Accessibility (92%):</strong> Az akadálymentesítés magas szintű, néhány aria-label finomhangolása még folyamatban van.</li>
+                <li><strong>Performance (58%):</strong> Ez a mérőszám a projekt korai fázisát és a rendkívül rövid fejlesztési időt tükrözi. A platform jelenleg egyetlen nagy bundle-t használ, és hiányzik a lazy loading (késleltetett betöltés) implementációja. A lassulást nem médiafájlok, hanem a nagy mennyiségű JavaScript kód egyszerre történő betöltése és a render-blocking szkriptek okozzák.</li>
+            </ul>
+            <p><strong>Kulcsfontosságú Mérőszámok:</strong></p>
+            <ul>
+                <li><strong>FCP (First Contentful Paint):</strong> 2.8 s</li>
+                <li><strong>LCP (Largest Contentful Paint):</strong> 5.2 s</li>
+                <li><strong>Speed Index:</strong> 2.9 s</li>
+                <li><strong>TBT (Total Blocking Time):</strong> 0 ms</li>
+                <li><strong>CLS (Cumulative Layout Shift):</strong> 0.096</li>
+            </ul>
+        </div>
+
+        <h3 id="sec11-5">11.5. Akadálymentesítés</h3>
 
         <p>
             Az akadálymentesítés külön megjelenése jó jel,
@@ -1387,6 +2113,10 @@ Státuszfrissítés / kapcsolatfelvétel / döntés
             Ezeket már a komponensszinten érdemes kezelni,
             nem utólag tűzoltásként.
         </p>
+
+        <div class="summary">
+            <strong>lényeg:</strong> A fejlesztői munka és a kiadási folyamat build-eszközökre és környezeti változókra épül, minimalizálva az üzemeltetési kockázatokat.
+        </div>
 
         <h2 id="sec12">12. Fejlesztői működés, build és üzemeltetés</h2>
 
@@ -1410,8 +2140,7 @@ npm run OrionAI    # ha az AI modul külön szükséges</code></pre>
         <h3>12.2. Környezeti változók</h3>
 
         <p>
-            A korábbi frontend dokumentáció említi,
-            hogy a backend indításához szükséges a megfelelő <code>.env</code> konfiguráció.
+            A backend indításához szükséges a megfelelő <code>.env</code> konfiguráció.
             A szerverfájl pedig név szerint hivatkozik bizonyos kulcsokra.
             Ez alapján minimálisan elvárt,
             hogy a projekt rendelkezzen a következőkhöz hasonló változókkal:
@@ -1446,6 +2175,10 @@ npm run OrionAI    # ha az AI modul külön szükséges</code></pre>
             <li>Az AI modul külön futtatási környezete miatt verzió- és dependency drift alakulhat ki.</li>
             <li>A publikus és védett oldalak együttes kezelése miatt SEO és auth regressziók egyszerre is megjelenhetnek.</li>
         </ul>
+
+        <div class="summary">
+            <strong>lényeg:</strong> A jövőbeni fejlesztések a dokumentáció további finomítására, az API szerződések formalizálására és a skálázhatóság javítására fókuszálnak.
+        </div>
 
         <h2 id="sec13">13. Fejlesztési ajánlások és következő lépések</h2>
 
@@ -1487,6 +2220,10 @@ npm run OrionAI    # ha az AI modul külön szükséges</code></pre>
             <li>egy frontend komponens- és design-rendszer dokumentum,</li>
             <li>egy üzemeltetési és release playbook.</li>
         </ul>
+
+        <div class="summary">
+            <strong>lényeg:</strong> A mellékletek technikai kivonatokat, kérés-életciklusokat és a rendszer megértését segítő gyors útmutatókat tartalmaznak.
+        </div>
 
         <h2 id="appendix">14. Mellékletek</h2>
 
@@ -1575,22 +2312,18 @@ database
             Az Orion jelenlegi felépítése alapján egy tudatosan moduláris,
             több szereplőt kezelő,
             üzleti folyamatokra épített rendszer.
-            A két korábbi dokumentáció külön-külön is értékes volt,
-            de eltérő fókuszuk miatt nehezebb volt belőlük gyorsan átlátni a teljes képet.
-            Ez az összevont dokumentum ezt a hiányt pótolja:
-            egyetlen folyamatos narratívában mutatja be,
-            hogyan kapcsolódik össze a termékcél,
+            A termékcél,
             a UI,
             a backend szolgáltatási logika,
             az adatmodell
-            és a biztonsági réteg.
+            és a biztonsági réteg szorosan összekapcsolódik,
+            ezért ezeket együtt érdemes értelmezni.
         </p>
 
         <h3>14.4. Részletes végponti felelősségi térkép</h3>
 
         <p>
-            Bár a jelenlegi két forrásdokumentum nem sorol fel minden egyes route-ot paraméterszinten,
-            a kódszerkezetből és a modulnevekből jól kirajzolódik,
+            A kódszerkezetből és a modulnevekből jól kirajzolódik,
             milyen jellegű végpontcsoportokra épül a rendszer.
             Ezt azért érdemes külön összefoglalni,
             mert a fejlesztői csapat számára a route-ok gyakran a rendszer „belépési ajtajai”.
@@ -1817,9 +2550,7 @@ database
         <h3>14.8. Hibatípusok és javasolt kezelési minta</h3>
 
         <p>
-            A frontend dokumentáció önállóan tárgyalja a hibák kezelését és a felhasználói visszajelzést,
-            ami arra utal,
-            hogy a fejlesztés során már most is fontos szempont a jól kommunikált hibakezelés.
+            A jól kommunikált hibakezelés kiemelten fontos a rendszerben.
             Egy ilyen rendszerben legalább négy hibatípust érdemes elkülöníteni:
         </p>
 
@@ -2127,8 +2858,7 @@ database
         </p>
 
         <div class="footer">
-            Orion teljes rendszerdokumentáció - összeállítva a frontend és backend dokumentációk,
-            valamint a jelenlegi projektstruktúra alapján.
+            Orion teljes rendszerdokumentáció.
         </div>
     </div>
 </body>
