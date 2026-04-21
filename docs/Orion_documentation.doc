@@ -13,7 +13,8 @@
         ul { margin-bottom: 18px; }
         li { margin-bottom: 8px; }
         code { font-family: 'Consolas', 'Courier New', monospace; background: #eef5f8; padding: 1px 5px; border-radius: 4px; }
-        pre { background: #21313c; color: #eef6fb; padding: 18px; border-radius: 8px; overflow-x: auto; line-height: 1.45; font-size: 12.5px; }
+        pre { background: #f3f7fa; color: #173042; border: 1px solid #d5e1e8; padding: 18px; border-radius: 8px; overflow-x: auto; line-height: 1.45; font-size: 12.5px; white-space: pre-wrap; }
+        pre code { background: none; padding: 0; color: #173042; }
         table { border-collapse: collapse; width: 100%; margin-bottom: 22px; font-size: 0.94em; }
         th { background: #0d4f63; color: white; text-align: left; padding: 10px 12px; }
         td { border-bottom: 1px solid #dde7ed; padding: 9px 12px; vertical-align: top; }
