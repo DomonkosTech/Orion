@@ -17,6 +17,7 @@ export interface UserChatPartner {
     user_lname: string,
     user_fname: string,
     last_message_at: string | null;
+    message?: string | null;
     is_read: boolean;
     sender_type: "USER" | "COMPANY";
 }

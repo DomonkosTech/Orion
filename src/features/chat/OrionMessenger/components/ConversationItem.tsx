@@ -40,9 +40,21 @@ function formatDateTime(value?: string | null) {
     }
 }
 
+function getMessagePreview(message?: string | null) {
+    if (!message) return "";
+    return message.replace(/\s+/g, " ").trim();
+}
+
 const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, onClick }) => {
     const initials = getInitials(partner.name);
     const itemClass = isActive ? `${styles.partnerItem} ${styles.partnerItemActive}` : styles.partnerItem;
+    const messagePreview = getMessagePreview(partner.last_message);
+    const hasPreview = messagePreview.length > 0;
+    const isUnread = partner.is_read === false;
+    const dateClassName = isUnread ? `${styles.smallMuted} ${styles.unreadMeta}` : styles.smallMuted;
+    const previewClassName = hasPreview
+        ? `${styles.messagePreview}${isUnread ? ` ${styles.unreadMeta}` : ""}`
+        : dateClassName;
 
     const avatarStyle = useMemo(() => {
         // Deterministic color based on ID
@@ -91,7 +103,17 @@ const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, 
                 <motion.div layout className={styles.partnerName}>
                     {partner.name}
                 </motion.div>
-                <motion.div layout className={styles.smallMuted}>{formatDateTime(partner.last_message_at)}</motion.div>
+                <motion.div layout className={styles.partnerMetaRow}>
+                    <span
+                        className={previewClassName}
+                        title={hasPreview ? messagePreview : undefined}
+                    >
+                        {hasPreview ? messagePreview : formatDateTime(partner.last_message_at)}
+                    </span>
+                    {partner.last_message_at && hasPreview && (
+                        <span className={dateClassName}>{formatDateTime(partner.last_message_at)}</span>
+                    )}
+                </motion.div>
             </div>
             {partner.is_read === false && (
                 <motion.div 
