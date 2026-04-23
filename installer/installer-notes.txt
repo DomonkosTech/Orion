@@ -1,0 +1,10 @@
+Orion installer
+
+This installer copies the Orion project files to your computer and creates shortcuts.
+
+Important:
+- On first launch, Orion may install Node.js, Python, and project dependencies.
+- The first startup can take a few minutes.
+- This installer does not include secrets from .env.
+
+For source code and updates, use the project's GitHub repository.

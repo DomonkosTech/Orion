@@ -8,6 +8,7 @@
     "OrionAI": ".venv\\Scripts\\python src/server/OrionAI.py",
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "installer:build": "powershell -ExecutionPolicy Bypass -File .\\installer\\Build-Installer.ps1",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest",
