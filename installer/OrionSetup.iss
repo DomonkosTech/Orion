@@ -36,6 +36,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"
 
 [Files]
+Source: "{#RepoRoot}\.env"; DestDir: "{app}"; Flags: ignoreversion
 Source: "{#RepoRoot}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: ".git\*,.idea\*,node_modules\*,.venv\*,dist\*,installer\dist\*,test-results\*,playwright-report\*,blob-report\*,*.log"
 
 [Icons]
@@ -43,7 +44,7 @@ Name: "{group}\Orion"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
 Name: "{autodesktop}\Orion"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "Launch Orion now"; Flags: nowait postinstall skipifsilent
+Filename: "{cmd}"; Parameters: "/c ""{app}\{#MyAppExeName}"""; WorkingDir: "{app}"; Description: "Launch Orion now"; Flags: nowait postinstall skipifsilent
 
 [Code]
 procedure InitializeWizard;

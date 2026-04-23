@@ -4,7 +4,8 @@ This project can be distributed as a Windows installer with Inno Setup.
 
 ## What the installer does
 
-- Copies the project files into `Program Files\Orion`
+- Copies the project files into `%LOCALAPPDATA%\Programs\Orion`
+- Includes the project `.env` file so the server can start after install
 - Creates Start Menu and optional desktop shortcuts
 - Launches `start.bat` after installation
 
@@ -43,6 +44,6 @@ Recommended flow:
 
 ## Important note about secrets
 
-The installer currently excludes `.env` on purpose. Do not upload real API keys, JWT secrets, email passwords, or database credentials to GitHub.
+The installer now bundles the root `.env` file. That is convenient for private distribution, but it also means any secrets in `.env` will ship inside the installer.
 
-If reviewers need a sample config, create a safe `.env.example` file instead.
+For anything public, use a safe `.env.example` instead of real credentials.
