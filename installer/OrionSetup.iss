@@ -36,8 +36,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"
 
 [Files]
-Source: "{#RepoRoot}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
-Excludes: ".git\*,.idea\*,node_modules\*,.venv\*,dist\*,installer\dist\*,test-results\*,playwright-report\*,blob-report\*,*.log,.env"
+Source: "{#RepoRoot}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: ".git\*,.idea\*,node_modules\*,.venv\*,dist\*,installer\dist\*,test-results\*,playwright-report\*,blob-report\*,*.log,.env"
 
 [Icons]
 Name: "{group}\Orion"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
