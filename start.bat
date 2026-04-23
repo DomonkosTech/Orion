@@ -111,13 +111,13 @@ echo.
 echo [4/4] Szerverek inditasa...
 
 :: Start API Server
-start "Node Server" cmd /k "npm run server"
+start "Node Server" cmd /k "cd /d \"%~dp0\" && npm run server || (echo. & echo HIBA: A Node Server leallt. Nyomj le egy billentyut a bezarashoz. & pause >nul)"
 
 :: Start OrionAI Python Server
-start "OrionAI" cmd /k "npm run OrionAI"
+start "OrionAI" cmd /k "cd /d \"%~dp0\" && npm run OrionAI || (echo. & echo HIBA: Az OrionAI folyamat leallt. Nyomj le egy billentyut a bezarashoz. & pause >nul)"
 
 :: Start Vite Dev Server
-start "Vite Dev" cmd /k "npm run dev"
+start "Vite Dev" cmd /k "cd /d \"%~dp0\" && npm run dev || (echo. & echo HIBA: A Vite szerver leallt. Nyomj le egy billentyut a bezarashoz. & pause >nul)"
 
 echo.
 echo Minden szerver elindult kulon ablakban.
