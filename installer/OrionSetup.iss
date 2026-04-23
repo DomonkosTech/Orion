@@ -44,7 +44,7 @@ Name: "{group}\Orion"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
 Name: "{autodesktop}\Orion"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"; Tasks: desktopicon
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "Launch Orion now"; Flags: nowait postinstall skipifsilent
+Filename: "{cmd}"; Parameters: "/c ""{app}\{#MyAppExeName}"""; WorkingDir: "{app}"; Description: "Launch Orion now"; Flags: nowait postinstall skipifsilent
 
 [Code]
 procedure InitializeWizard;
