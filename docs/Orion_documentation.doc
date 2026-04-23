@@ -54,15 +54,6 @@
             valamint a fejlesztési és üzemeltetési szempontokat.
         </em></p>
 
-        <div class="tldr-box">
-            <strong>QUICK INFO (TL;DR)</strong>
-            <ul>
-                <li><strong>Stack:</strong> React 19, Express 5, Supabase, OrionAI.</li>
-                <li><strong>Fő cél:</strong> Közvetlen diák-cég kapcsolat közvetítők nélkül.</li>
-                <li><strong>Különlegesség:</strong> Titkosított dokumentumkezelés és AI alapú álláskeresés.</li>
-            </ul>
-        </div>
-
     <div class="toc">
         <strong>Tartalomjegyzék</strong>
         <ol>
@@ -178,12 +169,6 @@
             <strong>TL;DR:</strong> A rendszer a diákok és cégek közötti <strong>transzparens piacot</strong> teremti meg, ahol profilkezelés, jelentkezéskövetés és valós idejű chat támogatja a hatékony együttműködést. Célja, hogy egy modern, adatvezérelt digitális munkateret biztosítson, amely gyorsítja a toborzást és csökkenti az adminisztrációs terheket mindkét oldal számára.
         </div>
 
-        <h3>2.1. Mi az Orion alapvető célja? (Core Purpose)</h3>
-
-        <p>Az Orion egy olyan online platform, amely a diákmunka-piacon a diákok és a cégek közötti közvetlen kapcsolatot támogatja. A klasszikus közvetítői modellben a diákok gyakran diákszövetkezeteken keresztül jutnak munkához, ami többlépcsős adminisztrációval, nehezebben átlátható működéssel és a bevétel csökkenésével is együtt járhat.</p>
-        
-        <p>Az Orion ezzel szemben piactérként és digitális együttműködési felületként (Digital Workspace) működik: a rendszer nem közvetítőként szerződik a felek helyett, hanem infrastruktúrát ad a toborzás, a kommunikáció, a profilkezelés, a dokumentumkezelés és a jelentkezéskövetés számára.</p>
-
         <h3>2.2. Kik használják a rendszert? (Primary Actors)</h3>
 
         <div class="highlight-box">
@@ -223,19 +208,19 @@
         <h3>2.4. A rendszer fő területei (Core Domains)</h3>
 
         <ul>
-            <li><strong>Felhasználói domén (User Domain):</strong> diák fiókok, hitelesítés, profil, dokumentumok, statisztikák.</li>
-            <li><strong>Céges domén (Company Domain):</strong> cégfiókok, hitelesítés, cégprofil, dashboard, jelöltkezelés.</li>
-            <li><strong>Hirdetési domén (Advertisement Domain):</strong> álláshirdetések létrehozása, listázása, frissítése, keresése és láthatósága.</li>
-            <li><strong>Jelentkezési domén (Application Domain):</strong> jelentkezések, státuszok, ATS (Applicant Tracking System) folyamatok, felvétel vagy elutasítás.</li>
-            <li><strong>Kommunikációs domén (Communication Domain):</strong> chat, rendszerüzenetek, olvasási állapotok, valós idejű (Realtime) frissítések.</li>
-            <li><strong>Biztonsági domén (Security Domain):</strong> auth, tokenek, titkosított személyes adatok, munkamenet (Session) és útvonalvédelem (Route Protection).</li>
+            <li><strong>Felhasználói rész (User Domain):</strong> diák fiókok, hitelesítés, profil, dokumentumok, statisztikák.</li>
+            <li><strong>Céges rész (Company Domain):</strong> cégfiókok, hitelesítés, cégprofil, dashboard, jelöltkezelés.</li>
+            <li><strong>Hirdetési rész (Advertisement Domain):</strong> álláshirdetések létrehozása, listázása, frissítése, keresése és láthatósága.</li>
+            <li><strong>Jelentkezési rész (Application Domain):</strong> jelentkezések, státuszok, ATS (Applicant Tracking System) folyamatok, felvétel vagy elutasítás.</li>
+            <li><strong>Kommunikációs rész (Communication Domain):</strong> chat, rendszerüzenetek, olvasási állapotok, valós idejű (Realtime) frissítések.</li>
+            <li><strong>Biztonsági rész (Security Domain):</strong> auth, tokenek, titkosított személyes adatok, munkamenet (Session) és útvonalvédelem (Route Protection).</li>
             <li><strong>Intelligens szolgáltatások (AI Services):</strong> OrionAI és az ehhez kapcsolódó külön útvonalak.</li>
         </ul>
 
         <h2 id="sec3">3. Rendszerszintű architektúra</h2>
 
         <div class="tldr-box">
-            <strong>TL;DR:</strong> A projekt modern, <strong>rétegzett architektúrát</strong> követ, ahol a React alapú kliens, a Node/Express szerver és a Supabase adatbázis alkot technológiailag koherens egészet. Ez a felépítés biztosítja a magas teljesítményt, a valós idejű adatcserét, valamint a könnyű skálázhatóságot és karbantarthatóságot a moduláris domén-alapú tervezés révén.
+            <strong>TL;DR:</strong> A projekt modern, <strong>rétegzett architektúrát</strong> követ, ahol a React alapú kliens, a Node/Express szerver és a Supabase adatbázis alkot technológiailag zárt egységet. Ez a felépítés biztosítja a magas teljesítményt, a valós idejű adatcserét, valamint a könnyű skálázhatóságot és karbantarthatóságot a moduláris domén-alapú tervezés révén.
         </div>
 
         <h3>3.1. Magas szintű architektúra</h3>
@@ -247,9 +232,8 @@
             A felhasználók böngészőből érik el a React alapú klienst.
             A kliens REST-szerű HTTP kérésekkel kommunikál az Express szerverrel,
             miközben bizonyos kommunikációs vagy eseményalapú funkciók realtime csatornán is elérhetők.
-            A szerver a perzisztenciát Supabase / PostgreSQL környezetben kezeli,
-            és több helyen tárolt eljárásokra,
-            illetve adatbázis szintű logikára támaszkodik.
+            Az adatok tartós tárolásáért és kezeléséért egy Supabase / PostgreSQL környezet felel,
+            ahol a rendszer jelentős mértékben támaszkodik tárolt eljárásokra és adatbázis-szintű üzleti logikára.
         </p>
 
         <pre><code>Felhasználó
