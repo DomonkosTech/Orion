@@ -314,7 +314,7 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
             Ez a struktúra lehetővé teszi,
             hogy az Oriont ne technológiai,
             hanem üzleti modulok mentén lehessen fejleszteni.
-            Egy új képesség bevezetése így általában végigvezethető ugyanazon a doménen:
+            Egy új funkció bevezetése így általában végigvezethető ugyanazon a részen:
             frontend feature,
             API útvonal,
             service logika,
