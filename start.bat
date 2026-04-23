@@ -1,6 +1,8 @@
 @echo off
 SETLOCAL EnableDelayedExpansion
 
+if not defined ORION_RELAUNCH_COUNT set ORION_RELAUNCH_COUNT=0
+
 echo [0/4] Node.js ellenorzese...
 where npm >nul 2>nul
 if errorlevel 1 (
@@ -18,17 +20,45 @@ if errorlevel 1 (
         pause
         exit /b 1
     )
-    echo A Node.js sikeresen telepitve. Kerlek INDITSD UJRA ezt a bat fajlt az uj PATH beallitasokhoz!
-    pause
-    exit /b 0
+    call :refresh_path
+    call :ensure_node_path
+    where npm >nul 2>nul
+    if errorlevel 1 (
+        call :auto_restart "Node.js telepitese utan"
+        exit /b !errorlevel!
+    )
 )
 
 echo [1/4] Node.js fuggosegek ellenorzese...
-if not exist node_modules (
-    echo A node_modules nem letezik, telepites inditasa...
+if not exist node_modules\.bin\tsx.cmd (
+    echo A Node.js fejlesztoi fuggosegek hianyoznak, telepites inditasa...
     call npm install
+    if errorlevel 1 (
+        echo HIBA: Az npm install sikertelen volt.
+        pause
+        exit /b 1
+    )
+)
+if not exist node_modules\.bin\vite.cmd (
+    echo A Vite nincs telepitve, javito telepites inditasa...
+    call npm install
+    if errorlevel 1 (
+        echo HIBA: Az npm install sikertelen volt.
+        pause
+        exit /b 1
+    )
+)
+if not exist node_modules\.bin\tsx.cmd (
+    echo HIBA: A tsx tovabbra sem erheto el az npm install utan.
+    pause
+    exit /b 1
+)
+if not exist node_modules\.bin\vite.cmd (
+    echo HIBA: A vite tovabbra sem erheto el az npm install utan.
+    pause
+    exit /b 1
 ) else (
-    echo A node_modules mar letezik.
+    echo A szukseges Node.js eszkozok elerhetok.
 )
 
 echo.
@@ -49,9 +79,13 @@ if errorlevel 1 (
         pause
         exit /b 1
     )
-    echo A Python sikeresen telepitve. Kerlek INDITSD UJRA ezt a bat fajlt az uj PATH beallitasokhoz!
-    pause
-    exit /b 0
+    call :refresh_path
+    call :ensure_python_path
+    where python >nul 2>nul
+    if errorlevel 1 (
+        call :auto_restart "Python telepitese utan"
+        exit /b !errorlevel!
+    )
 )
 if not exist .venv (
     echo A .venv nem letezik, Letrehozas...
@@ -89,3 +123,34 @@ echo.
 echo Minden szerver elindult kulon ablakban.
 echo Bezárhatod ezt az ablakot.
 pause
+exit /b 0
+
+:refresh_path
+for /f "tokens=2,*" %%A in ('reg query "HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v Path 2^>nul ^| find /i "Path"') do set "SYS_PATH=%%B"
+for /f "tokens=2,*" %%A in ('reg query "HKCU\Environment" /v Path 2^>nul ^| find /i "Path"') do set "USER_PATH=%%B"
+if defined SYS_PATH set "PATH=%SYS_PATH%"
+if defined USER_PATH set "PATH=%PATH%;%USER_PATH%"
+goto :eof
+
+:ensure_node_path
+if exist "%ProgramFiles%\nodejs\npm.cmd" set "PATH=%ProgramFiles%\nodejs;%PATH%"
+if exist "%ProgramFiles(x86)%\nodejs\npm.cmd" set "PATH=%ProgramFiles(x86)%\nodejs;%PATH%"
+goto :eof
+
+:ensure_python_path
+if exist "%LocalAppData%\Programs\Python\Python312\python.exe" set "PATH=%LocalAppData%\Programs\Python\Python312;%LocalAppData%\Programs\Python\Python312\Scripts;%PATH%"
+if exist "%ProgramFiles%\Python312\python.exe" set "PATH=%ProgramFiles%\Python312;%ProgramFiles%\Python312\Scripts;%PATH%"
+if exist "%ProgramFiles(x86)%\Python312\python.exe" set "PATH=%ProgramFiles(x86)%\Python312;%ProgramFiles(x86)%\Python312\Scripts;%PATH%"
+goto :eof
+
+:auto_restart
+set /a NEXT_RELAUNCH=ORION_RELAUNCH_COUNT+1
+if %NEXT_RELAUNCH% GTR 3 (
+    echo HIBA: A script tobbszori ujrainditas utan sem talalta a szukseges eszkozoket.
+    echo Probald meg kezileg ujrainditani ezt a fajlt.
+    pause
+    exit /b 1
+)
+echo %~1 a script automatikusan ujraindul 5 masodperc mulva...
+start "" cmd /c "timeout /t 5 /nobreak >nul && set ORION_RELAUNCH_COUNT=%NEXT_RELAUNCH% && call \"%~f0\""
+exit /b 0
