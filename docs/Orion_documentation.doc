@@ -913,190 +913,168 @@ Kérés a backend felé
 Siker vagy hiba állapot vizuális visszajelzése</code></pre>
 
         <h2 id="sec6">6. Backend Szerver Architektúra (src/server)</h2>
-        <p>A szerver Node.js és Express.js alapokon fut, Typescript nyelven írva. A fő belépési pont a <code>server.ts</code>, ahol az Express alkalmazás beállítása (CORS, Cookie-parser), a végpontok mountolása és a WebSocket szerver inicializálása történik. A port alapértelmezetten a <code>4000</code>.</p>
+        <div class="tldr-box">
+            <strong>TL;DR:</strong> A backend architektúra felel az Orion platform üzleti logikájának biztonságos és skálázható kiszolgálásáért. A <strong>Node.js és Express 5</strong> alapú REST API robusztus adatbázis-kapcsolatot tart fenn a Supabase-zel, miközben integrálja a valós idejű WebSocket kommunikációt (chat) és az egyedi NLP mikroszolgáltatást (OrionAI). Minden hálózati kommunikáció szigorú token-alapú hitelesítéssel és sémavalidációval védett.
+        </div>
+        <p>A szerveroldali alkalmazás <code>Node.js</code> környezetben, <code>TypeScript</code> nyelven fut. A fő belépési pont a <code>server.ts</code> állomány, amely az <code>Express</code> alkalmazás teljes életciklusát menedzseli. Feladatai közé tartozik a globális middleware-ek (CORS, Cookie-parser, JSON test feldolgozás) regisztrálása, a moduláris útvonalak (Routes) csatolása, valamint a független <code>WebSocket</code> szerver inicializálása. A rendszer alapértelmezetten a <code>4000</code>-es porton hallgat, és elkülöníti a hálózati réteget (Routes) az üzleti logikától (Services).</p>
         
-        <h3 id="sec6-1">6.1. Middleware és Realtime</h3>
-        <h4><code>auth.ts</code> (Middleware)</h4>
-        <p>Összefoglalás: A kliensek (felhasználók és cégek) authentikációját és jogosultság-ellenőrzését végző biztonsági réteg.</p>
+        <h3 id="sec6-1">6.1. Hálózati Middleware és Realtime Kommunikáció</h3>
+        <p>A backend architekturális alapelve, hogy a végpontok csak ellenőrzött és hitelesített kéréseket szolgálhatnak ki, illetve hogy a chat-funkció azonnal, HTTP polling nélkül működjön (ne kelljen a frontendnek folyamatosan kérdezgetni a szervert, hogy van-e új üzenet, illetve ne legyen késleltetés az üzenetek érkezésében és ne kelljen a böngészőt folyamatosan újratölteni a felületen).</p>
+
+        <h4><code>auth.ts</code> (Globális Hitelesítési Middleware)</h4>
+        <p>A biztonsági kapu (Gateway), amely minden védett végpont előtt lefut, biztosítva a Zero-Trust modellt.</p>
         <ul>
-            <li><strong>Folyamat:</strong></li>
-            <li>1. A <code>verifyToken</code> kiolvassa a HTTP-only <code>auth_token</code> sütiből a JSON Web Token-t.</li>
-            <li>2. Érvényesíti a JWT aláírást, majd a kinyert adatokat (<code>userId</code>, <code>companyId</code>, <code>userType</code>) az Express <code>Request</code> objektumába csatolja.</li>
-            <li>3. A <code>verifyUser</code> és <code>verifyCompany</code> ellenőrzi, hogy a tokenből kinyert azonosító valóban létezik-e az adatbázisban, megakadályozva a törölt fiókkal való hozzáférést.</li>
+            <li><strong>Működési folyamat:</strong></li>
+            <li>1. <strong>Token kinyerése:</strong> A middleware a HTTP kérésből szigorúan a <code>httpOnly</code> flag-gel ellátott <code>auth_token</code> süti tartalmát olvassa ki. Ezzel a módszerrel a token immunis az XSS támadásokra.</li>
+            <li>2. <strong>Kriptográfiai ellenőrzés:</strong> A <code>jsonwebtoken</code> könyvtár <code>verify</code> metódusával validálja a token szerveroldali aláírását és érvényességi idejét.</li>
+            <li>3. <strong>Adatinjektálás:</strong> Sikeres ellenőrzés után a token dekódolt tartalmát (<code>userId</code>, <code>companyId</code>, <code>userType</code>) közvetlenül az <code>Express Request</code> objektumba ágyazza.</li>
+            <li>4. <strong>Integritásvizsgálat:</strong> A specifikus <code>verifyUser</code> és <code>verifyCompany</code> middleware-ek extra ellenőrzést végeznek az adatbázissal, garantálva, hogy törölt vagy felfüggesztett fiókok ne kapjanak hozzáférést érvényes token birtokában sem.</li>
         </ul>
 
-        <h4><code>RealtimeServer.ts</code> (WebSocket)</h4>
-        <p>Összefoglalás: Valós idejű WebSocket szerver a chat üzenetek azonnali kézbesítésére.</p>
+        <h4><code>RealtimeServer.ts</code> (WebSocket Szolgáltatás)</h4>
+        <p>A privát üzenetek késedelem nélküli (Zero-Latency) továbbításáért felelős önálló szolgáltatás, amely a HTTP szerver felett fut.</p>
         <ul>
-            <li><strong>Folyamat:</strong></li>
-            <li>1. <code>ws</code> könyvtár segítségével WebSocket szervert hoz létre.</li>
-            <li>2. Feliratkozik a Supabase <code>postgres_changes</code> csatornán a <code>messages</code> tábla új (INSERT) eseményeire.</li>
-            <li>3. Új adatbázis bejegyzés esetén a payloadot rápumpálja az összes aktív WebSocket kliensnek (Broadcast).</li>
+            <li><strong>Működési folyamat:</strong></li>
+            <li>1. <strong>Inicializálás:</strong> A <code>ws</code> (WebSocket) könyvtár használatával egy dedikált csatornát nyit a felcsatlakozó klienseknek, és hitelesíti a bejövő kapcsolatokat.</li>
+            <li>2. <strong>Eseményfigyelés:</strong> Feliratkozik a Supabase adatbázis <code>postgres_changes</code> mechanizmusára. Folyamatosan figyeli a <code>messages</code> táblába érkező új (INSERT) adatbázis-eseményeket.</li>
+            <li>3. <strong>Broadcasting:</strong> Amint egy új üzenet bekerül az adatbázisba (akár a REST API-n keresztül), a <code>RealtimeServer</code> azonnal elkapja a payload-ot, és rápumpálja azt az érintett kliensek nyitott WebSocket csatornájára. Ezzel tehermentesíti a klienst a felesleges API lekérdezésektől.</li>
         </ul>
 
         <h3 id="sec6-2">6.2. API Végpontok és Szolgáltatások (Routes &amp; Services)</h3>
+        <p>A rendszer Domain-Driven Design (DDD) elvek alapján, funkcionális modulokra bontva kezeli az üzleti folyamatokat. Minden modul egy hálózati rétegből (<code>*Route.ts</code>) és egy üzleti logikát megvalósító szolgáltatásból (<code>*Service.ts</code>) áll.</p>
 
-        <h4>Auth Modul (<code>authRoute.ts</code> / <code>authService.ts</code>)</h4>
-        <p>A felhasználók és cégek bejelentkezését, regisztrációját és token ellenőrzését végzi a rendszer.</p>
+        <h4>6.2.1. Autentikációs Modul (<code>authRoute.ts</code> / <code>authService.ts</code>)</h4>
+        <p>A felhasználók és cégek életciklusának (regisztráció, belépés, kilépés) és hitelesítési folyamatainak biztonságos végrehajtása.</p>
         <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
-            <tr><td><code>POST /Api/auth/user/login</code></td><td><code>loginUser</code></td><td>Felhasználói bejelentkezést kezel, JWT sütit állít be.</td></tr>
-            <tr><td><code>POST /Api/auth/user/register</code></td><td><code>registerUser</code></td><td>Új felhasználót regisztrál, elmentve a titkosított adatokat.</td></tr>
-            <tr><td><code>POST /Api/auth/company/login</code></td><td><code>loginCompany</code></td><td>Céges bejelentkezést kezel, JWT sütit állít be.</td></tr>
-            <tr><td><code>POST /Api/auth/company/register</code></td><td><code>registerCompany</code></td><td>Új munkáltatót regisztrál az adatbázisba.</td></tr>
-            <tr><td><code>POST /Api/auth/logout</code></td><td>–</td><td>Törli az 'auth_token' cookie-t, kijelentkeztetve a felhasználót.</td></tr>
-            <tr><td><code>GET /Api/auth/status</code></td><td><code>verifyToken</code></td><td>Ellenőrzi a hitelesítési státuszt és visszaadja a profil típusát.</td></tr>
+            <tr><th>Végpont</th><th>Függvény</th><th>Architekturális Felelősség</th></tr>
+            <tr><td><code>POST /Api/auth/user/login</code></td><td><code>loginUser</code></td><td>Diák fiók hitelesítése, jelszó ellenőrzése és JWT token generálása.</td></tr>
+            <tr><td><code>POST /Api/auth/user/register</code></td><td><code>registerUser</code></td><td>Új diák fiók létrehozása, jelszó hashelése és titkosított adatok elmentése.</td></tr>
+            <tr><td><code>POST /Api/auth/company/login</code></td><td><code>loginCompany</code></td><td>Cég fiók hitelesítése, jelszó ellenőrzése és JWT token generálása.</td></tr>
+            <tr><td><code>POST /Api/auth/company/register</code></td><td><code>registerCompany</code></td><td>Új munkáltatói fiók létrehozása, jelszó hashelése és adatbázisba elmentése.</td></tr>
+            <tr><td><code>POST /Api/auth/logout</code></td><td>–</td><td>Azonnali munkamenet-megszakítás a hitelesítő süti törlésével.</td></tr>
+            <tr><td><code>GET /Api/auth/status</code></td><td><code>verifyToken</code></td><td>A kliens számára biztosít végpontot az aktuális jogosultsági szint lekérdezésére.</td></tr>
         </table>
         <ul>
-            <li><strong>Felhasználói Login folyamat:</strong><br/>1. Megadott adatok validálása Zod-dal. 2. A <code>users</code> táblából email alapján a hashelt jelszó lekérése. 3. <code>bcrypt.compare</code> használatával jelszó egyezés ellenőrzése. 4. Fiók aktivációs státusz vizsgálata. 5. JWT token (<code>auth_token</code>) generálása és beállítása kliens sütiként.</li>
-            <li><strong>Céges Login folyamat:</strong><br/>1. Ugyanaz a validáció és bcrypt ellenőrzés, de a <code>companies</code> táblán. 2. A generált JWT tokenben a <code>userType: 'company'</code> érték szerepel.</li>
-            <li><strong>Felhasználó Regisztrációs folyamat:</strong><br/>1. Bemeneti validáció. 2. Jelszó hashelése <code>bcrypt</code> segítségével. 3. A <code>register_user_v1</code> RPC meghívása, mely végrehajtja a titkosítást és adatbázis beillesztést egy tranzakcióban.</li>
-            <li><strong>Cég Regisztrációs folyamat:</strong><br/>1. Bemeneti validáció. 2. Jelszó hashelése <code>bcrypt</code>-tel. 3. A <code>register_company_v1</code> tranzakcionális RPC futtatása a biztos adatkezelés érdekében.</li>
-            <li><strong>Logout (kijelentkezés) folyamat:</strong><br/>1. A <code>clearCookie('auth_token')</code> hívással a szerver törli a böngésző hitelesítő sütijét.</li>
-            <li><strong>Verify Token (státusz ellenőrzés) folyamat:</strong><br/>1. A kérés sütijéből kinyeri a JWT-t. 2. Érvényesíti azt. 3. Visszaadja a dekódolt tokent (benne a userType-al és ID-val), hogy a kliens tudja, érvényes-e a bejelentkezése.</li>
+            <li><strong>Bejelentkezési (Login) folyamat:</strong> Szigorú bemeneti validáció a Zod segítségével. Az email cím alapján a szerver lekéri a megfelelő fiókot, majd a <code>bcrypt.compare</code> használatával kriptográfiailag ellenőrzi a jelszó egyezését. Sikeres azonosítás után egy magas biztonságú, <code>httpOnly</code> JWT tokent küld válaszként, amely beállítja a felhasználó munkamenetét.</li>
+            <li><strong>Regisztrációs (Register) folyamat:</strong> A jelszó azonnali hashelése (<code>bcrypt</code>) után a rendszer meghívja a Supabase RPC függvényeit (<code>register_user_v1</code> / <code>register_company_v1</code>). Ez az eljárás garantálja a tranzakcionális adatbázis-műveleteket, így hiba esetén nem jöhet létre inkonzisztens vagy részleges adatprofil.</li>
         </ul>
 
-        <h4>Felhasználó Modul (<code>userRoute.ts</code> / <code>userService.ts</code>)</h4>
-        <p>A diákok profil-alapadatait, statisztikáit, CV-jeit (önéletrajz) és elmentett hirdetéseit (kedvencek) kezeli.</p>
+        <h4>6.2.2. Felhasználói (Diák) Modul (<code>userRoute.ts</code> / <code>userService.ts</code>)</h4>
+        <p>A diákok személyes profiljának, okmányainak (CV), kedvelt hirdetéseinek és platformon belüli statisztikáinak komplex kezelése.</p>
         <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
-            <tr><td><code>GET /Api/users/me</code></td><td><code>getUserProfile</code></td><td>Visszaadja a felhasználó alapadatokat, visszafejti az okmányokat és jelzi, ha van feltöltve CV.</td></tr>
-            <tr><td><code>PATCH /Api/users/me</code></td><td><code>updateUserProfile</code></td><td>Frissíti a felhasználói profilt és újra-titkosítja a frissített okmányokat.</td></tr>
-            <tr><td><code>POST /Api/users/me/resume</code></td><td><code>uploadResume</code></td><td>Egy darab (max 5MB) önéletrajz fájt tölt fel a Supabase Storage-be.</td></tr>
-            <tr><td><code>DELETE /Api/users/me/resume</code></td><td><code>deleteResume</code></td><td>Véglegesen törli a felhasználó önéletrajzát a tárolóból.</td></tr>
-            <tr><td><code>GET /Api/users/me/stats</code></td><td><code>getUserDashboardData</code></td><td>Egységesített dashboard statisztikákat (RPC-vel jelentkezések, nézettség) kér le.</td></tr>
-            <tr><td><code>GET /Api/users/me/resume</code></td><td><code>getResumeUrl</code></td><td>Ideiglenes letöltési linket generál a tárolt CV-hez.</td></tr>
-            <tr><td><code>POST /Api/users/me/favorites</code></td><td><code>addFavorite</code></td><td>Felvesz egy álláshirdetést a kedvencek listájába.</td></tr>
-            <tr><td><code>GET /Api/users/me/favorites</code></td><td><code>getFavorites</code></td><td>Lekéri a kedvelt hirdetések ID-jait vagy teljes listáját.</td></tr>
-            <tr><td><code>DELETE /Api/users/me/favorites/:id</code></td><td><code>removeFavorite</code></td><td>Eltávolít egy hirdetést a kedvencekből.</td></tr>
-            <tr><td><code>POST /Api/users/:id/views</code></td><td><code>incrementProfileViews</code></td><td>Megtekintéskor megnöveli a profil látogatottsági mutatóját (RPC).</td></tr>
+            <tr><th>Végpont</th><th>Függvény</th><th>Architekturális Felelősség</th></tr>
+            <tr><td><code>GET /Api/users/me</code></td><td><code>getUserProfile</code></td><td>Személyes profil lekérése és az okmányok biztonságos, memórián belüli visszafejtése.</td></tr>
+            <tr><td><code>PATCH /Api/users/me</code></td><td><code>updateUserProfile</code></td><td>Profiladatok frissítése, újbóli titkosítási eljárások végrehajtásával.</td></tr>
+            <tr><td><code>POST /Api/users/me/resume</code></td><td><code>uploadResume</code></td><td>Egyedi PDF önéletrajz (max 5MB) pufferelt feltöltése a Supabase Storage bucketbe.</td></tr>
+            <tr><td><code>DELETE /Api/users/me/resume</code></td><td><code>deleteResume</code></td><td>Önéletrajz végleges eltávolítása a felhő alapú tárolóból.</td></tr>
+            <tr><td><code>GET /Api/users/me/stats</code></td><td><code>getUserDashboardData</code></td><td>Egységesített dashboard statisztikák (jelentkezések, nézettség) lekérdezése RPC-n keresztül.</td></tr>
+            <tr><td><code>GET /Api/users/me/resume</code></td><td><code>getResumeUrl</code></td><td>Kliens számára ideiglenes (lejárattal rendelkező) biztonságos letöltési link generálása.</td></tr>
+            <tr><td><code>POST /Api/users/me/favorites</code></td><td><code>addFavorite</code></td><td>Kapcsolótábla frissítése: álláshirdetés hozzáadása a személyes kedvencekhez.</td></tr>
+            <tr><td><code>GET /Api/users/me/favorites</code></td><td><code>getFavorites</code></td><td>A felhasználó által megjelölt preferált hirdetések lekérése.</td></tr>
+            <tr><td><code>DELETE /Api/users/me/favorites/:id</code></td><td><code>removeFavorite</code></td><td>Hivatkozás törlése a kedvencek listájáról.</td></tr>
+            <tr><td><code>POST /Api/users/:id/views</code></td><td><code>incrementProfileViews</code></td><td>Profil megtekintési mutatójának atomi növelése (RPC alapú statisztikagyűjtés).</td></tr>
         </table>
         <ul>
-            <li><strong>Profil lekérés folyamat:</strong><br/>1. Adatbázis keresés a <code>users</code> táblában UserId alapján. 2. A <code>get_decrypted_documents</code> RPC meghívásával a személyes adatok (titkosítás) biztonságos visszafejtése. 3. Feltöltött CV meglétének ellenőrzése a Storageből.</li>
-            <li><strong>Profil frissítés folyamat:</strong><br/>1. A validált bejövő adatok (név, cím, suli) alapján a <code>users</code> tábla felülírása és egyidejűleg az encrypting RPC lefutása az új adatokkal.</li>
-            <li><strong>CV feltöltés folyamat:</strong><br/>1. Ellenőrzi, hogy van-e már CV. Ha igen, hiba. 2. A fájlnév biztonságos normalizálása. 3. A fájl buffer feltöltése a <code>resumes</code> Supabase bucket-be, a felhasználó ID-val megegyező mappába.</li>
-            <li><strong>CV törlés folyamat:</strong><br/>1. Felhasználó létezésének ellenőrzése. 2. Fájl törlése a Storageből a mappa azonosításával.</li>
-            <li><strong>CV lekérés (User Resume URL) folyamat:</strong><br/>1. Ellenőrzi a CV meglétét. 2. A Supabase <code>createSignedUrl</code> hívásával ideiglenes (lejárattal rendelkező) linket generál a fájl letöltéséhez.</li>
-            <li><strong>Statisztika lekérés folyamata:</strong><br/>1. A <code>get_user_dashboard_stats</code> RPC függvény hívása, amely begyűjti az értesítések, kedvencek és látogatók számát aggregálva.</li>
-            <li><strong>Kedvenc hozzáadása folyamat:</strong><br/>1. Megvizsgálja, hogy létezik-e a hirdetés és még nem kedvenc-e. 2. Beszúr egy új rekordot a <code>favorites</code> táblába <code>(user_id, advertisement_id)</code> párossal.</li>
-            <li><strong>Kedvencek lekérése folyamat:</strong><br/>1. Csatlakozik a <code>favorites</code> és <code>advertisement</code> táblákhoz a felhasználó azonosítója alapján. 2. Formázott listával tér vissza.</li>
-            <li><strong>Kedvenc törlése folyamat:</strong><br/>1. A hirdetés ID és User ID alapján megkeresi és törli a vonatkozó bejegyzést a <code>favorites</code> táblából.</li>
-            <li><strong>Profil megtekintés növelése folyamat:</strong><br/>1. Más (például egy cég) hívja meg. 2. A <code>increment_profile_views</code> automatikusan eggyel lépteti a nézettség (view_count) mezőt a statisztika táblában.</li>
+            <li><strong>Személyes adatok kezelése:</strong> Az adatvédelem (GDPR) szempontjából kritikus adatok lekérésekor a szolgáltatás a <code>get_decrypted_documents</code> RPC függvényt hívja meg. A titkosított adatok visszafejtése közvetlenül az adatbázis memóriájában történik, így a hálózaton már csak a jogosult felhasználó számára dekódolt adatok utaznak.</li>
+            <li><strong>Fájlkezelés (CV):</strong> Az önéletrajzokat a rendszer normalizálja, kiterjesztés-ellenőrzésnek veti alá, majd egy biztonságos, jogosultság-vezérelt (RLS) Supabase Storage mappába tölti fel. A fájlok közvetlenül nem elérhetőek, lekérésükkor a rendszer úgynevezett <em>Signed URL</em>-eket generál, melyek rövid időn belül érvényüket vesztik, megakadályozva a dokumentumok kiszivárgását.</li>
         </ul>
 
-        <h4>Cég Modul (<code>companyRoute.ts</code> / <code>companyService.ts</code>)</h4>
-        <p>A munkáltatói cégek profiljainak es statisztikáinak lekérése, és az újonnan felvett alkalmazottak (diákok) kezelése.</p>
+        <h4>6.2.3. Cég Modul (<code>companyRoute.ts</code> / <code>companyService.ts</code>)</h4>
+        <p>A munkáltatók publikus adatainak, irányítópultjának (dashboard) és a rendszeren keresztül felvett alkalmazottak adminisztrációjának központja.</p>
         <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
-            <tr><td><code>GET /Api/companies/me</code></td><td><code>getCompanyProfile</code></td><td>Lekéri az adott cég nyilvános profilját és adatait.</td></tr>
-            <tr><td><code>PATCH /Api/companies/me</code></td><td><code>updateCompanyProfile</code></td><td>Szerkeszti az aktuális cég bemutatkozását és címadatait.</td></tr>
-            <tr><td><code>GET /Api/companies/me/stats</code></td><td><code>getCompanyStats</code></td><td>Statisztikát (RPC) és a 4 legfrissebb jelentkezést állítja össze.</td></tr>
-            <tr><td><code>GET /Api/companies/me/employees</code></td><td><code>getEmployees</code></td><td>Visszaadja a felvett, céghez tartozó diákok (munkavállalók) listáját.</td></tr>
-            <tr><td><code>DELETE /Api/companies/me/employees/:id</code></td><td><code>deleteEmployee</code></td><td>Töröl egy aktív alkalmazottat a cégtől, és automatikusan küld is neki erről egy rendszerüzenetet (értesítést).</td></tr>
+            <tr><th>Végpont</th><th>Függvény</th><th>Architekturális Felelősség</th></tr>
+            <tr><td><code>GET /Api/companies/me</code></td><td><code>getCompanyProfile</code></td><td>A munkáltató alap- és bemutatkozó adatainak kigyűjtése az adatbázisból.</td></tr>
+            <tr><td><code>PATCH /Api/companies/me</code></td><td><code>updateCompanyProfile</code></td><td>Céges profilinformációk validált frissítése.</td></tr>
+            <tr><td><code>GET /Api/companies/me/stats</code></td><td><code>getCompanyStats</code></td><td>Fő KPI adatok (megtekintések, futó hirdetések, friss jelentkezések) komplex lekérdezése.</td></tr>
+            <tr><td><code>GET /Api/companies/me/employees</code></td><td><code>getEmployees</code></td><td>A céghez hivatalosan felvett diákok (munkavállalók) listájának lekérése.</td></tr>
+            <tr><td><code>DELETE /Api/companies/me/employees/:id</code></td><td><code>deleteEmployee</code></td><td>Munkaviszony lezárása, alkalmazott törlése és automatikus rendszerüzenet (értesítés) generálása.</td></tr>
         </table>
         <ul>
-            <li><strong>Profil lekérés folyamata:</strong><br/>1. A <code>companyId</code> kinyerése a tokenből. 2. A <code>companies</code> tábla megfelelő sorának lekérése.</li>
-            <li><strong>Profil frissítés folyamata:</strong><br/>1. A <code>companyId</code> kinyerése a tokenből. 2. A <code>companies</code> tábla megfelelő sorának módosítása a kapott adatokkal.</li>
-            <li><strong>Statisztika lekérés folyamata:</strong><br/>1. <code>get_company_dashboard_stats</code> RPC hívása a fő KPI-ok (megtekintés, jelentkezők) eléréséhez.</li>
-            <li><strong>Alkalmazottak lekérése folyamata:</strong><br/>1. Az <code>employees</code> táblából az aktuális munkavállalók lekérése joinolva a user adatokkal.</li>
-            <li><strong>Alkalmazott törlése folyamata:</strong><br/>1. Törlés esetén az alkalmazott kikerül az <code>employees</code> táblából. 2. Rendszerüzenetet generál a törölt alkalmazott számára.</li>
+            <li><strong>Alkalmazottak kezelése:</strong> A munkaviszonyok (<code>employees</code>) adatbázisszintű összekapcsolást jelentenek egy diák és egy cég között. Egy alkalmazott eltávolításakor a szolgáltatás nem csak a relációt szünteti meg, hanem tranzakcionálisan egy értesítő rendszerüzenetet (System Message) is generál az érintett diáknak, biztosítva a teljes transzparenciát.</li>
         </ul>
 
-        <h4>Hirdetések (<code>advertisementRoute.ts</code> / <code>advertisementService.ts</code>)</h4>
-        <p>Az álláshirdetések életciklusának menedzselése.</p>
+        <h4>6.2.4. Álláshirdetések (<code>advertisementRoute.ts</code> / <code>advertisementService.ts</code>)</h4>
+        <p>A platform legfontosabb entitásának, az álláshirdetéseknek a teljes CRUD (Create, Read, Update, Delete) életciklus-kezelése és keresési motorja.</p>
         <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
-            <tr><td><code>POST /Api/advertisements</code></td><td><code>createAdvertisement</code></td><td>Új álláshirdetést hoz létre a limitszabályozás ellenőrzése (max 3/cég) után.</td></tr>
-            <tr><td><code>GET /Api/advertisements</code></td><td><code>getAllAdvertisements</code></td><td>Lekéri az összes, jelenleg aktív státuszú álláshirdetést.</td></tr>
-            <tr><td><code>GET /Api/advertisements/:id</code></td><td><code>getAdvertisementById</code></td><td>Egy konkrét álláshirdetés teljes részletes lekérése, beleértve a cégnevet is.</td></tr>
-            <tr><td><code>GET /Api/companies/me/advertisements</code></td><td><code>getCompanyAdvertisements</code></td><td>Lekéri a munkáltató (cég) által feladott saját hirdetéseket.</td></tr>
-            <tr><td><code>PATCH /Api/advertisements/:id</code></td><td><code>updateAdvertisement</code></td><td>Módosítja egy állás paramétereit (leírás, órabér stb.).</td></tr>
-            <tr><td><code>PATCH /Api/advertisements/:id/status</code></td><td><code>updateAdvertisementStatus</code></td><td>Be-/Kikapcsolja egy hirdetés aktív/inaktív állapotát.</td></tr>
-            <tr><td><code>GET /Api/advertisements/search</code></td><td><code>searchAdvertisements</code></td><td>Teljes szöveges keresést, bér- és városszűrést valósít meg lapozással.</td></tr>
-            <tr><td><code>GET /Api/advertisements/top3</code></td><td><code>getTopAdvertisements</code></td><td>Visszaadja a 3 legfrissebb aktív állást (főoldalra).</td></tr>
-            <tr><td><code>PATCH /Api/advertisements/:id/views</code></td><td><code>incrementClickCount</code></td><td>Az (RPC) automatikusan inkrementálja a hirdetés nézettségét (kattintás).</td></tr>
+            <tr><th>Végpont</th><th>Függvény</th><th>Architekturális Felelősség</th></tr>
+            <tr><td><code>POST /Api/advertisements</code></td><td><code>createAdvertisement</code></td><td>Új hirdetés publikálása szigorú limit-ellenőrzéssel (maximum 3 aktív hirdetés cégenként).</td></tr>
+            <tr><td><code>GET /Api/advertisements</code></td><td><code>getAllAdvertisements</code></td><td>A publikus felületek számára elérhető aktív hirdetések gyors listázása.</td></tr>
+            <tr><td><code>GET /Api/advertisements/:id</code></td><td><code>getAdvertisementById</code></td><td>Egyetlen hirdetés minden részletre kiterjedő, céges adatokkal join-olt lekérése.</td></tr>
+            <tr><td><code>GET /Api/companies/me/advertisements</code></td><td><code>getCompanyAdvertisements</code></td><td>A cég saját belső listájának (aktív és inaktív) lekérése az irányítópulthoz.</td></tr>
+            <tr><td><code>PATCH /Api/advertisements/:id</code></td><td><code>updateAdvertisement</code></td><td>Meglévő hirdetés paramétereinek biztonságos szerkesztése.</td></tr>
+            <tr><td><code>PATCH /Api/advertisements/:id/status</code></td><td><code>updateAdvertisementStatus</code></td><td>Hirdetés láthatóságának (aktív/inaktív) kapcsolása a találati listákban.</td></tr>
+            <tr><td><code>GET /Api/advertisements/search</code></td><td><code>searchAdvertisements</code></td><td>Robusztus szerveroldali keresés, paraméteres szűrés és lapozás (pagination) kivitelezése.</td></tr>
+            <tr><td><code>GET /Api/advertisements/top3</code></td><td><code>getTopAdvertisements</code></td><td>A kezdőlap optimalizált betöltését segítő, limitált lekérdezés.</td></tr>
+            <tr><td><code>PATCH /Api/advertisements/:id/views</code></td><td><code>incrementClickCount</code></td><td>RPC-alapú atomi hirdetés-kattintás számláló növelése.</td></tr>
         </table>
         <ul>
-            <li><strong>Hirdetés létrehozása folyamata:</strong><br/>1. Validációk (kötelező mezők, negatív bér kiszűrése). 2. Hirdetési limit ellenőrzése (max 3 aktív). 3. Beszúrás az <code>advertisement</code> táblába.</li>
-            <li><strong>Összes hirdetés lekérése folyamata:</strong><br/>1. Lekéri az összes aktív státuszú hirdetést csatolva a cégadatokat (név, logo) a főoldali listához.</li>
-            <li><strong>Egy hirdetés lekérése folyamata:</strong><br/>1. Adott azonosítójú hirdetés részletes adatainak lekérése a <code>advertisement</code> táblából a céges adatokkal joinolva.</li>
-            <li><strong>Saját hirdetések lekérése folyamata:</strong><br/>1. A hitelesített cég összes (aktív és inaktív) hirdetésének lekérdezése az adminisztrációhoz.</li>
-            <li><strong>Hirdetés frissítése folyamata:</strong><br/>1. A bejövő módosítások validálása. 2. Meglévő hirdetés adatainak felülírása az adatbázisban.</li>
-            <li><strong>Hirdetés státusz frissítése folyamata:</strong><br/>1. Átkapcsolja az aktív/inaktív (true/false) jelzőt, így levéve vagy visszatéve a hirdetést a publikus listákba.</li>
-            <li><strong>Keresés folyamata:</strong><br/>1. A <code>searchAdvertisements</code> összetett lekérdezést épít fel (Title keresés ILIKE-al, bérminimum, lokációszűrés). 2. Pagination (lapozás) alkalmazása.</li>
-            <li><strong>Top 3 hirdetés lekérése folyamata:</strong><br/>1. Visszaadja a 3 legfrissebb aktív állást limitálva, a főoldali kiemeléshez.</li>
-            <li><strong>Megtekintés (View) növelés folyamata:</strong><br/>1. Kattintás esetén az <code>increment_click_count</code> RPC fut le, atomi módon növelve a nézettséget.</li>
+            <li><strong>Keresési mechanizmus:</strong> A <code>searchAdvertisements</code> funkció dinamikusan épít fel egy komplex SQL-szerű lekérdezést (Query Builder) a paraméterek alapján (pl. szöveges egyezés a címben, minimális bér, város megjelölése). A memóriaszivárgások elkerülése és a hálózati sávszélesség kímélése érdekében az adatokat mindig szigorú lapozással (Pagination) és limitálva küldi vissza a kliensnek.</li>
+            <li><strong>Üzleti szabályok betartatása:</strong> A hirdetés-létrehozásnál a backend kőbe vésett szabályként ellenőrzi, hogy a cég nem lépte-e túl a megengedett 3 aktív hirdetési limitet. Ha igen, a rendszer API-szinten elutasítja a kérést (HTTP 403), megelőzve a platform spam-elését.</li>
         </ul>
 
-        <h4>Jelentkezések (<code>applicantRoute.ts</code> / <code>applicantService.ts</code>)</h4>
-        <p>A diákok jelentkezési folyamata és a cégek felvételi/elutasítási logikája.</p>
+        <h4>6.2.5. Jelentkezések (<code>applicantRoute.ts</code> / <code>applicantService.ts</code>)</h4>
+        <p>Az ATS (Applicant Tracking System) motorja, amely az állásokra beérkező pályázatokat, státuszaikat és az elbírálási folyamatokat menedzseli.</p>
         <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
-            <tr><td><code>POST /Api/applications</code></td><td><code>submitApplication</code></td><td>A felhasználó jelentkezik egy aktív hirdetésre; rekord készül a <code>job_applications</code>-ben.</td></tr>
-            <tr><td><code>GET /Api/users/me/applications</code></td><td><code>getUserApplications</code></td><td>Lekéri a diák leadott jelentkezéseit (státuszokkal) és az aktív munkakapcsolatait (alkalmazott).</td></tr>
-            <tr><td><code>GET /Api/advertisements/:id/applications</code></td><td><code>getApplicantsForAdvertisement</code></td><td>Lekéri egy állás összes beküldött jelentkezőjét a cég számára, diák adatokkal és önéletrajzuk elérhetőségével.</td></tr>
-            <tr><td><code>PATCH /Api/applications/:id/status</code></td><td><code>acceptApplication</code>/<code>rejectApplication</code></td><td>Elutasítja (rejected) vagy felveszi (accepted) a jelentkezőt az állásra.</td></tr>
-            <tr><td><code>GET /Api/applications/:id/resume</code></td><td><code>getApplicantResumeUrl</code></td><td>A cég letöltheti a diák CV-jét (jogosultság-ellenőrzéssel egybekötve). Itt kerül felszámolásra egy Resume-view a diáknak.</td></tr>
+            <tr><th>Végpont</th><th>Függvény</th><th>Architekturális Felelősség</th></tr>
+            <tr><td><code>POST /Api/applications</code></td><td><code>submitApplication</code></td><td>A diák összekapcsolása a hirdetéssel (jelentkezés leadása), duplikáció szűréssel.</td></tr>
+            <tr><td><code>GET /Api/users/me/applications</code></td><td><code>getUserApplications</code></td><td>A diák saját jelentkezési előzményeinek lekérdezése az aktuális elbírálási státuszokkal.</td></tr>
+            <tr><td><code>GET /Api/advertisements/:id/applications</code></td><td><code>getApplicantsForAdvertisement</code></td><td>A cégek számára biztosítja a hirdetésre érkezett profilok és pályázatok listáját.</td></tr>
+            <tr><td><code>PATCH /Api/applications/:id/status</code></td><td><code>acceptApplication</code>/<code>rejectApplication</code></td><td>Döntéshozatal: Pályázat elfogadása (munkaviszony generálással) vagy elutasítása.</td></tr>
+            <tr><td><code>GET /Api/applications/:id/resume</code></td><td><code>getApplicantResumeUrl</code></td><td>Pályázó CV-jének letöltése (jogosultságvizsgálattal) és a megtekintés adminisztrálása.</td></tr>
         </table>
         <ul>
-            <li><strong>Jelentkezés (Submit) folyamat:</strong><br/>1. Új rekord beszúrása a <code>job_applications</code> táblába <code>submitted</code> státusszal. 2. Megakadályozza a duplikált jelentkezést.</li>
-            <li><strong>Felhasználó jelentkezéseinek lekérése folyamat:</strong><br/>1. Lekéri a diák összes beadott jelentkezését és azok státuszát, joinolva a hirdetés- és cégadatokkal.</li>
-            <li><strong>Hirdetés jelentkezőiknek lekérése folyamat:</strong><br/>1. Lekéri az adott hirdetésre érkezett összes jelentkezést a diákprofilokkal együtt a cég felülete számára.</li>
-            <li><strong>Elfogadás (Accept) folyamat:</strong><br/>1. Ellenőrzi a cég jogosultságát. 2. A <code>employees</code> táblában (alkalmazottként) regisztrálja a diákot. 3. A jelentkezés státuszát <code>accepted</code>-re állítja. 4. Értesítő rendszerüzenetet generál.</li>
-            <li><strong>Elutasítás (Reject) folyamat:</strong><br/>1. A jelentkezés státuszát <code>rejected</code>-re állítja alkalmazott generálás nélkül. 2. Rendszerüzenetet küld az elutasításról a diáknak.</li>
-            <li><strong>Jelentkező önéletrajzának lekérése folyamat:</strong><br/>1. Ellenőrzi a cég jogosultságát a konkrét jelentkező felett. 2. Ideiglenes linket generál a diák CV-jéhez a Storage-ből. 3. Felszámol egy Resume-view megtekintést a felhasználó javára.</li>
+            <li><strong>Állapotgép (State Machine) logika:</strong> A jelentkezések a <code>submitted</code>, <code>accepted</code> vagy <code>rejected</code> állapotok között mozognak. A backend szigorúan felügyeli az állapotátmeneteket. Egy elfogadás (Accept) komplex folyamatot indít el: ellenőrzi a cég jogosultságát, módosítja a jelentkezés státuszát, hivatalosan is alkalmazottként rögzíti a diákot az <code>employees</code> táblában, és értesítést küld számára – mindezt adatbázis tranzakció keretében.</li>
         </ul>
 
-        <h4>Kommunikáció (<code>messageRoute.ts</code> / <code>messageService.ts</code>)</h4>
-        <p>A privát chat üzenetek és chatpartnerek (conversations) adatbázis műveletei.</p>
+        <h4>6.2.6. Kommunikáció és Chat (<code>messageRoute.ts</code> / <code>messageService.ts</code>)</h4>
+        <p>A felhasználók közötti privát üzenetváltások és a chatpartnerek hálózati listázásának API rétege.</p>
         <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
-            <tr><td><code>GET /Api/messages/conversations</code> (User/Company)</td><td><code>getUserChatPartners</code> / <code>getCompany...</code></td><td>Lekérdezi az aktív beszélgetéseket és kivel van levelezése az adott fióknak.</td></tr>
-            <tr><td><code>GET /Api/messages/conversations/:id</code></td><td><code>getChatMessages</code></td><td>Betölti egy adott cég/diák páros chatelőzményét (és a bejövő üzeneteket <code>is_read=true</code>-ra állítja).</td></tr>
-            <tr><td><code>POST /Api/messages</code></td><td><code>sendMessage</code></td><td>Új chat üzenetet szúr be a <code>messages</code> táblába. (Ezután a RealtimeServer kiküldi WebSocketeken).</td></tr>
+            <tr><th>Végpont</th><th>Függvény</th><th>Architekturális Felelősség</th></tr>
+            <tr><td><code>GET /Api/messages/conversations</code></td><td><code>getUserChatPartners</code> / <code>getCompany...</code></td><td>A legutóbbi üzenetváltások alapján aggregálja az aktív beszélgetőpartnereket.</td></tr>
+            <tr><td><code>GET /Api/messages/conversations/:id</code></td><td><code>getChatMessages</code></td><td>Lekéri a konkrét chatelőzményt, és atomi módon beállítja az üzenetek "olvasott" státuszát.</td></tr>
+            <tr><td><code>POST /Api/messages</code></td><td><code>sendMessage</code></td><td>Új üzenetet rögzít a <code>messages</code> táblába, amely kiváltja a RealtimeServer adásszórását.</td></tr>
         </table>
         <ul>
-            <li><strong>Beszélgetőpartnerek lekérése:</strong><br/>1. Megállapítja a hívó típusát (Cég vagy User). 2. RPC hívással (<code>get_user_chat_partners</code> vagy <code>get_company_chat_partners</code>) kigyűjtik az egyedi beszélgetőpartnereket az utolsó üzenettel és időbélyeggel.</li>
-            <li><strong>Chat előzmények lekérése:</strong><br/>1. Betölti az adott partnerek közötti korábbi üzenetváltásokat lapozható formában. 2. Ezzel egy időben a rá vonatkozó olvasatlan (is_read=false) üzenetek státuszát true-ra frissíti az adatbázisban.</li>
-            <li><strong>Üzenetküldés folyamata:</strong><br/>1. A <code>messages</code> táblába egy új üzenet rekord beszúrása (ki küldte, kinek, tartalom, típus). 2. A háttérben futó RealtimeServer WebSocketen keresztül ("Broadcast") azonnal továbbítja az élő kliensek felé.</li>
+            <li><strong>Optimalizált adatelérés:</strong> Mivel egy chat platformnál az üzenetek száma exponenciálisan nőhet, a partnerek listázását nem a backend kódban, hanem optimalizált adatbázis RPC függvényekkel (<code>get_user_chat_partners</code>) végezzük. Amikor a kliens megnyit egy beszélgetést, az API nemcsak visszaküldi az előzményeket, hanem egy háttérfolyamatban azonnal <code>is_read=true</code> állapotúra frissíti a bejövő üzeneteket, szinkronban tartva az értesítési piktogramokat.</li>
         </ul>
 
-        <h4>Rendszerüzenetek (<code>systemmessageRoute.ts</code> / <code>systemmessageService.ts</code>)</h4>
-        <p>Automatizált adminisztratív vagy eseménynative értesítések kezelése.</p>
+        <h4>6.2.7. Rendszerüzenetek (<code>systemmessageRoute.ts</code> / <code>systemmessageService.ts</code>)</h4>
+        <p>A platformon belüli automatikus, adminisztratív értesítések (pl. elutasítás, munkaviszony vége) disztribúciós központja.</p>
         <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
-            <tr><td><code>GET /Api/notifications</code></td><td><code>getUserSystemMessages</code></td><td>Lekéri az el nem olvasott értesítéseket.</td></tr>
-            <tr><td><code>PATCH /Api/notifications/:id/read</code></td><td><code>markSystemMessageAsRead</code></td><td>Olvasottnak jelöl egy rendszerüzenetet (beszúr egy <code>system_message_reads</code> sort).</td></tr>
+            <tr><th>Végpont</th><th>Függvény</th><th>Architekturális Felelősség</th></tr>
+            <tr><td><code>GET /Api/notifications</code></td><td><code>getUserSystemMessages</code></td><td>A célzott felhasználónak szóló, még el nem olvasott értesítések kigyűjtése.</td></tr>
+            <tr><td><code>PATCH /Api/notifications/:id/read</code></td><td><code>markSystemMessageAsRead</code></td><td>Pivot-tábla frissítése: a rendszerüzenet olvasottként való elkönyvelése az adott kliensnél.</td></tr>
         </table>
         <ul>
-            <li><strong>Értesítések listázása folyamat:</strong><br/>1. Lekéri azokat az üzeneteket a <code>system_messages</code> táblából, amik a célnak (<code>USER / COMPANY / ALL</code>) szólnak. 2. Filtereléssel (a <code>system_message_reads</code> ellenőrzésével) csak az olvasatlan értesítéseket adja vissza.</li>
-            <li><strong>Értesítés olvasottnak jelölése folyamat:</strong><br/>1. A <code>markSystemMessageAsRead</code> az adott üzenet ID-ját és a kliens ID-ját felhasználva beszúr egy rekordot a <code>system_message_reads</code> pivot táblába, eltüntetve azt a listából.</li>
+            <li><strong>Hatékony elosztás (Broadcasting logika):</strong> A rendszerüzenetek lehetnek személyre szabottak vagy globálisak (mindenkinek, vagy az összes cégnek szólóak). A backend egy külön olvasási pivot-táblát (<code>system_message_reads</code>) tart fenn. Így egyetlen globális üzenetet elég egyszer eltárolni, a rendszer csak a megtekintés tényét rögzíti felhasználónként, drasztikusan csökkentve az adatbázis méretét.</li>
         </ul>
 
-        <h4>Email Hitelesítés &amp; Jelszó (<code>emailRoute.ts</code> / <code>emailService.ts</code>)</h4>
-        <p>A fiók aktiválási folyamatok és elfelejtett jelszavas emailek a Nodemailer használatával.</p>
+        <h4>6.2.8. Email Hitelesítés &amp; Jelszó (<code>emailRoute.ts</code> / <code>emailService.ts</code>)</h4>
+        <p>A fiókok aktiválási életciklusát és a jelszó-visszaállítás biztonságos hálózati folyamatait kezeli <code>Nodemailer</code> integrációval.</p>
         <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
-            <tr><td><code>POST /Api/auth/.../verify-email</code></td><td><code>send...ActivationEmail</code></td><td>Ideiglenes JWT aktiváló tokent és URL-t generál, és elküldi Nodemailerrel.</td></tr>
-            <tr><td><code>PATCH /Api/auth/.../verify-email</code></td><td><code>activate...Account</code></td><td>A token validációja után a felhasználó <code>activated=true</code> állapotba kerül.</td></tr>
-            <tr><td><code>POST /Api/auth/.../forgot-password</code></td><td><code>send...PasswordResetEmail</code></td><td>Ideiglenes jelszóvisszaállító token(URL) küldése.</td></tr>
-            <tr><td><code>PATCH /Api/auth/.../reset-password</code></td><td><code>saveNew...Password</code></td><td>Hasheli és elmenti az új jelszót, majd invalidálja a tokent.</td></tr>
+            <tr><th>Végpont</th><th>Függvény</th><th>Architekturális Felelősség</th></tr>
+            <tr><td><code>POST /Api/auth/.../verify-email</code></td><td><code>send...ActivationEmail</code></td><td>Rövid lejáratú, egyedi JWT tokent generál, és elküldi az aktiváló hivatkozást emailben.</td></tr>
+            <tr><td><code>PATCH /Api/auth/.../verify-email</code></td><td><code>activate...Account</code></td><td>A beérkező token validálása után a fiók adatbázis szintű aktiválása.</td></tr>
+            <tr><td><code>POST /Api/auth/.../forgot-password</code></td><td><code>send...PasswordResetEmail</code></td><td>Biztonságos jelszóvisszaállító token és instrukciók küldése a regisztrált email címre.</td></tr>
+            <tr><td><code>PATCH /Api/auth/.../reset-password</code></td><td><code>saveNew...Password</code></td><td>Token érvényesítése, új jelszó kriptográfiai hashelése és mentése.</td></tr>
         </table>
         <ul>
-            <li><strong>Hitelesítő Email küldés folyamata:</strong><br/>1. Generál egy lejárattal rendelkező JWT tokent. 2. Eltárolja az adatbázisban (<code>user_email_tokens</code> / <code>company_email_tokens</code>) az UPSERT elv alapján. 3. Nodemailer-en (Gmail SMTP) keresztül elküldi az aktiváló linket.</li>
-            <li><strong>Fiók aktiválás folyamata:</strong><br/>1. A kliens végpontja ellenőrzi a tokent az URL-ből. 2. Validáció után módosítja az adatbázist (<code>activated=true</code> állapotba léptetve a fiókot). 3. Törli az egyszer használatos tokent.</li>
-            <li><strong>Jelszóvisszaállítási Email küldés folyamata:</strong><br/>1. A megadott email alapján token generálása és adatbázisba mentése. 2. Biztonságos visszaállító link kiküldése Nodemailerrel.</li>
-            <li><strong>Új jelszó beállítása folyamat:</strong><br/>1. A visszaállító token és az új jelszó validálása. 2. Az új jelszó hashelése <code>bcrypt</code> segítségével. 3. A <code>password_hash</code> frissítése az adatbázisban. 4. A felhasznált token törlése.</li>
+            <li><strong>Biztonsági megfontolások:</strong> Az aktivációs és jelszó-visszaállító emailekben szereplő linkek egyszer használatos (One-Time) JWT tokeneket tartalmaznak. A tokeneket a backend az adatbázisban (UPSERT elv alapján) tárolja, így garantálja, hogy ha a felhasználó új emailt kér, az előző link automatikusan érvényét veszti. A tokenek beépített lejárati idővel (TTL - Time to Live) rendelkeznek. Sikeres felhasználás után a tokeneket a rendszer azonnal megsemmisíti.</li>
         </ul>
         
-        <h4>OrionAI (<code>OrionAIRoute.ts</code> / <code>OrionAI.py</code>)</h4>
-        <p>Az NLP alapú állásajánló modul a Python/FastAPI mikroszolgáltatásból és a Node Router hídból épül fel.</p>
+        <h4>6.2.9. OrionAI Mikroszolgáltatás (<code>OrionAIRoute.ts</code> / <code>OrionAI.py</code>)</h4>
+        <p>Az Orion technológiai innovációja: a hagyományos Node.js szerver és a Python-alapú mesterséges intelligencia motor integrációs pontja.</p>
         <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
-            <tr><td><code>POST /Api/OrionAI</code></td><td><code>OrionAI.py</code> API hívás / <code>getAdvertisementsByIds</code></td><td>Továbbítja a kliens "mit dolgozna" szövegét a Python API-nak, majd lekéri a pontszámítás alapján visszakapott Top 10 azonosítót az adatbázisból.</td></tr>
+            <tr><th>Végpont</th><th>Függvény</th><th>Architekturális Felelősség</th></tr>
+            <tr><td><code>POST /Api/OrionAI</code></td><td><code>OrionAI.py</code> API hívás / <code>getAdvertisementsByIds</code></td><td>A felhasználó természetes nyelvű promptjának továbbítása az AI szerverhez, majd a visszaadott azonosítók alapján az adatok lekérése a Supabase-ből.</td></tr>
         </table>
         <ul>
-            <li><strong>Működési mechanizmus (<code>OrionAI.py</code>):</strong><br/>1. Elindít egy önálló API-t lokálisan (<code>8000</code>). 2. Közvetlen lekéri az összes aktív hirdetést a Supabase DB-ből. 3. Szűri a kötőszavakat, lemmatizálja a bemeneti magyar szöveget, leválasztja a lokációkat. 4. <code>paraphrase-multilingual-MiniLM-L12-v2</code> NLP modellel szemantikus (cosine) similaritást és pontszámot kalkulál. 5. Súlyozás: Szöveges egyezés (65%), Bér (20%), Helyszín (15%). 6. Visszaadja az optimális lista azonosítóit.</li>
+            <li><strong>Fejlett Működési Mechanizmus:</strong> Mivel a Node.js nem alkalmas nehéz gépi tanulási modellek futtatására, a feladatot egy önálló <code>FastAPI</code> alapú Python szolgáltatás végzi (<code>8000</code>-es port). 
+            <br>1. Az Express router átadja a magyar nyelvű szöveget (pl. "Informatikai diákmunkát keresek otthonról"). 
+            <br>2. A Python motor szűri a kötőszavakat és lemmatizálja a szöveget. 
+            <br>3. Egy <code>paraphrase-multilingual-MiniLM-L12-v2</code> SentenceTransformer modellel szemantikai elemzést és Vektortér-számítást (cosine similarity) végez a DB-ben lévő összes aktív hirdetésen.
+            <br>4. A komplex algoritmus több faktort súlyoz: Szöveges szemantikai egyezés (65%), Bér sávja (20%), és a Földrajzi lokáció (15%).
+            <br>5. A legjobban illeszkedő hirdetések azonosítóit visszaküldi az Express szervernek, amely végül kiszolgálja azokat a frontend számára.</li>
         </ul>
 
         <h2 id="sec7">7. Adatmodell és adatbázislogika</h2>
