@@ -88,9 +88,17 @@
                             <li><a href="#sec4-1-6">Összefoglaló</a></li>
                         </ol>
                     </li>
-                    <li><a href="#sec4-2">Backend stack</a></li>
-                    <li><a href="#sec4-3">Adatplatform</a></li>
-                    <li><a href="#sec4-4">A választott kombináció előnyei</a></li>
+                    <li>
+                        <a href="#sec4-2">Backend Technológiai Döntések</a>
+                        <ol>
+                            <li><a href="#sec4-2-1">Miért Node.js és Express?</a></li>
+                            <li><a href="#sec4-2-2">Biztonság és Validáció</a></li>
+                            <li><a href="#sec4-2-3">Adatbázis és Realtime</a></li>
+                            <li><a href="#sec4-2-4">Fájlkezelés és Értesítések</a></li>
+                            <li><a href="#sec4-2-5">Összefoglaló</a></li>
+                        </ol>
+                    </li>
+                    <li><a href="#sec4-3">A választott kombináció előnyei</a></li>
                 </ol>
             </li>
 
@@ -437,36 +445,96 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
             </table>
         </div>
 
-        <h3>4.2. Backend stack</h3>
+        <h3 id="sec4-2">4.2. Backend Technológiai Döntések (Detailed)</h3>
+        
+        <div class="tldr-box">
+            <strong>TL;DR:</strong> Miért az <strong>Express 5</strong> és <strong>Node.js</strong>? (Könnyűsúlyú, aszinkron, TypeScripttel kiválóan tipizálható környezet). A valós idejű funkciókat és az adatbázist a <strong>Supabase (PostgreSQL)</strong> biztosítja, ami levéltárazza és titkosítja az adatokat. A rendszer egyedi <strong>JWT</strong> alapú hitelesítést és szigorú <strong>Zod</strong> validációt használ a robusztus biztonság érdekében.
+        </div>
+        
+        <p>A szerveroldali technológiák kiválasztásánál a fő szempont az volt, hogy a backend elég gyors, skálázható és biztonságos legyen a valós idejű chat és az érzékeny személyes adatok (okmányok) kezeléséhez. Az Orion backendje ezért a Node.js és az Express környezetére épül, szorosan integrálva a Supabase ökoszisztémával.</p>
 
-        <p>
-            A szerveroldal alapját az <span class="tech-tag">Express 5</span> adja.
-            A szerver JSON-alapú kommunikációt használ,
-            cookie-kezeléssel és CORS konfigurációval kiegészítve.
-            A kód struktúrájából látszik, hogy a szerver közvetlenül mountolja a route modulokat,
-            majd egy HTTP szerverre ráépül a realtime kiszolgálás.
-            A backendhez kapcsolódik a <span class="tech-tag">jsonwebtoken</span>,
-            a <span class="tech-tag">bcryptjs</span>,
-            a <span class="tech-tag">nodemailer</span>,
-            valamint a fájlkezeléshez a <span class="tech-tag">multer</span>.
-        </p>
+        <h4 id="sec4-2-1">4.2.1. Miért pont Node.js és Express 5?</h4>
+        <p>Egy olyan rendszernél, ahol a frontend és a backend is ugyanabban a nyelvben (TypeScript) íródik, a kódmegosztás és a fejlesztői kontextusváltás (context switching) minimalizálása hatalmas előny. A Node.js aszinkron, eseményvezérelt architektúrája (Event Loop) tökéletes a sok párhuzamos, de I/O intenzív feladathoz, mint amilyen a hirdetések lekérése vagy az üzenetek továbbítása.</p>
+        <p>Bár használhattunk volna nehezebb keretrendszereket (pl. NestJS), az Express egyszerűsége és flexibilitása sokkal jobban illeszkedik az Orion moduláris (route-service) felépítéséhez. Az Express 5 ráadásul beépítve támogatja az aszinkron hibakezelést (Promise-based routing), így kevesebb <code>try-catch</code> blokkra van szükség, és a kód átláthatóbb marad.</p>
 
-        <h3>4.3. Adatplatform</h3>
+        <h4 id="sec4-2-2">4.2.2. Biztonság, Validáció és Hitelesítés</h4>
+        <p>Az adatok integritása kritikus. A bejövő kérések (HTTP POST/PATCH) validálására ugyanazt a <strong>Zod</strong> könyvtárat használjuk a backend-en is, mint a frontend-en. Ez garantálja, hogy hibás vagy hiányos adat soha ne juthasson el az adatbázis rétegig.</p>
+        <p>Az autentikáció saját fejlesztésű, <strong>JWT (JSON Web Token)</strong> alapú rendszer. A tokeneket szigorúan, httpOnly cookie-kban adjuk át, így védve a rendszert a kliensoldali támadásoktól (XSS). A jelszavakat <strong>bcrypt</strong> algoritmussal hasheljük, így adatbázis-szivárgás esetén is visszafejthetetlenek maradnak.</p>
 
-        <p>
-            Az adatplatform Supabase / PostgreSQL alapú.
-            Ez a döntés egyszerre ad relációs adatbázist,
-            modern fejlesztői élményt,
-            és több olyan szolgáltatást,
-            amely az Orion fő funkcióihoz közvetlenül illeszkedik:
-            realtime,
-            auth,
-            RPC függvények,
-            PostgreSQL szintű bővíthetőség,
-            valamint titkosítási lehetőségek.
-        </p>
+        <h4 id="sec4-2-3">4.2.3. Adatbázis és Realtime Képességek (Supabase)</h4>
+        <p>A hagyományos adatbázisok helyett a <strong>Supabase (PostgreSQL)</strong> platformra építkezünk. Ez egyszerre ad egy sziklaszilárd, relációs adatbázist (PostgreSQL) és egy modern API réteget. A Supabase segítségével a bonyolult üzleti logika egy részét (például a statisztikák számítását) közvetlenül az adatbázisba, tárolt eljárásokként (RPC - Remote Procedure Call) tudtuk kiszervezni.</p>
+        <p>A chat funkció elengedhetetlen része egy modern diákmunka platformnak. A Supabase beépített Realtime modulját (amely PostgreSQL triggerekre épül) egy saját <code>RealtimeServer</code> WebSocket komponenssel kötöttük össze az Express-en belül, így az üzenetek másodpercek töredéke alatt, frissítés nélkül megérkeznek a kliensekhez.</p>
 
-        <h3>4.4. Miért jó ez a kombináció?</h3>
+        <h4 id="sec4-2-4">4.2.4. Fájlkezelés és Értesítések</h4>
+        <p>A diákok önéletrajzainak (PDF) biztonságos feltöltését a szerveren a <strong>Multer</strong> kezeli, mielőtt azokat a Supabase titkosított Storage rendszerébe (bucket) továbbítaná. Az automatizált értesítésekhez, mint például a regisztráció megerősítése vagy az elfelejtett jelszó visszaállítása, a <strong>Nodemailer</strong> könyvtárat integráltuk (Gmail SMTP használatával).</p>
+
+        <h4 id="sec4-2-5">4.2.5. Backend Technológiai Verem Összefoglaló</h4>
+        <div class="tldr-box">
+            <strong>Backend Technológiai Verem Összefoglaló</strong>
+            <table style="margin-top: 10px;">
+                <thead>
+                    <tr>
+                        <th>Kategória</th>
+                        <th>Technológia</th>
+                        <th>Leírás / Szerepkör</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Futtatókörnyezet</strong></td>
+                        <td><span class="tech-tag">Node.js</span></td>
+                        <td>V18+ aszinkron futtatókörnyezet V8 motorral.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Keretrendszer</strong></td>
+                        <td><span class="tech-tag">Express 5</span></td>
+                        <td>Könnyűsúlyú, middleware-alapú webszerver aszinkron routinggal.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nyelv</strong></td>
+                        <td><span class="tech-tag">TypeScript</span></td>
+                        <td>Szerveroldali típusbiztonság, egységes nyelv a frontennel.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Adatbázis & Backend-as-a-Service</strong></td>
+                        <td><span class="tech-tag">Supabase (PostgreSQL)</span></td>
+                        <td>Relációs DB, RPC függvények, Storage és pgcrypto titkosítás.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Hitelesítés (Auth)</strong></td>
+                        <td><span class="tech-tag">JWT & bcryptjs</span></td>
+                        <td>Állapotmentes (stateless), httpOnly cookie-alapú azonosítás és jelszó hashelés.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Adatvalidáció</strong></td>
+                        <td><span class="tech-tag">Zod</span></td>
+                        <td>Séma alapú futásidejű ellenőrzés a POST/PATCH kéréseknél.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Valós Idejű Kom.</strong></td>
+                        <td><span class="tech-tag">ws (WebSocket)</span></td>
+                        <td>Natív WebSocket szerver a chatüzenetek (RealtimeServer) közvetítésére.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fájlkezelés</strong></td>
+                        <td><span class="tech-tag">Multer</span></td>
+                        <td>Multipart/form-data kérések és CV feltöltések pufferelt kezelése.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>E-mail küldés</strong></td>
+                        <td><span class="tech-tag">Nodemailer</span></td>
+                        <td>SMTP alapú tranzakcionális emailek (aktiválás, jelszó csere).</td>
+                    </tr>
+                    <tr>
+                        <td><strong>AI Integráció</strong></td>
+                        <td><span class="tech-tag">Python & FastAPI</span></td>
+                        <td>Mikroszolgáltatás (OrionAI.py) NLP alapú álláskereséshez.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h3 id="sec4-3">4.3. A választott kombináció előnyei</h3>
 
         <table>
             <thead>
@@ -2132,639 +2200,8 @@ npm run OrionAI    # ha az AI modul külön szükséges</code></pre>
 
         <h2 id="appendix">14. Mellékletek</h2>
 
-        <div class="tldr-box">
-            <strong>TL;DR:</strong> A mellékletek <strong>technikai kivonatokat</strong>, kérés-életciklusokat és a rendszer mélyebb megértését segítő gyorsútmutatókat tartalmaznak. Ezek a referenciák összefoglalják a teljes technológiai stacket, a modulok közötti kapcsolatokat és az API végpontok térképét, átfogó képet adva a rendszer architektúrájáról és adatáramlásáról fejlesztői szemszögből.
-        </div>
 
-        <h3>14.1. Gyors technikai kivonat</h3>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Kategória</th>
-                    <th>Jelenlegi megoldás</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Frontend</td>
-                    <td>React 19, TypeScript, Vite</td>
-                </tr>
-                <tr>
-                    <td>Routing</td>
-                    <td>react-router-dom</td>
-                </tr>
-                <tr>
-                    <td>Űrlapkezelés</td>
-                    <td>react-hook-form, zod</td>
-                </tr>
-                <tr>
-                    <td>Backend</td>
-                    <td>Express 5, Node, cookie-parser, cors</td>
-                </tr>
-                <tr>
-                    <td>Adatplatform</td>
-                    <td>Supabase / PostgreSQL</td>
-                </tr>
-                <tr>
-                    <td>Realtime</td>
-                    <td>Külön realtime szerverkomponens</td>
-                </tr>
-                <tr>
-                    <td>Kommunikáció</td>
-                    <td>Chat + rendszerüzenetek</td>
-                </tr>
-                <tr>
-                    <td>Biztonság</td>
-                    <td>JWT titok, middleware, pgcrypto-alapú titkosítás</td>
-                </tr>
-                <tr>
-                    <td>Tesztek</td>
-                    <td>Vitest, Testing Library, Playwright, MSW</td>
-                </tr>
-                <tr>
-                    <td>Nem funkcionális fókusz</td>
-                    <td><span class="tech-tag">SEO</span>, <span class="tech-tag">i18n</span>, <span class="tech-tag">Accessibility</span>, dashboard analitika</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>14.2. Modulok közti kapcsolat röviden</h3>
-
-        <pre><code>public
-  → belépési pontok, nyilvános oldalak, SEO
-
-auth
-  → login, register, password reset, verify
-
-user
-  → profil, dokumentumok, jelentkezések, dashboard
-
-company
-  → profil, dashboard, hirdetések, ATS
-
-chat
-  → partnerlista, üzenetek, realtime kommunikáció
-
-backend routes/services
-  → auth, user, company, advertisement, applicant, message,
-    systemmessage, email, OrionAI
-
-database
-  → users, companies, advertisement, job_applications,
-    employees, messages, system_messages, statistics,
-    tokenek, dokumentumok, RPC-k, triggerek</code></pre>
-
-        <h3>14.3. Záró megjegyzés</h3>
-
-        <p>
-            Az Orion jelenlegi felépítése alapján egy tudatosan moduláris,
-            több szereplőt kezelő,
-            üzleti folyamatokra épített rendszer.
-            A termékcél,
-            a UI,
-            a backend szolgáltatási logika,
-            az adatmodell
-            és a biztonsági réteg szorosan összekapcsolódik,
-            ezért ezeket együtt érdemes értelmezni.
-        </p>
-
-        <h3>14.4. Részletes végponti felelősségi térkép</h3>
-
-        <p>
-            A kódszerkezetből és a modulnevekből jól kirajzolódik,
-            milyen jellegű végpontcsoportokra épül a rendszer.
-            Ezt azért érdemes külön összefoglalni,
-            mert a fejlesztői csapat számára a route-ok gyakran a rendszer „belépési ajtajai”.
-            Ezekhez kötődik a validáció,
-            az auth,
-            a hibakezelés,
-            az auditálhatóság
-            és a kliensoldali integráció.
-        </p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Route csoport</th>
-                    <th>Tipikus műveletek</th>
-                    <th>Kapcsolódó táblák / függvények</th>
-                    <th>Megjegyzés</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>/Api/auth</code></td>
-                    <td>login, register, logout, auth check, email flow</td>
-                    <td><code>user_credentials</code>, <code>company_credentials</code>, email token táblák, regisztrációs RPC-k</td>
-                    <td>A rendszer egyik legérzékenyebb belépési pontja</td>
-                </tr>
-                <tr>
-                    <td><code>/Api/users</code></td>
-                    <td>profil, dokumentum, önéletrajz, dashboard adatok</td>
-                    <td><code>users</code>, <code>user_documents</code>, <code>user_statistics</code></td>
-                    <td>Diákoldali üzleti mag</td>
-                </tr>
-                <tr>
-                    <td><code>/Api/companies</code></td>
-                    <td>cégprofil, dashboard, céges állapotok</td>
-                    <td><code>companies</code>, céges statisztikai lekérdezések</td>
-                    <td>Céges adminisztrációs központ</td>
-                </tr>
-                <tr>
-                    <td><code>/Api</code> + advertisement route</td>
-                    <td>hirdetés létrehozás, listázás, módosítás, részletezés</td>
-                    <td><code>advertisement</code>, kattintásszámláló függvények</td>
-                    <td>Közvetlenül kapcsolódik a kereséshez és konverzióhoz</td>
-                </tr>
-                <tr>
-                    <td><code>/Api</code> + applicant route</td>
-                    <td>jelentkezés, státuszfrissítés, ATS folyamatok</td>
-                    <td><code>job_applications</code>, <code>employees</code></td>
-                    <td>A rendszer elsődleges értéktermelő tranzakciós útvonala</td>
-                </tr>
-                <tr>
-                    <td><code>/Api/messages</code></td>
-                    <td>üzenetlista, küldés, beszélgetések betöltése</td>
-                    <td><code>messages</code>, chat partner RPC-k</td>
-                    <td>Realtime működéssel együtt értelmezendő</td>
-                </tr>
-                <tr>
-                    <td><code>/Api/notifications</code></td>
-                    <td>rendszerüzenetek és olvasottság kezelése</td>
-                    <td><code>system_messages</code>, <code>system_message_reads</code></td>
-                    <td>Nem keverendő a humán chat funkcióval</td>
-                </tr>
-                <tr>
-                    <td><code>/Api</code> + OrionAI route</td>
-                    <td>AI-kapcsolt műveletek</td>
-                    <td>Python oldali kiszolgálás</td>
-                    <td>Külön életciklusú integrációs pont</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>14.5. Teljes kérés-életciklus egy tipikus felhasználói műveletnél</h3>
-
-        <p>
-            Az Orion mélyebb megértéséhez hasznos végigkövetni egy tipikus üzleti műveletet.
-            Vegyük példának azt az esetet,
-            amikor egy diák bejelentkezik,
-            rákeres egy állásra,
-            megnyitja a részleteket,
-            majd jelentkezik rá.
-            A teljes folyamat több réteget érint,
-            és a hibák többsége is ezek határfelületein jelenik meg.
-        </p>
-
-        <p>
-            Első lépésként a felhasználó a frontend auth oldalán beírja a hitelesítési adatait.
-            A kliensoldali validáció ellenőrzi a formátumot,
-            majd a hitelesítési kérés eljut az auth route-hoz.
-            Itt a szerveroldal eldönti,
-            hogy diák- vagy cégfiókról van szó,
-            érvényesíti a jelszót vagy a kapcsolódó auth mechanizmust,
-            beállítja a szükséges session vagy token állapotot,
-            és visszaküldi a frontendnek a sikeres bejelentkezéshez szükséges adatokat.
-        </p>
-
-        <p>
-            Ezután a felhasználó állásokat keres.
-            A kliensoldal ilyenkor vagy egy listaoldalt,
-            vagy egy szűrőpanellel ellátott nézetet használ.
-            A szűrési paraméterek alapján a frontend API-hívást indít.
-            A backend advertisement modulja összeállítja a lekérdezést,
-            majd visszaadja a releváns eredményeket.
-            Itt dől el az is,
-            hogy milyen szerveroldali szűrés történik,
-            mennyi adat érkezik egyszerre,
-            és mennyire gyorsan reagál a felület nagyobb adathalmazok esetén.
-        </p>
-
-        <p>
-            Amikor a diák megnyitja az állás részletező oldalát,
-            a rendszer jó eséllyel további üzleti eseményt is rögzít,
-            például a kattintások számának növelését.
-            Erre utal az <code>increment_click_count</code> függvény jelenléte.
-            Vagyis a részletező oldal megnyitása nem pusztán olvasási művelet,
-            hanem a céges analitikában is visszatükröződő aktivitás.
-        </p>
-
-        <p>
-            A jelentkezés beküldésekor a frontend ellenőrzi,
-            hogy a szükséges mezők ki vannak-e töltve,
-            rendelkezésre állnak-e a szükséges dokumentumok,
-            és a felhasználó jogosult-e jelentkezni.
-            A backend applicant modulja ezután létrehozza a jelentkezési rekordot a <code>job_applications</code> táblában.
-            Ettől a ponttól kezdve a céges ATS felületnek is látnia kell az új jelöltet,
-            és adott esetben rendszerüzenet vagy chat kezdeményezés is társulhat az eseményhez.
-        </p>
-
-        <p>
-            Ha a cég később státuszt vált,
-            például előszűrésre továbbítja,
-            interjúra jelöli,
-            elfogadja
-            vagy elutasítja a jelentkezést,
-            akkor ugyanennek a rekordnak vagy kapcsolódó entitásainak a módosítása történik.
-            A frontend ezt vagy friss lekéréssel,
-            vagy realtime eseménnyel érzékeli.
-            A diák élmény szempontjából kiemelten fontos,
-            hogy ez a státusz a felhasználói felületen konzisztensen és gyorsan jelenjen meg.
-        </p>
-
-        <h3>14.6. Adatéletciklus és állapotátmenetek</h3>
-
-        <p>
-            A rendszer egyik fontos tervezési kérdése az,
-            hogy az egyes rekordok hogyan változnak időben.
-            Nem minden adat egyszerű CRUD objektum.
-            A felhasználó profilja például viszonylag stabil,
-            de a státusza,
-            a dokumentumai,
-            az analitikai számlálók
-            és a kommunikációs nyomvonalak folyamatosan bővülnek.
-            Ugyanez igaz a céges és hirdetési oldalra is.
-        </p>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Entitás</th>
-                    <th>Kezdeti állapot</th>
-                    <th>Állapotátmenetek</th>
-                    <th>Megjegyzés</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Felhasználó</td>
-                    <td>újonnan regisztrált</td>
-                    <td>ellenőrizetlen → hitelesített → profilkiegészített → aktív jelentkező</td>
-                    <td>A dokumentumfeltöltés és email verifikáció külön mérföldkő lehet</td>
-                </tr>
-                <tr>
-                    <td>Cég</td>
-                    <td>újonnan regisztrált</td>
-                    <td>ellenőrizetlen → hitelesített → profilkiegészített → aktív hirdető</td>
-                    <td>A dashboard használhatósága a profil teljességétől is függhet</td>
-                </tr>
-                <tr>
-                    <td>Hirdetés</td>
-                    <td>vázlat vagy új</td>
-                    <td>létrehozott → aktív → módosított → lezárt / archivált</td>
-                    <td>A kattintás és jelentkezésszám külön analitikai állapot</td>
-                </tr>
-                <tr>
-                    <td>Jelentkezés</td>
-                    <td>beküldött</td>
-                    <td>beküldött → áttekintés alatt → kapcsolatfelvétel → elfogadott / elutasított</td>
-                    <td>Az ATS legfőbb munkadarabja</td>
-                </tr>
-                <tr>
-                    <td>Chat kapcsolat</td>
-                    <td>nincs vagy inaktív</td>
-                    <td>létrejött → aktív → lezárt / elhalt</td>
-                    <td>Gyakran jelentkezési eseményhez vagy döntési ponthoz kötődik</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h3>14.7. Frontend és backend együttműködési minták</h3>
-
-        <p>
-            A két eredeti dokumentum alapján az Orion egyik kulcsminőségi kérdése az,
-            hogy a frontend mennyire tud tisztán kommunikálni a backenddel.
-            Ezt érdemes külön elvi szinten is rögzíteni.
-            Egy jól működő együttműködési minta esetén a frontend felel a felhasználói interakcióért,
-            az azonnali validációért,
-            a vizuális állapotokért
-            és a navigációért,
-            míg a backend felel a szabályok valódi érvényesítéséért,
-            a tranzakciókért,
-            a jogosultságokért
-            és a végleges adatállapotért.
-        </p>
-
-        <p>
-            A rendszer karbantarthatóságát nagyban segíti,
-            ha ezek a határok a jövőben is tiszták maradnak.
-            Tipikusan nem jó irány,
-            ha a frontend elkezd üzleti logikát duplikálni,
-            vagy a backend kezd el UI-formátumra optimalizált,
-            nehezen újrahasznosítható válaszstruktúrákat visszaadni.
-            Az Orion jelenlegi moduláris szerkezete jó alapot ad ennek elkerüléséhez.
-        </p>
-
-        <h3>14.8. Hibatípusok és javasolt kezelési minta</h3>
-
-        <p>
-            A jól kommunikált hibakezelés kiemelten fontos a rendszerben.
-            Egy ilyen rendszerben legalább négy hibatípust érdemes elkülöníteni:
-        </p>
-
-        <ul>
-            <li><strong>Validációs hibák:</strong> hibás formátum, hiányzó mezők, nem elfogadható értékek.</li>
-            <li><strong>Jogosultsági hibák:</strong> nem megfelelő szerepkör, lejárt session, tiltott művelet.</li>
-            <li><strong>Üzleti logikai hibák:</strong> például duplikált jelentkezés, nem módosítható státusz, ütköző állapot.</li>
-            <li><strong>Rendszerhibák:</strong> adatbázis elérhetetlenség, külső szolgáltatási hiba, váratlan kivétel.</li>
-        </ul>
-
-        <p>
-            A dokumentációban érdemes ezt a szemléletet hosszú távon is tartani,
-            mert jelentősen megkönnyíti a frontend értesítések,
-            a logolás,
-            a monitoring
-            és a támogatási folyamatok egységesítését.
-        </p>
-
-        <h3>14.9. OrionAI lehetséges helye a termékstratégiában</h3>
-
-        <p>
-            Mivel az OrionAI külön modulként szerepel,
-            érdemes nemcsak technikai,
-            hanem termékstratégiai szinten is értelmezni.
-            A legfontosabb kérdés nem az,
-            hogy „van-e AI”,
-            hanem az,
-            hogy pontosan hol ad a rendszer számára plusz értéket.
-            Egy ilyen platform esetében ez potenciálisan megjelenhet
-            hirdetés-szövegek javításában,
-            jelölt-összegzések készítésében,
-            támogatói vagy asszisztensi funkciókban,
-            keresési relevancia javításában,
-            vagy akár kommunikációs segédeszközökben is.
-        </p>
-
-        <p>
-            A külön modulba szervezés azért előnyös,
-            mert lehetőséget ad arra,
-            hogy az AI-képességek gyorsabban iterálhatók legyenek,
-            miközben a fő tranzakciós rendszer stabil marad.
-            Dokumentációs oldalról azonban ajánlott lesz később pontosan rögzíteni,
-            hogy mely route-ok hívják,
-            milyen inputot vár,
-            milyen outputot ad,
-            mennyire determinisztikus a viselkedése,
-            és milyen fallback stratégia van hiba esetén.
-        </p>
-
-        <h3>14.10. Operatív ellenőrzőlista új fejlesztőknek</h3>
-
-        <p>
-            A két eredeti dokumentum részletes, de sok témát külön-külön tárgyal.
-            Új csapattagok számára hasznos egy rövid operatív ellenőrzőlista is,
-            amely megmutatja,
-            milyen sorrendben érdemes megismerni a rendszert.
-        </p>
-
-        <ol>
-            <li>Olvasd át a projekt üzleti célját és a három fő domént: diák, cég, jelentkezés.</li>
-            <li>Nézd át a frontend feature mappákat, hogy lásd a fő képernyőcsoportokat.</li>
-            <li>Tanulmányozd a <code>server.ts</code> fájlt, mert ebből gyorsan kirajzolódik a backend modulrendszer.</li>
-            <li>Azonosítsd a fő adatbázis entitásokat: <code>users</code>, <code>companies</code>, <code>advertisement</code>, <code>job_applications</code>, <code>messages</code>.</li>
-            <li>Értsd meg a regisztrációs és login folyamatot mindkét szereplőnél.</li>
-            <li>Kövesd végig a hirdetés létrehozás és jelentkezés teljes útját.</li>
-            <li>Ezután vizsgáld meg a dashboard statisztikák és a chat működését.</li>
-            <li>Végül tekintsd át a dokumentumtitkosítás és email folyamatok biztonsági rétegét.</li>
-        </ol>
-
-        <h3>14.11. Fenntarthatósági és karbantarthatósági értékelés</h3>
-
-        <p>
-            A jelenlegi felépítés alapján az Orion jó eséllyel fenntartható marad középtávon,
-            feltéve hogy a jövőbeni fejlesztések nem bontják meg a most látható modulhatárokat.
-            A projekt egyik legerősebb tulajdonsága,
-            hogy több kritikus területnél már most külön rétegekben gondolkodik:
-            auth,
-            messaging,
-            ATS,
-            dashboard,
-            dokumentumtitkosítás,
-            OrionAI.
-            Ez jó alap a későbbi skálázáshoz.
-        </p>
-
-        <p>
-            A fő kockázat inkább az,
-            hogy a különálló területek közötti szerződések mennyire maradnak tiszták.
-            Ahogy nő a funkciók száma,
-            egyre fontosabb lesz a következetes válaszstruktúra,
-            a típusok és sémák központi karbantartása,
-            az adatbázis-változtatások kontrollált kezelése,
-            valamint az,
-            hogy a frontend ne váljon túlzottan API-változás érzékennyé.
-        </p>
-
-        <h3>14.12. Ajánlott külön mellékletek a következő verzióhoz</h3>
-
-        <p>
-            Ha az Orion dokumentációját a következő iterációban még professzionálisabb szintre szeretnétek emelni,
-            akkor az alábbi külön mellékletek létrehozása lenne a legértékesebb:
-        </p>
-
-        <ul>
-            <li><strong>API melléklet:</strong> minden route HTTP metódussal, bemeneti sémával, jogosultsági elvárással és példa válasszal.</li>
-            <li><strong>Adatbázis melléklet:</strong> teljes táblalista mezőszintű leírással, indexekkel és kulcsokkal.</li>
-            <li><strong>Biztonsági melléklet:</strong> auth folyamat, tokenkezelés, dokumentumtitkosítás, incidenskezelési ajánlások.</li>
-            <li><strong>Frontend UI melléklet:</strong> fő képernyők, route-ok, üres állapotok, hibaképernyők és komponenshierarchia.</li>
-            <li><strong>Üzemeltetési melléklet:</strong> környezeti változók, indulási sorrend, backup, monitoring és release folyamat.</li>
-        </ul>
-
-        <h3>14.13. Modulonkénti részletes értelmezés</h3>
-
-        <h4>14.13.1. Public modul</h4>
-
-        <p>
-            A public modul az Orion külső arca.
-            Itt jelenik meg először a platform üzenete,
-            a termék értékajánlata,
-            és sok esetben itt történik meg az első kapcsolatfelvétel a felhasználóval.
-            Egy ilyen modul nem csak design szempontból fontos.
-            Technikai oldalról ez az a rész,
-            ahol a SEO,
-            a teljesítmény,
-            a lighthouse mutatók,
-            a gyors betöltés
-            és a konverzióra optimalizált tartalom különösen nagy jelentőséget kap.
-            Ha ez a réteg gyenge,
-            akkor a rendszer későbbi értékeihez kevesebb felhasználó jut el.
-        </p>
-
-        <h4>14.13.2. Auth modul</h4>
-
-        <p>
-            Az auth modul szinte minden más domén alapja.
-            Itt történik meg a rendszerbe való belépés,
-            a fiókok létrehozása,
-            az identitás igazolása
-            és a munkamenet életben tartása.
-            Dokumentációs szempontból ezt a modult mindig különösen részletesen kell karbantartani,
-            mert a felhasználók első valós rendszerélménye gyakran itt dől el.
-            Ha a regisztráció vagy login folyamat nem érthető,
-            túl hosszú,
-            túl sok mezőt kér,
-            vagy rosszul kommunikálja a hibákat,
-            akkor a termék elveszíti a legfontosabb korai érdeklődőket.
-        </p>
-
-        <p>
-            Fejlesztői szempontból az auth modul az egyik legnagyobb regressziós kockázatú terület.
-            Itt találkoznak a formvalidációk,
-            a backend auth szabályok,
-            a cookie vagy token kezelés,
-            az email verifikáció,
-            valamint az eltérő szerepkörök.
-            Emiatt minden új auth-hoz kapcsolódó változtatásnál különösen ajánlott a több rétegű tesztelés.
-        </p>
-
-        <h4>14.13.3. User modul</h4>
-
-        <p>
-            A user modul a diákoldali életciklus fő tere.
-            Itt nem egyetlen képernyőről van szó,
-            hanem egy teljes felhasználói narratíváról:
-            ki vagyok,
-            mit keresek,
-            hogyan mutatom be magam,
-            milyen állásokat találtam,
-            hová jelentkeztem,
-            és milyen visszajelzéseket kaptam.
-            Ebből következően ez a modul egyszerre tartalmaz adatbeviteli,
-            listázó,
-            analitikai
-            és kommunikációhoz kapcsolódó felületeket.
-        </p>
-
-        <p>
-            Az Orionnál a user modul értéke részben abból is fakad,
-            hogy nem csak passzív profilként kezeli a diákot,
-            hanem aktív szereplőként.
-            A kedvencek,
-            a jelentkezések,
-            a dashboard statisztikák
-            és a chat mind arra utalnak,
-            hogy a rendszer visszajelző hurkokat épít a felhasználó köré.
-            Ez növeli a platformon töltött időt,
-            és javítja a felhasználói döntéshozatalt.
-        </p>
-
-        <h4>14.13.4. Company modul</h4>
-
-        <p>
-            A céges modulnak egyszerre kell marketinges,
-            adminisztratív
-            és operatív feladatot ellátnia.
-            Egy cég számára nem elég,
-            hogy létrehozhat egy hirdetést.
-            Át kell látnia,
-            mennyire eredményesek a hirdetései,
-            kik jelentkeztek,
-            milyen állapotban vannak a jelöltek,
-            és milyen kommunikáció zajlik.
-            Ez indokolja,
-            hogy a modulon belül a dashboard,
-            a hirdetéskezelés
-            és az ATS különösen hangsúlyos.
-        </p>
-
-        <p>
-            Dokumentációs szempontból a company modulnál különösen hasznos lehet később folyamatábrákat is készíteni.
-            A céges döntési pontok ugyanis általában több lépésesek:
-            hirdetés publikálása,
-            jelentkezések áttekintése,
-            szűrés,
-            kapcsolatfelvétel,
-            döntés,
-            esetleges munkaviszonyba emelés.
-            Ez sokkal könnyebben érthető meg,
-            ha a jövőben vizuális folyamatábrák is kapcsolódnak ehhez a dokumentumhoz.
-        </p>
-
-        <h4>14.13.5. Chat modul</h4>
-
-        <p>
-            A chat modul az Orion egyik leginkább élményérzékeny eleme.
-            Egy jelentkezési platformnál a kommunikáció gyorsasága és közvetlensége közvetlenül befolyásolja,
-            hogy a felek mennyire érzik használhatónak a rendszert.
-            Ha a chat lassú,
-            nehezen követhető,
-            vagy nincs jól integrálva a jelentkezési folyamatokkal,
-            a felhasználók könnyen külső csatornákra vándorolnak át.
-        </p>
-
-        <p>
-            Technikai szemmel a chat azért is kiemelt terület,
-            mert több problématípust egyesít:
-            időrend,
-            partnerlista,
-            állapotfrissítés,
-            olvasottság,
-            új üzenetek megjelenítése,
-            esetleges értesítések,
-            és nagyobb üzenetszám esetén teljesítménykérdések.
-            Emiatt a chat modulhoz általában külön operatív és tesztelési ajánlások is indokoltak.
-        </p>
-
-        <h3>14.14. Release előtti ellenőrzési javaslat</h3>
-
-        <p>
-            Az Orion összetettsége miatt erősen javasolt minden jelentősebb kiadás előtt egy rövid,
-            de strukturált release checklist használata.
-            Ez nem csupán üzemeltetési formalitás,
-            hanem a regressziók korai kiszűrésének egyik legegyszerűbb eszköze.
-        </p>
-
-        <ol>
-            <li>Ellenőrizni kell, hogy a frontend build és a TypeScript fordítás hibamentes-e.</li>
-            <li>Futtatni kell az auth alapfolyamatait: login, logout, register, password reset.</li>
-            <li>Végig kell kattintani legalább egy diákoldali és egy céges alapfolyamatot.</li>
-            <li>Próbajelentkezéssel ellenőrizni kell az ATS-ben megjelenő rekordot.</li>
-            <li>Tesztelni kell a chat üzenetküldést és a partnerlista frissülését.</li>
-            <li>Meg kell nézni, hogy a rendszerüzenetek megjelennek-e és jelölhetők-e olvasottnak.</li>
-            <li>Érdemes próbálni egy dokumentumfeltöltési vagy dokumentumkezelési műveletet is.</li>
-            <li>Ellenőrizni kell a fontos környezeti változók elérhetőségét és a szerverindítást.</li>
-            <li>Publikus oldalaknál ajánlott legalább egy gyors Lighthouse vagy kézi teljesítményellenőrzés.</li>
-        </ol>
-
-        <h3>14.15. Architektúra-olvasási útmutató vezetőknek és új belépőknek</h3>
-
-        <p>
-            Nem minden olvasó ugyanabból a szempontból érkezik ehhez a dokumentumhoz.
-            Egy új fejlesztő tipikusan implementációs részleteket keres,
-            egy technikai vezető inkább a réteghatárokra,
-            a kockázatokra
-            és a skálázhatóságra kíváncsi,
-            egy product vagy operations szereplő pedig azt szeretné látni,
-            hogyan támogatja a technikai struktúra a fő üzleti folyamatokat.
-        </p>
-
-        <p>
-            Emiatt ezt a dokumentumot háromféle olvasási sorrendben is lehet használni.
-            Új fejlesztőknek a 2.,
-            3.,
-            5.,
-            6.,
-            7.
-            és 9. fejezet adja a legjobb belépést.
-            Technikai vezetőknek a 3.,
-            4.,
-            7.,
-            10.
-            és 12. fejezet a leghasznosabb.
-            Product szemléletű olvasóknak pedig a 2.,
-            5.,
-            8.
-            és 9. fejezet fogja a legjobban összekötni a termékígéretet a megvalósítással.
-        </p>
-
-        <p>
-            Ez a többnézőpontú használhatóság volt az egyik fő oka annak,
-            hogy az új dokumentum nem rétegek szerint kettéválasztva,
-            hanem teljes rendszernarratívaként készült el.
-            Így ugyanaz a dokumentum eltérő mélységben,
-            de többféle szerepkör számára is használható.
-        </p>
 
         <div class="footer">
             Orion teljes rendszerdokumentáció.
