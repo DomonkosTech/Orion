@@ -860,190 +860,221 @@ Kérés a backend felé
     ↓
 Siker vagy hiba állapot vizuális visszajelzése</code></pre>
 
-        <h2 id="sec6">6. Backend architektúra</h2>
-
-        <div class="tldr-box">
-            <strong>TL;DR:</strong> Az <strong>Express szerver</strong> doménvezérelt felépítésű, amely a klasszikus API-k mellett nagy teljesítményű valós idejű kommunikációt is kiszolgál. A tiszta útvonalstruktúra, az integrált middleware-ek és a dedikált szolgáltatási rétegek (például auth, user, company) átlátható felelősségi köröket és biztonságos, skálázható architektúrát eredményeznek.
-        </div>
-
-        <h3>6.1. Szerver bootstrap és alapkonfiguráció</h3>
-
-        <p>
-            A <code>src/server/server.ts</code> fájl alapján a szerverindítás folyamata tömör,
-            de jól értelmezhető.
-            A szerver betölti a környezeti változókat,
-            inicializálja az Express alkalmazást,
-            bekapcsolja a JSON parsolást,
-            a cookie-kezelést
-            és a CORS-t.
-            Ezt követően a route modulok külön mountpontokra kerülnek,
-            majd a HTTP szerverre épül rá a realtime alrendszer.
-        </p>
-
-        <pre><code>dotenv.config()
-express.json()
-cookieParser()
-cors({ origin: "http://localhost:5173", credentials: true })
-
-app.use("/Api/auth", authRoutes)
-app.use("/Api/users", userRoutes)
-app.use("/Api/companies", companyRoutes)
-app.use("/Api", advertisementRoutes)
-app.use("/Api", applicantRoutes)
-app.use("/Api/notifications", systemmessageRoute)
-app.use("/Api/auth", emailRoute)
-app.use("/Api/messages", messageRoute)
-app.use("/Api", OrionAIRoute)
-
-setupRealtime(server)
-server.listen(4000)</code></pre>
-
-        <h3>6.2. Szerveroldali modulok és végpontok</h3>
-
-        <p>A szerver moduláris felépítése lehetővé teszi az egyes üzleti területek elkülönített kezelését. Alább láthatók a főbb modulok és a hozzájuk tartozó API végpontok.</p>
-
-        <h4>Auth Modul</h4>
-        <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglaló</th></tr>
-            <tr><td><code>/login</code></td><td>login</td><td>Felhasználói bejelentkezés (diák/cég)</td></tr>
-            <tr><td><code>/register</code></td><td>register</td><td>Új regisztráció indítása</td></tr>
-            <tr><td><code>/logout</code></td><td>logout</td><td>Session lezárása</td></tr>
-            <tr><td><code>/status</code></td><td>checkStatus</td><td>JWT token érvényesség ellenőrzése</td></tr>
-        </table>
-
-        <h4>User Modul</h4>
-        <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglaló</th></tr>
-            <tr><td><code>/profile</code></td><td>getProfile</td><td>Bejelentkezett diák adatainak lekérése</td></tr>
-            <tr><td><code>/update-profile</code></td><td>updateProfile</td><td>Profiladatok módosítása</td></tr>
-            <tr><td><code>/upload-cv</code></td><td>uploadCV</td><td>Önéletrajz feltöltése és tárolása</td></tr>
-            <tr><td><code>/documents</code></td><td>getDocs</td><td>Titkosított okmányok biztonságos lekérdezése</td></tr>
-        </table>
-
-        <h4>Company Modul</h4>
-        <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglaló</th></tr>
-            <tr><td><code>/dashboard</code></td><td>getStats</td><td>Céges statisztikák és dashboard adatok</td></tr>
-            <tr><td><code>/profile</code></td><td>getCompProfile</td><td>Cégadatok lekérése</td></tr>
-            <tr><td><code>/applicants</code></td><td>listApplicants</td><td>Jelentkezők listázása és szűrése</td></tr>
-        </table>
-
-        <h4>Advertisement & Applicant</h4>
-        <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglaló</th></tr>
-            <tr><td><code>/ads</code></td><td>listAds</td><td>Hirdetések listázása (lapozással)</td></tr>
-            <tr><td><code>/apply</code></td><td>submitApp</td><td>Jelentkezés elküldése egy hirdetésre</td></tr>
-            <tr><td><code>/status-update</code></td><td>updateStat</td><td>Jelentkezés állapotának módosítása (ATS)</td></tr>
-        </table>
-
-        <h4>Messages & Notifications</h4>
-        <table>
-            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglaló</th></tr>
-            <tr><td><code>/chat-partners</code></td><td>getPartners</td><td>Beszélgetőpartnerek listájának lekérése</td></tr>
-            <tr><td><code>/history</code></td><td>getMessages</td><td>Üzenetváltások előzményeinek betöltése</td></tr>
-            <tr><td><code>/system</code></td><td>getNotifications</td><td>Rendszerüzenetek listázása</td></tr>
-        </table>
-
-        <h3>6.3. Middleware és kéréséletciklus</h3>
-
-        <p>
-            Az Orion rendszerében az <code>auth.ts</code> middleware kiemelt szerepet kap.
-            Feladata a tokenek és munkamenetek ellenőrzése, az identitás kinyerése,
-            valamint a jogosultságok érvényesítése.
-            Mivel a platformon <strong>kizárólag két szereplő – diákok és cégek – van jelen</strong>,
-            a middleware gondoskodik arról, hogy a specifikus útvonalakhoz (route-okhoz) csak az adott célcsoport,
-            a megosztott funkciókhoz pedig mindkét autentikált fél hozzáférjen.
-        </p>
-
-        <h3>6.4. Realtime szerver</h3>
-
-        <p>
-            A <code>RealtimeServer.ts</code> megléte azt mutatja,
-            hogy a rendszer nem csupán kérés-válasz modellben működik.
-            Az üzenetküldés és bizonyos értesítési folyamatok esetében
-            a felhasználói élmény csak akkor lesz versenyképes,
-            ha nem kell minden frissítésért manuális újratöltés vagy periodikus polling.
-            A realtime réteg ezért valószínűleg a chat és esetleges státuszfrissítések környezetében játszik fontos szerepet.
-        </p>
-
-        <h3>6.5. Backend architektúra erősségei</h3>
-
+        <h2 id="sec6">6. Backend Szerver Architektúra (src/server)</h2>
+        <p>A szerver Node.js és Express.js alapokon fut, Typescript nyelven írva. A fő belépési pont a <code>server.ts</code>, ahol az Express alkalmazás beállítása (CORS, Cookie-parser), a végpontok mountolása és a WebSocket szerver inicializálása történik. A port alapértelmezetten a <code>4000</code>.</p>
+        
+        <h3 id="sec6-1">6.1. Middleware és Realtime</h3>
+        <h4><code>auth.ts</code> (Middleware)</h4>
+        <p>Összefoglalás: A kliensek (felhasználók és cégek) authentikációját és jogosultság-ellenőrzését végző biztonsági réteg.</p>
         <ul>
-            <li>A route és service szétválasztás jól olvasható felelősségi határokat ad.</li>
-            <li>A doménalapú modulok közel állnak a felhasználói folyamatokhoz.</li>
-            <li>A szerver képes klasszikus API-kat és realtime működést is biztosítani.</li>
-            <li>A tárolt eljárások használata bizonyos üzleti logikákban csökkentheti a többszörös round-trip költséget.</li>
-            <li>Az OrionAI külön modulba szervezése megőrzi a rendszer fő ágának tisztaságát.</li>
+            <li><strong>Folyamat:</strong></li>
+            <li>1. A <code>verifyToken</code> kiolvassa a HTTP-only <code>auth_token</code> sütiből a JSON Web Token-t.</li>
+            <li>2. Érvényesíti a JWT aláírást, majd a kinyert adatokat (<code>userId</code>, <code>companyId</code>, <code>userType</code>) az Express <code>Request</code> objektumába csatolja.</li>
+            <li>3. A <code>verifyUser</code> és <code>verifyCompany</code> ellenőrzi, hogy a tokenből kinyert azonosító valóban létezik-e az adatbázisban, megakadályozva a törölt fiókkal való hozzáférést.</li>
+        </ul>
+
+        <h4><code>RealtimeServer.ts</code> (WebSocket)</h4>
+        <p>Összefoglalás: Valós idejű WebSocket szerver a chat üzenetek azonnali kézbesítésére.</p>
+        <ul>
+            <li><strong>Folyamat:</strong></li>
+            <li>1. <code>ws</code> könyvtár segítségével WebSocket szervert hoz létre.</li>
+            <li>2. Feliratkozik a Supabase <code>postgres_changes</code> csatornán a <code>messages</code> tábla új (INSERT) eseményeire.</li>
+            <li>3. Új adatbázis bejegyzés esetén a payloadot rápumpálja az összes aktív WebSocket kliensnek (Broadcast).</li>
+        </ul>
+
+        <h3 id="sec6-2">6.2. API Végpontok és Szolgáltatások (Routes &amp; Services)</h3>
+
+        <h4>Auth Modul (<code>authRoute.ts</code> / <code>authService.ts</code>)</h4>
+        <p>A felhasználók és cégek bejelentkezését, regisztrációját és token ellenőrzését végzi a rendszer.</p>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
+            <tr><td><code>POST /Api/auth/user/login</code></td><td><code>loginUser</code></td><td>Felhasználói bejelentkezést kezel, JWT sütit állít be.</td></tr>
+            <tr><td><code>POST /Api/auth/user/register</code></td><td><code>registerUser</code></td><td>Új felhasználót regisztrál, elmentve a titkosított adatokat.</td></tr>
+            <tr><td><code>POST /Api/auth/company/login</code></td><td><code>loginCompany</code></td><td>Céges bejelentkezést kezel, JWT sütit állít be.</td></tr>
+            <tr><td><code>POST /Api/auth/company/register</code></td><td><code>registerCompany</code></td><td>Új munkáltatót regisztrál az adatbázisba.</td></tr>
+            <tr><td><code>POST /Api/auth/logout</code></td><td>–</td><td>Törli az 'auth_token' cookie-t, kijelentkeztetve a felhasználót.</td></tr>
+            <tr><td><code>GET /Api/auth/status</code></td><td><code>verifyToken</code></td><td>Ellenőrzi a hitelesítési státuszt és visszaadja a profil típusát.</td></tr>
+        </table>
+        <ul>
+            <li><strong>Felhasználói Login folyamat:</strong><br/>1. Megadott adatok validálása Zod-dal. 2. A <code>users</code> táblából email alapján a hashelt jelszó lekérése. 3. <code>bcrypt.compare</code> használatával jelszó egyezés ellenőrzése. 4. Fiók aktivációs státusz vizsgálata. 5. JWT token (<code>auth_token</code>) generálása és beállítása kliens sütiként.</li>
+            <li><strong>Céges Login folyamat:</strong><br/>1. Ugyanaz a validáció és bcrypt ellenőrzés, de a <code>companies</code> táblán. 2. A generált JWT tokenben a <code>userType: 'company'</code> érték szerepel.</li>
+            <li><strong>Felhasználó Regisztrációs folyamat:</strong><br/>1. Bemeneti validáció. 2. Jelszó hashelése <code>bcrypt</code> segítségével. 3. A <code>register_user_v1</code> RPC meghívása, mely végrehajtja a titkosítást és adatbázis beillesztést egy tranzakcióban.</li>
+            <li><strong>Cég Regisztrációs folyamat:</strong><br/>1. Bemeneti validáció. 2. Jelszó hashelése <code>bcrypt</code>-tel. 3. A <code>register_company_v1</code> tranzakcionális RPC futtatása a biztos adatkezelés érdekében.</li>
+            <li><strong>Logout (kijelentkezés) folyamat:</strong><br/>1. A <code>clearCookie('auth_token')</code> hívással a szerver törli a böngésző hitelesítő sütijét.</li>
+            <li><strong>Verify Token (státusz ellenőrzés) folyamat:</strong><br/>1. A kérés sütijéből kinyeri a JWT-t. 2. Érvényesíti azt. 3. Visszaadja a dekódolt tokent (benne a userType-al és ID-val), hogy a kliens tudja, érvényes-e a bejelentkezése.</li>
+        </ul>
+
+        <h4>Felhasználó Modul (<code>userRoute.ts</code> / <code>userService.ts</code>)</h4>
+        <p>A diákok profil-alapadatait, statisztikáit, CV-jeit (önéletrajz) és elmentett hirdetéseit (kedvencek) kezeli.</p>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
+            <tr><td><code>GET /Api/users/me</code></td><td><code>getUserProfile</code></td><td>Visszaadja a felhasználó alapadatokat, visszafejti az okmányokat és jelzi, ha van feltöltve CV.</td></tr>
+            <tr><td><code>PATCH /Api/users/me</code></td><td><code>updateUserProfile</code></td><td>Frissíti a felhasználói profilt és újra-titkosítja a frissített okmányokat.</td></tr>
+            <tr><td><code>POST /Api/users/me/resume</code></td><td><code>uploadResume</code></td><td>Egy darab (max 5MB) önéletrajz fájt tölt fel a Supabase Storage-be.</td></tr>
+            <tr><td><code>DELETE /Api/users/me/resume</code></td><td><code>deleteResume</code></td><td>Véglegesen törli a felhasználó önéletrajzát a tárolóból.</td></tr>
+            <tr><td><code>GET /Api/users/me/stats</code></td><td><code>getUserDashboardData</code></td><td>Egységesített dashboard statisztikákat (RPC-vel jelentkezések, nézettség) kér le.</td></tr>
+            <tr><td><code>GET /Api/users/me/resume</code></td><td><code>getResumeUrl</code></td><td>Ideiglenes letöltési linket generál a tárolt CV-hez.</td></tr>
+            <tr><td><code>POST /Api/users/me/favorites</code></td><td><code>addFavorite</code></td><td>Felvesz egy álláshirdetést a kedvencek listájába.</td></tr>
+            <tr><td><code>GET /Api/users/me/favorites</code></td><td><code>getFavorites</code></td><td>Lekéri a kedvelt hirdetések ID-jait vagy teljes listáját.</td></tr>
+            <tr><td><code>DELETE /Api/users/me/favorites/:id</code></td><td><code>removeFavorite</code></td><td>Eltávolít egy hirdetést a kedvencekből.</td></tr>
+            <tr><td><code>POST /Api/users/:id/views</code></td><td><code>incrementProfileViews</code></td><td>Megtekintéskor megnöveli a profil látogatottsági mutatóját (RPC).</td></tr>
+        </table>
+        <ul>
+            <li><strong>Profil lekérés folyamat:</strong><br/>1. Adatbázis keresés a <code>users</code> táblában UserId alapján. 2. A <code>get_decrypted_documents</code> RPC meghívásával a személyes adatok (titkosítás) biztonságos visszafejtése. 3. Feltöltött CV meglétének ellenőrzése a Storageből.</li>
+            <li><strong>Profil frissítés folyamat:</strong><br/>1. A validált bejövő adatok (név, cím, suli) alapján a <code>users</code> tábla felülírása és egyidejűleg az encrypting RPC lefutása az új adatokkal.</li>
+            <li><strong>CV feltöltés folyamat:</strong><br/>1. Ellenőrzi, hogy van-e már CV. Ha igen, hiba. 2. A fájlnév biztonságos normalizálása. 3. A fájl buffer feltöltése a <code>resumes</code> Supabase bucket-be, a felhasználó ID-val megegyező mappába.</li>
+            <li><strong>CV törlés folyamat:</strong><br/>1. Felhasználó létezésének ellenőrzése. 2. Fájl törlése a Storageből a mappa azonosításával.</li>
+            <li><strong>CV lekérés (User Resume URL) folyamat:</strong><br/>1. Ellenőrzi a CV meglétét. 2. A Supabase <code>createSignedUrl</code> hívásával ideiglenes (lejárattal rendelkező) linket generál a fájl letöltéséhez.</li>
+            <li><strong>Statisztika lekérés folyamata:</strong><br/>1. A <code>get_user_dashboard_stats</code> RPC függvény hívása, amely begyűjti az értesítések, kedvencek és látogatók számát aggregálva.</li>
+            <li><strong>Kedvenc hozzáadása folyamat:</strong><br/>1. Megvizsgálja, hogy létezik-e a hirdetés és még nem kedvenc-e. 2. Beszúr egy új rekordot a <code>favorites</code> táblába <code>(user_id, advertisement_id)</code> párossal.</li>
+            <li><strong>Kedvencek lekérése folyamat:</strong><br/>1. Csatlakozik a <code>favorites</code> és <code>advertisement</code> táblákhoz a felhasználó azonosítója alapján. 2. Formázott listával tér vissza.</li>
+            <li><strong>Kedvenc törlése folyamat:</strong><br/>1. A hirdetés ID és User ID alapján megkeresi és törli a vonatkozó bejegyzést a <code>favorites</code> táblából.</li>
+            <li><strong>Profil megtekintés növelése folyamat:</strong><br/>1. Más (például egy cég) hívja meg. 2. A <code>increment_profile_views</code> automatikusan eggyel lépteti a nézettség (view_count) mezőt a statisztika táblában.</li>
+        </ul>
+
+        <h4>Cég Modul (<code>companyRoute.ts</code> / <code>companyService.ts</code>)</h4>
+        <p>A munkáltatói cégek profiljainak es statisztikáinak lekérése, és az újonnan felvett alkalmazottak (diákok) kezelése.</p>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
+            <tr><td><code>GET /Api/companies/me</code></td><td><code>getCompanyProfile</code></td><td>Lekéri az adott cég nyilvános profilját és adatait.</td></tr>
+            <tr><td><code>PATCH /Api/companies/me</code></td><td><code>updateCompanyProfile</code></td><td>Szerkeszti az aktuális cég bemutatkozását és címadatait.</td></tr>
+            <tr><td><code>GET /Api/companies/me/stats</code></td><td><code>getCompanyStats</code></td><td>Statisztikát (RPC) és a 4 legfrissebb jelentkezést állítja össze.</td></tr>
+            <tr><td><code>GET /Api/companies/me/employees</code></td><td><code>getEmployees</code></td><td>Visszaadja a felvett, céghez tartozó diákok (munkavállalók) listáját.</td></tr>
+            <tr><td><code>DELETE /Api/companies/me/employees/:id</code></td><td><code>deleteEmployee</code></td><td>Töröl egy aktív alkalmazottat a cégtől, és automatikusan küld is neki erről egy rendszerüzenetet (értesítést).</td></tr>
+        </table>
+        <ul>
+            <li><strong>Profil lekérés folyamata:</strong><br/>1. A <code>companyId</code> kinyerése a tokenből. 2. A <code>companies</code> tábla megfelelő sorának lekérése.</li>
+            <li><strong>Profil frissítés folyamata:</strong><br/>1. A <code>companyId</code> kinyerése a tokenből. 2. A <code>companies</code> tábla megfelelő sorának módosítása a kapott adatokkal.</li>
+            <li><strong>Statisztika lekérés folyamata:</strong><br/>1. <code>get_company_dashboard_stats</code> RPC hívása a fő KPI-ok (megtekintés, jelentkezők) eléréséhez.</li>
+            <li><strong>Alkalmazottak lekérése folyamata:</strong><br/>1. Az <code>employees</code> táblából az aktuális munkavállalók lekérése joinolva a user adatokkal.</li>
+            <li><strong>Alkalmazott törlése folyamata:</strong><br/>1. Törlés esetén az alkalmazott kikerül az <code>employees</code> táblából. 2. Rendszerüzenetet generál a törölt alkalmazott számára.</li>
+        </ul>
+
+        <h4>Hirdetések (<code>advertisementRoute.ts</code> / <code>advertisementService.ts</code>)</h4>
+        <p>Az álláshirdetések életciklusának menedzselése.</p>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
+            <tr><td><code>POST /Api/advertisements</code></td><td><code>createAdvertisement</code></td><td>Új álláshirdetést hoz létre a limitszabályozás ellenőrzése (max 3/cég) után.</td></tr>
+            <tr><td><code>GET /Api/advertisements</code></td><td><code>getAllAdvertisements</code></td><td>Lekéri az összes, jelenleg aktív státuszú álláshirdetést.</td></tr>
+            <tr><td><code>GET /Api/advertisements/:id</code></td><td><code>getAdvertisementById</code></td><td>Egy konkrét álláshirdetés teljes részletes lekérése, beleértve a cégnevet is.</td></tr>
+            <tr><td><code>GET /Api/companies/me/advertisements</code></td><td><code>getCompanyAdvertisements</code></td><td>Lekéri a munkáltató (cég) által feladott saját hirdetéseket.</td></tr>
+            <tr><td><code>PATCH /Api/advertisements/:id</code></td><td><code>updateAdvertisement</code></td><td>Módosítja egy állás paramétereit (leírás, órabér stb.).</td></tr>
+            <tr><td><code>PATCH /Api/advertisements/:id/status</code></td><td><code>updateAdvertisementStatus</code></td><td>Be-/Kikapcsolja egy hirdetés aktív/inaktív állapotát.</td></tr>
+            <tr><td><code>GET /Api/advertisements/search</code></td><td><code>searchAdvertisements</code></td><td>Teljes szöveges keresést, bér- és városszűrést valósít meg lapozással.</td></tr>
+            <tr><td><code>GET /Api/advertisements/top3</code></td><td><code>getTopAdvertisements</code></td><td>Visszaadja a 3 legfrissebb aktív állást (főoldalra).</td></tr>
+            <tr><td><code>PATCH /Api/advertisements/:id/views</code></td><td><code>incrementClickCount</code></td><td>Az (RPC) automatikusan inkrementálja a hirdetés nézettségét (kattintás).</td></tr>
+        </table>
+        <ul>
+            <li><strong>Hirdetés létrehozása folyamata:</strong><br/>1. Validációk (kötelező mezők, negatív bér kiszűrése). 2. Hirdetési limit ellenőrzése (max 3 aktív). 3. Beszúrás az <code>advertisement</code> táblába.</li>
+            <li><strong>Összes hirdetés lekérése folyamata:</strong><br/>1. Lekéri az összes aktív státuszú hirdetést csatolva a cégadatokat (név, logo) a főoldali listához.</li>
+            <li><strong>Egy hirdetés lekérése folyamata:</strong><br/>1. Adott azonosítójú hirdetés részletes adatainak lekérése a <code>advertisement</code> táblából a céges adatokkal joinolva.</li>
+            <li><strong>Saját hirdetések lekérése folyamata:</strong><br/>1. A hitelesített cég összes (aktív és inaktív) hirdetésének lekérdezése az adminisztrációhoz.</li>
+            <li><strong>Hirdetés frissítése folyamata:</strong><br/>1. A bejövő módosítások validálása. 2. Meglévő hirdetés adatainak felülírása az adatbázisban.</li>
+            <li><strong>Hirdetés státusz frissítése folyamata:</strong><br/>1. Átkapcsolja az aktív/inaktív (true/false) jelzőt, így levéve vagy visszatéve a hirdetést a publikus listákba.</li>
+            <li><strong>Keresés folyamata:</strong><br/>1. A <code>searchAdvertisements</code> összetett lekérdezést épít fel (Title keresés ILIKE-al, bérminimum, lokációszűrés). 2. Pagination (lapozás) alkalmazása.</li>
+            <li><strong>Top 3 hirdetés lekérése folyamata:</strong><br/>1. Visszaadja a 3 legfrissebb aktív állást limitálva, a főoldali kiemeléshez.</li>
+            <li><strong>Megtekintés (View) növelés folyamata:</strong><br/>1. Kattintás esetén az <code>increment_click_count</code> RPC fut le, atomi módon növelve a nézettséget.</li>
+        </ul>
+
+        <h4>Jelentkezések (<code>applicantRoute.ts</code> / <code>applicantService.ts</code>)</h4>
+        <p>A diákok jelentkezési folyamata és a cégek felvételi/elutasítási logikája.</p>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
+            <tr><td><code>POST /Api/applications</code></td><td><code>submitApplication</code></td><td>A felhasználó jelentkezik egy aktív hirdetésre; rekord készül a <code>job_applications</code>-ben.</td></tr>
+            <tr><td><code>GET /Api/users/me/applications</code></td><td><code>getUserApplications</code></td><td>Lekéri a diák leadott jelentkezéseit (státuszokkal) és az aktív munkakapcsolatait (alkalmazott).</td></tr>
+            <tr><td><code>GET /Api/advertisements/:id/applications</code></td><td><code>getApplicantsForAdvertisement</code></td><td>Lekéri egy állás összes beküldött jelentkezőjét a cég számára, diák adatokkal és önéletrajzuk elérhetőségével.</td></tr>
+            <tr><td><code>PATCH /Api/applications/:id/status</code></td><td><code>acceptApplication</code>/<code>rejectApplication</code></td><td>Elutasítja (rejected) vagy felveszi (accepted) a jelentkezőt az állásra.</td></tr>
+            <tr><td><code>GET /Api/applications/:id/resume</code></td><td><code>getApplicantResumeUrl</code></td><td>A cég letöltheti a diák CV-jét (jogosultság-ellenőrzéssel egybekötve). Itt kerül felszámolásra egy Resume-view a diáknak.</td></tr>
+        </table>
+        <ul>
+            <li><strong>Jelentkezés (Submit) folyamat:</strong><br/>1. Új rekord beszúrása a <code>job_applications</code> táblába <code>submitted</code> státusszal. 2. Megakadályozza a duplikált jelentkezést.</li>
+            <li><strong>Felhasználó jelentkezéseinek lekérése folyamat:</strong><br/>1. Lekéri a diák összes beadott jelentkezését és azok státuszát, joinolva a hirdetés- és cégadatokkal.</li>
+            <li><strong>Hirdetés jelentkezőiknek lekérése folyamat:</strong><br/>1. Lekéri az adott hirdetésre érkezett összes jelentkezést a diákprofilokkal együtt a cég felülete számára.</li>
+            <li><strong>Elfogadás (Accept) folyamat:</strong><br/>1. Ellenőrzi a cég jogosultságát. 2. A <code>employees</code> táblában (alkalmazottként) regisztrálja a diákot. 3. A jelentkezés státuszát <code>accepted</code>-re állítja. 4. Értesítő rendszerüzenetet generál.</li>
+            <li><strong>Elutasítás (Reject) folyamat:</strong><br/>1. A jelentkezés státuszát <code>rejected</code>-re állítja alkalmazott generálás nélkül. 2. Rendszerüzenetet küld az elutasításról a diáknak.</li>
+            <li><strong>Jelentkező önéletrajzának lekérése folyamat:</strong><br/>1. Ellenőrzi a cég jogosultságát a konkrét jelentkező felett. 2. Ideiglenes linket generál a diák CV-jéhez a Storage-ből. 3. Felszámol egy Resume-view megtekintést a felhasználó javára.</li>
+        </ul>
+
+        <h4>Kommunikáció (<code>messageRoute.ts</code> / <code>messageService.ts</code>)</h4>
+        <p>A privát chat üzenetek és chatpartnerek (conversations) adatbázis műveletei.</p>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
+            <tr><td><code>GET /Api/messages/conversations</code> (User/Company)</td><td><code>getUserChatPartners</code> / <code>getCompany...</code></td><td>Lekérdezi az aktív beszélgetéseket és kivel van levelezése az adott fióknak.</td></tr>
+            <tr><td><code>GET /Api/messages/conversations/:id</code></td><td><code>getChatMessages</code></td><td>Betölti egy adott cég/diák páros chatelőzményét (és a bejövő üzeneteket <code>is_read=true</code>-ra állítja).</td></tr>
+            <tr><td><code>POST /Api/messages</code></td><td><code>sendMessage</code></td><td>Új chat üzenetet szúr be a <code>messages</code> táblába. (Ezután a RealtimeServer kiküldi WebSocketeken).</td></tr>
+        </table>
+        <ul>
+            <li><strong>Beszélgetőpartnerek lekérése:</strong><br/>1. Megállapítja a hívó típusát (Cég vagy User). 2. RPC hívással (<code>get_user_chat_partners</code> vagy <code>get_company_chat_partners</code>) kigyűjtik az egyedi beszélgetőpartnereket az utolsó üzenettel és időbélyeggel.</li>
+            <li><strong>Chat előzmények lekérése:</strong><br/>1. Betölti az adott partnerek közötti korábbi üzenetváltásokat lapozható formában. 2. Ezzel egy időben a rá vonatkozó olvasatlan (is_read=false) üzenetek státuszát true-ra frissíti az adatbázisban.</li>
+            <li><strong>Üzenetküldés folyamata:</strong><br/>1. A <code>messages</code> táblába egy új üzenet rekord beszúrása (ki küldte, kinek, tartalom, típus). 2. A háttérben futó RealtimeServer WebSocketen keresztül ("Broadcast") azonnal továbbítja az élő kliensek felé.</li>
+        </ul>
+
+        <h4>Rendszerüzenetek (<code>systemmessageRoute.ts</code> / <code>systemmessageService.ts</code>)</h4>
+        <p>Automatizált adminisztratív vagy eseménynative értesítések kezelése.</p>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
+            <tr><td><code>GET /Api/notifications</code></td><td><code>getUserSystemMessages</code></td><td>Lekéri az el nem olvasott értesítéseket.</td></tr>
+            <tr><td><code>PATCH /Api/notifications/:id/read</code></td><td><code>markSystemMessageAsRead</code></td><td>Olvasottnak jelöl egy rendszerüzenetet (beszúr egy <code>system_message_reads</code> sort).</td></tr>
+        </table>
+        <ul>
+            <li><strong>Értesítések listázása folyamat:</strong><br/>1. Lekéri azokat az üzeneteket a <code>system_messages</code> táblából, amik a célnak (<code>USER / COMPANY / ALL</code>) szólnak. 2. Filtereléssel (a <code>system_message_reads</code> ellenőrzésével) csak az olvasatlan értesítéseket adja vissza.</li>
+            <li><strong>Értesítés olvasottnak jelölése folyamat:</strong><br/>1. A <code>markSystemMessageAsRead</code> az adott üzenet ID-ját és a kliens ID-ját felhasználva beszúr egy rekordot a <code>system_message_reads</code> pivot táblába, eltüntetve azt a listából.</li>
+        </ul>
+
+        <h4>Email Hitelesítés &amp; Jelszó (<code>emailRoute.ts</code> / <code>emailService.ts</code>)</h4>
+        <p>A fiók aktiválási folyamatok és elfelejtett jelszavas emailek a Nodemailer használatával.</p>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
+            <tr><td><code>POST /Api/auth/.../verify-email</code></td><td><code>send...ActivationEmail</code></td><td>Ideiglenes JWT aktiváló tokent és URL-t generál, és elküldi Nodemailerrel.</td></tr>
+            <tr><td><code>PATCH /Api/auth/.../verify-email</code></td><td><code>activate...Account</code></td><td>A token validációja után a felhasználó <code>activated=true</code> állapotba kerül.</td></tr>
+            <tr><td><code>POST /Api/auth/.../forgot-password</code></td><td><code>send...PasswordResetEmail</code></td><td>Ideiglenes jelszóvisszaállító token(URL) küldése.</td></tr>
+            <tr><td><code>PATCH /Api/auth/.../reset-password</code></td><td><code>saveNew...Password</code></td><td>Hasheli és elmenti az új jelszót, majd invalidálja a tokent.</td></tr>
+        </table>
+        <ul>
+            <li><strong>Hitelesítő Email küldés folyamata:</strong><br/>1. Generál egy lejárattal rendelkező JWT tokent. 2. Eltárolja az adatbázisban (<code>user_email_tokens</code> / <code>company_email_tokens</code>) az UPSERT elv alapján. 3. Nodemailer-en (Gmail SMTP) keresztül elküldi az aktiváló linket.</li>
+            <li><strong>Fiók aktiválás folyamata:</strong><br/>1. A kliens végpontja ellenőrzi a tokent az URL-ből. 2. Validáció után módosítja az adatbázist (<code>activated=true</code> állapotba léptetve a fiókot). 3. Törli az egyszer használatos tokent.</li>
+            <li><strong>Jelszóvisszaállítási Email küldés folyamata:</strong><br/>1. A megadott email alapján token generálása és adatbázisba mentése. 2. Biztonságos visszaállító link kiküldése Nodemailerrel.</li>
+            <li><strong>Új jelszó beállítása folyamat:</strong><br/>1. A visszaállító token és az új jelszó validálása. 2. Az új jelszó hashelése <code>bcrypt</code> segítségével. 3. A <code>password_hash</code> frissítése az adatbázisban. 4. A felhasznált token törlése.</li>
+        </ul>
+        
+        <h4>OrionAI (<code>OrionAIRoute.ts</code> / <code>OrionAI.py</code>)</h4>
+        <p>Az NLP alapú állásajánló modul a Python/FastAPI mikroszolgáltatásból és a Node Router hídból épül fel.</p>
+        <table>
+            <tr><th>Végpont</th><th>Függvény</th><th>Összefoglalás</th></tr>
+            <tr><td><code>POST /Api/OrionAI</code></td><td><code>OrionAI.py</code> API hívás / <code>getAdvertisementsByIds</code></td><td>Továbbítja a kliens "mit dolgozna" szövegét a Python API-nak, majd lekéri a pontszámítás alapján visszakapott Top 10 azonosítót az adatbázisból.</td></tr>
+        </table>
+        <ul>
+            <li><strong>Működési mechanizmus (<code>OrionAI.py</code>):</strong><br/>1. Elindít egy önálló API-t lokálisan (<code>8000</code>). 2. Közvetlen lekéri az összes aktív hirdetést a Supabase DB-ből. 3. Szűri a kötőszavakat, lemmatizálja a bemeneti magyar szöveget, leválasztja a lokációkat. 4. <code>paraphrase-multilingual-MiniLM-L12-v2</code> NLP modellel szemantikus (cosine) similaritást és pontszámot kalkulál. 5. Súlyozás: Szöveges egyezés (65%), Bér (20%), Helyszín (15%). 6. Visszaadja az optimális lista azonosítóit.</li>
         </ul>
 
         <h2 id="sec7">7. Adatmodell és adatbázislogika</h2>
 
-        <div class="tldr-box">
-            <strong>TL;DR:</strong> A relációs adatbázis-modell és az <strong>adatbázis-szintű logikák</strong> (RPC, triggerek) garantálják az adatok integritását és a rendszerszintű biztonságot. Az architektúra négy fő doménre bontja az adatokat (felhasználók, cégek, hirdetések, kommunikáció), míg a titkosítási eljárások és a komplex lekérdezések közvetlenül a Supabase PostgreSQL motorjában futnak a maximális teljesítmény érdekében.
+        <h3 id="sec7-1">7.1. Technológiai Háttér (Supabase / PostgreSQL)</h3>
+        <h4>Miért a Supabase / PostgreSQL?</h4>
+        <p>A projekt adatbázis-motorjaként és backend szolgáltatásaként a <strong>Supabase</strong> platformot használjuk, amely egy nyílt forráskódú PostgreSQL-alapú megoldás. Főbb indokok:</p>
+        <ul>
+            <li><span class="tech-tag">PostgreSQL Alapok</span> Robusztus, relációs adatbázis; kiváló teljesítmény, megbízhatóság és tranzakciókezelés.</li>
+            <li><span class="tech-tag">Biztonság és Titkosítás</span> Beépített <code>pgcrypto</code> bővítmény: a szenzitív adatok (személyi igazolvány, lakcímkártya) adatbázis-szintű szimmetrikus titkosítással (<code>pgp_sym_encrypt</code>) tárolódnak.</li>
+            <li><span class="tech-tag">Gyors Backend Fejlesztés</span> Automatikus REST és GraphQL API generálás, valós idejű (real-time) feliratkozások – ez utóbbi elengedhetetlen a beépített chat funkcióhoz.</li>
+            <li><span class="tech-tag">Beépített Auth és RLS</span> Row Level Security: a jogosultságkezelés közvetlenül az adatbázis rétegben valósul meg.</li>
+            <li><span class="tech-tag">PL/pgSQL RPC</span> Az üzleti logika egy része tárolt eljárásokban él, minimalizálva a hálózati round-trip-ek számát.</li>
+        </ul>
+
+        <div class="highlight-box">
+            <strong>Kiterjesztés:</strong> <code>CREATE EXTENSION IF NOT EXISTS pgcrypto;</code> — a titkosított dokumentumok tárolásához szükséges kiterjesztés. Minden Supabase projekten aktiválni kell.
         </div>
 
-        <h3>7.1. Az adatmodell fő blokkjai</h3>
+        <h3 id="sec7-2">7.2. Táblák részletes leírása</h3>
+        <p>Az adatbázis négy fő logikai modulra bontható: <strong>Felhasználók</strong>, <strong>Cégek</strong>, <strong>Álláshirdetések / Munkaviszony</strong> és <strong>Kommunikáció / Üzenetek</strong>.</p>
 
-        <p>
-            Az adatmodell négy nagy adatbázis-modult különít el:
-            felhasználók,
-            cégek,
-            álláshirdetések és munkaviszony,
-            kommunikáció és értesítések.
-            Ez a csoportosítás nemcsak dokumentációs szempontból jó,
-            hanem architekturális szempontból is helyes,
-            mert tükrözi a fő doménfolyamatokat.
-        </p>
+        <!-- ===== 3.1 USERS ===== -->
+        <h4 id="sec7-2-1">7.2.1. Felhasználók (Users) Modul</h4>
 
-        <h3>7.2. Felhasználói modul</h3>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Tábla</th>
-                    <th>Szerep</th>
-                    <th>Megjegyzés</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>users</code></td>
-                    <td>A diákok alapadatai</td>
-                    <td>Profil, elérhetőség, személyes adatok, életciklus kiindulópontja</td>
-                </tr>
-                <tr>
-                    <td><code>user_credentials</code></td>
-                    <td>Hitelesítési adatok</td>
-                    <td>Jelszó vagy auth-hoz szükséges adatok elkülönítése</td>
-                </tr>
-                <tr>
-                    <td><code>user_documents</code></td>
-                    <td>Érzékeny dokumentumok</td>
-                    <td>Titkosított tárolás, személyi és lakcím adatok</td>
-                </tr>
-                <tr>
-                    <td><code>user_email_tokens</code></td>
-                    <td>Email verifikáció és tokenes folyamatok</td>
-                    <td>Hitelesítési kiegészítő tábla</td>
-                </tr>
-                <tr>
-                    <td><code>user_statistics</code></td>
-                    <td>Felhasználói dashboard és analitika</td>
-                    <td>Profilnézet, önéletrajz megtekintés és egyéb számlálók</td>
-                </tr>
-                <tr>
-                    <td><code>favorites</code></td>
-                    <td>Kedvencek</td>
-                    <td>Mentett állások vagy preferált elemek kezelése</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h4><code>users</code></h4>
+        <h5><code>users</code></h5>
         <p>A munkavállalók (álláskeresők) összes alapadatát tároló fő tábla.</p>
         <table>
             <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
-            <tr><td><code>id</code> <span class="tech-tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Automatikusan generált egyedi azonosító</td></tr>
+            <tr><td><code>id</code> <span class="badge-pk">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Automatikusan generált egyedi azonosító</td></tr>
             <tr><td><code>email</code></td><td>TEXT</td><td>UNIQUE NOT NULL</td><td>Egyedi email cím, belépéshez és értesítésekhez</td></tr>
             <tr><td><code>lname</code></td><td>TEXT</td><td>NOT NULL</td><td>Felhasználó vezetékneve</td></tr>
             <tr><td><code>fname</code></td><td>TEXT</td><td>NOT NULL</td><td>Felhasználó keresztneve</td></tr>
@@ -1077,11 +1108,11 @@ server.listen(4000)</code></pre>
   join_date TIMESTAMP DEFAULT NOW() NOT NULL
 );</code></pre>
 
-        <h4><code>user_credentials</code></h4>
+        <h5><code>user_credentials</code></h5>
         <p>A felhasználói jelszavak biztonságos, hashelt tárolása. Az alaptáblától elkülönítve, elv: minimális jogosultság elve alapján csak erre a táblára vonatkozó olvasási jog szükséges az autentikációhoz.</p>
         <table>
             <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
-            <tr><td><code>user_id</code> <span class="tech-tag">PK</span> <span class="tech-tag">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
+            <tr><td><code>user_id</code> <span class="badge-pk">PK</span> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
             <tr><td><code>password_hash</code></td><td>TEXT</td><td>NOT NULL</td><td>Hashelt jelszó (pl. bcrypt)</td></tr>
         </table>
         <pre><code>CREATE TABLE user_credentials (
@@ -1090,16 +1121,16 @@ server.listen(4000)</code></pre>
   PRIMARY KEY (user_id)
 );</code></pre>
 
-        <h4><code>user_documents</code></h4>
-        <p>Személyi okmányok másolatainak <strong>titkosított</strong> tárolója. Az adatokat <code>pgp_sym_encrypt</code> segítségével szimmetrikusan titkosítva tároljuk.</p>
+        <h5><code>user_documents</code></h5>
+        <p>Személyi okmányok másolatainak <strong>titkosított</strong> tárolója. Az adatokat <code>pgp_sym_encrypt</code> segítségével szimmetrikusan titkosítva tároljuk, nyers szöveg soha nem kerül az adatbázisba.</p>
         <div class="warn-box">
-            <strong>Szenzitív adat:</strong> A <code>personal_id</code> és <code>address_card_number</code> mezők <code>BYTEA</code> típusban titkosított ciphertext-et tárolnak.
+            <strong>⚠ Szenzitív adat:</strong> A <code>personal_id</code> és <code>address_card_number</code> mezők <code>BYTEA</code> típusban titkosított ciphertext-et tárolnak. Közvetlen lekérdezés értelmetlen – kizárólag a <code>get_decrypted_documents()</code> RPC függvényen át érhetők el.
         </div>
         <table>
             <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
-            <tr><td><code>user_id</code> <span class="tech-tag">PK</span> <span class="tech-tag">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
-            <tr><td><code>personal_id</code> <span class="tag">ENC</span></td><td>BYTEA</td><td>NOT NULL</td><td>Személyi igazolvány száma – titkosítva</td></tr>
-            <tr><td><code>address_card_number</code> <span class="tag">ENC</span></td><td>BYTEA</td><td>NOT NULL</td><td>Lakcímkártya száma – titkosítva</td></tr>
+            <tr><td><code>user_id</code> <span class="badge-pk">PK</span> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
+            <tr><td><code>personal_id</code> <span class="badge-enc">ENC</span></td><td>BYTEA</td><td>NOT NULL</td><td>Személyi igazolvány száma – titkosítva</td></tr>
+            <tr><td><code>address_card_number</code> <span class="badge-enc">ENC</span></td><td>BYTEA</td><td>NOT NULL</td><td>Lakcímkártya száma – titkosítva</td></tr>
         </table>
         <pre><code>CREATE TABLE user_documents (
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
@@ -1108,10 +1139,11 @@ server.listen(4000)</code></pre>
   PRIMARY KEY (user_id)
 );</code></pre>
 
-        <h4><code>user_email_tokens</code></h4>
+        <h5><code>user_email_tokens</code></h5>
+        <p>Regisztrációs email-megerősítési és jelszó-helyreállítási tokenek tárolása. A <code>expires_at</code> mező biztosítja, hogy a tokenek korlátozott ideig érvényesek.</p>
         <table>
             <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
-            <tr><td><code>user_id</code> <span class="tech-tag">PK</span> <span class="tech-tag">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
+            <tr><td><code>user_id</code> <span class="badge-pk">PK</span> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
             <tr><td><code>token</code></td><td>TEXT</td><td>UNIQUE NOT NULL</td><td>Egyedi, véletlenszerű token string</td></tr>
             <tr><td><code>expires_at</code></td><td>TIMESTAMP</td><td>NOT NULL</td><td>Token lejáratának időpontja</td></tr>
         </table>
@@ -1121,10 +1153,11 @@ server.listen(4000)</code></pre>
     expires_at TIMESTAMP NOT NULL
 );</code></pre>
 
-        <h4><code>user_statistics</code></h4>
+        <h5><code>user_statistics</code></h5>
+        <p>A felhasználói profil látogatási és önéletrajz-megtekintési statisztikái. Automatikusan kerül létrehozásra a <code>trg_create_user_statistics</code> trigger által, új felhasználó regisztrálásakor.</p>
         <table>
             <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
-            <tr><td><code>user_id</code> <span class="tech-tag">PK</span> <span class="tech-tag">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
+            <tr><td><code>user_id</code> <span class="badge-pk">PK</span> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
             <tr><td><code>profile_views</code></td><td>INTEGER</td><td>NOT NULL DEFAULT 0</td><td>Profiloldal megtekintéseinek száma</td></tr>
             <tr><td><code>resume_views</code></td><td>INTEGER</td><td>NOT NULL DEFAULT 0</td><td>Önéletrajz megtekintéseinek száma</td></tr>
         </table>
@@ -1134,11 +1167,12 @@ server.listen(4000)</code></pre>
     resume_views INTEGER NOT NULL DEFAULT 0
 );</code></pre>
 
-        <h4><code>favorites</code></h4>
+        <h5><code>favorites</code></h5>
+        <p>A felhasználók által elmentett / kedvelt álláshirdetések nyilvántartása. Összetett elsődleges kulcs biztosítja, hogy egy felhasználó egy hirdetést csak egyszer menthet el.</p>
         <table>
             <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
-            <tr><td><code>user_id</code> <span class="tech-tag">PK</span> <span class="tech-tag">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
-            <tr><td><code>advertisement_id</code> <span class="tag">PK</span> <span class="tag">FK</span></td><td>INTEGER</td><td>REFERENCES advertisement(id) ON DELETE CASCADE</td><td>Hivatkozás az advertisement táblára</td></tr>
+            <tr><td><code>user_id</code> <span class="badge-pk">PK</span> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>REFERENCES users(id) ON DELETE CASCADE</td><td>Hivatkozás a users táblára</td></tr>
+            <tr><td><code>advertisement_id</code> <span class="badge-pk">PK</span> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>REFERENCES advertisement(id) ON DELETE CASCADE</td><td>Hivatkozás az advertisement táblára</td></tr>
         </table>
         <pre><code>CREATE TABLE favorites (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1146,39 +1180,14 @@ server.listen(4000)</code></pre>
     PRIMARY KEY (user_id, advertisement_id)
 );</code></pre>
 
-        <h3>7.3. Céges modul</h3>
+        <!-- ===== 3.2 COMPANIES ===== -->
+        <h4 id="sec7-2-2">7.2.2. Cégek (Companies) Modul</h4>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Tábla</th>
-                    <th>Szerep</th>
-                    <th>Megjegyzés</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>companies</code></td>
-                    <td>Céges alapadatok</td>
-                    <td>Profil és működési identitás</td>
-                </tr>
-                <tr>
-                    <td><code>company_credentials</code></td>
-                    <td>Céges auth adatok</td>
-                    <td>Hitelesítés külön tárolása</td>
-                </tr>
-                <tr>
-                    <td><code>company_email_tokens</code></td>
-                    <td>Emailhez kapcsolódó tokenes folyamatok</td>
-                    <td>Verifikáció és helyreállítási műveletek</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h4><code>companies</code></h4>
+        <h5><code>companies</code></h5>
+        <p>A munkáltatóként regisztráló cégek összes alapadatát tároló fő tábla.</p>
         <table>
             <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
-            <tr><td><code>id</code> <span class="tech-tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Automatikusan generált egyedi azonosító</td></tr>
+            <tr><td><code>id</code> <span class="badge-pk">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Automatikusan generált egyedi azonosító</td></tr>
             <tr><td><code>email</code></td><td>TEXT</td><td>UNIQUE NOT NULL</td><td>Egyedi email cím</td></tr>
             <tr><td><code>name</code></td><td>TEXT</td><td>NOT NULL</td><td>Cég neve</td></tr>
             <tr><td><code>address</code></td><td>TEXT</td><td>NOT NULL</td><td>Székhely / cím</td></tr>
@@ -1187,6 +1196,7 @@ server.listen(4000)</code></pre>
             <tr><td><code>activity_scope</code></td><td>TEXT</td><td>NOT NULL</td><td>Tevékenységi kör / iparág</td></tr>
             <tr><td><code>website</code></td><td>TEXT</td><td>–</td><td>Cég weboldalának URL-je (opcionális)</td></tr>
             <tr><td><code>short_description</code></td><td>TEXT</td><td>NOT NULL</td><td>Rövid bemutatkozás / cégismertető</td></tr>
+            <tr><td><code>terms_accepted</code></td><td>BOOLEAN</td><td>DEFAULT FALSE NOT NULL</td><td>ÁSZF elfogadásának jelzése</td></tr>
             <tr><td><code>verified</code></td><td>BOOLEAN</td><td>DEFAULT FALSE NOT NULL</td><td>Admin által manuálisan hitelesített cég</td></tr>
             <tr><td><code>join_date</code></td><td>TIMESTAMP</td><td>DEFAULT NOW() NOT NULL</td><td>Regisztráció időpontja</td></tr>
             <tr><td><code>phone_number</code></td><td>TEXT</td><td>NOT NULL</td><td>Telefonszám</td></tr>
@@ -1207,53 +1217,41 @@ server.listen(4000)</code></pre>
   phone_number TEXT NOT NULL
 );</code></pre>
 
-        <h4><code>company_credentials</code></h4>
+        <h5><code>company_credentials</code></h5>
+        <p>A cégek belépési jelszavainak hashelt tárolása. Felépítése megegyezik a <code>user_credentials</code> táblával.</p>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>company_id</code> <span class="badge-pk">PK</span> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>REFERENCES companies(id) ON DELETE CASCADE</td><td>Hivatkozás a companies táblára</td></tr>
+            <tr><td><code>password_hash</code></td><td>TEXT</td><td>NOT NULL</td><td>Hashelt jelszó</td></tr>
+        </table>
         <pre><code>CREATE TABLE company_credentials (
   company_id INTEGER REFERENCES companies(id) ON DELETE CASCADE,
   password_hash TEXT NOT NULL,
   PRIMARY KEY (company_id)
 );</code></pre>
 
-        <h4><code>company_email_tokens</code></h4>
+        <h5><code>company_email_tokens</code></h5>
+        <p>A cégek email-megerősítési folyamataihoz tartozó tokenek. Megegyező struktúrájú a <code>user_email_tokens</code> táblával.</p>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>company_id</code> <span class="badge-pk">PK</span> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>REFERENCES companies(id) ON DELETE CASCADE</td><td>Hivatkozás a companies táblára</td></tr>
+            <tr><td><code>token</code></td><td>TEXT</td><td>UNIQUE NOT NULL</td><td>Egyedi token string</td></tr>
+            <tr><td><code>expires_at</code></td><td>TIMESTAMP</td><td>NOT NULL</td><td>Token lejáratának időpontja</td></tr>
+        </table>
         <pre><code>CREATE TABLE company_email_tokens (
     company_id INTEGER PRIMARY KEY REFERENCES companies(id) ON DELETE CASCADE,
     token TEXT UNIQUE NOT NULL,
     expires_at TIMESTAMP NOT NULL
 );</code></pre>
 
-        <h3>7.4. Hirdetés és jelentkezés modul</h3>
+        <!-- ===== 3.3 ADS & JOBS ===== -->
+        <h4 id="sec7-2-3">7.2.3. Álláshirdetések és Munkaviszony (Ads &amp; Jobs)</h4>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Tábla</th>
-                    <th>Szerep</th>
-                    <th>Megjegyzés</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>advertisement</code></td>
-                    <td>Álláshirdetések</td>
-                    <td>A cég által létrehozott, kereshető és listázható pozíciók</td>
-                </tr>
-                <tr>
-                    <td><code>job_applications</code></td>
-                    <td>Jelentkezési rekordok</td>
-                    <td>Diák és hirdetés közötti kapcsolat, státuszok és ATS logika</td>
-                </tr>
-                <tr>
-                    <td><code>employees</code></td>
-                    <td>Munkaviszonyhoz kapcsolódó állapot</td>
-                    <td>Felvett vagy aktív kapcsolatok nyilvántartása</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h4><code>advertisement</code></h4>
+        <h5><code>advertisement</code></h5>
+        <p>A cégek által meghirdetett pozíciók adatai. A <code>click_count</code> mező az <code>increment_click_count()</code> RPC függvényen át kerül növelésre, valahányszor egy felhasználó megtekinti a hirdetést.</p>
         <table>
             <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
-            <tr><td><code>id</code> <span class="tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi azonosító</td></tr>
+            <tr><td><code>id</code> <span class="badge-pk">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi azonosító</td></tr>
             <tr><td><code>position</code></td><td>TEXT</td><td>NOT NULL</td><td>Munkakör megnevezése</td></tr>
             <tr><td><code>hourly_wage</code></td><td>INT</td><td>NOT NULL</td><td>Órabér (Ft)</td></tr>
             <tr><td><code>tasks</code></td><td>TEXT</td><td>–</td><td>Elvégzendő feladatok leírása</td></tr>
@@ -1262,7 +1260,7 @@ server.listen(4000)</code></pre>
             <tr><td><code>is_active</code></td><td>BOOLEAN</td><td>DEFAULT TRUE</td><td>Aktív-e a hirdetés?</td></tr>
             <tr><td><code>click_count</code></td><td>INT</td><td>DEFAULT 0</td><td>Hirdetés megtekintéseinek száma</td></tr>
             <tr><td><code>search_start</code></td><td>TIMESTAMP</td><td>DEFAULT NOW()</td><td>Keresés megkezdésének időpontja</td></tr>
-            <tr><td><code>company_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>REFERENCES companies(id) ON DELETE CASCADE</td><td>Hirdető cég azonosítója</td></tr>
+            <tr><td><code>company_id</code> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>REFERENCES companies(id) ON DELETE CASCADE</td><td>Hirdető cég azonosítója</td></tr>
         </table>
         <pre><code>CREATE TABLE advertisement (
     id SERIAL PRIMARY KEY,
@@ -1277,12 +1275,13 @@ server.listen(4000)</code></pre>
     job_description TEXT
 );</code></pre>
 
-        <h4><code>job_applications</code></h4>
+        <h5><code>job_applications</code></h5>
+        <p>A munkavállalók álláshirdetésekre leadott jelentkezéseit tárolja, és nyomon követi azok státuszát (<code>submitted</code> → <code>accepted</code> / <code>rejected</code>).</p>
         <table>
             <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
-            <tr><td><code>id</code> <span class="tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi azonosító</td></tr>
-            <tr><td><code>user_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES users(id) ON DELETE CASCADE</td><td>Jelentkező felhasználó</td></tr>
-            <tr><td><code>advertisement_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES advertisement(id) ON DELETE CASCADE</td><td>Érintett álláshirdetés</td></tr>
+            <tr><td><code>id</code> <span class="badge-pk">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi azonosító</td></tr>
+            <tr><td><code>user_id</code> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES users(id) ON DELETE CASCADE</td><td>Jelentkező felhasználó</td></tr>
+            <tr><td><code>advertisement_id</code> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES advertisement(id) ON DELETE CASCADE</td><td>Érintett álláshirdetés</td></tr>
             <tr><td><code>status</code></td><td>TEXT</td><td>NOT NULL DEFAULT 'submitted'</td><td>Státusz: <code>submitted</code> / <code>accepted</code> / <code>rejected</code></td></tr>
             <tr><td><code>last_updated</code></td><td>TIMESTAMP</td><td>NOT NULL DEFAULT NOW()</td><td>Utolsó státuszváltozás időpontja</td></tr>
         </table>
@@ -1294,12 +1293,13 @@ server.listen(4000)</code></pre>
     last_updated TIMESTAMP NOT NULL DEFAULT NOW()
 );</code></pre>
 
-        <h4><code>employees</code></h4>
+        <h5><code>employees</code></h5>
+        <p>Sikeres felvétel után a munkaviszony formalizált nyilvántartása. Ide kerül az összes aktív és lezárt alkalmazotti kapcsolat.</p>
         <table>
             <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
-            <tr><td><code>id</code> <span class="tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi azonosító</td></tr>
-            <tr><td><code>user_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES users(id) ON DELETE CASCADE</td><td>Alkalmazott felhasználó</td></tr>
-            <tr><td><code>company_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES companies(id) ON DELETE CASCADE</td><td>Munkáltató cég</td></tr>
+            <tr><td><code>id</code> <span class="badge-pk">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi azonosító</td></tr>
+            <tr><td><code>user_id</code> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES users(id) ON DELETE CASCADE</td><td>Alkalmazott felhasználó</td></tr>
+            <tr><td><code>company_id</code> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES companies(id) ON DELETE CASCADE</td><td>Munkáltató cég</td></tr>
             <tr><td><code>position</code></td><td>TEXT</td><td>NOT NULL</td><td>Pozíció / munkakör kód</td></tr>
             <tr><td><code>job_title</code></td><td>TEXT</td><td>NOT NULL</td><td>Megjelenített állásTitle</td></tr>
             <tr><td><code>hourly_wage</code></td><td>INT</td><td>NOT NULL</td><td>Megállapodott órabér (Ft)</td></tr>
@@ -1315,41 +1315,16 @@ server.listen(4000)</code></pre>
     hire_date TIMESTAMP NOT NULL DEFAULT NOW()
 );</code></pre>
 
-        <h3>7.5. Kommunikáció és értesítések</h3>
+        <!-- ===== 3.4 COMMUNICATION ===== -->
+        <h4 id="sec7-2-4">7.2.4. Kommunikáció és Értesítések</h4>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Tábla</th>
-                    <th>Szerep</th>
-                    <th>Megjegyzés</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>messages</code></td>
-                    <td>Chat üzenetek</td>
-                    <td>Diákok és cégek közötti közvetlen kommunikáció</td>
-                </tr>
-                <tr>
-                    <td><code>system_messages</code></td>
-                    <td>Rendszerértesítések</td>
-                    <td>Platform által generált tájékoztatások és események</td>
-                </tr>
-                <tr>
-                    <td><code>system_message_reads</code></td>
-                    <td>Olvasási állapot</td>
-                    <td>Értesítések nyomon követése és UX támogatása</td>
-                </tr>
-            </tbody>
-        </table>
-
-        <h4><code>messages</code></h4>
+        <h5><code>messages</code></h5>
+        <p>Kétoldalú, valós idejű privát chat üzenetek tárolása Felhasználó–Cég viszonylatban. A <code>sender_type</code> CHECK constraint garantálja, hogy csak érvényes küldőtípus kerülhessen az adatbázisba.</p>
         <table>
             <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
-            <tr><td><code>id</code> <span class="tag">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi üzenet-azonosító</td></tr>
-            <tr><td><code>company_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES companies(id)</td><td>Érintett cég</td></tr>
-            <tr><td><code>user_id</code> <span class="tag">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES users(id)</td><td>Érintett felhasználó</td></tr>
+            <tr><td><code>id</code> <span class="badge-pk">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi üzenet-azonosító</td></tr>
+            <tr><td><code>company_id</code> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES companies(id)</td><td>Érintett cég</td></tr>
+            <tr><td><code>user_id</code> <span class="badge-fk">FK</span></td><td>INTEGER</td><td>NOT NULL REFERENCES users(id)</td><td>Érintett felhasználó</td></tr>
             <tr><td><code>sender_type</code></td><td>TEXT</td><td>NOT NULL CHECK IN ('USER', 'COMPANY')</td><td>Ki küldte az üzenetet</td></tr>
             <tr><td><code>message</code></td><td>TEXT</td><td>NOT NULL</td><td>Az üzenet szöveges tartalma</td></tr>
             <tr><td><code>is_read</code></td><td>BOOLEAN</td><td>NOT NULL DEFAULT FALSE</td><td>Olvasottsági állapot</td></tr>
@@ -1365,7 +1340,28 @@ server.listen(4000)</code></pre>
     created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );</code></pre>
 
-        <h4><code>system_messages</code></h4>
+        <h5><code>system_messages</code></h5>
+        <p>Adminisztrátorok által küldött rendszerszintű értesítések (pl. karbantartási figyelmeztetések, globális hírek). A <code>target_type</code> és <code>target_id</code> kombinációja lehetővé teszi célzott (egy adott felhasználó/cég) vagy globális (NULL target_id) küldést.</p>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>id</code> <span class="badge-pk">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi azonosító</td></tr>
+            <tr><td><code>title</code></td><td>VARCHAR(255)</td><td>NOT NULL</td><td>Üzenet tárgya / címe</td></tr>
+            <tr><td><code>message</code></td><td>TEXT</td><td>NOT NULL</td><td>Üzenet törzse</td></tr>
+            <tr><td><code>target_type</code></td><td>TEXT</td><td>NOT NULL</td><td>Célpont típusa: pl. <code>'USER'</code>, <code>'COMPANY'</code>, <code>'ALL'</code></td></tr>
+            <tr><td><code>target_id</code></td><td>INT</td><td>NULL</td><td>Konkrét célpont ID-ja (NULL = mindenki)</td></tr>
+            <tr><td><code>created_at</code></td><td>TIMESTAMP</td><td>NOT NULL DEFAULT NOW()</td><td>Létrehozás időpontja</td></tr>
+            <tr><td><code>is_active</code></td><td>BOOLEAN</td><td>NOT NULL DEFAULT TRUE</td><td>Aktív-e az üzenet?</td></tr>
+        </table>
+
+        <h5><code>system_message_reads</code></h5>
+        <p>Az egyes rendszerüzenetek olvasottságának nyilvántartása célpontonként.</p>
+        <table>
+            <tr><th>Mező</th><th>Típus</th><th>Constraint</th><th>Leírás</th></tr>
+            <tr><td><code>id</code> <span class="badge-pk">PK</span></td><td>SERIAL</td><td>PRIMARY KEY</td><td>Egyedi azonosító</td></tr>
+            <tr><td><code>message_id</code> <span class="badge-fk">FK</span></td><td>INT</td><td>NOT NULL REFERENCES system_messages(id)</td><td>Melyik üzenet</td></tr>
+            <tr><td><code>target_type</code></td><td>TEXT</td><td>NOT NULL</td><td>Ki olvasta (típus)</td></tr>
+            <tr><td><code>target_id</code></td><td>INT</td><td>NULL</td><td>Ki olvasta (ID)</td></tr>
+        </table>
         <pre><code>CREATE TABLE system_messages (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -1374,10 +1370,9 @@ server.listen(4000)</code></pre>
     target_id INT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     is_active BOOLEAN NOT NULL DEFAULT TRUE
-);</code></pre>
+);
 
-        <h4><code>system_message_reads</code></h4>
-        <pre><code>CREATE TABLE system_message_reads (
+CREATE TABLE system_message_reads (
     id SERIAL PRIMARY KEY,
     message_id INT NOT NULL,
     target_type TEXT NOT NULL,
@@ -1385,198 +1380,154 @@ server.listen(4000)</code></pre>
     FOREIGN KEY (message_id) REFERENCES system_messages(id)
 );</code></pre>
 
-        <h3>7.6. Táblakapcsolatok értelmezése</h3>
+        <!-- ===== 4. KAPCSOLATOK ===== -->
+        <h3 id="sec7-3">7.3. Táblakapcsolatok (ER összefoglaló)</h3>
+        <p>Az alábbi táblázat az összes idegen kulcs kapcsolatot összefoglalja. Minden <code>ON DELETE CASCADE</code> kapcsolat garantálja, hogy egy szülő entitás törlése esetén az összes hozzá tartozó gyermek sor automatikusan törlődik, megőrizve az adatbázis konzisztenciáját.</p>
 
-        <p>
-            Az Orion adatmodellje erősen relációs szemléletű.
-            A felhasználó és a cég külön entitásként jelenik meg,
-            saját hitelesítési adattal.
-            A hirdetés a céghez kapcsolódik,
-            a jelentkezés a hirdetés és a diák közötti kapcsolótáblaként működik,
-            az üzenetek pedig vagy közvetlen partnerkapcsolatot,
-            vagy legalábbis két szereplő közti kommunikációt reprezentálnak.
-            A statisztikai és olvasási táblák másodlagos,
-            de üzleti érték szempontjából kulcsfontosságú adatokat hordoznak.
-        </p>
-
-        <h3>7.7. RPC függvények szerepe</h3>
-
-        <p>
-            A dokumentáció külön fejezetet szentel az adatbázis-függvényeknek,
-            ami azt mutatja,
-            hogy az Orion nem minden logikát a Node rétegben kezel.
-            Bizonyos összetett,
-            tranzakciós vagy érzékeny műveletek adatbázis közelében futnak.
-            Ez az alábbi esetekben különösen indokolt:
-        </p>
-
-        <ul>
-            <li>regisztrációs folyamatok, ahol több tábla közös írása történik,</li>
-            <li>titkosított dokumentumkezelés,</li>
-            <li>dashboard statisztikák összesítése,</li>
-            <li>számlálók növelése,</li>
-            <li>chatpartnerek hatékony lekérdezése.</li>
-        </ul>
-
-        <h3>7.8. Fontosabb RPC függvények</h3>
-
-        <p>A rendszer az adatbázis-oldali üzleti logika jelentős részét tárolt eljárásokban (RPC) kezeli. Ez biztosítja a tranzakcionális integritást és a Node.js rétegtől való függetlenséget.</p>
-
-        <h4>7.8.1. Regisztrációs függvények</h4>
-
-        <h5><code>register_user_v1</code></h5>
-        <p>Egyetlen tranzakcióban kezeli az új diák felhasználó regisztrációját és az összes kapcsolódó segédtábla inicializálását.</p>
         <table>
-            <thead>
-                <tr>
-                    <th>Függvény</th>
-                    <th>Cél</th>
-                    <th>Várható eredmény</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><code>register_user_v1(...)</code></td>
-                    <td>Diák regisztráció tranzakciós kiszolgálása</td>
-                    <td>JSONB válasz státusszal és eredménnyel</td>
-                </tr>
-                <tr>
-                    <td><code>register_company_v1(...)</code></td>
-                    <td>Cég regisztráció adatbázisoldali folyamata</td>
-                    <td>JSONB válasz státusszal és eredménnyel</td>
-                </tr>
-                <tr>
-                    <td><code>insert_encrypted_documents(...)</code></td>
-                    <td>Titkosított dokumentumok beszúrása</td>
-                    <td>Érzékeny mezők védett tárolása</td>
-                </tr>
-                <tr>
-                    <td><code>update_encrypted_documents(...)</code></td>
-                    <td>Titkosított dokumentumok frissítése</td>
-                    <td>Meglévő rekord módosítása sértetlen titkosítási folyamattal</td>
-                </tr>
-                <tr>
-                    <td><code>get_decrypted_documents(...)</code></td>
-                    <td>Dokumentumok visszafejtése jogosult lekéréskor</td>
-                    <td>Olvasható értékek táblás eredményként</td>
-                </tr>
-                <tr>
-                    <td><code>get_company_dashboard_stats(...)</code></td>
-                    <td>Céges dashboard aggregált adatai</td>
-                    <td>JSON válasz összesített számokkal</td>
-                </tr>
-                <tr>
-                    <td><code>get_user_dashboard_stats(...)</code></td>
-                    <td>Felhasználói dashboard összesítés</td>
-                    <td>JSON válasz aktivitási és profiladatokkal</td>
-                </tr>
-                <tr>
-                    <td><code>increment_click_count(...)</code></td>
-                    <td>Hirdetésaktivitás mérése</td>
-                    <td>Számlálófrissítés</td>
-                </tr>
-                <tr>
-                    <td><code>increment_profile_views(...)</code></td>
-                    <td>Profilmegtekintések mérése</td>
-                    <td>Statisztikai mező növelése</td>
-                </tr>
-                <tr>
-                    <td><code>increment_resume_views(...)</code></td>
-                    <td>Önéletrajz-megtekintések mérése</td>
-                    <td>Analitikai adat frissítése</td>
-                </tr>
-                <tr>
-                    <td><code>get_user_chat_partners(...)</code></td>
-                    <td>Felhasználó chatpartnereinek kiszolgálása</td>
-                    <td>Partnerlista táblás formában</td>
-                </tr>
-                <tr>
-                    <td><code>get_company_chat_partners(...)</code></td>
-                    <td>Cég chatpartnereinek lekérése</td>
-                    <td>Partnerlista táblás formában</td>
-                </tr>
-            </tbody>
+            <tr><th>Gyermek tábla</th><th>Külső kulcs mező</th><th>→ Szülő tábla</th><th>Szülő kulcs</th><th>Viselkedés törléskor</th></tr>
+            <tr><td><code>user_credentials</code></td><td><code>user_id</code></td><td><code>users</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>user_documents</code></td><td><code>user_id</code></td><td><code>users</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>user_email_tokens</code></td><td><code>user_id</code></td><td><code>users</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>user_statistics</code></td><td><code>user_id</code></td><td><code>users</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>favorites</code></td><td><code>user_id</code></td><td><code>users</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>favorites</code></td><td><code>advertisement_id</code></td><td><code>advertisement</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>company_credentials</code></td><td><code>company_id</code></td><td><code>companies</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>company_email_tokens</code></td><td><code>company_id</code></td><td><code>companies</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>advertisement</code></td><td><code>company_id</code></td><td><code>companies</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>job_applications</code></td><td><code>user_id</code></td><td><code>users</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>job_applications</code></td><td><code>advertisement_id</code></td><td><code>advertisement</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>employees</code></td><td><code>user_id</code></td><td><code>users</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>employees</code></td><td><code>company_id</code></td><td><code>companies</code></td><td><code>id</code></td><td>CASCADE</td></tr>
+            <tr><td><code>messages</code></td><td><code>company_id</code></td><td><code>companies</code></td><td><code>id</code></td><td>–</td></tr>
+            <tr><td><code>messages</code></td><td><code>user_id</code></td><td><code>users</code></td><td><code>id</code></td><td>–</td></tr>
+            <tr><td><code>system_message_reads</code></td><td><code>message_id</code></td><td><code>system_messages</code></td><td><code>id</code></td><td>–</td></tr>
         </table>
-        <p><strong>Működési logika:</strong></p>
+
+        <!-- ===== 5. FÜGGVÉNYEK ===== -->
+        <h3 id="sec7-4">7.4. Adatbázis Függvények (RPC)</h3>
+        <p>Az üzleti logika egy része közvetlenül PL/pgSQL tárolt eljárásokban él. Ezeket Supabase RPC hívásokon keresztül lehet meghívni a kliensekből. Minden kritikus függvény <code>SECURITY DEFINER</code> módban fut a megfelelő jogosultság-kezelés érdekében.</p>
+
+        <h4>Regisztrációs függvények</h4>
+
+        <h5><code>register_user_v1(...) → JSONB</code></h5>
+        <p>Tranzakcionális felhasználói regisztráció. Egyetlen hívással, atomi módon elvégzi:</p>
         <ol>
-            <li>Beszúrás a <code>users</code> táblába.</li>
-            <li>A generált <code>id</code> lekérése.</li>
-            <li>Jelszó eltárolása a <code>user_credentials</code> táblában.</li>
-            <li>Üres statisztikai sor létrehozása a <code>user_statistics</code> táblában.</li>
-            <li>Válasz JSONB formátumban: <code>{ "success": true, "user_id": ... }</code>.</li>
+            <li>User sor beszúrása a <code>users</code> táblába</li>
+            <li>Jelszó-hash mentése a <code>user_credentials</code> táblába</li>
+            <li>Személyi okmányok titkosítva tárolása (<code>insert_encrypted_documents</code> hívásával)</li>
         </ol>
-
-        <h5><code>register_company_v1</code></h5>
-        <p>Céges regisztráció tranzakciós lebonyolítása.</p>
+        <p>Hiba esetén az egész tranzakció visszagörget (<code>EXCEPTION WHEN OTHERS</code>). Visszatérési érték: <code>{"success": true, "user_id": &lt;id&gt;}</code>.</p>
         <table>
             <tr><th>Paraméter</th><th>Típus</th><th>Leírás</th></tr>
-            <tr><td><code>p_email</code></td><td>TEXT</td><td>Céges kapcsolattartói email</td></tr>
-            <tr><td><code>p_password_hash</code></td><td>TEXT</td><td>Céges jelszó hash</td></tr>
-            <tr><td><code>p_name, p_address, p_tax_number, p_contact_name, p_scope, p_bio, p_phone</code></td><td>TEXT</td><td>Céges profil adatok</td></tr>
-            <tr><td><code>p_website</code></td><td>TEXT</td><td>Opcionális weboldal URL</td></tr>
+            <tr><td><code>p_email</code></td><td>TEXT</td><td>Email cím</td></tr>
+            <tr><td><code>p_password_hash</code></td><td>TEXT</td><td>Előre hashelt jelszó</td></tr>
+            <tr><td><code>p_lname</code></td><td>TEXT</td><td>Vezetéknév</td></tr>
+            <tr><td><code>p_fname</code></td><td>TEXT</td><td>Keresztnév</td></tr>
+            <tr><td><code>p_phone_number</code></td><td>TEXT</td><td>Telefonszám</td></tr>
+            <tr><td><code>p_birth_place</code></td><td>TEXT</td><td>Születési hely</td></tr>
+            <tr><td><code>p_birth_date</code></td><td>DATE</td><td>Születési dátum</td></tr>
+            <tr><td><code>p_address</code></td><td>TEXT</td><td>Lakcím</td></tr>
+            <tr><td><code>p_nationality</code></td><td>TEXT</td><td>Állampolgárság</td></tr>
+            <tr><td><code>p_short_bio</code></td><td>TEXT</td><td>Rövid bemutatkozás</td></tr>
+            <tr><td><code>p_qualifications</code></td><td>TEXT</td><td>Végzettségek</td></tr>
+            <tr><td><code>p_tax_number</code></td><td>TEXT</td><td>Adóazonosító</td></tr>
+            <tr><td><code>p_terms_accepted</code></td><td>BOOLEAN</td><td>ÁSZF elfogadva?</td></tr>
+            <tr><td><code>p_personal_id</code></td><td>TEXT</td><td>Személyi igazolvány száma (titkosítandó)</td></tr>
+            <tr><td><code>p_address_card_number</code></td><td>TEXT</td><td>Lakcímkártya száma (titkosítandó)</td></tr>
+            <tr><td><code>p_encryption_key</code></td><td>TEXT</td><td>Titkosítási kulcs</td></tr>
         </table>
 
-        <h4>7.8.2. Titkosított dokumentumkezelés</h4>
-
-        <p>Ezek a függvények a <code>pgcrypto</code> kiterjesztést használják az adatok védelmére.</p>
-
-        <h5><code>insert_encrypted_documents</code></h5>
+        <h5><code>register_company_v1(...) → JSONB</code></h5>
+        <p>Tranzakcionális céges regisztráció. Atomi módon elvégzi:</p>
+        <ol>
+            <li>Cég sor beszúrása a <code>companies</code> táblába</li>
+            <li>Jelszó-hash mentése a <code>company_credentials</code> táblába</li>
+        </ol>
+        <p>Visszatérési érték: <code>{"success": true, "company_id": &lt;id&gt;}</code>.</p>
         <table>
             <tr><th>Paraméter</th><th>Típus</th><th>Leírás</th></tr>
-            <tr><td><code>p_user_id</code></td><td>INT</td><td>Felhasználó azonosítója</td></tr>
-            <tr><td><code>p_personal_id</code></td><td>TEXT</td><td>Személyi igazolvány száma (plain text)</td></tr>
-            <tr><td><code>p_address_card</code></td><td>TEXT</td><td>Lakcímkártya száma (plain text)</td></tr>
-            <tr><td><code>p_key</code></td><td>TEXT</td><td>Symmetric encryption key (alkalmazásszintről érkezik)</td></tr>
+            <tr><td><code>p_email</code></td><td>TEXT</td><td>Email cím</td></tr>
+            <tr><td><code>p_password_hash</code></td><td>TEXT</td><td>Hashelt jelszó</td></tr>
+            <tr><td><code>p_name</code></td><td>TEXT</td><td>Cég neve</td></tr>
+            <tr><td><code>p_address</code></td><td>TEXT</td><td>Székhely</td></tr>
+            <tr><td><code>p_tax_number</code></td><td>TEXT</td><td>Adószám</td></tr>
+            <tr><td><code>p_contact_person_name</code></td><td>TEXT</td><td>Kapcsolattartó neve</td></tr>
+            <tr><td><code>p_activity_scope</code></td><td>TEXT</td><td>Tevékenységi kör</td></tr>
+            <tr><td><code>p_website</code></td><td>TEXT</td><td>Weboldal (opcionális)</td></tr>
+            <tr><td><code>p_short_description</code></td><td>TEXT</td><td>Cégismertető</td></tr>
+            <tr><td><code>p_terms_accepted</code></td><td>BOOLEAN</td><td>ÁSZF elfogadva?</td></tr>
+            <tr><td><code>p_phone_number</code></td><td>TEXT</td><td>Telefonszám</td></tr>
         </table>
 
-        <h5><code>get_decrypted_documents</code></h5>
-        <p>Visszaadja a titkosított adatokat olvasható formában a megfelelő kulcs birtokában.</p>
-        <pre><code>SELECT * FROM get_decrypted_documents(123, 'encryption_key_here');</code></pre>
+        <h4>Dokumentum-titkosítási függvények</h4>
 
-        <h4>7.8.3. Statisztikai és Dashboard függvények</h4>
+        <h5><code>insert_encrypted_documents(p_user_id, p_personal_id, p_address_card_number, p_encryption_key) → void</code></h5>
+        <p>Személyi okmányok első mentése. A <code>pgp_sym_encrypt</code> segítségével titkosítja a megadott szövegeket és <code>BYTEA</code> formátumban elmenti a <code>user_documents</code> táblába. Hívja a <code>register_user_v1</code>.</p>
 
-        <h5><code>get_company_dashboard_stats</code></h5>
-        <p>Összesített adatokat szolgáltat a cégvezetői dashboardhoz.</p>
+        <h5><code>update_encrypted_documents(p_user_id, p_personal_id, p_address_card_number, p_encryption_key) → void</code></h5>
+        <p>Meglévő titkosított dokumentumok frissítése. Felülírja a korábban eltárolt értékeket az újabb, szintén titkosított adatokkal.</p>
+
+        <h5><code>get_decrypted_documents(p_user_id, p_encryption_key) → TABLE(personal_id text, address_card_number text)</code></h5>
+        <p>A titkosított dokumentumok visszafejtése és visszaadása. A <code>pgp_sym_decrypt</code> segítségével oldja fel a titkosítást, és visszaadja az olvasható szöveget. Kizárólag megfelelő encryption key megadása esetén működik.</p>
+        <pre><code>-- Példa hívás:
+SELECT * FROM get_decrypted_documents(42, 'titkos_kulcs');</code></pre>
+
+        <h4>Statisztika és Dashboard függvények</h4>
+
+        <h5><code>get_company_dashboard_stats(target_company_id int) → JSON</code></h5>
+        <p>Egy cég főbb KPI-jait adja vissza egyetlen adatbázis-hívásban, minimalizálva a hálózati lekérdezések számát. Visszaadott mezők:</p>
         <ul>
-            <li>Aktív hirdetések száma.</li>
-            <li>Összes jelentkező száma.</li>
-            <li>Folyamatban lévő jelentkezések (submitted) száma.</li>
-            <li>Összesített hirdetési kattintásszám.</li>
+            <li><code>views</code> – hirdetések összes kattintásszáma (<code>click_count</code> összege)</li>
+            <li><code>applicants</code> – összes beérkezett jelentkezés száma</li>
+            <li><code>employees</code> – aktív alkalmazottak száma</li>
+            <li><code>conversion</code> – konverziós arány: <code>(applicants / views) × 100</code> %-ban</li>
         </ul>
 
-        <h5><code>get_user_dashboard_stats</code></h5>
-        <p>A diák saját aktivitásának összesítése.</p>
+        <h5><code>get_user_dashboard_stats(p_user_id int) → JSON</code></h5>
+        <p>Egy felhasználó dashboard statisztikáit adja vissza. Visszaadott mezők:</p>
         <ul>
-            <li>Aktív jelentkezések száma.</li>
-            <li>Profil- és önéletrajz megtekintések (user_statistics alapján).</li>
+            <li><code>total_applications</code> – összes leadott jelentkezés</li>
+            <li><code>profile_views</code> – profil megtekintések száma</li>
+            <li><code>resume_views</code> – önéletrajz megtekintések száma</li>
+            <li><code>accepted_applications</code> – elfogadott jelentkezések száma</li>
         </ul>
 
-        <h5>Számláló függvények:</h5>
-        <ul>
-            <li><code>increment_click_count(p_ad_id)</code>: Növeli az <code>advertisement.click_count</code> értékét.</li>
-            <li><code>increment_profile_views(p_user_id)</code>: Növeli a <code>user_statistics.profile_views</code> értékét.</li>
-            <li><code>increment_resume_views(p_user_id)</code>: Növeli a <code>user_statistics.resume_views</code> értékét.</li>
-        </ul>
+        <h5><code>increment_click_count(ad_id int) → void</code></h5>
+        <p>Az adott hirdetés <code>click_count</code> számlálóját növeli eggyel. Meghívandó minden alkalommal, amikor egy felhasználó megnyit egy álláshirdetést.</p>
 
-        <h4>7.8.4. Chat partnerek lekérdezése</h4>
+        <h5><code>increment_profile_views(p_user_id int) → void</code></h5>
+        <p>A <code>user_statistics</code> tábla <code>profile_views</code> mezőjét növeli eggyel a megadott felhasználó esetén.</p>
 
-        <p>A chat modul hatékonyságát segítő függvények, amelyek JSON formátumban adják vissza a beszélgetőpartnerek listáját az utolsó üzenettel együtt.</p>
-        <ul>
-            <li><code>get_user_chat_partners(p_user_id)</code></li>
-            <li><code>get_company_chat_partners(p_company_id)</code></li>
-        </ul>
+        <h5><code>increment_resume_views(p_user_id int) → void</code></h5>
+        <p>A <code>user_statistics</code> tábla <code>resume_views</code> mezőjét növeli eggyel a megadott felhasználó esetén.</p>
 
-        <h3>7.9. Triggerek</h3>
+        <h4>Chat / Üzenetküldés függvények</h4>
 
-        <p>
-            A dokumentált <code>trg_create_user_statistics</code> trigger azt sugallja,
-            hogy a rendszer automatikusan létrehoz bizonyos kapcsolódó rekordokat,
-            például statisztikai sorokat,
-            amikor egy új felhasználó bekerül.
-            Ez jó tervezési gyakorlat,
-            mert csökkenti az alkalmazáskódban a kötelező utólagos inicializálás kockázatát.
-        </p>
+        <h5><code>get_user_chat_partners(p_user_id int) → TABLE</code></h5>
+        <p>Visszaadja a felhasználóval chat-kapcsolatban álló összes cég listáját, cégenkénti bontásban a <strong>legutóbbi üzenettel</strong>. Eredmény oszlopai: <code>company_id</code>, <code>company_name</code>, <code>message_id</code>, <code>sender_type</code>, <code>message</code>, <code>is_read</code>, <code>created_at</code>.</p>
 
+        <h5><code>get_company_chat_partners(p_company_id int) → TABLE</code></h5>
+        <p>Visszaadja a céggel chat-kapcsolatban álló összes felhasználó listáját, utolsó üzenet időpontja szerint csökkenő sorrendben. Eredmény oszlopai: <code>user_id</code>, <code>user_lname</code>, <code>user_fname</code>, <code>last_message_at</code>.</p>
+
+        <!-- ===== 6. TRIGGEREK ===== -->
+        <h3 id="sec7-5">7.5. Triggerek</h3>
+
+        <h5><code>trg_create_user_statistics</code></h5>
+        <p>Automatikusan lefut minden új felhasználó regisztrációja után (<code>AFTER INSERT ON users</code>). Létrehozza a hozzá tartozó <code>user_statistics</code> sort alapértékekkel (<code>profile_views = 0</code>, <code>resume_views = 0</code>), így biztosítva, hogy minden felhasználóhoz mindig létezik statisztika sor.</p>
+        <pre><code>CREATE OR REPLACE FUNCTION create_user_statistics()
+RETURNS TRIGGER AS $$
+BEGIN
+    INSERT INTO user_statistics (user_id)
+    VALUES (NEW.id);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_create_user_statistics
+AFTER INSERT ON users
+FOR EACH ROW
+EXECUTE FUNCTION create_user_statistics();</code></pre>
         <h2 id="sec8">8. Végpontok, szerveroldali szolgáltatások és integrációk</h2>
 
         <div class="tldr-box">
