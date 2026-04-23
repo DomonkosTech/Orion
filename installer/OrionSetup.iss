@@ -16,7 +16,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={autopf}\{#MyAppName}
+DefaultDirName={localappdata}\Programs\{#MyAppName}
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 InfoBeforeFile={#RepoRoot}\installer\installer-notes.txt
@@ -26,7 +26,7 @@ Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 ArchitecturesInstallIn64BitMode=x64compatible
-PrivilegesRequired=admin
+PrivilegesRequired=lowest
 UninstallDisplayIcon={app}\{#MyAppExeName}
 
 [Languages]
@@ -36,7 +36,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional shortcuts:"
 
 [Files]
-Source: "{#RepoRoot}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: ".git\*,.idea\*,node_modules\*,.venv\*,dist\*,installer\dist\*,test-results\*,playwright-report\*,blob-report\*,*.log,.env"
+Source: "{#RepoRoot}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs; Excludes: ".git\*,.idea\*,node_modules\*,.venv\*,dist\*,installer\dist\*,test-results\*,playwright-report\*,blob-report\*,*.log"
 
 [Icons]
 Name: "{group}\Orion"; Filename: "{app}\{#MyAppExeName}"; WorkingDir: "{app}"
