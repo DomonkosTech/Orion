@@ -108,9 +108,12 @@ const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, 
                         className={previewClassName}
                         title={hasPreview ? messagePreview : undefined}
                     >
-                        {hasPreview ? messagePreview : formatDateTime(partner.last_message_at)}
+                        {hasPreview ? messagePreview : ""}
                     </span>
                     {partner.last_message_at && hasPreview && (
+                        <span className={dateClassName}>{formatDateTime(partner.last_message_at)}</span>
+                    )}
+                    {partner.last_message_at && !hasPreview && (
                         <span className={dateClassName}>{formatDateTime(partner.last_message_at)}</span>
                     )}
                 </motion.div>

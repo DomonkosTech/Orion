@@ -37,11 +37,18 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
     const [sending, setSending] = useState(false);
     const [sendError, setSendError] = useState<string | null>(null);
 
+    const sortPartnersByLatestMessage = (list: ChatPartner[]) =>
+        [...list].sort((a, b) => {
+            const aTime = a.last_message_at ? new Date(a.last_message_at).getTime() : 0;
+            const bTime = b.last_message_at ? new Date(b.last_message_at).getTime() : 0;
+            return bTime - aTime;
+        });
+
     const setNewChatPartner = (partner: ChatPartner | null) => {
         if (!partner) return;
         setPartners(prev => {
             if (prev.find(p => p.id === partner.id)) return prev;
-            return [partner, ...prev];
+            return sortPartnersByLatestMessage([partner, ...prev]);
         });
         setSelectedPartnerId(partner.id);
     };
@@ -76,7 +83,7 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                         id: p.company_id,
                         name: p.company_name,
                         last_message_at: p.created_at,
-                        last_message: p.sender_type === "COMPANY" && p.is_read === false ? p.message : null,
+                        last_message: p.message,
                         // If I sent the last message, it's "read" for me
                         is_read: p.sender_type === "USER" ? true : p.is_read,
                         sender_type: p.sender_type
@@ -88,7 +95,7 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                         id: p.user_id,
                         name: `${p.user_lname} ${p.user_fname}`,
                         last_message_at: p.last_message_at,
-                        last_message: p.sender_type === "USER" && p.is_read === false ? (p.message ?? null) : null,
+                        last_message: p.message,
                         // If I sent the last message, it's "read" for me
                         is_read: p.sender_type === "COMPANY" ? true : p.is_read,
                         sender_type: p.sender_type
@@ -142,7 +149,7 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                         }
                     }
 
-                    setPartners(data);
+                    setPartners(sortPartnersByLatestMessage(data));
                 }
             } catch {
                 if (!cancelled) setPartnersError("hiba történt");
@@ -162,7 +169,7 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
             const idx = prev.findIndex(p => p.id === selectedPartnerId);
             if (idx === -1 || prev[idx].is_read) return prev;
             const updated = [...prev];
-            updated[idx] = { ...updated[idx], is_read: true, last_message: null };
+            updated[idx] = { ...updated[idx], is_read: true };
             return updated;
         });
     }, [selectedPartnerId, partnersLoading]);
@@ -267,11 +274,11 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                                 updatedPartners[idx] = {
                                     ...updatedPartners[idx],
                                     last_message_at: newMessage.created_at,
-                                    last_message: isFromOther ? (newMessage.message ?? newMessage.content ?? null) : null,
+                                    last_message: newMessage.message ?? newMessage.content ?? null,
                                     // Only mark unread if it's from the other person AND NOT in current chat
                                     is_read: isFromOther && currentPartnerId == partnerId ? true : (isFromOther ? false : updatedPartners[idx].is_read)
                                 };
-                                return updatedPartners;
+                                return sortPartnersByLatestMessage(updatedPartners);
                             });
 
                             // 2. If it belongs to current conversation, add to messages list
@@ -363,10 +370,10 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
             updated[idx] = {
                 ...updated[idx],
                 last_message_at: optimistic.created_at,
-                last_message: null,
+                last_message: optimistic.message ?? optimistic.content ?? null,
                 is_read: true // Sent by me, so it's "read" for me
             };
-            return updated;
+            return sortPartnersByLatestMessage(updated);
         });
 
         try {
