@@ -337,17 +337,17 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
         </div>
 
         <h3 id="sec4-1">4.1. Frontend Technológiai Döntések (Detailed)</h3>
-        
+
         <div class="tldr-box">
             <strong>TL;DR:</strong> Miért a <strong>Vite</strong>-ra esett a választás? (Kiemelkedő fejlesztői élmény és sebesség). Miért nélkülözhetetlen a <strong>TypeScript</strong>? (Típusbiztonság egy 25 000 soros kódbázisban). A React natív állapotkezelése minimalizálja a függőségeket, a Vanilla CSS pedig maximális UI flexibilitást és teljesítményt biztosít modern animációkkal kiegészítve.
         </div>
-        
+
         <p>A modern webes alkalmazások alapjait nem egyszerű kiválasztani. Mérlegelnünk kellett a fejlesztési sebességet, a későbbi karbantarthatóságot és azt, hogy mennyire lesz gyors az oldal (performance). Az Orion frontendjénél az volt a cél, hogy egy stabil, jól bővíthető és szép rendszert építsünk. Ezért választottuk a React 19-et és a Vite-ot.</p>
 
         <h4 id="sec4-1-1">4.1.1. Miért pont React és Vite?</h4>
-        
+
         <p>Sok más lehetőség is lett volna (például Angular vagy Vue), de ezek túl kötöttek lettek volna az Orionhoz. A React azért jó, mert az összetett felületeket (például az álláskeresőt vagy a jelöltkezelőt) könnyen kisebb, újrahasznosítható egységekre bonthatjuk (decomposition). A React gyorsasága és a Virtual DOM használata biztosítja, hogy a rengeteg adat megjelenítésekor se lassuljon be az oldal.</p>
-        
+
         <p>Régebben a legtöbb React projekt Webpacket használt, de az egyre lassabb (suboptimal) lett, ahogy nőtt a kód. A Vite viszont egy teljesen új megközelítést (paradigm shift) hozott. Nagyon gyorsan indul el, és a kód módosítása után is azonnal látszik a változás (Hot Module Replacement – HMR). Ez segít abban, hogy a fejlesztés ne lassuljon le akkor sem, ha már óriásira nőtt a projekt.</p>
 
         <h4 id="sec4-1-2">4.1.2. Miért jó nekünk a TypeScript?</h4>
@@ -446,11 +446,11 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
         </div>
 
         <h3 id="sec4-2">4.2. Backend Technológiai Döntések (Detailed)</h3>
-        
+
         <div class="tldr-box">
             <strong>TL;DR:</strong> Miért az <strong>Express 5</strong> és <strong>Node.js</strong>? (Könnyűsúlyú, aszinkron, TypeScripttel kiválóan tipizálható környezet). A valós idejű funkciókat és az adatbázist a <strong>Supabase (PostgreSQL)</strong> biztosítja, ami levéltárazza és titkosítja az adatokat. A rendszer egyedi <strong>JWT</strong> alapú hitelesítést és szigorú <strong>Zod</strong> validációt használ a robusztus biztonság érdekében.
         </div>
-        
+
         <p>A szerveroldali technológiák kiválasztásánál a fő szempont az volt, hogy a backend elég gyors, skálázható és biztonságos legyen a valós idejű chat és az érzékeny személyes adatok (okmányok) kezeléséhez. Az Orion backendje ezért a Node.js és az Express környezetére épül, szorosan integrálva a Supabase ökoszisztémával.</p>
 
         <h4 id="sec4-2-1">4.2.1. Miért pont Node.js és Express 5?</h4>
@@ -573,39 +573,22 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
             </tbody>
         </table>
 
-        <h2 id="sec5">5. Frontend architektúra</h2>
+        <h2 id="sec5">5. Könyvtárstruktúra (Directory Structure)</h2>
 
         <div class="tldr-box">
             <strong>TL;DR:</strong> A frontend <strong>moduláris, funkció-alapú</strong> felosztást követ, egyedi állapotkezeléssel és szigorú, többszintű hozzáférésvédelemmel. A kód olyan üzleti területek (például auth, chat, public, company) köré szerveződik, ami lehetővé teszi a könnyű bővíthetőséget, a tiszta adatáramlást és az optimális teljesítményt anélkül, hogy a globális állapot feleslegesen bonyolódna.
         </div>
 
-        <h3>5.1. Könyvtárstruktúra és általános kép</h3>
+        <h3>5.1. Könyvtárstruktúra (Directory Structure)</h3>
 
         <p>
-            A projektstruktúra alapján a frontend nem csupán oldalakat,
-            hanem több egymásra épülő réteget tartalmaz.
-            A fő mappák:
-            <code>Api</code>,
-            <code>components</code>,
-            <code>constants</code>,
-            <code>features</code>,
-            <code>hooks</code>,
-            <code>lib</code>,
-            <code>locales</code>,
-            <code>validation</code>.
-            Ez arra utal,
-            hogy a projektben jelen vannak újrahasznosítható UI elemek,
-            feature-alapú oldalak,
-            különálló API-hívó rétegek,
-            lokalizációs erőforrások
-            és szervezett validációs szabályok is.
-            A projekt tényleges mappaszerkezete az alábbi logikát követi:
+            Az Orion nem a megszokott módon (ahol minden gomb egy helyen, minden logika egy másik helyen van) épül fel. Ehelyett funkciók szerint csoportosítunk (Feature-based). Ez azért jó, mert ha például az Üzenetküldőn (OrionMessenger) dolgozunk, minden szükséges fájlt egy helyen találunk, és nem kell tíz különböző mappát átnéznünk. Így a kód sokkal átláthatóbb marad (cohesion), és később is könnyebben bővíthető. A projekt tényleges mappaszerkezete az alábbi logikát követi:
         </p>
 
 <pre><code>src/
 ├── Api/              # Globális API hívások (native fetch)
 ├── components/       # Újrahasznosítható UI elemek csoportosítva
-│   ├── base/         # Nagyobb űrlap és profil komponenensek (pl. LoginPage)
+│   ├── base/         # Nagyobb űrlap és profil komponensek (pl. LoginPage)
 │   ├── layout/       # Elrendezési elemek (Header, Footer, Navigáció)
 │   └── ui/           # Atomi dizájn elemek (Gombok, Beviteli mezők, Modalok)
 ├── features/         # Funkció-alapú modulok (Feature-based)
@@ -619,7 +602,48 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
 ├── test/             # Tesztelési környezet és segédfájlok
 └── validation/       # Zod adatsémák és űrlap validációk (pl. Validation.ts)</code></pre>
 
-        <h3>5.2. Feature alapú felosztás és Funkcionális dekompozíció</h3>
+        <h3>5.2. Komponensek és felelősségek</h3>
+
+        <p>
+            A felületek építésénél különválasztjuk az "okos" (Smart) és az "egyszerű" (Dumb/Presentational) komponenseket. Az okos komponensek kezelik az adatokat és az üzleti logikát, míg az egyszerűek (mint egy gomb vagy egy beviteli mező) csak a megjelenítésért felelősek. Ez a szigorú szétválasztás segít abban, hogy az Orion könnyen fejleszthető és tesztelhető maradjon.
+        </p>
+
+        <h3>5.3. Ki mit láthat az oldalon? (Access Control)</h3>
+
+        <p>
+            Az oldalvédelmet egy központi megoldással (RBAC – Role Based Access Control) kezeljük. Az <code>IsLoggedIn</code> nevű elem folyamatosan figyeli, hogy ki van bejelentkezve, és milyen joga van. Ez biztos védelmet (protection) ad, hogy senki ne láthasson olyan oldalakat, amikhez nincs jogosultsága (például egy álláskereső ne juthasson be a cégek kezelőfelületére).
+        </p>
+
+<pre><code>// Részlet az IsLoggedIn.tsx implementációjából
+function IsLoggedIn({ children, mode = "user" }: Props) {
+    const [loading, setLoading] = useState(true);
+    const [loggedIn, setLoggedIn] = useState(false);
+    const [userType, setUserType] = useState&lt;"user" | "company" | null&gt;(null);
+
+    useEffect(() => {
+        const check = async () => {
+            try {
+                const data = await checkAuthStatus();
+                setLoggedIn(Boolean(data.loggedIn));
+                setUserType(data.userType || null);
+            } finally {
+                setLoading(false);
+            }
+        };
+        check();
+    }, []);
+
+    if (loading) return &lt;div&gt;Betöltés...&lt;/div&gt;;
+    // Szerepkör alapú redirect logika...
+}</code></pre>
+
+        <p>Fontos tudni, hogy az RBAC védelem a frontend oldalán csak a felhasználói élményt javítja (UX Security): segít abban, hogy a felhasználó ne lásson zavaró, számára szükségtelen menüket. A valódi biztonságot a backend szerver végzi a JWT tokenek ellenőrzésével minden egyes kérésnél.</p>
+
+        <h3>5.4. Az oldal részei és funkciói (Functional Decomposition)</h3>
+
+        <p>
+            Ebben a fejezetben az Orion platform felhasználói felületeit logikai modulokra bontva mutatjuk be, részletezve a konkrét oldalak célját, a fejlesztésük során felmerült technikai kihívásokat és az adathálózati kapcsolataikat. A rendszer funkció-alapú (feature-based) architektúrát követ, így a komponensek a <code>src/features</code> mappában találhatók.
+        </p>
 
         <table>
             <thead>
@@ -726,84 +750,21 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
             </ul>
         </div>
 
-        <h3>5.3. Routing és hozzáférésvédelem</h3>
-
-        <p>
-            Nem minden oldal érhető el minden felhasználó számára.
-            A routing ezért nem csak navigációs,
-            hanem jogosultsági kérdés is.
-            Külön kell kezelni a publikus,
-            a felhasználói
-            és a céges elérést.
-            A route-védelem a frontend és a backend közös felelőssége:
-            a kliensoldal élmény és navigáció szintjén zár le képernyőket,
-            a backend pedig ténylegesen érvényesíti az autentikációt és a hozzáférési szabályokat.
-        </p>
-
-        <p>
-            Az oldalvédelmet egy központi megoldással (RBAC – Role Based Access Control) kezeljük. Az <code>IsLoggedIn</code> nevű elem folyamatosan figyeli, hogy ki van bejelentkezve, és milyen joga van. Ez egy biztos védelmet (protection) ad, hogy senki ne láthasson olyan oldalakat, amikhez nincs jogosultsága (például egy álláskereső ne juthasson be a cégek kezelőfelületére).
-        </p>
-
-<pre><code>// Részlet az IsLoggedIn.tsx implementációjából
-function IsLoggedIn({ children, mode = "user" }: Props) {
-    const [loading, setLoading] = useState(true);
-    const [loggedIn, setLoggedIn] = useState(false);
-    const [userType, setUserType] = useState&lt;"user" | "company" | null&gt;(null);
-
-    useEffect(() => {
-        const check = async () => {
-            try {
-                const data = await checkAuthStatus();
-                setLoggedIn(Boolean(data.loggedIn));
-                setUserType(data.userType || null);
-            } finally {
-                setLoading(false);
-            }
-        };
-        check();
-    }, []);
-
-    if (loading) return &lt;div&gt;Betöltés...&lt;/div&gt;;
-    // Szerepkör alapú redirect logika...
-}</code></pre>
-
-        <p>Fontos tudni, hogy az RBAC védelem a frontend oldalán csak a felhasználói élményt javítja (UX Security): segít abban, hogy a felhasználó ne lásson zavaró, számára szükségtelen menüket. A valódi biztonságot a backend szerver végzi a JWT tokenek ellenőrzésével minden egyes kérésnél.</p>
-
-        <h3>5.4. UI építőelemek és komponensstratégia</h3>
-
-        <p>
-            Az Orion jelentős mennyiségű képernyőt kezel,
-            és ezeket modulonként bontja fel.
-            A komponensarchitektúra sikeressége azon múlik,
-            mennyire választja el egymástól a következő szinteket:
-        </p>
-
-        <ul>
-            <li>oldal szintű komponensek, amelyek route-hoz kötődnek,</li>
-            <li>feature szintű üzleti komponensek, amelyek egy adott domén funkcióit szervezik,</li>
-            <li>újrahasznosítható UI komponensek, amelyek több feature-ben is használhatók,</li>
-            <li>hookok és segédfüggvények, amelyek adatlekérést, validációt vagy állapotkezelést segítenek.</li>
-        </ul>
-
-        <p>A felületek építésénél különválasztjuk az "okos" (Smart) és az "egyszerű" (Dumb/Presentational) komponenseket. Az okos komponensek kezelik az adatokat és az üzleti logikát, míg az egyszerűek (mint egy gomb vagy egy beviteli mező) csak a megjelenítésért felelősek. Ez a szigorú szétválasztás segít abban, hogy az Orion könnyen fejleszthető és tesztelhető maradjon.</p>
-
-        <h3>5.5. Kliensoldali adatkezelés</h3>
-
-        <h3>5.5. Kliensoldali adatkezelés (Data Flow & State Management)</h3>
+        <h3>5.5. Adatkezelés: Hogyan mozognak az adatok? (State Management &amp; Data Flow)</h3>
 
         <div class="summary">
-            <strong>TL;DR:</strong> Nem használunk bonyolult külső könyvtárakat (mint a Redux). A React saját megoldásait (Context API) használjuk a globális adatokhoz, és minden mást helyben (Local State) kezelünk, hogy gyors maradjon az oldal. Az egyirányú adatáramlás és a JWT-alapú hitelesítés egyértelmű életciklust és maximális biztonságot garantál, elkerülve a teljesítménycsökkenést és a felesleges újrarendereléseket.
+            <strong>TL;DR:</strong> Nem használunk bonyolult külső könyvtárakat (mint a Redux). A React saját megoldásait (Context API) használjuk a globális adatokhoz, és minden mást helyben (Local State) kezelünk, hogy gyors maradjon az oldal.
         </div>
 
         <p>
-            Az Orionban elkülönül a helyi állapot és a globálisabb alkalmazásállapot. Nagy hiba lenne minden adatot egyetlen közös helyen tárolni, mert akkor minden apró változástól (például egy mezőbe való gépeléstől) az egész oldal újrafrissülne és lelassulna. Az Orionban ezért szigorúan szétválasztjuk a helyi (Local) és a globális (Global) adatokat.
+            Nagy hiba lenne minden adatot egyetlen közös helyen tárolni, mert akkor minden apró változástól (például egy mezőbe való gépeléstől) az egész oldal újrafrissülne és lelassulna. Az Orionban ezért szigorúan szétválasztjuk a helyi (Local) és a globális (Global) adatokat.
         </p>
 
         <p>
-            Az olyan ideiglenes (transient) dolgokat, mint egy lenyíló menü állapota vagy egy űrlap szövege, helyben kezeljük a komponenseken belül (useState). Csak a legszükségesebb adatokat tesszük közösbe (Context API), amikre sok helyen szükség van: például a bejelentkezési adatok (JWT tokenek, szerepkörök) vagy az Üzenetküldő (<strong>OrionMessenger</strong>) rendszer állapota.
+            Az olyan ideiglenes (transient) dolgokat, mint egy lenyíló menü állapota vagy egy űrlap szövege, helyben kezeljük a komponenseken belül (useState). Csak a legszükségesebb adatokat tesszük közösbe (Context API), amikre sok helyen szükség van: például a bejelentkezési adatok (JWT tokenek, szerepkörök) vagy az Üzenetküldő (OrionMessenger) rendszer állapota.
         </p>
 
-        <p>Az adatok mozgása az Orionban mindig egyirányú (Unidirectional Data Flow). Ez segít abban, hogy a rendszer kiszámítható és stabil maradjon. Amikor a felhasználó például beküld egy űrlapot, az adat végigmegy bizonyos lépéseken (stations): a gombnyomástól a hálózati lekérésen át egészen a képernyő frissítéséig.</p>
+        <p>Az adatok mozgása az Orionban mindig egyirányú (Unidirectional Data Flow). Ez segít abban, hogy a rendszer kiszámítható és stabil maradjon. Amikor a felhasználó például beküld egy űrlapot, az adat végigmegy bizonyos lépéseken: a gombnyomástól a hálózati lekérésen át egészen a képernyő frissítéséig.</p>
 
         <div class="summary">
             <strong>Adatáramlási Modell (Data Flow)</strong>
@@ -831,9 +792,9 @@ function IsLoggedIn({ children, mode = "user" }: Props) {
 [Frontend] (Update IsLoggedIn state)</code></pre>
         </div>
 
-        <p>Az adatok áramlása az Orion architektúrájában szigorúan egyirányú. A kliens oldali állapotmegőrzés a httpOnly cookie-kra épül, ami maximális biztonságot garantál az XSS támadásokkal szemben.</p>
+        <p>Az adatok áramlása az Orion architektúrájában szigorúan egyirányú. A kliensoldali állapotmegőrzés a httpOnly cookie-kra épül, ami maximális biztonságot garantál az XSS támadásokkal szemben.</p>
 
-<pre><code>// Példa: Autentikációs állapot ellenőrzése (authApi.ts)
+<pre><code class="language-ts">// Példa: Autentikációs állapot ellenőrzése (authApi.ts)
 export const checkAuthStatus = async (): Promise&lt;AuthStatus&gt; => {
     const res = await fetch(`${API_BASE_URL}/auth/status`, {
         method: "GET",
@@ -846,78 +807,74 @@ export const checkAuthStatus = async (): Promise&lt;AuthStatus&gt; => {
 
         <p>Ez a determinisztikus adatkérési életciklus biztosítja, hogy a vizuális keretrendszer soha nem tartalmaz adathálózati specifikus "spagetti-kódot".</p>
 
-        <h3>5.6. Formok és validáció</h3>
+        <h3>5.6. Űrlapok és adatok ellenőrzése (Form Handling &amp; Validation)</h3>
 
         <p>
-            A regisztrációs és profilfolyamatok összetettsége miatt az Orionban az űrlapkezelés kritikus terület.
-            A csomagok alapján a <code>react-hook-form</code> és a <code>zod</code> használata
-            arra utal,
-            hogy a kliensoldali validáció deklaratív,
-            újrahasznosítható
-            és jól strukturálható.
-            Ez különösen fontos a következő képernyőkön:
+            A nagyobb adatbeviteli felületeknél (például a profil szerkesztésénél vagy álláshirdetés feladásánál) fontos, hogy az oldal ne akadjon meg gépelés közben. Ehhez egy modern technikát (react-hook-form) használunk, ami segít gyorsan tartani a felületet.
         </p>
-
-        <ul>
-            <li>diák és cég regisztráció,</li>
-            <li>bejelentkezés,</li>
-            <li>profil szerkesztés,</li>
-            <li>hirdetés létrehozás és szerkesztés,</li>
-            <li>dokumentumfeltöltés,</li>
-            <li>jelszó-helyreállítási és email-hitelesítési folyamatok.</li>
-        </ul>
-
-        <h3>5.7. Többnyelvűség</h3>
 
         <p>
-            A <code>locales</code> mappa alapján
-            az Orion i18n támogatással rendelkezik.
-            Ez nem pusztán UI-kényelmi funkció,
-            hanem architekturális kérdés is,
-            mert a szöveges tartalmakat,
-            validációs visszajelzéseket,
-            gombfeliratokat,
-            hibanaplókat
-            és esetleges email sablonokat is összehangolt kulcsrendszer mentén kell kezelni.
+            Az adatok helyességét egy sémavalidációs rendszerrel (Zod) ellenőrizzük. Ez lehetővé teszi, hogy még azelőtt figyelmeztessük a felhasználót a hibákra, hogy az adatok elhagynák a böngészőt. Így azonnali visszajelzést kap, ha például elfelejtett kitölteni egy kötelező mezőt.
         </p>
 
-        <h3>5.8. SEO, statikus elemek és első benyomás</h3>
+<pre><code class="language-ts">// Diák/User regisztráció sémája (Validation.ts)
+export const userRegisterObject = authBase.extend({
+    lname: z.string().min(2, "Vezetéknév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
+    fname: z.string().min(2, "Keresztnév legalább 2 karakter").regex(/^[a-zA-ZáéíóöőúüűÁÉÍÓÖŐÚÜŰ\s]+$/, "A mező csak betűket tartalmazhat"),
+    birth_place: z.string().min(2, "Születési hely legalább 2 karakter"),
+    birth_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Érvénytelen dátum").refine((date) => {
+        return new Date(date) &lt;= new Date();
+    }, "A születési dátum nem lehet a jövőben"),
+    // ...
+});</code></pre>
+
+        <p>A komplex, több képernyőt érintő folyamatokat (mint a Messenger rendszere) dedikált Context Provider-ek kezelik.</p>
+
+        <h3>5.7. Többnyelvűség (i18n)</h3>
+
+        <div class="summary">
+            <strong>i18n TL;DR:</strong> Könyvtár: i18next + react-i18next. Nyelvi fájlok: src/locales/{lang}/{namespace}.json. Alapértelmezett nyelv: Magyar (hu). Választás: Böngésző/LocalStorage alapú felismerés.
+        </div>
 
         <p>
-            A nyilvános oldalaknál fontos szerepet kap a SEO és a statikus eszközök kezelése,
-            például a robots,
-            sitemap,
-            favicon
-            és Lighthouse audit témák.
-            Ez azt jelzi,
-            hogy az Orion nem kizárólag belső dashboard alkalmazásként kezeli a publikus felületeit,
-            hanem fontosnak tartja a keresőmotorok számára is megfelelő láthatóságot,
-            a technikai minőséget
-            és a teljesítményalapú optimalizálást.
+            Az Orion platform több nyelvet is támogat. A rendszer a modern i18next megoldást használja a felületi szövegek kezelésére. A fordítások strukturált JSON fájlokban találhatóak a src/locales/ könyvtárban, nyelvi kódok szerint csoportosítva (hu, en, de). A könnyebb karbantarthatóság érdekében a szövegek névterekre (namespaces) vannak bontva: public, user, company, components.
         </p>
 
-        <h3>5.9. Frontend architektúra rövid mintafolyamata</h3>
+        <p>Az oldal betöltésekor a rendszer megnézi, mit választott korábban a felhasználó. Ha még nem választott, automatikusan a magyart (Fallback Language) tölti be.</p>
 
-        <pre><code>Felhasználó kiválaszt egy állást
-    ↓
-Frontend oldal betölti a lista vagy részletező komponenst
-    ↓
-API réteg lekéri a szükséges adatokat
-    ↓
-Kliensoldali állapot frissül
-    ↓
-Űrlapkitöltés és validáció
-    ↓
-Kérés a backend felé
-    ↓
-Siker vagy hiba állapot vizuális visszajelzése</code></pre>
+<pre><code class="language-tsx">// Példa i18n használatra egy komponensben
+const { t } = useTranslation(['public', 'components']);
+
+return (
+    &lt;button&gt;
+        {t('components:confirm_modal.submit_btn')}
+    &lt;/button&gt;
+);</code></pre>
+
+        <h3>5.8. SEO és Statikus Eszközök</h3>
+
+        <div class="summary">
+            <strong>SEO TL;DR:</strong> A platform láthatóságát és professzionális megjelenését valid robots.txt, sitemap.xml és egyedi favicon biztosítja, célkitűzésünk a 100%-os Lighthouse SEO pontszám.
+        </div>
+
+        <p>
+            Az Orion platform nem csupán funkcionálisan, hanem technikai keresőoptimalizálás (SEO) szempontjából is modern elvárásoknak felel meg. A robots.txt meghatározza a nyilvános elérést a crawlerek számára és közvetlen linket biztosít a sitemapre. A sitemap.xml tartalmazza az oldal struktúráját és a fontosabb útvonalakat, segítve a Google és más keresők gyorsabb feltérképezését.
+        </p>
+
+        <p>
+            A professzionális arculat része a böngésző fülön megjelenő ikon (favicon). Az Orion egy modern, minimalista, csillagképet idéző logót használ, amely nemcsak vizuális azonosítást tesz lehetővé, hanem javítja a Lighthouse "Best Practices" pontszámát is. Minden statikus eszköz a projekt public/ könyvtárában található — a Vite ezeket változtatás nélkül másolja a végleges csomagba (dist).
+        </p>
+
+        <p>
+            A Lighthouse tesztek részletes eredményei a <a href="#sec11-4">11.4. szakaszban</a> találhatók.
+        </p>
 
         <h2 id="sec6">6. Backend Szerver Architektúra (src/server)</h2>
         <div class="tldr-box">
             <strong>TL;DR:</strong> A backend architektúra felel az Orion platform üzleti logikájának biztonságos és skálázható kiszolgálásáért. A <strong>Node.js és Express 5</strong> alapú REST API robusztus adatbázis-kapcsolatot tart fenn a Supabase-zel, miközben integrálja a valós idejű WebSocket kommunikációt (chat) és az egyedi NLP mikroszolgáltatást (OrionAI). Minden hálózati kommunikáció szigorú token-alapú hitelesítéssel és sémavalidációval védett.
         </div>
         <p>A szerveroldali alkalmazás <code>Node.js</code> környezetben, <code>TypeScript</code> nyelven fut. A fő belépési pont a <code>server.ts</code> állomány, amely az <code>Express</code> alkalmazás teljes életciklusát menedzseli. Feladatai közé tartozik a globális middleware-ek (CORS, Cookie-parser, JSON test feldolgozás) regisztrálása, a moduláris útvonalak (Routes) csatolása, valamint a független <code>WebSocket</code> szerver inicializálása. A rendszer alapértelmezetten a <code>4000</code>-es porton hallgat, és elkülöníti a hálózati réteget (Routes) az üzleti logikától (Services).</p>
-        
+
         <h3 id="sec6-1">6.1. Hálózati Middleware és Realtime Kommunikáció</h3>
         <p>A backend architekturális alapelve, hogy a végpontok csak ellenőrzött és hitelesített kéréseket szolgálhatnak ki, illetve hogy a chat-funkció azonnal, HTTP polling nélkül működjön (ne kelljen a frontendnek folyamatosan kérdezgetni a szervert, hogy van-e új üzenet, illetve ne legyen késleltetés az üzenetek érkezésében és ne kelljen a böngészőt folyamatosan újratölteni a felületen).</p>
 
@@ -1061,7 +1018,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
         <ul>
             <li><strong>Biztonsági megfontolások:</strong> Az aktivációs és jelszó-visszaállító emailekben szereplő linkek egyszer használatos (One-Time) JWT tokeneket tartalmaznak. A tokeneket a backend az adatbázisban (UPSERT elv alapján) tárolja, így garantálja, hogy ha a felhasználó új emailt kér, az előző link automatikusan érvényét veszti. A tokenek beépített lejárati idővel (TTL - Time to Live) rendelkeznek. Sikeres felhasználás után a tokeneket a rendszer azonnal megsemmisíti.</li>
         </ul>
-        
+
         <h4>6.2.9. OrionAI Mikroszolgáltatás (<code>OrionAIRoute.ts</code> / <code>OrionAI.py</code>)</h4>
         <p>Az Orion technológiai innovációja: a hagyományos Node.js szerver és a Python-alapú mesterséges intelligencia motor integrációs pontja.</p>
         <table>
@@ -1069,9 +1026,9 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
             <tr><td><code>POST /Api/OrionAI</code></td><td><code>OrionAI.py</code> API hívás / <code>getAdvertisementsByIds</code></td><td>A felhasználó természetes nyelvű promptjának továbbítása az AI szerverhez, majd a visszaadott azonosítók alapján az adatok lekérése a Supabase-ből.</td></tr>
         </table>
         <ul>
-            <li><strong>Fejlett Működési Mechanizmus:</strong> Mivel a Node.js nem alkalmas nehéz gépi tanulási modellek futtatására, a feladatot egy önálló <code>FastAPI</code> alapú Python szolgáltatás végzi (<code>8000</code>-es port). 
-            <br>1. Az Express router átadja a magyar nyelvű szöveget (pl. "Informatikai diákmunkát keresek otthonról"). 
-            <br>2. A Python motor szűri a kötőszavakat és lemmatizálja a szöveget. 
+            <li><strong>Fejlett Működési Mechanizmus:</strong> Mivel a Node.js nem alkalmas nehéz gépi tanulási modellek futtatására, a feladatot egy önálló <code>FastAPI</code> alapú Python szolgáltatás végzi (<code>8000</code>-es port).
+            <br>1. Az Express router átadja a magyar nyelvű szöveget (pl. "Informatikai diákmunkát keresek otthonról").
+            <br>2. A Python motor szűri a kötőszavakat és lemmatizálja a szöveget.
             <br>3. Egy <code>paraphrase-multilingual-MiniLM-L12-v2</code> SentenceTransformer modellel szemantikai elemzést és Vektortér-számítást (cosine similarity) végez a DB-ben lévő összes aktív hirdetésen.
             <br>4. A komplex algoritmus több faktort súlyoz: Szöveges szemantikai egyezés (65%), Bér sávja (20%), és a Földrajzi lokáció (15%).
             <br>5. A legjobban illeszkedő hirdetések azonosítóit visszaküldi az Express szervernek, amely végül kiszolgálja azokat a frontend számára.</li>
@@ -1080,9 +1037,9 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
         <h2 id="sec7">7. Adatmodell és adatbázislogika</h2>
 
         <h3 id="sec7-1">7.1. Adatbázis és Technológiai Háttér (Supabase / PostgreSQL)</h3>
-        
+
         <p>A projekt adatbázis-motorjaként a <strong>Supabase</strong> platformot választottuk, amely egy megbízható <strong>PostgreSQL</strong> relációs adatbázisra épül. A választás főbb okai a beépített biztonsági funkciók, az egyszerű kezelhetőség és a gyors működés voltak. A rendszer a következő funkciókat használja ki a legjobban:</p>
-        
+
         <ul>
             <li><strong>Megbízható adattárolás:</strong> A PostgreSQL biztosítja, hogy az adatok (pl. állásjelentkezések, munkaviszonyok) konzisztensek maradjanak, és esetleges hiba esetén se sérüljenek vagy vesszenek el (tranzakciókezelés).</li>
             <li><strong>Beépített titkosítás (pgcrypto):</strong> A GDPR előírások miatt a legérzékenyebb személyes adatokat (személyi igazolvány, lakcímkártya) nem tároljuk olvasható szövegként. Az adatbázis <code>pgcrypto</code> bővítménye segítségével ezeket az adatokat már közvetlenül az adatbázis szintjén titkosítva mentjük el.</li>
@@ -1608,7 +1565,7 @@ Státuszfrissítés / kapcsolatfelvétel / döntés
         </div>
 
         <h3>10.1. Auth és session biztonság</h3>
-        
+
         <p>
             Az Orion egyszerre kezel személyes adatokat,
             céges hozzáféréseket,
@@ -1619,7 +1576,7 @@ Státuszfrissítés / kapcsolatfelvétel / döntés
         </p>
 
         <h3>10.2. Hibák kezelése és visszajelzés</h3>
-        
+
         <p>Egy hálózati rendszernél előfordulhatnak hibák (pl. megszakad a net vagy túlterhelt a szerver). Az Orion 'hibatűrő' (Graceful Degradation) módon működik. Külön tudjuk választani a felhasználói hibákat (pl. rossz jelszó) és a váratlan szerverhibákat, és ezekről mindig egyértelmű üzenetet küldünk (Toast értesítések formájában).</p>
 
         <h3>10.3. Szerepköralapú hozzáférés</h3>
@@ -1706,9 +1663,9 @@ Státuszfrissítés / kapcsolatfelvétel / döntés
 
         <p>
             A projekt csomaglistája alapján a főbb eszközök:
-            <code>vitest</code>, 
-            <code>@testing-library/react</code>, 
-            <code>playwright</code> (e2e) és 
+            <code>vitest</code>,
+            <code>@testing-library/react</code>,
+            <code>playwright</code> (e2e) és
             <code>msw</code>.
         </p>
 
@@ -1774,7 +1731,7 @@ Státuszfrissítés / kapcsolatfelvétel / döntés
         <div class="tldr-box">
             <strong>WEB-AUDIT ÖSSZESÍTÉS</strong>
             <p>Az Orion platform legutóbbi Lighthouse auditja kiváló eredményeket mutat a keresőoptimalizálás és az elérhetőség terén, miközben kijelöli az irányt a további teljesítmény-optimalizáláshoz.</p>
-            
+
             <table style="width: 100%; border-collapse: separate; border-spacing: 10px; margin-top: 15px;">
                 <tr>
                     <td style="background: #2d3436; color: #f39c12; text-align: center; padding: 20px; border-radius: 10px; border: 2px solid #f39c12;">
