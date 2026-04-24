@@ -1101,7 +1101,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
         <h4 id="sec7-2-1">7.2.1. Felhasználói Identitás és Személyes Adatok Modul</h4>
 
         <h5><code>1. users</code> (Álláskeresők Törzstáblája)</h5>
-        <p>A diák (munkavállaló) felhasználók demográfiai és profiladatait tartalmazó főtábla. Az érzékeny személyazonosító okmányok nem itt, hanem a kriptográfiailag védett <code>user_documents</code> táblában kapnak helyet.</p>
+        <p>Ez a tábla tárolja az álláskeresők alapvető személyes adatait és a profiljukhoz tartozó leírásokat. A biztonság jegyében a személyazonosító okmányokat külön kezeljük: ezek nem itt, hanem a titkosított <code>user_documents</code> táblában találhatók.</p>
         <pre><code class="language-sql">CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
@@ -1127,7 +1127,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
 );</code></pre>
 
         <h5><code>3. user_documents</code> (Titkosított Okmánytár)</h5>
-        <p>A GDPR előírásainak megfelelően a személyes igazolványok és lakcímkártyák nyílt szövegként (plaintext) nem tárolhatók. A <code>pgcrypto</code> bővítmény <code>pgp_sym_encrypt</code> eljárása titkosítja ezeket az adatokat <code>BYTEA</code> formátumba.</p>
+        <p>Ez a tábla az érzékeny adatok védelmére szolgál, és fizikailag is elkülönítve tárolja az álláskeresők igazolványait a profiladatoktól. A GDPR elveinek megfelelően az adatok nem nyílt szövegként, hanem a <code>pgcrypto</code> bővítmény segítségével, PGP-alapú szimmetrikus titkosítással kerülnek a rendszerbe <code>BYTEA</code> formátumban. Így az okmányok száma csak a megfelelő kulcs birtokában fejthető vissza.</p>
         <pre><code class="language-sql">CREATE TABLE user_documents (
   user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
   personal_id BYTEA NOT NULL,
@@ -1136,7 +1136,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
 );</code></pre>
 
         <h5><code>4. user_email_tokens</code> (Tranzakciós Tokenek)</h5>
-        <p>Ideiglenes, biztonságos tokenek tárolása email megerősítéshez és jelszó-visszaállításhoz. A <code>expires_at</code> oszlop kötelező lejárati időt (TTL) rendel a tokenekhez.</p>
+        <p>Ez a tábla kezeli a felhasználói fiókok megerősítéséhez és a jelszó-visszaállításhoz szükséges egyszer használatos azonosítókat. Minden rekordhoz kötelező lejárati idő (TTL) tartozik, amely biztosítja, hogy a kiküldött kódok csak meghatározott ideig maradjanak érvényesek, növelve ezzel a rendszer biztonságát.</p>
         <pre><code class="language-sql">CREATE TABLE user_email_tokens (
     user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     token TEXT UNIQUE NOT NULL,
@@ -1144,7 +1144,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
 );</code></pre>
 
         <h5><code>5. user_statistics</code> (Interakciós adatok)</h5>
-        <p>A profil és a CV megtekintésének metrikáit gyűjti. Új diák regisztrációjakor egy automatikus Trigger hozza létre a kezdő, nullázott rekordot.</p>
+        <p>Ez a tábla az álláskeresők profiljához kapcsolódó aktivitásokat rendszerezi, külön mérve a profiladatok és az önéletrajzok megtekintéseinek számát. Az adatok integritását egy adatbázis-trigger biztosítja, amely minden új regisztrációkor automatikusan létrehozza a felhasználóhoz tartozó, alaphelyzetbe állított (nullázott) statisztikai rekordot.</p>
         <pre><code class="language-sql">CREATE TABLE user_statistics (
     user_id INTEGER PRIMARY KEY
         REFERENCES users(id)
@@ -1155,7 +1155,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
 );</code></pre>
 
         <h5><code>6. favorites</code> (Kedvencek)</h5>
-        <p>Egy kapcsolótábla (M:N reláció) a felhasználók és az általuk preferált (elmentett) álláshirdetések között.</p>
+        <p>Ez a kapcsolótábla teszi lehetővé az álláskeresők számára a hirdetések mentését és későbbi gyors elérését. A tábla egy több-a-többhöz kapcsolatot valósít meg a felhasználók és az álláshirdetések között. Az összetett elsődleges kulcs garantálja, hogy egy felhasználó csak egyszer jelölhet meg kedvencként egy adott hirdetést.</p>
         <pre><code class="language-sql">CREATE TABLE favorites (
     user_id INTEGER NOT NULL
         REFERENCES users(id) ON DELETE CASCADE,
@@ -1170,7 +1170,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
         <h4 id="sec7-2-2">7.2.2. Vállalati (Cég) Modul</h4>
 
         <h5><code>7. companies</code> (Vállalati Törzstábla)</h5>
-        <p>A munkáltatók publikus és adminisztratív adatainak központi tárolója.</p>
+        <p>A hirdető partnerek adminisztratív és profiladatainak tárolója. A tábla külön kezeli a kapcsolattartó személyét és a cég hivatalos elérhetőségeit.</p>
         <pre><code class="language-sql">CREATE TABLE companies (
   id SERIAL PRIMARY KEY,
   email TEXT UNIQUE NOT NULL,
@@ -1196,7 +1196,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
 );</code></pre>
 
         <h5><code>9. company_email_tokens</code> (Céges Tokenek)</h5>
-        <p>Tranzakciós tokeneik, amelyeket email megerősítéshez és jelszó visszaállításhoz használ a rendszer.</p>
+        <p>Ez a tábla kezeli a munkáltatói fiókok megerősítéséhez és a jelszó-visszaállításhoz szükséges egyszer használatos azonosítókat. Minden rekordhoz kötelező lejárati idő (TTL) tartozik, amely biztosítja, hogy a kiküldött kódok csak meghatározott ideig maradjanak érvényesek, növelve ezzel a rendszer biztonságát.</p>
         <pre><code class="language-sql">CREATE TABLE company_email_tokens (
     company_id INTEGER PRIMARY KEY REFERENCES companies(id) ON DELETE CASCADE,
     token TEXT UNIQUE NOT NULL,
@@ -1207,7 +1207,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
         <h4 id="sec7-2-3">7.2.3. Hirdetések és Munkaviszony (ATS Modul)</h4>
 
         <h5><code>10. advertisement</code> (Álláshirdetések)</h5>
-        <p>A munkaerőpiaci kínálatot leíró tábla. A hirdetéshez tartozó analitikai mutatókat (kattintások) az adatbázis natívan vezeti a <code>click_count</code> mezőben.</p>
+        <p>Ez a tábla a rendszerben közzétett álláslehetőségek központi jegyzéke. Tartalmazza a munkakör pontos megnevezését, a bérsávot, valamint a pozíció betöltéséhez szükséges elvárásokat és feladatokat. A hirdetések közvetlen kapcsolatban állnak a hirdető vállalattal, az <code>is_active</code> státusz pedig lehetővé teszi a hirdetések láthatóságának azonnali kezelését. A népszerűségi mutatók nyomon követésére a tábla natív módon vezeti a megtekintések számát, segítve ezzel a hirdetések hatékonyságának elemzését.</p>
         <pre><code class="language-sql">CREATE TABLE advertisement (
     id SERIAL PRIMARY KEY,
     position TEXT NOT NULL,                 -- munkakör
@@ -1221,7 +1221,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
 );</code></pre>
 
         <h5><code>11. job_applications</code> (Pályázatok)</h5>
-        <p>A jelentkezők és a hirdetések közötti állapotkövető (State Tracker) kapcsolótábla.</p>
+        <p>Ez a tábla kezeli az álláskeresők és a hirdetések közötti kapcsolatot, rögzítve minden egyes pályázati folyamatot. Nem csupán egy egyszerű összekötő elem, hanem egy állapotkövető (State Tracker) rendszer, amely a <code>status</code> mező segítségével transzparensen mutatja a jelentkezés aktuális szakaszát (pl. benyújtva, elbírálás alatt, elfogadva). A <code>last_updated</code> időbélyeg biztosítja a folyamatok időbeliségének nyomon követhetőségét, így mindig látható, mikor történt az utolsó változtatás a pályázat sorsában.</p>
         <pre><code class="language-sql">CREATE TABLE job_applications (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1231,7 +1231,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
 );</code></pre>
 
         <h5><code>12. employees</code> (Alkalmazotti Nyilvántartás)</h5>
-        <p>A sikeres felvételi folyamat végeredményeként létrejövő munkaviszonyokat rögzíti. Exakt lenyomata a diák és a cég közti szerződéses viszonynak (pozíció, órabér, kezdés dátuma).</p>
+        <p>Ez a tábla a sikeres kiválasztási folyamat lezárásaként létrejött aktív munkaviszonyok hivatalos jegyzéke. Nem csupán statisztikai adat, hanem a diák és a munkáltató közötti szerződéses feltételek pontos, visszakereshető lenyomata. Rögzíti a betöltött pozíciót, a megállapodás szerinti órabért és a munkába állás pontos időpontját. A tábla biztosítja a jogfolytonosságot és az adminisztratív átláthatóságot a teljes munkaviszony alatt.</p>
         <pre><code class="language-sql">CREATE TABLE employees (
     id SERIAL PRIMARY KEY,
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -1246,7 +1246,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
         <h4 id="sec7-2-4">7.2.4. Kommunikáció és Értesítési Rendszer</h4>
 
         <h5><code>13. messages</code> (Chat Motor)</h5>
-        <p>A WebSocket szerver és a kliensek közti üzenetváltások perzisztens tárolója. A <code>sender_type</code> mezőn lévő <code>CHECK</code> kényszer adatszintű védelmet nyújt a hamisított feladójú üzenetek ellen.</p>
+        <p>Ez a tábla a rendszer üzenetküldő motorjának központi tárolója, amely biztosítja a párbeszédek folyamatosságát a diákok és a munkáltatók között. A WebSocket-alapú valós idejű csevegés háttérbázisaként szolgál, így az üzenetváltások később is bármikor visszakereshetők és megtekinthetők. A rendszer biztonságát a <code>sender_type</code> mezőre illesztett adatszintű ellenőrzés (CHECK constraint) garantálja, amely megakadályozza a feladói szerepkörök felcserélését. A tábla emellett megbízhatóan rögzíti az üzenetek olvasottságát és a küldés pontos idejét.</p>
         <pre><code class="language-sql">CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
 
@@ -1267,7 +1267,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
 );</code></pre>
 
         <h5><code>14. system_messages</code> (Rendszerüzenetek)</h5>
-        <p>Adminisztrátorok által küldött globális vagy célzott üzenetek. A <code>target_type</code> és <code>target_id</code> párosítás (Polimorfikus architektúra) lehetővé teszi a pontos címzést.</p>
+        <p>Ez a tábla az adminisztrátorok által küldött hivatalos értesítések és globális üzenetek gyűjtőhelye. A rugalmas felépítés lehetővé teszi, hogy az üzeneteket pontosan célozzuk meg: küldhetők minden felhasználónak, vagy akár specifikusan csak egy adott csoportnak (pl. csak a cégeknek vagy csak a diákoknak). A tábla biztosítja, hogy a fontos rendszerüzenetek — mint például a karbantartási tájékoztatók vagy jogi frissítések — rendezett formában jussanak el a címzettekhez.</p>
         <pre><code class="language-sql">CREATE TABLE system_messages (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -1279,7 +1279,7 @@ Siker vagy hiba állapot vizuális visszajelzése</code></pre>
 );</code></pre>
 
         <h5><code>15. system_message_reads</code> (Rendszerüzenet Megtekintések)</h5>
-        <p>Pivot-tábla, ami csak azt rögzíti, ha egy kliens már elolvasta az adott rendszerüzenetet, így a frontend tudja, hogy ne jelenítse meg újra.</p>
+        <p>Ez a tábla a rendszerüzenetek megtekintéseit követi nyomon, biztosítva a felhasználói élmény zavartalanságát. Kizárólag azt rögzíti, ha egy adott üzenetet a címzett már elolvasott, így a kezelőfelület (frontend) pontosan tudja, mely értesítéseket nem kell többé megjeleníteni. Ez a megoldás megakadályozza a redundáns információközlést, és segít tisztán tartani a felhasználók értesítési listáját.</p>
         <pre><code class="language-sql">CREATE TABLE system_message_reads (
     id SERIAL PRIMARY KEY,
     message_id INT NOT NULL,
