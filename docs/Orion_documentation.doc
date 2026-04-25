@@ -141,6 +141,8 @@
 
             <li><a href="#sec13">Ajánlások és következő lépések</a></li>
 
+            <li><a href="#sec14">Fejlesztési folyamat és ütemezés</a></li>
+
             <li><a href="#appendix">Mellékletek</a></li>
         </ol>
     </div>
@@ -1082,25 +1084,27 @@ function IsLoggedIn({ children, mode = "user" }: Props) {
 
         <p>Fontos tudni, hogy az RBAC védelem a frontend oldalán csak a felhasználói élményt javítja (UX Security): segít abban, hogy a felhasználó ne lásson zavaró, számára szükségtelen menüket. A valódi biztonságot a backend szerver végzi a JWT tokenek ellenőrzésével minden egyes kérésnél.</p>
 
-        <h3>5.4. Az oldal részei és funkciói (Functional Decomposition)</h3>
+                <h3>5.4. Az oldal részei és funkciói (Functional Decomposition)</h3>
 
         <p>
-            Ebben a fejezetben az Orion platform felhasználói felületeit logikai modulokra bontva mutatjuk be, részletezve a konkrét oldalak célját, a fejlesztésük során felmerült technikai kihívásokat és az adathálózati kapcsolataikat. A rendszer funkció-alapú (feature-based) architektúrát követ, így a komponensek a <code>src/features</code> mappában találhatók.
+            Az Orion platform feature-alapú (feature-based) architektúrát követ: a frontend komponensek a <code>src/features</code> mappában, modulonként külön könyvtárakba szervezve találhatók. Az alábbi alfejezetek modulonként, egységes táblázatos formában mutatják be az egyes oldalak célját és adathálózati kapcsolataikat.
         </p>
+
+        <h4>5.4.1. Feature modulok áttekintése</h4>
 
         <table>
             <thead>
                 <tr>
                     <th>Feature</th>
-                    <th>Fő cél</th>
-                    <th>Kapcsolódó folyamatok</th>
+                    <th>Felelősségi kör</th>
+                    <th>Tartalom</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td><code>public</code></td>
                     <td>Nyilvános felületek és belépési pontok</td>
-                    <td>Kezdőlap, marketing jellegű tartalom, nyilvános álláslisták</td>
+                    <td>Kezdőlap, marketing tartalom, nyilvános álláslisták</td>
                 </tr>
                 <tr>
                     <td><code>auth</code></td>
@@ -1125,72 +1129,179 @@ function IsLoggedIn({ children, mode = "user" }: Props) {
             </tbody>
         </table>
 
+        <h4>5.4.2. Publikus Modul — <code>src/features/public</code></h4>
 
-        <div class="summary">
-            <h4>A) Publikus Modul <code>(src/features/public)</code></h4>
-            <p><strong>Kezdőlap (PublicHomePage)</strong></p>
-            <ul>
-                <li><strong>Cél:</strong> A platform bemutatása a nem bejelentkezett felhasználók számára, a regisztráció ösztönzése és az elérhető funkciók (álláskeresés, toborzás) ismertetése.</li>
-                <li><strong>Technikai kihívás:</strong> Gyors betöltési idő és reszponzív, látványos megjelenés biztosítása SEO szempontok (Lighthouse 100%) figyelembevételével.</li>
-            </ul>
+        <p>A nem bejelentkezett felhasználók számára szolgáltatott felületek. Technikai fókusz: gyors betöltési idő (Lighthouse 100%) és reszponzív, SEO-barát megjelenés.</p>
 
-            <h4>B) Globális Autentikációs Modul <code>(src/features/auth)</code></h4>
-            <p><strong>Jelszóvisszaállítás (PasswordReset)</strong></p>
-            <ul>
-                <li><strong>Cél:</strong> Elfelejtett jelszavak biztonságos megújítása egy emailben kapott token segítségével.</li>
-                <li><strong>Adatkapcsolat:</strong> A <code>/auth/reset-password</code> folyamat kezelése.</li>
-            </ul>
-            <p><strong>Fiók Hitelesítés (VerifyPage, SendVerifyPage)</strong></p>
-            <ul>
-                <li><strong>Cél:</strong> A regisztrált email címek megerősítése (diákok és cégek számára egyaránt).</li>
-                <li><strong>Adatkapcsolat:</strong> A <code>/auth/verify</code> endpoint hívása a token validálásához.</li>
-            </ul>
+        <table>
+            <thead>
+                <tr>
+                    <th>Oldal / Komponens</th>
+                    <th>Cél</th>
+                    <th>Adatkapcsolat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>PublicHomePage</code></td>
+                    <td>Platform bemutatása, regisztráció ösztönzése, funkciók (álláskeresés, toborzás) ismertetése</td>
+                    <td><code>GET /api/advertisements/top3</code></td>
+                </tr>
+            </tbody>
+        </table>
 
-            <h4>C) Munkaadói (Céges) Modul <code>(src/features/company)</code></h4>
-            <p><strong>Autentikáció (LoginPage, RegisterPage)</strong></p>
-            <ul>
-                <li><strong>Cél:</strong> Céges felhasználók beléptetése és új cégek regisztrációja.</li>
-                <li><strong>Adatkapcsolat:</strong> Az <code>/auth/company/login</code> és <code>/auth/company/register</code> hívások.</li>
-            </ul>
-            <p><strong>Céges Dashboard (HomePage, EditProfile)</strong></p>
-            <ul>
-                <li><strong>Cél:</strong> A cég profiljának karbantartása, és az alapvető statisztikák áttekintése.</li>
-            </ul>
-            <p><strong>Hirdetéskezelés (ShowListedJobs, CompanyJobs)</strong></p>
-            <ul>
-                <li><strong>Cél:</strong> Új munkakörök kiírása, meglévők szerkesztése és az aktív/inaktív hirdetések áttekintése.</li>
-                <li><strong>Technikai kihívás:</strong> Összetett űrlapok kezelése a React Hook Form és Zod validáció segítségével.</li>
-            </ul>
-            <p><strong>Jelöltkezelő Rendszer (ATS - Applicant Tracking System)</strong></p>
-            <ul>
-                <li><strong>Cél:</strong> A jelentkezők nyomon követése, státuszuk frissítése egy Kanban-szerű felületen.</li>
-                <li><strong>Technikai kihívás:</strong> Folyamatos animációk (Framer Motion) és valós idejű státusz frissítések zökkenőmentes megjelenítése.</li>
-            </ul>
+        <h4>5.4.3. Globális Autentikációs Modul — <code>src/features/auth</code></h4>
 
-            <h4>D) Álláskeresői (Diák) Modul <code>(src/features/user)</code></h4>
-            <p><strong>Autentikáció (LoginPage, RegisterPage)</strong></p>
-            <ul>
-                <li><strong>Cél:</strong> Diákok/álláskeresők beléptetése és regisztrációja, jelentősen eltérő adatokkal (pl. lakcímkártya, személyi).</li>
-            </ul>
-            <p><strong>Álláskereső Alrendszer (UserJobs)</strong></p>
-            <ul>
-                <li><strong>Cél:</strong> Hirdetések listázása, részletes adatlap megtekintése és mentett/kedvenc állások kezelése.</li>
-                <li><strong>Technikai kihívás:</strong> Az OrionAI alapú intelligens keresés integrációja és az aszinkron lapozás (pagination) kivitelezése memóriaszivárgás nélkül.</li>
-                <li><strong>Adatkapcsolat:</strong> A <code>/advertisement</code> API és az OrionAI végpont használata.</li>
-            </ul>
-            <p><strong>Profil és Jelentkezések (EditProfile, JobApplications, UploadResume)</strong></p>
-            <ul>
-                <li><strong>Cél:</strong> Önéletrajzok (PDF) feltöltése és a felhasználó által benyújtott jelentkezések utólagos visszakövetése.</li>
-            </ul>
+        <p>Szerepkörtől független hitelesítési folyamatok (jelszókezelés, email verifikáció). A konkrét végpontok szerepkörönként eltérnek (user / company).</p>
 
-            <h4>E) Kommunikációs Modul <code>(src/features/chat)</code></h4>
-            <p><strong>OrionMessenger</strong></p>
-            <ul>
-                <li><strong>Cél:</strong> Közvetlen, valós idejű interakció biztosítása a munkaadók és a jelöltek között.</li>
-                <li><strong>Technikai kihívás:</strong> Az "Optimista felület" (Optimistic UI) technika alkalmazása a gyors és folyamatos élményért.</li>
-                <li><strong>Adatkapcsolat:</strong> Globális <code>MessengerProvider</code> által menedzselt WebSocket/szinkronizációs kapcsolat.</li>
-            </ul>
-        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Oldal / Komponens</th>
+                    <th>Cél</th>
+                    <th>Adatkapcsolat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>PasswordReset</code></td>
+                    <td>Elfelejtett jelszó megújítása: kérő email kiküldése, majd új jelszó mentése token alapján</td>
+                    <td><code>POST /api/auth/{szerepkör}/forgot-password</code><br><code>PATCH /api/auth/{szerepkör}/reset-password</code></td>
+                </tr>
+                <tr>
+                    <td><code>VerifyPage</code></td>
+                    <td>Regisztrált email cím megerősítése token alapján</td>
+                    <td><code>PATCH /api/auth/{szerepkör}/verify-email</code></td>
+                </tr>
+                <tr>
+                    <td><code>SendVerifyPage</code></td>
+                    <td>Verifikációs email újraküldése</td>
+                    <td><code>POST /api/auth/{szerepkör}/verify-email</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>5.4.4. Munkaadói (Céges) Modul — <code>src/features/company</code></h4>
+
+        <p>Cégek teljes életciklusa: regisztrációtól a jelöltkezelésig. Az összetett űrlapoknál (hirdetésfeladás) React Hook Form + Zod validáció biztosítja a gépelés közben is gyors felületet. Az ATS Kanban-nézet Framer Motion animációkat használ a státuszváltások megjelenítésére.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Oldal / Komponens</th>
+                    <th>Cél</th>
+                    <th>Adatkapcsolat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>LoginPage</code></td>
+                    <td>Céges felhasználók beléptetése</td>
+                    <td><code>POST /api/auth/company/login</code></td>
+                </tr>
+                <tr>
+                    <td><code>RegisterPage</code></td>
+                    <td>Új cég regisztrációja</td>
+                    <td><code>POST /api/auth/company/register</code></td>
+                </tr>
+                <tr>
+                    <td><code>HomePage</code></td>
+                    <td>Céges dashboard, alapvető statisztikák áttekintése</td>
+                    <td><code>GET /api/companies/me/stats</code><br><code>GET /api/companies/me/advertisements</code></td>
+                </tr>
+                <tr>
+                    <td><code>EditProfile</code></td>
+                    <td>Céges profil adatainak karbantartása</td>
+                    <td><code>GET /api/companies/me</code><br><code>PATCH /api/companies/me</code></td>
+                </tr>
+                <tr>
+                    <td><code>ShowListedJobs</code></td>
+                    <td>Aktív/inaktív hirdetések áttekintése</td>
+                    <td><code>GET /api/companies/me/advertisements</code></td>
+                </tr>
+                <tr>
+                    <td><code>CompanyJobs</code></td>
+                    <td>Új munkakör kiírása, meglévő szerkesztése, státuszváltás</td>
+                    <td><code>POST /api/advertisements</code><br><code>GET /api/advertisements/{id}</code><br><code>PATCH /api/advertisements/{id}</code><br><code>PATCH /api/advertisements/{id}/status</code></td>
+                </tr>
+                <tr>
+                    <td><em>ATS felület</em></td>
+                    <td>Jelentkezők listázása, státusz frissítése (elfogadás/elutasítás), önéletrajz letöltése</td>
+                    <td><code>GET /api/advertisements/{id}/applications</code><br><code>PATCH /api/applications/{id}/status</code><br><code>GET /api/applications/{id}/resume</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>5.4.5. Álláskeresői (Diák) Modul — <code>src/features/user</code></h4>
+
+        <p>Diákok és álláskeresők számára biztosított felületek, a regisztrációtól a jelentkezések visszakövetéséig. Technikai kihívás: az OrionAI alapú intelligens keresés integrációja, valamint az aszinkron lapozás (pagination) memóriaszivárgás-mentes kivitelezése.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Oldal / Komponens</th>
+                    <th>Cél</th>
+                    <th>Adatkapcsolat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>LoginPage</code></td>
+                    <td>Diákok/álláskeresők beléptetése</td>
+                    <td><code>POST /api/auth/user/login</code></td>
+                </tr>
+                <tr>
+                    <td><code>RegisterPage</code></td>
+                    <td>Diák regisztráció (lakcímkártya, személyi adatok)</td>
+                    <td><code>POST /api/auth/user/register</code></td>
+                </tr>
+                <tr>
+                    <td><code>UserJobs</code></td>
+                    <td>Hirdetések listázása, részletes adatlap, mentett/kedvenc állások kezelése</td>
+                    <td><code>GET /api/advertisements/search</code><br><code>GET /api/advertisements/{id}</code><br><code>GET /api/users/me/favorites</code><br><code>POST /api/OrionAI</code></td>
+                </tr>
+                <tr>
+                    <td><code>EditProfile</code></td>
+                    <td>Felhasználói profil szerkesztése, önéletrajz megtekintése/törlése</td>
+                    <td><code>GET /api/users/me</code><br><code>PATCH /api/users/me</code><br><code>GET /api/users/me/resume</code><br><code>DELETE /api/users/me/resume</code></td>
+                </tr>
+                <tr>
+                    <td><code>JobApplications</code></td>
+                    <td>Benyújtott jelentkezések visszakövetése</td>
+                    <td><code>GET /api/users/me/applications</code></td>
+                </tr>
+                <tr>
+                    <td><code>UploadResume</code></td>
+                    <td>Önéletrajz (PDF) feltöltése, megtekintése, törlése</td>
+                    <td><code>POST /api/users/me/resume</code><br><code>GET /api/users/me/resume</code><br><code>DELETE /api/users/me/resume</code></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h4>5.4.6. Kommunikációs Modul — <code>src/features/chat</code></h4>
+
+        <p>Valós idejű, közvetlen üzenetküldés munkaadók és jelöltek között. Technikai kihívás: az "Optimistic UI" technika alkalmazása — az elküldött üzenet azonnal megjelenik a felületen, még a szerver visszaigazolása előtt, majd szükség esetén visszagörgetés történik hiba esetén. Az állapotot a globális <code>MessengerProvider</code> (Context API) menedzseli, amely REST API hívásokkal és WebSocket kapcsolattal (<code>ws://localhost:4000</code>) tartja fenn a valós idejű szinkronizációt.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Oldal / Komponens</th>
+                    <th>Cél</th>
+                    <th>Adatkapcsolat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="2"><code>OrionMessenger</code></td>
+                    <td>Partnerlista lekérése</td>
+                    <td><code>GET /api/messages/conversations</code> (user)<br><code>GET /api/messages/conversations/company</code> (company)</td>
+                </tr>
+                <tr>
+                    <td>Üzenetek lekérése és küldése</td>
+                    <td><code>GET /api/messages/conversations/{id}</code><br><code>POST /api/messages</code><br>WebSocket <code>ws://localhost:4000</code></td>
+                </tr>
+            </tbody>
+        </table>
 
         <h3>5.5. Adatkezelés: Hogyan mozognak az adatok? (State Management &amp; Data Flow)</h3>
 
@@ -1743,7 +1854,101 @@ npm run OrionAI    # AI modul indítása</code></pre>
             <li><strong>API verziókezelés (v1, v2):</strong> Az új funkciók és a potenciális mobilalkalmazás bevezetésével a backend végpontjait szigorú verziókezeléssel kell ellátni, garantálva a régebbi kliensek visszafelé kompatibilitását.</li>
         </ul>
 
-        <h2 id="appendix">14. Mellékletek</h2>
+        
+        <h2 id="sec14">14. Fejlesztési folyamat és ütemezés</h2>
+
+        <div class="tldr-box">
+            <strong>TL;DR:</strong> Az Orion fejlesztését **két fős csapatunk** végezte agilis szemlélettel, **Trello** alapú feladatkezelést és **Discord** kommunikációt alkalmazva. A fejlesztés során kiemelt figyelmet fordítottunk a **Clean Code** alapelvekre és a fenntartható architektúrára. A projektet a tervezéstől a tesztelésig hat fő fázisra bontottuk.
+        </div>
+
+        <h3>14.1. Csapat és szerepkörök</h3>
+        <p>A projekten ketten dolgoztunk, a felelősségi köröket az alábbiak szerint osztottuk el:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Fejlesztő</th>
+                    <th>Felelősségi kör</th>
+                    <th>Főbb feladatok</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Peti</strong></td>
+                    <td>Backend fejlesztés és adatbázis</td>
+                    <td>Express API végpontok, szolgáltatási réteg, Supabase adatbázis-tervezés (táblák, RPC-k, triggerek), JWT hitelesítés, WebSocket integráció, OrionAI összekötés</td>
+                </tr>
+                <tr>
+                    <td><strong>Domonkos</strong></td>
+                    <td>Frontend fejlesztés</td>
+                    <td>React komponensek, oldalak és nézetek, routing és Route Guard rendszer, Vanilla CSS design, Framer Motion animációk, űrlapkezelés (React Hook Form + Zod)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>14.2. Eszközök és kommunikáció</h3>
+        <ul>
+            <li><strong>Feladatkezelés – Trello:</strong> A feladatok nyomon követésére Trello táblát használtunk, ahol a kártyákat a szokásos Kanban-oszlopok mentén mozgattuk (Teendő → Folyamatban → Kész). Minden nagyobb funkciót és hibajavítást külön kártyaként kezeltünk, így a haladásunk bármikor átlátható volt.</li>
+            <li><strong>Kommunikáció – Discord:</strong> A napi egyeztetéseinket, technikai döntéseinket és a kódintegrációs kérdések tisztázását saját Discord szerverünkön zajlott. A szöveges és hangcsatornák lehetővé tették az azonnali problémamegoldást és a párhuzamos fejlesztési ágaink összehangolását.</li>
+            <li><strong>Verziókezelés – Git / GitHub:</strong> A kódbázist a <code>DomonkosTech/Orion</code> GitHub repositoryban tároltuk, ahol külön ágakon dolgoztunk és pull request-ekkel integráltuk a változtatásokat.</li>
+        </ul>
+
+        <h3>14.3. Fejlesztési ütemterv</h3>
+        <p>A projekt fejlesztését az alábbi fő fázisokra bontottuk. Az ütemezést rugalmasan, iteratív módon kezeltük, az egyes fázisok között tudatosan hagytunk átfedéseket.</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Fázis</th>
+                    <th>Időszak (hét)</th>
+                    <th>Fő tevékenységek</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>1. Tervezés és architektúra</strong></td>
+                    <td>1–2. hét</td>
+                    <td>Követelmények összegyűjtése, adatmodell megtervezése, technológiai verem kiválasztása, Trello tábla felállítása, fejlesztési környezet konfigurálása.</td>
+                </tr>
+                <tr>
+                    <td><strong>2. Alaprendszer kiépítése</strong></td>
+                    <td>3–9. hét</td>
+                    <td>Adatbázis-séma létrehozása (táblák, FK kapcsolatok), Express szerver alap middleware-ek, JWT hitelesítés, frontend vázszerkezet (routing, layout komponensek).</td>
+                </tr>
+                <tr>
+                    <td><strong>3. Fő funkciók implementálása</strong></td>
+                    <td>9–17. hét</td>
+                    <td>Regisztráció és bejelentkezés (diák + cég), profilkezelés, álláshirdetés CRUD műveletek, jelentkezési rendszer (ATS) alapjai, céges dashboard.</td>
+                </tr>
+                <tr>
+                    <td><strong>4. Kommunikáció és értesítések</strong></td>
+                    <td>17–21. hét</td>
+                    <td>OrionMessenger (valós idejű chat) implementálása, WebSocket integráció, rendszerüzenetek, email-értesítési rendszer (Nodemailer) bekötése.</td>
+                </tr>
+                <tr>
+                    <td><strong>5. Intelligens funkciók és finomhangolás</strong></td>
+                    <td>21–26. hét</td>
+                    <td>OrionAI NLP keresőmotor integrálása, kedvencek rendszere, statisztikák, UI animációk és reszponzív finomhangolás.</td>
+                </tr>
+                <tr>
+                    <td><strong>6. Tesztelés és dokumentáció</strong></td>
+                    <td>26–28. hét</td>
+                    <td>Manuális végponttesztelés, biztonsági ellenőrzések, Lighthouse teljesítménymérés, hibajavítások, rendszerdokumentáció véglegesítése.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>14.4. Fejlesztési folyamat összefoglalása</h3>
+        <p>A fejlesztés során az alábbi ciklikus munkafolyamatot követtük:</p>
+        <ol>
+            <li><strong>Feladatkijelölés:</strong> A Trello táblán kiválasztott kártyát „Folyamatban" státuszba helyeztük.</li>
+            <li><strong>Implementáció:</strong> A backend és frontend fejlesztéssel párhuzamosan haladtunk; a közös API interfészeket előre egyeztettük, hogy az integráció során minimális legyen a súrlódás.</li>
+            <li><strong>Integráció:</strong> A kész funkciókat GitHub-on egyesítettük és helyi környezetben teszteltük az összjátékot.</li>
+            <li><strong>Ellenőrzés:</strong> Manuális tesztek és kódellenőrzés után a feladatot „Kész" státuszba tettük.</li>
+            <li><strong>Iteráció:</strong> A visszajelzések alapján szükség esetén elvégeztük a hibajavításokat és a finomhangolást.</li>
+        </ol>
+
+        <h2 id="appendix">15. Mellékletek</h2>
 
 
 
