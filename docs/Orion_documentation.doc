@@ -27,12 +27,12 @@
         .badge-enc { background: #8e44ad; color: white; padding: 1px 6px; border-radius: 4px; font-size: 0.75em; font-weight: bold; }
         .footer { margin-top: 60px; padding-top: 20px; border-top: 1px solid #eee; font-size: 0.85em; color: #95a5a6; text-align: center; }
         .premium-text { color: #d35400; font-weight: bold; }
-        .toc { background: #f8f9fa; border: 1px solid #ddd; padding: 20px 30px; border-radius: 8px; margin-bottom: 30px; }
-        .toc ul { list-style-type: none; padding-left: 20px; margin: 0; }
-        .toc ul:first-child { padding-left: 0; }
-        .toc li { margin-bottom: 4px; list-style-type: none; }
-        .toc a { color: #1a5f7a; text-decoration: none; }
-        .toc a:hover { text-decoration: underline; }
+        .toc-minimal { background: white; border: none; padding: 10px 0; margin-bottom: 30px; }
+        .toc-minimal ul { list-style-type: none; padding-left: 20px; margin: 0; }
+        .toc-minimal ul:first-child { padding-left: 0; }
+        .toc-minimal li { margin-bottom: 4px; list-style-type: none; }
+        .toc-minimal a { color: #1a5f7a; text-decoration: none; }
+        .toc-minimal a:hover { text-decoration: underline; }
         .rel-arrow { color: #159895; font-weight: bold; }
         .tldr-box {
             background: #eef2f3;
@@ -55,7 +55,7 @@
             valamint a fejlesztési és üzemeltetési szempontokat.
         </em></p>
 
-    <div class="toc">
+    <div class="toc-minimal">
         <strong>Tartalomjegyzék</strong>
         <ul>
             <li><a href="#sec1"><strong>1. Bevezetés</strong></a>
@@ -100,17 +100,18 @@
             <li><a href="#sec5"><strong>5. Adatmodell és adatbázislogika</strong></a>
                 <ul>
                     <li><a href="#sec5-1">5.1. Adatbázis és Technológiai Háttér</a></li>
-                    <li><a href="#sec5-2">5.2. Táblák részletes leírása</a>
+                    <li><a href="#sec5-2">5.2. Adatbázis sémakép</a></li>
+                    <li><a href="#sec5-3">5.3. Táblák részletes leírása</a>
                         <ul>
-                            <li><a href="#sec5-2-1">5.2.1. Felhasználói Identitás és Személyes Adatok Modul</a></li>
-                            <li><a href="#sec5-2-2">5.2.2. Vállalati (Cég) Modul</a></li>
-                            <li><a href="#sec5-2-3">5.2.3. Hirdetések és Munkaviszony (ATS Modul)</a></li>
-                            <li><a href="#sec5-2-4">5.2.4. Kommunikáció és Értesítési Rendszer</a></li>
+                            <li><a href="#sec5-3-1">5.3.1. Felhasználói (Diák) Modul</a></li>
+                            <li><a href="#sec5-3-2">5.3.2. Vállalati (Cég) Modul</a></li>
+                            <li><a href="#sec5-3-3">5.3.3. Hirdetések és Munkaviszony (ATS Modul)</a></li>
+                            <li><a href="#sec5-3-4">5.3.4. Kommunikáció és Értesítési Rendszer</a></li>
                         </ul>
                     </li>
-                    <li><a href="#sec5-3">5.3. Referenciális Integritás</a></li>
-                    <li><a href="#sec5-4">5.4. Szerveroldali Tárolt Eljárások (RPC)</a></li>
-                    <li><a href="#sec5-5">5.5. Eseményvezérelt Adatbázis Logika (Triggerek)</a></li>
+                    <li><a href="#sec5-4">5.4. Referenciális Integritás</a></li>
+                    <li><a href="#sec5-5">5.5. Szerveroldali Tárolt Eljárások (RPC)</a></li>
+                    <li><a href="#sec5-6">5.6. Eseményvezérelt Adatbázis Logika (Triggerek)</a></li>
                 </ul>
             </li>
             <li><a href="#sec6"><strong>6. Backend Szerver Architektúra</strong></a>
@@ -643,18 +644,24 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
             <li><strong>Megbízható adattárolás:</strong> A PostgreSQL biztosítja, hogy az adatok (pl. állásjelentkezések, munkaviszonyok) konzisztensek maradjanak, és esetleges hiba esetén se sérüljenek vagy vesszenek el (tranzakciókezelés).</li>
             <li><strong>Beépített titkosítás (pgcrypto):</strong> A GDPR előírások miatt a legérzékenyebb személyes adatokat (személyi igazolvány, lakcímkártya) nem tároljuk olvasható szövegként. Az adatbázis <code>pgcrypto</code> bővítménye segítségével ezeket az adatokat már közvetlenül az adatbázis szintjén titkosítva mentjük el.</li>
             <li><strong>Szerveroldali függvények (RPC):</strong> A bonyolultabb számításokat (pl. statisztikák lekérése) és a több lépésből álló feladatokat (pl. biztonságos regisztráció) közvetlenül az adatbázisban, úgynevezett tárolt eljárásokban (RPC) futtatjuk. Ezzel gyorsítjuk a rendszert, mert kevesebb adatot kell mozgatni a szerver és az adatbázis között.</li>
-            <li><strong>Valós idejű kommunikáció (Real-time):</strong> A Supabase beépített WebSocket megoldásának köszönhetően a chat üzenetek azonnal megjelennek a feleknél, anélkül, hogy a böngészőt folyamatosan frissíteni kellene, vagy a szervert terhelnénk a folyamatos lekérdezésekkel.</li>
+            <li><strong>Valós idejű kommunikáció (Real-time):</strong> A Supabase beépített WebSocket megoldásának köszönhetően a chat üzenetek azonnal megjelennek a feleknél, anélkül, hogy a böngészőt folyamatosun frissíteni kellene, vagy a szervert terhelnénk a folyamatos lekérdezésekkel.</li>
         </ul>
 
         <div class="highlight-box">
             <strong>Kiterjesztés telepítése:</strong> Az adatbázis első beállításakor futtatni kell a <code>CREATE EXTENSION IF NOT EXISTS pgcrypto;</code> parancsot az SQL felületen, mert ezen múlik az okmányok titkosított tárolása.
         </div>
 
-        <h3 id="sec5-2"><a name="sec5-2"></a>5.2. Táblák részletes leírása</h3>
+        <h3 id="sec5-2"><a name="sec5-2"></a>5.2. Adatbázis sémakép</h3>
+        <p>Az alábbi ábra szemlélteti a rendszer teljes adatbázis-architektúráját, a táblák közötti kapcsolatokat és a referenciális integritási szabályokat.</p>
+        <div style="text-align: center; margin: 20px 0;">
+            <p><em>(Ide illessze be az adatbázis sémaképet)</em></p>
+        </div>
+
+        <h3 id="sec5-3"><a name="sec5-3"></a>5.3. Táblák részletes leírása</h3>
         <p>Az adatbázis négy fő logikai modulra bontható: <strong>Felhasználók</strong>, <strong>Cégek</strong>, <strong>Álláshirdetések / Munkaviszony</strong> és <strong>Kommunikáció / Üzenetek</strong>.</p>
 
         <!-- ===== 3.1 USERS ===== -->
-        <h4 id="sec5-2-1"><a name="sec5-2-1"></a>5.2.1. Felhasználói Identitás és Személyes Adatok Modul</h4>
+        <h4 id="sec5-3-1"><a name="sec5-3-1"></a>5.3.1. Felhasználói (Diák) Modul</h4>
 
         <h5><code>1. users</code> (Álláskeresők Törzstáblája)</h5>
         <p>Ez a tábla tárolja az álláskeresők alapvető személyes adatait és a profiljukhoz tartozó leírásokat. A biztonság jegyében a személyazonosító okmányokat külön kezeljük: ezek nem itt, hanem a titkosított <code>user_documents</code> táblában találhatók.</p>
@@ -723,7 +730,7 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
 );</code></pre>
 
         <!-- ===== 3.2 COMPANIES ===== -->
-        <h4 id="sec5-2-2"><a name="sec5-2-2"></a>5.2.2. Vállalati (Cég) Modul</h4>
+        <h4 id="sec5-3-2"><a name="sec5-3-2"></a>5.3.2. Vállalati (Cég) Modul</h4>
 
         <h5><code>7. companies</code> (Vállalati Törzstábla)</h5>
         <p>A hirdető partnerek adminisztratív és profiladatainak tárolója. A tábla külön kezeli a kapcsolattartó személyét és a cég hivatalos elérhetőségeit.</p>
@@ -760,7 +767,7 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
 );</code></pre>
 
         <!-- ===== 3.3 ADS & JOBS ===== -->
-        <h4 id="sec5-2-3"><a name="sec5-2-3"></a>5.2.3. Hirdetések és Munkaviszony (ATS Modul)</h4>
+        <h4 id="sec5-3-3"><a name="sec5-3-3"></a>5.3.3. Hirdetések és Munkaviszony (ATS Modul)</h4>
 
         <h5><code>10. advertisement</code> (Álláshirdetések)</h5>
         <p>Ez a tábla a rendszerben közzétett álláslehetőségek központi jegyzéke. Tartalmazza a munkakör pontos megnevezését, a bérsávot, valamint a pozíció betöltéséhez szükséges elvárásokat és feladatokat. A hirdetések közvetlen kapcsolatban állnak a hirdető vállalattal, az <code>is_active</code> státusz pedig lehetővé teszi a hirdetések láthatóságának azonnali kezelését. A népszerűségi mutatók nyomon követésére a tábla natív módon vezeti a megtekintések számát, segítve ezzel a hirdetések hatékonyságának elemzését.</p>
@@ -799,7 +806,7 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
 );</code></pre>
 
         <!-- ===== 3.4 COMMUNICATION ===== -->
-        <h4 id="sec5-2-4"><a name="sec5-2-4"></a>5.2.4. Kommunikáció és Értesítési Rendszer</h4>
+        <h4 id="sec5-3-4"><a name="sec5-3-4"></a>5.3.4. Kommunikáció és Értesítési Rendszer</h4>
 
         <h5><code>13. messages</code> (Chat Motor)</h5>
         <p>Ez a tábla a rendszer üzenetküldő motorjának központi tárolója, amely biztosítja a párbeszédek folyamatosságát a diákok és a munkáltatók között. A WebSocket-alapú valós idejű csevegés háttérbázisaként szolgál, így az üzenetváltások később is bármikor visszakereshetők és megtekinthetők. A rendszer biztonságát a <code>sender_type</code> mezőre illesztett adatszintű ellenőrzés (CHECK constraint) garantálja, amely megakadályozza a feladói szerepkörök felcserélését. A tábla emellett megbízhatóan rögzíti az üzenetek olvasottságát és a küldés pontos idejét.</p>
@@ -845,11 +852,11 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
 );</code></pre>
 
         <!-- ===== 4. KAPCSOLATOK ===== -->
-        <h3 id="sec5-3"><a name="sec5-3"></a>5.3. Referenciális Integritás (ER Összefoglaló)</h3>
+        <h3 id="sec5-4"><a name="sec5-4"></a>5.4. Referenciális Integritás (ER Összefoglaló)</h3>
         <p>Az adatbázis kiterjedten alkalmazza a <code>FOREIGN KEY ... ON DELETE CASCADE</code> szabályokat. Ha egy entitás (pl. egy Cég) törlődik a platformról, az adatbázis motorja automatikusan – alkalmazásszintű logika bevonása nélkül – eltávolítja a cég összes hirdetését, munkavállalói kapcsolatait, hitelesítő adatait és chat előzményeit, meggátolva az "árva" (orphan) rekordok kialakulását.</p>
 
         <!-- ===== 5. FÜGGVÉNYEK ===== -->
-        <h3 id="sec5-4"><a name="sec5-4"></a>5.4. Szerveroldali Tárolt Eljárások (RPC)</h3>
+        <h3 id="sec5-5"><a name="sec5-5"></a>5.5. Szerveroldali Tárolt Eljárások (RPC)</h3>
         <p>Az Orion a komplex tranzakciókat és aggregációs számításokat közvetlenül a PostgreSQL motoron belül végzi (PL/pgSQL nyelven). Minden érzékeny függvény <code>SECURITY DEFINER</code> futási kontextust használ, felülbírálva az alapértelmezett jogosultságokat a biztonság érdekében. A rendszerben 13 dedikált eljárás (RPC) dolgozik:</p>
 
         <ul>
@@ -869,7 +876,7 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
         </ul>
 
         <!-- ===== 6. TRIGGEREK ===== -->
-        <h3 id="sec5-5"><a name="sec5-5"></a>5.5. Eseményvezérelt Adatbázis Logika (Triggerek)</h3>
+        <h3 id="sec5-6"><a name="sec5-6"></a>5.6. Eseményvezérelt Adatbázis Logika (Triggerek)</h3>
         <ul>
             <li><code>trg_create_user_statistics</code>: Egy <code>AFTER INSERT</code> esemény kiváltó, amely a <code>create_user_statistics</code> eljárást hívja meg. Amint egy új felhasználó regisztrál, aszinkron módon létrehozza a <code>user_statistics</code> sort. Biztosítja az adatszerkezet integritását anélkül, hogy az alkalmazásréteget terhelné.</li>
         </ul>
