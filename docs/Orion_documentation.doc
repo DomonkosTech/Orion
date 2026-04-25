@@ -844,7 +844,40 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
         </ul>
 
         <h3 id="sec6-2">6.2. API Végpontok és Szolgáltatások (Routes &amp; Services)</h3>
-        <p>A rendszer Domain-Driven Design (DDD) elvek alapján, funkcionális modulokra bontva kezeli az üzleti folyamatokat. Minden modul egy hálózati rétegből (<code>*Route.ts</code>) és egy üzleti logikát megvalósító szolgáltatásból (<code>*Service.ts</code>) áll.</p>
+        <p>
+        A rendszer felépítése úgy lett kialakítva, hogy hosszú távon is jól átlátható, 
+        karbantartható és könnyen bővíthető maradjon. Ennek érdekében a Domain-Driven Design (DDD) 
+        megközelítést alkalmazza, amely az alkalmazást különálló, logikailag elkülönített 
+        modulokra bontja (pl. autentikáció, felhasználók, cégek, hirdetések).
+        </p>
+        <p>
+        Ez a felosztás lehetővé teszi, hogy minden modul egy konkrét feladatért feleljen, 
+        így a fejlesztés során egyszerűbb új funkciókat hozzáadni vagy meglévőket módosítani 
+        anélkül, hogy az egész rendszert érintenénk.
+        </p>
+        <p>
+        Minden modul két jól elkülöníthető rétegből áll:
+        </p>
+        <ul>
+            <li>
+                <strong>Route réteg (<code>*Route.ts</code>):</strong> Ez a réteg felelős a kliens 
+                (pl. frontend alkalmazás) felől érkező HTTP kérések fogadásáért. Itt történik a 
+                végpontok (endpointok) definiálása, az adatok alapvető ellenőrzése (validáció), 
+                valamint a megfelelő szolgáltatás (service) meghívása. Fontos, hogy itt még nem 
+                történik komoly üzleti logika feldolgozás.
+            </li>
+            <li>
+                <strong>Service réteg (<code>*Service.ts</code>):</strong> Ebben a rétegben található 
+                a rendszer „gondolkodása”. Itt valósul meg az üzleti logika, például adatbázis műveletek, 
+                szabályok ellenőrzése, számítások és egyéb folyamatok. A service réteg független a 
+                konkrét HTTP kérésektől, így más környezetben is újrahasználható.
+            </li>
+        </ul>
+        <p>
+        A két réteg szétválasztása biztosítja, hogy a kód strukturált maradjon: a route csak a 
+        kommunikációért felel, míg a service a működésért. Ez nemcsak a fejlesztést gyorsítja, 
+        hanem a hibakeresést és a tesztelést is jelentősen megkönnyíti.
+        </p>
 
         <h4>6.2.1. Autentikációs Modul (<code>authRoute.ts</code> / <code>authService.ts</code>)</h4>
         <p>A felhasználók és cégek életciklusának (regisztráció, belépés, kilépés) és hitelesítési folyamatainak biztonságos végrehajtása.</p>
@@ -971,13 +1004,15 @@ Táblák + RPC függvények + triggerek + titkosított adattárolás</code></pre
             <tr><th>Végpont</th><th>Függvény</th><th>Architekturális Felelősség</th></tr>
             <tr><td><code>POST /Api/OrionAI</code></td><td><code>OrionAI.py</code> API hívás / <code>getAdvertisementsByIds</code></td><td>A felhasználó természetes nyelvű promptjának továbbítása az AI szerverhez, majd a visszaadott azonosítók alapján az adatok lekérése a Supabase-ből.</td></tr>
         </table>
+        
+        <p><em>Megjegyzés: A mikroszolgáltatás technikai hátterének és a NLP alapú keresőmotornak a részletes ismertetését lásd a <strong>8.2. OrionAI Integráció (Python NLP)</strong> szekcióban.</em></p>
+        <h3 id="sec6-3">6.3. Hibakezelési Stratégia (Error Handling)</h3>
+        <p>A backend robusztus és egységes hibakezelési mechanizmussal védi a rendszer stabilitását és az adatok integritását:</p>
         <ul>
-            <li><strong>Fejlett Működési Mechanizmus:</strong> Mivel a Node.js nem alkalmas nehéz gépi tanulási modellek futtatására, a feladatot egy önálló <code>FastAPI</code> alapú Python szolgáltatás végzi (<code>8000</code>-es port).
-            <br>1. Az Express router átadja a magyar nyelvű szöveget (pl. "Informatikai diákmunkát keresek otthonról").
-            <br>2. A Python motor szűri a kötőszavakat és lemmatizálja a szöveget.
-            <br>3. Egy <code>paraphrase-multilingual-MiniLM-L12-v2</code> SentenceTransformer modellel szemantikai elemzést és Vektortér-számítást (cosine similarity) végez a DB-ben lévő összes aktív hirdetésen.
-            <br>4. A komplex algoritmus több faktort súlyoz: Szöveges szemantikai egyezés (65%), Bér sávja (20%), és a Földrajzi lokáció (15%).
-            <br>5. A legjobban illeszkedő hirdetések azonosítóit visszaküldi az Express szervernek, amely végül kiszolgálja azokat a frontend számára.</li>
+            <li><strong>Központi Try-Catch Szerkezet:</strong> Minden Express útvonalkezelő (route handler) szigorú <code>try-catch</code> blokkba van csomagolva, így a váratlan szerverhibák nem okozhatják a Node.js folyamat összeomlását.</li>
+            <li><strong>Bemeneti Validációs Hibák (Zod):</strong> A hibásan beküldött vagy hiányos adatok már az üzleti logika elérése előtt fennakadnak, és a rendszer tiszta, <code>400 Bad Request</code> JSON válaszban tájékoztatja a klienst a pontos hibáról.</li>
+            <li><strong>Kezelt Üzleti Kivételek:</strong> Az olyan specifikus üzleti eseteket, mint a <em>"Már töltöttél fel önéletrajzot"</em> vagy <em>"Nem megfelelő jogosultság"</em>, a rendszer felismeri, és dedikált <code>400</code>, <code>401</code> vagy <code>403</code>-as HTTP kóddal jelzi, hogy a kliensoldali Toast értesítések (UI) azonnal feldolgozhassák azokat.</li>
+            <li><strong>Váratlan Szerverhibák (500):</strong> Adatbázis-szakadások vagy belső kódhibák esetén a rendszer a <code>console.error</code> segítségével logol a fejlesztőknek, de a kliens felé csak egy biztonságos, általános <code>500 Internal Server Error</code> választ ad, megelőzve az infrastruktúra részleteinek kiszivárgását.</li>
         </ul>
 
 
@@ -1307,111 +1342,26 @@ return (
         
 
 
-        <h2 id="sec8">8. Végpontok, szerveroldali szolgáltatások és integrációk</h2>
+        <h2 id="sec8">8. Külső Integrációk és Speciális Szolgáltatások</h2>
 
         <div class="tldr-box">
-            <strong>TL;DR:</strong> A rendszer <strong>moduláris API-jai</strong> mellett olyan külső szolgáltatások, mint az email-automatizálás és az <strong>OrionAI</strong> is szerves részét képezik a platformnak. Ezek az integrációk lehetővé teszik a tranzakciós üzenetek biztonságos kézbesítését, a kifinomult, természetes nyelvű álláskeresést és a rugalmas kommunikációs csatornákat, javítva mind az élményt, mind a platform hatékonyságát.
+            <strong>TL;DR:</strong> A szerveroldali üzleti logika kiegészül két fontos, önállóan működő, speciális rendszerrel: a Nodemailer alapú <strong>Email értesítési és hitelesítési rendszerrel</strong>, valamint a Python alapú <strong>OrionAI intelligens keresőmotorral</strong>. Ezek nem részei az alap CRUD műveleteknek, hanem külső rendszerekre és külön mikroszolgáltatásokra támaszkodnak.
         </div>
 
-        <h3>8.1. API szervezési elv</h3>
+        <h3>8.1. Email Integráció és Automatizáció (Nodemailer)</h3>
+        <p>A rendszer az <code>emailRoute.ts</code> és <code>emailService.ts</code> fájlokon keresztül kezeli az összes platformszintű, automatikus email-kommunikációt. A küldés a <strong>Nodemailer</strong> csomagra épül, egy dedikált Gmail SMTP szerveren keresztül (<code>process.env.EMAIL</code>). Az email szolgáltatás kritikus fontosságú a biztonságos fiókkezelés szempontjából, mivel ez felel az aszinkron hitelesítési folyamatokért.</p>
+        
+        <h4>Fő folyamatok (Email Services):</h4>
+        <ul>
+            <li><strong>Fiókaktiválás:</strong> A diákok és a cégek regisztrációja után a rendszer egy 1 óráig érvényes, egyedi <code>jwt</code> alapú tokent generál (pl. <code>sendUserActivationEmail</code>). Ezt a tokent adatbázisban is rögzíti (<code>user_email_tokens</code>), és kiküldi a felhasználónak. A fiók mindaddig inaktív (<code>activated: false</code> / <code>verified: false</code>), amíg a linkre rá nem kattintanak.</li>
+            <li><strong>Jelszó visszaállítása:</strong> A <code>sendUserPasswordResetEmail</code> és <code>sendCompanyPasswordResetEmail</code> funkciók biztonságos, token-alapú visszaállítási linket küldenek. Az új jelszó bekérésekor a szerver (<code>saveNewUserPassword</code>) először ellenőrzi a token lejáratát és érvényességét, majd <code>bcrypt</code>-tel hasheli és menti az új jelszót, végül törli a felhasznált tokent az adatbázisból.</li>
+            <li><strong>Tranzakciós rugalmasság:</strong> A szolgáltatás dedikált, időzített token-lejárati rendszert használ. Ha a felhasználó egy órán belül nem kattint az aktivációs/jelszó linkre, a folyamat biztonsági okokból érvényét veszti.</li>
+        </ul>
+
+        <h3>8.2. OrionAI Integráció (Python NLP)</h3>
 
         <p>
-            A szerver mountolási mintája alapján az Orion API szervezése részben erősen doménvezérelt,
-            részben pragmatikus.
-            Bizonyos modulok saját prefixet kapnak,
-            például <code>/Api/auth</code>,
-            <code>/Api/users</code>,
-            <code>/Api/companies</code>,
-            <code>/Api/messages</code>,
-            <code>/Api/notifications</code>.
-            Más modulok a közös <code>/Api</code> gyökér alá kerülnek,
-            és a route fájlon belül definiálják a végső útvonalakat.
-        </p>
-
-        <h3>8.2. Auth és session műveletek</h3>
-
-        <p>
-            Az auth modul felelős mind a diák,
-            mind a céges hozzáférések alapjáért.
-            Ide tartozik a regisztráció,
-            a bejelentkezés,
-            a kijelentkezés,
-            a session ellenőrzése,
-            valamint a token- és cookie-alapú állapotfenntartás.
-            Az email modul ehhez szorosan kapcsolódik,
-            mivel az email hitelesítés és a jelszóval kapcsolatos helyreállítási műveletek jellemzően az auth életciklus részei.
-        </p>
-
-        <h3>8.3. User és company szolgáltatások</h3>
-
-        <p>
-            A felhasználói és céges service-ek lényegében a két fő szereplő külön üzleti világát szolgálják ki.
-            A diákok oldalán hangsúlyos a profil,
-            a dokumentumok,
-            az önéletrajz,
-            a jelentkezések
-            és a személyes statisztikák kezelése.
-            A céges oldalon ezzel szemben a profil,
-            a dashboard,
-            a közzétett hirdetések
-            és a jelöltkezelés dominál.
-        </p>
-
-        <h3>8.4. Advertisement és applicant modulok</h3>
-
-        <p>
-            A hirdetés és a jelentkezés elkülönítése kifejezetten jó döntés.
-            Az álláshirdetés a kínálati oldalt reprezentálja:
-            adatok létrehozása,
-            listázása,
-            módosítása,
-            megjelenítése.
-            A jelentkezés viszont egy külön üzleti esemény,
-            amely a hirdetés és a jelentkező közti kapcsolatot írja le.
-            Ez lehetővé teszi,
-            hogy az ATS logika,
-            a státuszváltások,
-            az elfogadás vagy elutasítás
-            és a kapcsolódó értesítések külön doménként fejlődjenek tovább.
-        </p>
-
-        <h3>8.5. Message és system message modulok</h3>
-
-        <p>
-            A kétféle üzenetkezelés szétválasztása fontos architekturális döntés.
-            A <code>messages</code> táblához és a <code>messageService.ts</code> fájlhoz kapcsolódó funkciók emberi szereplők közti kommunikációt kezelnek.
-            A <code>system_messages</code> viszont platform által generált értesítésekre szolgál.
-            Ez a szétválasztás skálázhatósági és UX szempontból is helyes,
-            mert a rendszerüzeneteknek más megjelenítési,
-            prioritási
-            és olvasási logikájuk van,
-            mint a beszélgetés típusú üzeneteknek.
-        </p>
-
-        <h3>8.6. Email integráció</h3>
-
-        <p>
-            A <code>nodemailer</code> függőség és az email modul jelenléte alapján
-            az Orion számít emailalapú folyamatokra.
-            Ilyenek tipikusan:
-            email verifikáció,
-            jelszó-helyreállítás,
-            esetleges tranzakciós értesítések.
-            Ezek olyan folyamatok,
-            amelyek felhasználói bizalom és account-biztonság szempontjából kiemelt jelentőségűek.
-        </p>
-
-        <h3>8.7. OrionAI integráció</h3>
-
-        <p>
-            Az OrionAI külön útvonalon és külön Python fájllal jelenik meg,
-            ami arra utal,
-            hogy a projekt bizonyos AI funkciókat elkülönített végrehajtási környezetben kezel.
-            Ez jó irány,
-            mert a mesterséges intelligenciához kapcsolódó függőségek,
-            futtatási igények
-            és hibaminták gyakran eltérnek a klasszikus web backendétől.
-            A szétválasztás segít fenntartani a fő Node/Express ág stabilitását.
+            Az OrionAI (<code>OrionAI.py</code> és <code>OrionAIRoute.ts</code>) külön útvonalon és külön Python alapú környezetben fut. Míg a rendszer nagy része Node.js alapú, az NLP (Természetes Nyelvfeldolgozás) feladatokat teljesítmény és ökoszisztéma okokból egy önálló Python mikroszolgáltatás látja el. Az Express szerver (az <code>OrionAIRoute.ts</code>-en keresztül) csupán API Gateway-ként viselkedik: továbbítja a felhasználói promptokat a Python mikroszolgáltatásnak, és visszajuttatja az eredményt a kliensnek. Ez az elszeparáció biztosítja a magas teljesítményt és azt, hogy az AI számításigényes feladatai ne akasszák meg a fő backend többi folyamatát.
         </p>
 
         <h4>Működési mechanizmus</h4>
@@ -1422,7 +1372,7 @@ return (
             <li><strong>NLP feldolgozás:</strong> A modul elemzi a kérést, kulcsszavakat és szándékot azonosít.</li>
             <li><strong>Matchmaking:</strong> Az azonosított feltételek alapján a rendszer rangsorolja a meglévő hirdetéseket.</li>
             <li><strong>Eredmény:</strong> A végpont visszaadja a legrelevánsabb hirdetések listáját JSON formátumban.</li>
-        
+        </ol>
 
         <h2 id="sec10">10. Biztonság, jogosultság és adatvédelem</h2>
 
