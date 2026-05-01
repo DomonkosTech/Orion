@@ -1,69 +1,64 @@
-# React + TypeScript + Vite
+# Orion — AI-Powered Job Search & Recruitment Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Orion connects job seekers and companies with AI-driven job matching and a built-in Applicant Tracking System (ATS).
 
-Currently, two official plugins are available:
+## Prerequisites
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Node.js** 22.x (the project uses npm 10.x)
+- **Python** 3.10+ (for the OrionAI recommendation engine)
+- A **Supabase** project (used as the database and realtime backend)
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+# 1. Clone and install dependencies
+git clone <repo-url> && cd Orion
+npm install
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+# 2. Create a Python virtual environment for the AI service
+python -m venv .venv
+.venv\Scripts\activate       # Windows
+# source .venv/bin/activate  # macOS / Linux
+pip install -r requirements.txt
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+# 3. Set up your environment variables
+cp .env.example .env
+# Fill in your Supabase URL, keys, and JWT secret in .env
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# 4. Start both the frontend and backend
+npm run dev        # Vite dev server on :5173
+npm run server     # Express API on :4000
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Basic Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```tsx
+// src/main.tsx — the entry point
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import App from './App'
+import './i18n'
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
 ```
+
+The app supports three languages (English, German, Hungarian) and three role modes:
+- **Guest** — browse the landing page, register, or log in
+- **User** — search and apply for jobs, manage applications, upload resumes
+- **Company** — post jobs, manage listings, track applicants through the ATS
+
+## Troubleshooting
+
+**"Encryption key loaded: undefined"** — Your `.env` file is missing or incomplete. Copy `.env.example` and fill in every field.
+
+**CORS errors on the frontend** — Make sure `npm run server` is running on port 4000.
+
+**Python script not found** — Run `npm run OrionAI` directly to check if `.venv` is set up correctly.
+
+## Full Documentation
+
+For architecture diagrams, database schema, API reference, and deployment guides, see the [Orion Documentation](./docs/Orion_documentation.pdf) (PDF, 60+ pages).
