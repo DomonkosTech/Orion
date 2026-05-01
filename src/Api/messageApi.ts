@@ -1,5 +1,5 @@
 
-const API_BASE_URL = "http://localhost:4000/api"
+import { API_BASE_URL } from "./ApiConfig.ts";
 
 
 export interface CompanyChatPartner {

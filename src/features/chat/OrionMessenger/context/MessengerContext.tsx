@@ -122,7 +122,8 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                                     id: targetId,
                                     name: companyName || "Orion Partner",
                                     last_message_at: null,
-                                    last_message: null
+                                    last_message: null,
+                                    is_read: true
                                 });
                             } else if (companyName && data[existingIdx].name === "Orion Partner") {
                                 // Update name if it was previously generic
@@ -140,7 +141,8 @@ export const MessengerProvider: React.FC<{ children: ReactNode }> = ({ children 
                                     id: targetId,
                                     name: userName || "Orion User",
                                     last_message_at: null,
-                                    last_message: null
+                                    last_message: null,
+                                    is_read: true
                                 });
                             } else if (userName && (data[existingIdx].name === "Orion User" || !data[existingIdx].name)) {
                                 data[existingIdx].name = userName;

@@ -1,0 +1,40 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    depends_on:
+      - server
+    restart: unless-stopped
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile.server
+    ports:
+      - "${SERVER_PORT:-4000}:4000"
+    environment:
+      - ENCRYPTION_KEY=${ENCRYPTION_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - EMAIL=${EMAIL}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
+      - FRONTEND_API_URL=${FRONTEND_API_URL:-http://localhost}
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
+      - SUPABASE_URL=${SUPABASE_URL:-https://nlabffngmifszpwrqetx.supabase.co}
+      - PYTHON_API_URL=http://orionai:8000
+    depends_on:
+      - orionai
+    restart: unless-stopped
+
+  orionai:
+    build:
+      context: .
+      dockerfile: Dockerfile.orionai
+    ports:
+      - "${ORIONAI_PORT:-8000}:8000"
+    environment:
+      - SUPABASE_SERVICE_KEY=${SUPABASE_SERVICE_KEY}
+      - SUPABASE_URL=${SUPABASE_URL:-https://nlabffngmifszpwrqetx.supabase.co}
+    restart: unless-stopped

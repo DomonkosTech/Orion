@@ -29,7 +29,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_API_URL || "http://localhost:5173",
     credentials: true
 }));
 
@@ -69,4 +69,5 @@ const server = createServer(app);
 setupRealtime(server);
 
 // Start server
-server.listen(4000, () => console.log("Server running on http://localhost:4000"));
+const PORT = parseInt(process.env.PORT || "4000");
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

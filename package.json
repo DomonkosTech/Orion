@@ -23,6 +23,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "framer-motion": "^12.23.24",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.562.0",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.12",
@@ -33,6 +34,8 @@
     "react-router-dom": "^7.8.2",
     "react-tsparticles": "^2.10.1",
     "tsparticles": "^2.11.1",
+    "tsx": "^4.20.6",
+    "ws": "^8.18.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -58,7 +61,6 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
     "jsdom": "^28.1.0",
-    "jsonwebtoken": "^9.0.2",
     "msw": "^2.13.2",
     "react-hook-form": "^7.72.0",
     "react-virtualized-auto-sizer": "^2.0.3",

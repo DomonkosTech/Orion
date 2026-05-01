@@ -31,7 +31,7 @@ interface RegisterPageProps<T> {
     loginPath?: string;
 }
 
-const RegisterPage = <T extends Record<string, unknown>>({
+const RegisterPage = <T extends object>({
     initialValues,
     steps,
     stepSchemas,
@@ -51,7 +51,7 @@ const RegisterPage = <T extends Record<string, unknown>>({
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => ({ ...prev, [name]: value } as T));
         if (errors[name]) {
             setErrors(prev => {
                 const newErrors = { ...prev };
@@ -62,7 +62,7 @@ const RegisterPage = <T extends Record<string, unknown>>({
     };
 
     const handleCheckboxChangeGeneric = (name: string, checked: boolean) => {
-         setFormData(prev => ({ ...prev, [name]: checked }));
+         setFormData(prev => ({ ...prev, [name]: checked } as T));
          if (errors[name]) {
              setErrors(prev => {
                  const newErrors = { ...prev };

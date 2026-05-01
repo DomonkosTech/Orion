@@ -15,7 +15,7 @@ export interface CompanyRegistrationData {
     tax_number: string;
     contact_person_name: string;
     activity_scope: string;
-    website: string;
+    website?: string;
     short_description: string;
     phone_number: string;
     terms_accepted: boolean;
@@ -27,7 +27,7 @@ export interface CompanyProfile {
     tax_number: string;
     contact_person_name: string;
     activity_scope: string;
-    website: string;
+    website?: string;
     short_description: string;
     phone_number: string;
 }
