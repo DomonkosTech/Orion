@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // 1. Static Import for Guard/Layout (Essential to load immediately)
 import IsLoggedIn from "./IsLoggedIn.tsx";
@@ -34,9 +35,12 @@ const CompanyPasswordResetSave = lazy(() => import("./features/company/EditProfi
 const Messenger = lazy(() => import("./features/user/messenger/messenger.tsx"));
 const ShowFavoritesJobs = lazy(() => import("./features/user/UserJobs/Favorites/ShowFavoritesJobs.tsx"));
 
-const PageLoader = () => (
-    <div style={{ padding: "20px", textAlign: "center" }}>Loading...</div>
-);
+const PageLoader = () => {
+    const { t } = useTranslation("components");
+    return (
+        <div style={{ padding: "20px", textAlign: "center" }}>{t("loading")}</div>
+    );
+};
 
 function App() {
     return (

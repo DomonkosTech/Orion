@@ -80,7 +80,9 @@
         "error": "OrionAI ist derzeit nicht verfügbar.",
         "locationPlaceholder": "Standort",
         "positionPlaceholder": "Position",
-        "wagePlaceholder": "Min. Lohn"
+        "wagePlaceholder": "Min. Lohn",
+        "loadingTitle": "Orion AI analysiert die Möglichkeiten...",
+        "loadingSubtitle": "Wir zeigen Ihnen bald die besten Treffer! Dies kann bis zu einer Minute dauern."
       },
       "filters": {
         "title": "Filter",
