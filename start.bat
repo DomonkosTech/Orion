@@ -15,19 +15,8 @@ echo [0/4] Node.js ellenorzese...
 where npm >nul 2>nul
 if errorlevel 1 (
     echo Az 'npm' nem talalhato. Megprobalom telepiteni a Node.js-t...
-    where winget >nul 2>nul
-    if errorlevel 1 (
-        echo HIBA: A 'winget' nem talalhato. Kerlek telepitsd a Node.js-t manualisan: https://nodejs.org/
-        pause
-        exit /b 1
-    )
-    echo Node.js telepitese folyamatban...
-    winget install -e --id OpenJS.NodeJS.LTS
-    if errorlevel 1 (
-        echo HIBA: A telepites sikertelen volt.
-        pause
-        exit /b 1
-    )
+    call :install_nodejs
+    if errorlevel 1 exit /b 1
     call :refresh_path
     call :ensure_node_path
     where npm >nul 2>nul
@@ -74,19 +63,8 @@ echo [2/4] Python virtualis kornyezet ellenorzese...
 where python >nul 2>nul
 if errorlevel 1 (
     echo A 'python' nem talalhato. Megprobalom telepiteni...
-    where winget >nul 2>nul
-    if errorlevel 1 (
-        echo HIBA: A 'winget' nem talalhato. Kerlek telepitsd a Python-t manualisan!
-        pause
-        exit /b 1
-    )
-    echo Python telepitese folyamatban...
-    winget install -e --id Python.Python.3.12
-    if errorlevel 1 (
-        echo HIBA: A telepites sikertelen volt.
-        pause
-        exit /b 1
-    )
+    call :install_python
+    if errorlevel 1 exit /b 1
     call :refresh_path
     call :ensure_python_path
     where python >nul 2>nul
@@ -132,6 +110,56 @@ echo.
 echo Minden szerver elindult kulon ablakban.
 echo Bezárhatod ezt az ablakot.
 pause
+exit /b 0
+
+:install_nodejs
+where winget >nul 2>nul
+if not errorlevel 1 (
+    echo Node.js telepitese winget-tel...
+    winget install -e --id OpenJS.NodeJS.LTS
+    if not errorlevel 1 exit /b 0
+    echo winget telepites sikertelen, masik modszer probalasa...
+)
+where choco >nul 2>nul
+if not errorlevel 1 (
+    echo Node.js telepitese Chocolatey-vel...
+    choco install nodejs-lts -y
+    if not errorlevel 1 exit /b 0
+    echo Chocolatey telepites sikertelen, masik modszer probalasa...
+)
+echo Node.js telepitese kozvetlen letoltessel (PowerShell)...
+powershell -ExecutionPolicy Bypass -Command "$url='https://nodejs.org/dist/v20.18.0/node-v20.18.0-x64.msi'; $out=\"$env:TEMP\nodejs-installer.msi\"; Write-Host 'Letoltes...'; Invoke-WebRequest -Uri $url -OutFile $out; Write-Host 'Telepites...'; $p = Start-Process msiexec.exe -Args \"/i `\"$out`\" /quiet /norestart\" -Wait -PassThru; Remove-Item $out; exit $p.ExitCode"
+if errorlevel 1 (
+    echo HIBA: Minden automatikus telepitesi modszer sikertelen volt.
+    echo Kerlek telepitsd a Node.js-t manualisan: https://nodejs.org/
+    pause
+    exit /b 1
+)
+exit /b 0
+
+:install_python
+where winget >nul 2>nul
+if not errorlevel 1 (
+    echo Python telepitese winget-tel...
+    winget install -e --id Python.Python.3.12
+    if not errorlevel 1 exit /b 0
+    echo winget telepites sikertelen, masik modszer probalasa...
+)
+where choco >nul 2>nul
+if not errorlevel 1 (
+    echo Python telepitese Chocolatey-vel...
+    choco install python312 -y
+    if not errorlevel 1 exit /b 0
+    echo Chocolatey telepites sikertelen, masik modszer probalasa...
+)
+echo Python telepitese kozvetlen letoltessel (PowerShell)...
+powershell -ExecutionPolicy Bypass -Command "$url='https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe'; $out=\"$env:TEMP\python-installer.exe\"; Write-Host 'Letoltes...'; Invoke-WebRequest -Uri $url -OutFile $out; Write-Host 'Telepites...'; $p = Start-Process $out -Args '/quiet InstallAllUsers=1 PrependPath=1' -Wait -PassThru; Remove-Item $out; exit $p.ExitCode"
+if errorlevel 1 (
+    echo HIBA: Minden automatikus telepitesi modszer sikertelen volt.
+    echo Kerlek telepitsd a Python-t manualisan: https://www.python.org/downloads/
+    pause
+    exit /b 1
+)
 exit /b 0
 
 :refresh_path
