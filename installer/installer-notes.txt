@@ -5,6 +5,6 @@ This installer copies the Orion project files to your computer and creates short
 Important:
 - On first launch, Orion may install Node.js, Python, and project dependencies.
 - The first startup can take a few minutes.
-- This installer includes the current .env file from the project root.
+- You will need to configure your own .env file after installation. See .env.example for the required format.
 
 For source code and updates, use the project's GitHub repository.
