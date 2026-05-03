@@ -3,6 +3,14 @@ SETLOCAL EnableDelayedExpansion
 
 if not defined ORION_RELAUNCH_COUNT set ORION_RELAUNCH_COUNT=0
 
+if not exist .env if exist .env.example (
+    echo .env nem talalhato, masolas a .env.example sablonbol...
+    copy .env.example .env >nul
+    echo FIGYELEM: A .env fajl a .env.example sablonbol lett letrehozva.
+    echo Allitsd be a valodi ertekeket a .env fajlban a projekt inditasa elott!
+    echo.
+)
+
 echo [0/4] Node.js ellenorzese...
 where npm >nul 2>nul
 if errorlevel 1 (
@@ -87,11 +95,12 @@ if errorlevel 1 (
         exit /b !errorlevel!
     )
 )
-if not exist .venv (
-    echo A .venv nem letezik, Letrehozas...
+if not exist .venv\Scripts\python.exe (
+    echo A .venv nem letezik vagy serult, Letrehozas...
+    if exist .venv rmdir /s /q .venv
     python -m venv .venv
     if errorlevel 1 (
-        echo HIBA: A Python nincs telepitve vagy nem elerheto a PATH-ban!
+        echo HIBA: A Python virtualis kornyezet letrehozasa sikertelen!
         pause
         exit /b 1
     )
