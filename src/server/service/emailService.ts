@@ -8,18 +8,23 @@ import bcrypt from "bcryptjs";
 const JWT_SECRET = process.env.JWT_SECRET;
 
 const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, // 587-es porthoz false kell
     auth: {
         user: process.env.EMAIL,
         pass: process.env.EMAIL_PASSWORD,
     },
+    tls: {
+        rejectUnauthorized: false
+    }
 });
 const api_url = process.env.FRONTEND_API_URL
 
 // Új segédfüggvény az email küldéshez
 export const sendEmail = async (to: string, subject: string, text: string) => {
     await transporter.sendMail({
-        from: `"Orion" <${process.env.GMAIL_USER}>`,
+        from: `"Orion" <${process.env.EMAIL}>`,
         to,
         subject,
         text,
