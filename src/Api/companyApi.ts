@@ -10,6 +10,7 @@ export interface CompanyLoginData {
 export interface CompanyRegistrationData {
     email: string;
     password: string;
+    confirmPassword?: string;
     name: string;
     address: string;
     tax_number: string;

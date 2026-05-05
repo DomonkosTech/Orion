@@ -136,7 +136,20 @@ const UserRegisterPage: React.FC = () => {
                     <TextArea label={t('register.fields.bio')} name="short_bio" value={formData.short_bio} onChange={handleChange} rows={3} error={errors.short_bio} maxLength={BIO_MAX_LENGTH} />
 
                     <div className={`${styles.terms} ${errors.terms_accepted ? styles.errorShake : ""}`}>
-                        <Checkbox label={t('register.fields.terms')} checked={formData.terms_accepted} onChange={(checked) => handleCheckboxChange("terms_accepted", checked)} />
+                        <Checkbox 
+                            label={
+                                <span>
+                                    Elfogadom az <a 
+                                        href="https://nlabffngmifszpwrqetx.supabase.co/storage/v1/object/sign/ASZF/ASZF_Orion.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84NjhlOTgyNy02YjIwLTQ5YWUtYWIwYi0yY2UyMzNmYTJkYTAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBU1pGL0FTWkZfT3Jpb24ucGRmIiwiaWF0IjoxNzc3OTI2MTA0LCJleHAiOjE4MDk0NjIxMDR9._Gnn-msavH9Y3jLilj5dC_2ktDxDZiaE7z2Ft22K7A8" 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        style={{ color: "var(--orion-blue)", fontWeight: "600", textDecoration: "none" }}
+                                    >ÁSZF feltételeket</a>
+                                </span>
+                            } 
+                            checked={formData.terms_accepted} 
+                            onChange={(checked) => handleCheckboxChange("terms_accepted", checked)} 
+                        />
                         {errors.terms_accepted && <span className={styles.errorText}>{errors.terms_accepted}</span>}
                     </div>
                 </>
