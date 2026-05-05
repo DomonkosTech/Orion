@@ -32,13 +32,11 @@ const CompanyHomePage: React.FC = () => {
                 if (adsData.success) {
                     setAds(adsData.advertisements);
                 }
-                
-                // A backend válasz struktúrája: { success: true, data: { stats: {...}, lastApplications: [...] } }
+
                 if (statsData.success && statsData.data) {
                     setStats(statsData.data.stats || {});
                     setLastActivities(statsData.data.lastApplications || []);
                 } else if (statsData.success && !statsData.data) {
-                    // Fallback, ha esetleg a régi struktúra jönne vissza (közvetlenül a root-ban)
                     setStats(statsData.stats || {});
                     setLastActivities(statsData.lastApplications || []);
                 }
@@ -141,13 +139,13 @@ const CompanyHomePage: React.FC = () => {
                             <Button variant="secondary" color={"orion-blue"} onClick={() => navigate("/ShowListedJobs")}>{t('home.activeJobs.viewAll')}</Button>
                         </div>
                         <div className={styles.jobList}>
-                            {ads.slice(0, 5).map(ad => (
+                            {[...ads].sort((a, b) => Number(b.is_active) - Number(a.is_active)).slice(0, 5).map(ad => (
                                 <div key={ad.id} className={styles.jobItem} onClick={() => navigate(`/company/ATS/${ad.id}`)}>
                                     <div className={styles.jobInfo}>
                                         <h4>{ad.title}</h4>
-                                        <div className={styles.jobMeta}>{ad.position} • {t('home.activeJobs.statusActive')}</div>
+                                        <div className={styles.jobMeta}>{ad.position} • <span className={ad.is_active ? styles.badge : styles.badgeInactive}>{ad.is_active ? t('home.activeJobs.statusActive') : t('home.activeJobs.statusInactive')}</span></div>
                                     </div>
-                                    <div className={styles.badge}>{t('home.activeJobs.view')}</div>
+                                    <span className={styles.viewLink}>{t('home.activeJobs.view')}</span>
                                 </div>
                             ))}
                         </div>
@@ -158,17 +156,25 @@ const CompanyHomePage: React.FC = () => {
                         <div className={styles.sectionHeader}>
                             <h2 className={styles.sectionTitle}>{t('home.recentActivity.title')}</h2>
                         </div>
-                        <div className={styles.jobList}>
+                        <div className={styles.activityList}>
                             {lastActivities.length > 0 ? (
                                 lastActivities.map((activity, index) => (
-                                    <div key={index} className={styles.jobItem}>
+                                    <div key={index} className={styles.activityItem}>
                                         <div className={styles.jobMeta}>
-                                            <strong>{activity.users?.fname} {activity.users?.lname}</strong> {t('home.recentActivity.applied')} <i>{activity.advertisement?.title}</i>
+                                            <strong
+                                                className={styles.activityName}
+                                                onClick={() => {
+                                                    const ad = ads.find(a => a.title === activity.advertisement?.title);
+                                                    if (ad) {
+                                                        navigate(`/company/ATS/${ad.id}?name=${encodeURIComponent(`${activity.users?.fname} ${activity.users?.lname}`)}`);
+                                                    }
+                                                }}
+                                            >{activity.users?.fname} {activity.users?.lname}</strong> {t('home.recentActivity.applied')} <i>{activity.advertisement?.title}</i>
                                         </div>
                                     </div>
                                 ))
                             ) : (
-                                <div className={styles.jobItem}>
+                                <div className={styles.activityItem}>
                                     <div className={styles.jobMeta}>Nincs legutóbbi aktivitás.</div>
                                 </div>
                             )}

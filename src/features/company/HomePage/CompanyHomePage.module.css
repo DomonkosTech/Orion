@@ -159,6 +159,14 @@
 
 .jobList {
     width: 100%;
+    max-height: 420px;
+    overflow-y: auto;
+}
+
+.activityList {
+    width: 100%;
+    max-height: 420px;
+    overflow-y: auto;
 }
 
 .jobItem {
@@ -175,6 +183,10 @@
     background: #f1f5f9;
 }
 
+.jobItem:hover .viewLink {
+    transform: scale(1.05);
+}
+
 .jobInfo h4 {
     margin: 0;
     font-weight: 800;
@@ -186,6 +198,20 @@
     font-weight: 600;
 }
 
+.activityItem {
+    padding: 10px 24px;
+}
+
+.activityName {
+    cursor: pointer;
+    color: var(--orion-blue);
+    transition: opacity 0.15s;
+}
+
+.activityName:hover {
+    opacity: 0.75;
+}
+
 .badge {
     padding: 4px 10px;
     border-radius: 8px;
@@ -193,6 +219,27 @@
     font-weight: 800;
     background: #eef2f8;
     color: var(--orion-blue);
+}
+
+.badgeInactive {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    background: rgba(239, 68, 68, 0.08);
+    color: #ef4444;
+}
+
+.viewLink {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--orion-blue);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: inline-block;
+    transition: transform 0.15s ease;
 }
 
 @media (max-width: 1024px) {
