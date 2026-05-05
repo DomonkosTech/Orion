@@ -228,7 +228,7 @@
       "phone": "Telefonszám *",
       "activityScope": "Tevékenységi kör *",
       "shortDescription": "Rövid bemutatkozás *",
-      "terms": "Elfogadom a felhasználási feltételeket"
+      "terms": "Elfogadom a <1>felhasználási feltételeket</1>"
     },
     "passwordRequirements": {
       "title": "Jelszó követelmények:",

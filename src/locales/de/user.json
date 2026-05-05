@@ -186,7 +186,7 @@
       "taxNumber": "Steuernummer",
       "qualifications": "Qualifikationen",
       "bio": "Kurze Biografie",
-      "terms": "Ich akzeptiere die Nutzungsbedingungen"
+      "terms": "Ich akzeptiere die <1>Nutzungsbedingungen</1>"
     },
     "passwordRequirements": {
       "title": "Passwortanforderungen:",
