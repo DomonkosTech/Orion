@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import type { ChatPartner } from "../context/MessengerContextInstance";
 import { AVATAR_COLORS } from "../context/MessengerContextInstance";
 import styles from "../MessengerPage.module.css";
@@ -9,6 +10,7 @@ interface ConversationItemProps {
     isActive: boolean;
     onClick: () => void;
     style?: React.CSSProperties;
+    userType: "user" | "company" | null;
 }
 
 function getInitials(name?: string) {
@@ -45,11 +47,20 @@ function getMessagePreview(message?: string | null) {
     return message.replace(/\s+/g, " ").trim();
 }
 
-const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, onClick }) => {
+function getSenderPrefix(partner: ChatPartner, userType: "user" | "company" | null, youLabel: string): string {
+    if (!partner.last_message || !partner.sender_type || !userType) return "";
+    if (partner.sender_type.toLowerCase() === userType) return youLabel;
+    return partner.name.split(" ")[0];
+}
+
+const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, onClick, userType }) => {
+    const { t } = useTranslation('components');
     const initials = getInitials(partner.name);
     const itemClass = isActive ? `${styles.partnerItem} ${styles.partnerItemActive}` : styles.partnerItem;
+    const senderPrefix = getSenderPrefix(partner, userType, t('conversationList.you'));
     const messagePreview = getMessagePreview(partner.last_message);
-    const hasPreview = messagePreview.length > 0;
+    const displayPreview = senderPrefix && messagePreview ? `${senderPrefix}: ${messagePreview}` : messagePreview;
+    const hasPreview = displayPreview.length > 0;
     const isUnread = partner.is_read === false;
     const dateClassName = isUnread ? `${styles.smallMuted} ${styles.unreadMeta}` : styles.smallMuted;
     const previewClassName = hasPreview
@@ -106,9 +117,9 @@ const ConversationItem: React.FC<ConversationItemProps> = ({ partner, isActive, 
                 <motion.div layout className={styles.partnerMetaRow}>
                     <span
                         className={previewClassName}
-                        title={hasPreview ? messagePreview : undefined}
+                        title={hasPreview ? displayPreview : undefined}
                     >
-                        {hasPreview ? messagePreview : ""}
+                        {hasPreview ? displayPreview : ""}
                     </span>
                     {partner.last_message_at && hasPreview && (
                         <span className={dateClassName}>{formatDateTime(partner.last_message_at)}</span>

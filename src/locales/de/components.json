@@ -127,7 +127,8 @@
     "back": "Zurück",
     "title": "Gespräche",
     "loading": "Partner werden geladen…",
-    "empty": "Noch keine Gespräche."
+    "empty": "Noch keine Gespräche.",
+    "you": "Du"
   },
   "profileDropdown": {
     "guest": "Gast",

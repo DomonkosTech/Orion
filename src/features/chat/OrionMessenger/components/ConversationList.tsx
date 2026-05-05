@@ -6,6 +6,7 @@ import styles from "../MessengerPage.module.css";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../../../hooks/useAuth";
 
 const listVariants: Variants = {
   hidden: { opacity: 0 },
@@ -41,6 +42,7 @@ const itemVariants: Variants = {
 
 const ConversationList: React.FC = () => {
   const { partners, partnersLoading, partnersError, selectedCompanyId, setSelectedCompanyId } = useMessenger();
+  const { userType } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation('components');
   
@@ -119,6 +121,7 @@ const ConversationList: React.FC = () => {
                   partner={p}
                   isActive={p.id === selectedCompanyId}
                   onClick={() => setSelectedCompanyId(p.id)}
+                  userType={userType}
                 />
               </motion.div>
             ))}

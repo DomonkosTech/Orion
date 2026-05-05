@@ -127,7 +127,8 @@
     "back": "Vissza",
     "title": "Beszélgetések",
     "loading": "Partnerek betöltése…",
-    "empty": "Még nincs beszélgetés."
+    "empty": "Még nincs beszélgetés.",
+    "you": "Te"
   },
   "profileDropdown": {
     "guest": "Vendég",

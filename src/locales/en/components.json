@@ -142,7 +142,8 @@
     "title": "Conversations",
     "back": "Back",
     "loading": "Loading partners...",
-    "empty": "No conversations yet."
+    "empty": "No conversations yet.",
+    "you": "You"
   },
   "notificationDropdown": {
     "newMessage": "{{count}} new message",
