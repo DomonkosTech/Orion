@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { createAdvertisement } from "../../../Api/advertisementApi";
+import { createAdvertisement, ApiError } from "../../../Api/advertisementApi";
 import { toast } from "react-hot-toast";
 import { ArrowLeft } from "lucide-react";
 import styles from "./AddJob.module.css";
@@ -67,8 +67,12 @@ const AddJob: React.FC = () => {
             });
             toast.success(t('addJob.validation.success'));
             navigate("/company");
-        } catch {
-            toast.error(t('addJob.validation.error'));
+        } catch (err) {
+            if (err instanceof ApiError && /maximum limit.*3/i.test(err.message)) {
+                toast.error(t('addJob.validation.maxLimit'));
+            } else {
+                toast.error(err instanceof ApiError ? err.message : t('addJob.validation.error'));
+            }
         } finally {
             setIsLoading(false);
         }

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 import { toast } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import styles from "./ApplicantTrackingSystem.module.css";
 
 // Icons
-import { FileText, Check, X, ArrowLeft, Mail, Calendar, MapPin, User, Briefcase, GraduationCap, Globe, ChevronDown, MessageSquare } from "lucide-react";
+import { FileText, Check, X, ArrowLeft, Mail, Calendar, MapPin, User, Briefcase, GraduationCap, Globe, ChevronDown, MessageSquare, Info } from "lucide-react";
 
 // Shared Components
 import { Header } from "../../../components/layout/Header/Header.tsx";
@@ -28,6 +28,7 @@ export const ApplicantTrackingSystem: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const { id } = useParams<{ id: string }>();
+    const [searchParams, setSearchParams] = useSearchParams();
     const [selectedApplicantId, setSelectedApplicantId] = useState<number | null>(null);
     const [showScrollIndicator, setShowScrollIndicator] = useState(true);
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
@@ -83,6 +84,25 @@ export const ApplicantTrackingSystem: React.FC = () => {
         };
         fetchApplicants();
     }, [id]);
+
+    // Auto-select applicant when navigated from activity list
+    useEffect(() => {
+        const name = searchParams.get("name");
+        if (!name || loading) return;
+
+        const match = applicants.find(a => `${a.users.fname} ${a.users.lname}` === name);
+        const next = new URLSearchParams(searchParams);
+        next.delete("name");
+        setSearchParams(next, { replace: true });
+
+        if (match) {
+            setSelectedApplicantId(match.id);
+        } else {
+            toast(t('ats.notifications.applicantNotFound'), {
+                icon: <Info size={20} style={{ minWidth: 20, flexShrink: 0 }} />,
+            });
+        }
+    }, [applicants, loading, searchParams, setSearchParams, t]);
 
     // Handle ESC key to close modal
     useEffect(() => {
