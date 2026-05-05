@@ -14,7 +14,8 @@
       "title": "Aktuelle Anzeigen",
       "viewAll": "Alle ansehen",
       "statusActive": "Aktiv",
-      "view": "Ansehen"
+      "statusInactive": "Inaktiv",
+      "view": "Zum Ansehen klicken"
     },
     "recentActivity": {
       "title": "Letzte Aktivitäten",
@@ -47,7 +48,8 @@
     "validation": {
       "requiredFields": "Bitte füllen Sie die Pflichtfelder aus!",
       "success": "Anzeige erfolgreich erstellt!",
-      "error": "Fehler beim Erstellen der Anzeige."
+      "error": "Fehler beim Erstellen der Anzeige.",
+      "maxLimit": "Sie haben das maximale Limit von 3 Anzeigen erreicht. Bitte löschen Sie eine, um eine neue zu erstellen."
     },
     "sections": {
       "basicInfo": {
@@ -179,7 +181,8 @@
       "acceptSuccess": "Erfolgreich angenommen",
       "rejectSuccess": "Erfolgreich abgelehnt",
       "actionError": "Ein Fehler ist aufgetreten.",
-      "cvError": "Der Lebenslauf ist nicht verfügbar"
+      "cvError": "Der Lebenslauf ist nicht verfügbar",
+      "applicantNotFound": "Dieser Bewerber ist nicht mehr verfügbar — er wurde möglicherweise abgelehnt oder seine Bewerbung wurde entfernt."
     }
   },
   "editProfile": {
@@ -280,6 +283,7 @@
     "inactive": "Inaktiv",
     "noJobs": "Keine Anzeigen zum Anzeigen.",
     "fetchError": "Fehler beim Abrufen der Anzeigen:",
+    "currentUsage": "Aktuelle Anzeigen: {{current}}/{{max}}",
     "viewApplicants": "Bewerber anzeigen"
   }
 }

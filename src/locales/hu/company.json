@@ -14,7 +14,8 @@
       "title": "Aktuális hirdetések",
       "viewAll": "Összes megtekintése",
       "statusActive": "Aktív",
-      "view": "Megtekintés"
+      "statusInactive": "Inaktív",
+      "view": "Kattints a megtekintéshez"
     },
     "recentActivity": {
       "title": "Legutóbbi aktivitás",
@@ -47,7 +48,8 @@
     "validation": {
       "requiredFields": "Kérlek, töltsd ki a kötelező mezőket!",
       "success": "Sikeres a hirdetés létrehozása!",
-      "error": "Hiba a hirdetés létrehozása során."
+      "error": "Hiba a hirdetés létrehozása során.",
+      "maxLimit": "Elérte a maximum 3 hirdetéses limitet. Kérjük, töröljön egyet az új létrehozásához."
     },
     "sections": {
       "basicInfo": {
@@ -179,7 +181,8 @@
       "acceptSuccess": "Sikeresen elfogadva",
       "rejectSuccess": "Sikeresen elutasítva",
       "actionError": "Hiba történt.",
-      "cvError": "Az önéletrajz nem elérhető"
+      "cvError": "Az önéletrajz nem elérhető",
+      "applicantNotFound": "Ez a jelentkező már nem található — lehet, hogy időközben elutasítottad vagy törölted a jelentkezését."
     }
   },
   "editProfile": {
@@ -280,6 +283,7 @@
     "inactive": "Inaktív",
     "noJobs": "Nincsenek megjeleníthető hirdetések.",
     "fetchError": "Hirdetések lekérése sikertelen:",
+    "currentUsage": "Jelenlegi hirdetések: {{current}}/{{max}}",
     "viewApplicants": "Jelentkezők megtekintése"
   }
 }

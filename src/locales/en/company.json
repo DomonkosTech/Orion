@@ -14,7 +14,8 @@
       "title": "Current Ads",
       "viewAll": "View All",
       "statusActive": "Active",
-      "view": "View"
+      "statusInactive": "Inactive",
+      "view": "Click to view"
     },
     "recentActivity": {
       "title": "Recent Activity",
@@ -47,7 +48,8 @@
     "validation": {
       "requiredFields": "Please fill in the required fields!",
       "success": "Ad created successfully!",
-      "error": "Error creating the ad."
+      "error": "Error creating the ad.",
+      "maxLimit": "You have reached the maximum limit of 3 advertisements. Please delete one to create a new one."
     },
     "sections": {
       "basicInfo": {
@@ -179,7 +181,8 @@
       "acceptSuccess": "Successfully accepted",
       "rejectSuccess": "Successfully rejected",
       "actionError": "An error occurred.",
-      "cvError": "The resume is not available"
+      "cvError": "The resume is not available",
+      "applicantNotFound": "This applicant is no longer here — they may have been rejected or their application was removed."
     }
   },
   "editProfile": {
@@ -280,6 +283,7 @@
     "inactive": "Inactive",
     "noJobs": "No ads to display.",
     "fetchError": "Failed to fetch ads:",
+    "currentUsage": "Current ads: {{current}}/{{max}}",
     "viewApplicants": "View Applicants"
   }
 }
