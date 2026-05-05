@@ -32,9 +32,7 @@ function PublicHomePage() {
 
     return (
         <div className={styles.page}>
-            <Header
-
-            />
+            <Header/>
 
             <main>
                 {/* Hero Section */}
@@ -62,7 +60,7 @@ function PublicHomePage() {
                             </Button>
 
                             <Button
-                                onClick={() => window.scrollTo({ top: 800, behavior: 'smooth' })}
+                                onClick={() => window.scrollTo({ top: 400, behavior: 'smooth' })}
                                 variant="secondary"
                                 color="orion-blue"
                             >
