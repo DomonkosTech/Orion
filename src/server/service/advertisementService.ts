@@ -158,6 +158,20 @@ export const incrementClickCount = async (id: string) => {
 
 // update advertisement status
 export const updateAdvertisementStatus = async (id: string, status: boolean, companyId: number) => {
+    if (status) {
+        const { count, error: countError } = await supabase
+            .from("advertisement")
+            .select("*", { count: "exact", head: true })
+            .eq("is_active", true)
+            .eq("company_id", companyId);
+
+        if (countError) throw countError;
+
+        if (count! >= 3) {
+            throw new Error("You have reached the maximum limit of 3 active advertisements. Please deactivate one to activate this one.");
+        }
+    }
+
     const { error } = await supabase
         .from("advertisement")
         .update({ is_active: status })
