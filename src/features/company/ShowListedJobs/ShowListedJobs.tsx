@@ -49,6 +49,9 @@ const ShowListedJobs: React.FC = () => {
                         <div>
                             <BannerKicker>{t('showJobs.banner')}</BannerKicker>
                             <h1 className={styles.title}>{t('showJobs.title')}</h1>
+                            <p className={styles.usageCounter}>
+                                {t('showJobs.currentUsage', { current: ads.length, max: 3 })}
+                            </p>
                         </div>
                         <div className={styles.actions}>
                             <Button
@@ -87,7 +90,7 @@ const ShowListedJobs: React.FC = () => {
                                     </div>
 
                                     <div className={styles.controls}>
-                                        <span className={styles.statusBadge}>{ad.is_active ? t('showJobs.active') : t('showJobs.inactive')}</span>
+                                        <span className={ad.is_active ? styles.statusBadge : styles.statusBadgeInactive}>{ad.is_active ? t('showJobs.active') : t('showJobs.inactive')}</span>
                                         <button
                                             className={styles.editButton}
                                             onClick={(e) => handleEditClick(e, ad.id)}

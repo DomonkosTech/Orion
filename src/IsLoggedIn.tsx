@@ -47,7 +47,7 @@ function IsLoggedIn({ children, mode = "user" }: Props) {
     }, []);
 
     if (loading) {
-        return <div>Betöltés...</div>;
+        return null;
     }
 
     // Guest mód: ha be van jelentkezve, irányítsuk a megfelelő kezdőoldalra

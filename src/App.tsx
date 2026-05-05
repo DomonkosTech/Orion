@@ -1,6 +1,5 @@
-import { lazy, Suspense } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { lazy, Suspense, useState, useEffect, useTransition, useRef } from "react";
+import { Router, Routes, Route } from "react-router-dom";
 
 // 1. Static Import for Guard/Layout (Essential to load immediately)
 import IsLoggedIn from "./IsLoggedIn.tsx";
@@ -35,18 +34,92 @@ const CompanyPasswordResetSave = lazy(() => import("./features/company/EditProfi
 const Messenger = lazy(() => import("./features/user/messenger/messenger.tsx"));
 const ShowFavoritesJobs = lazy(() => import("./features/user/UserJobs/Favorites/ShowFavoritesJobs.tsx"));
 
-const PageLoader = () => {
-    const { t } = useTranslation("components");
-    return (
-        <div style={{ padding: "20px", textAlign: "center" }}>{t("loading")}</div>
-    );
+// Create a path string from a To object (used by the navigator)
+const toPath = (to: unknown): string => {
+    if (typeof to === "string") return to;
+    if (to && typeof to === "object") {
+        const t = to as Record<string, string>;
+        return (t.pathname || "") + (t.search || "") + (t.hash || "");
+    }
+    return "";
 };
 
 function App() {
+    const [, startTransition] = useTransition();
+    const [location, setLocation] = useState(() => ({
+        pathname: window.location.pathname,
+        search: window.location.search,
+        hash: window.location.hash,
+        state: window.history.state,
+        key: Math.random().toString(36).slice(2),
+    }));
+
+    const startRef = useRef(startTransition);
+    startRef.current = startTransition;
+
+    // Handle browser back/forward
+    useEffect(() => {
+        const onPopState = () => {
+            startRef.current(() => {
+                setLocation({
+                    pathname: window.location.pathname,
+                    search: window.location.search,
+                    hash: window.location.hash,
+                    state: window.history.state,
+                    key: Math.random().toString(36).slice(2),
+                });
+            });
+        };
+        window.addEventListener("popstate", onPopState);
+        return () => window.removeEventListener("popstate", onPopState);
+    }, []);
+
+    // Stable navigator — wraps push/replace in startTransition
+    const navigator = useRef({
+        createHref(to: unknown): string {
+            return toPath(to);
+        },
+        push(to: unknown, state?: unknown): void {
+            const href = toPath(to);
+            window.history.pushState(state, "", href);
+            startRef.current(() => {
+                setLocation({
+                    pathname: window.location.pathname,
+                    search: window.location.search,
+                    hash: window.location.hash,
+                    state: window.history.state,
+                    key: Math.random().toString(36).slice(2),
+                });
+            });
+        },
+        replace(to: unknown, state?: unknown): void {
+            const href = toPath(to);
+            window.history.replaceState(state, "", href);
+            startRef.current(() => {
+                setLocation({
+                    pathname: window.location.pathname,
+                    search: window.location.search,
+                    hash: window.location.hash,
+                    state: window.history.state,
+                    key: Math.random().toString(36).slice(2),
+                });
+            });
+        },
+        go(delta: number): void {
+            window.history.go(delta);
+            // popstate listener fires → startTransition → setLocation
+        },
+        listen(): () => void {
+            return () => {};
+        },
+        block(): () => void {
+            return () => {};
+        },
+    }).current;
+
     return (
-        <Router>
-            {/* 3. Wrap Routes in Suspense */}
-            <Suspense fallback={<PageLoader />}>
+        <Router location={location} navigator={navigator}>
+            <Suspense fallback={null}>
                 <Routes>
                     {/* Mindenkinek elérhető oldalak (PUBLIC) */}
                     <Route path="/" element={<PublicHomePage />} />
