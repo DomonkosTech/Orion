@@ -62,23 +62,22 @@ const ChatWindow: React.FC = () => {
 
     const showLoader = messagesLoading && delayedLoading;
 
-    const scrollToBottom = (behavior: ScrollBehavior = "smooth", delay = 50) => {
-        // Use a timeout to ensure the DOM has updated and Framer Motion layout is ready
-        setTimeout(() => {
+    const scrollToBottom = (behavior: ScrollBehavior = "smooth", delay = 50, doubleCheck = false) => {
+        const doScroll = () => {
             if (containerRef.current && messagesEndRef.current) {
                 const { scrollHeight, clientHeight } = containerRef.current;
-                
-                // ONLY scroll if the content exceeds the container height
                 if (scrollHeight > clientHeight) {
                     messagesEndRef.current.scrollIntoView({ behavior });
-                    
-                    // Double-check scroll for 100% reliability on initial load or large updates
-                    if (delay > 100) {
-                        setTimeout(() => {
-                            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-                        }, 150);
-                    }
                 }
+            }
+        };
+
+        // Delay to let Framer Motion layout animations finish before scrolling
+        setTimeout(() => {
+            doScroll();
+            // A second scroll pass catches cases where the first fired mid-layout
+            if (doubleCheck) {
+                setTimeout(doScroll, 250);
             }
         }, delay);
     };
@@ -86,12 +85,13 @@ const ChatWindow: React.FC = () => {
     useEffect(() => {
         if (!showLoader && selectedCompany && messages.length > 0) {
             const isNewConversation = prevCompanyIdRef.current !== selectedCompany.company_id;
-            
-            // If it's a new conversation, wait 100ms for a quick but visible transition
-            // Otherwise (new message), use a shorter delay for responsiveness
-            const delay = isNewConversation ? 100 : 50;
-            
-            scrollToBottom("smooth", delay);
+
+            // New conversation: longer delay so Framer Motion layout settles,
+            // plus a double-check scroll for reliability.
+            // Existing conversation (new message): quick, single scroll.
+            const delay = isNewConversation ? 200 : 50;
+
+            scrollToBottom("smooth", delay, isNewConversation);
             prevCompanyIdRef.current = selectedCompany.company_id;
         }
     }, [messages, showLoader, selectedCompany]);

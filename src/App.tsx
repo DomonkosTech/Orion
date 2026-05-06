@@ -1,5 +1,18 @@
 import { lazy, Suspense, useState, useEffect, useTransition, useRef } from "react";
-import { Router, Routes, Route } from "react-router-dom";
+import { Router, Routes, Route, useLocation } from "react-router-dom";
+
+// Prevent the browser from trying to restore scroll positions on back/forward.
+// We handle scrolling ourselves in the navigator and popstate handler so it
+// happens synchronously — before paint — avoiding the flash of wrong position.
+window.history.scrollRestoration = "manual";
+
+function ScrollToTop() {
+    const { pathname } = useLocation();
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
+    return null;
+}
 
 // 1. Static Import for Guard/Layout (Essential to load immediately)
 import IsLoggedIn from "./IsLoggedIn.tsx";
@@ -45,7 +58,7 @@ const toPath = (to: unknown): string => {
 };
 
 function App() {
-    const [, startTransition] = useTransition();
+    const [isPending, startTransition] = useTransition();
     const [location, setLocation] = useState(() => ({
         pathname: window.location.pathname,
         search: window.location.search,
@@ -60,6 +73,7 @@ function App() {
     // Handle browser back/forward
     useEffect(() => {
         const onPopState = () => {
+            window.scrollTo(0, 0);
             startRef.current(() => {
                 setLocation({
                     pathname: window.location.pathname,
@@ -82,6 +96,7 @@ function App() {
         push(to: unknown, state?: unknown): void {
             const href = toPath(to);
             window.history.pushState(state, "", href);
+            window.scrollTo(0, 0);
             startRef.current(() => {
                 setLocation({
                     pathname: window.location.pathname,
@@ -95,6 +110,7 @@ function App() {
         replace(to: unknown, state?: unknown): void {
             const href = toPath(to);
             window.history.replaceState(state, "", href);
+            window.scrollTo(0, 0);
             startRef.current(() => {
                 setLocation({
                     pathname: window.location.pathname,
@@ -120,6 +136,8 @@ function App() {
     return (
         <Router location={location} navigator={navigator}>
             <Suspense fallback={null}>
+                <ScrollToTop />
+                {!isPending && (
                 <Routes>
                     {/* Mindenkinek elérhető oldalak (PUBLIC) */}
                     <Route path="/" element={<PublicHomePage />} />
@@ -163,6 +181,7 @@ function App() {
                         <Route path="/CompanyRegisterPage" element={<CompanyRegisterPage />} />
                     </Route>
                 </Routes>
+                )}
             </Suspense>
         </Router>
     );

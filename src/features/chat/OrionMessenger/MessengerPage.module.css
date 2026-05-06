@@ -242,6 +242,7 @@
     flex-direction: column;
     gap: 12px;
     background-clip: padding-box;
+    scroll-behavior: smooth;
 }
 
 .emptyState {
