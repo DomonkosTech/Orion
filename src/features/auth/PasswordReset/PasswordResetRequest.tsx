@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 // components
 import InputField from "../../../components/ui/InputField/InputField";
 import Button from "../../../components/ui/Button/Button";
-import { Header } from "../../../components/layout/Header/Header";
 
 interface PasswordResetRequestProps {
     onSendEmail: (email: string) => Promise<void>;
@@ -51,7 +50,6 @@ const PasswordResetRequest: React.FC<PasswordResetRequestProps> = ({
 
     return (
         <div className={styles.page}>
-            <Header />
             <main className={styles.mainContent}>
                 <div className={styles.container}>
                     <div className={styles.card}>

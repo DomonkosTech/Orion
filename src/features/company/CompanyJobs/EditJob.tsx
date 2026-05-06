@@ -16,9 +16,7 @@ import {
 import styles from "./EditJob.module.css";
 
 // Shared Components
-import { Header } from "../../../components/layout/Header/Header.tsx";
 import Button from "../../../components/ui/Button/Button.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
 import InputField from "../../../components/ui/InputField/InputField.tsx";
 import TextArea from "../../../components/ui/TextArea/TextArea.tsx";
@@ -107,8 +105,6 @@ const EditJob: React.FC = () => {
 
     return (
         <div className={styles.pageWrapper}>
-            <Header />
-
             <main className={styles.container}>
                 <header className={styles.header}>
                     <div className={styles.titleGroup}>
@@ -252,7 +248,6 @@ const EditJob: React.FC = () => {
                     </aside>
                 </form>
             </main>
-            <Footer />
         </div>
     );
 };

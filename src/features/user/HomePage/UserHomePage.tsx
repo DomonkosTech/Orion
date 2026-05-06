@@ -21,10 +21,8 @@ import {
 import styles from "./UserHomePage.module.css";
 
 // components
-import { Header } from "../../../components/layout/Header/Header.tsx";
 import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/ui/Button/Button.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 import { useAuth } from "../../../hooks/useAuth";
 import { getAdvertisementById, type AdvertisementDetails } from "../../../Api/advertisementApi.ts";
 import { getUserStatistics, type DashboardStats } from "../../../Api/userApi.ts"
@@ -119,8 +117,6 @@ function UserHomePage() {
 
     return (
         <div className={styles.page}>
-            <Header />
-
             <main className={styles.mainContent}>
                 <div className={styles.container}>
                     {/* Welcome Header */}
@@ -282,8 +278,6 @@ function UserHomePage() {
                     </div>
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 }

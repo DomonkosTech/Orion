@@ -8,8 +8,6 @@ import { useTranslation } from "react-i18next";
 import InputField from "../../ui/InputField/InputField";
 import Checkbox from "../../ui/Checkbox/Checkbox";
 import Button from "../../ui/Button/Button.tsx";
-import { Header } from "../../layout/Header/Header.tsx";
-import Footer from "../../layout/Footer/Footer.tsx";
 import { loginSchema, type LoginInput } from "../../../validation/Validation.ts";
 
 interface LoginPageProps {
@@ -91,9 +89,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
     };
 
     return (
-        <>
-            <Header />
-            <div className={styles.container}>
+        <div className={styles.container}>
                 <form onSubmit={handleLogin} className={styles.form} noValidate>
                     <h1>{title}</h1>
 
@@ -176,9 +172,7 @@ const LoginPage: React.FC<LoginPageProps> = ({
                         </Button>
                     </div>
                 </form>
-            </div>
-            <Footer/>
-        </>
+        </div>
     );
 };
 

@@ -13,9 +13,7 @@ import { getJobApplications, type JobApplicationData } from "../../../Api/advert
 import styles from "./JobApplications.module.css";
 
 // Components
-import { Header } from "../../../components/layout/Header/Header.tsx";
 import Button from "../../../components/ui/Button/Button.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
 
 const JobApplications = () => {
@@ -44,8 +42,6 @@ const JobApplications = () => {
 
     return (
         <div className={styles.pageWrapper}>
-            <Header />
-
             <main className={styles.container}>
                 {loading ? (
                     <div className={styles.loadingState}>
@@ -166,7 +162,6 @@ const JobApplications = () => {
                     </>
                 )}
             </main>
-            <Footer />
         </div>
     );
 };

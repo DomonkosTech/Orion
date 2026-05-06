@@ -5,9 +5,7 @@ import { MessageSquare, Users, PlusCircle, Eye, UserCheck, TrendingUp } from "lu
 import styles from "./CompanyHomePage.module.css";
 
 // Components
-import { Header } from "../../../components/layout/Header/Header.tsx";
 import Button from "../../../components/ui/Button/Button.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
 
 // API
@@ -49,8 +47,6 @@ const CompanyHomePage: React.FC = () => {
 
     return (
         <div className={styles.page}>
-            <Header />
-
             <main className={styles.container}>
                 <header className={styles.dashboardHeader}>
                     <div>
@@ -182,8 +178,6 @@ const CompanyHomePage: React.FC = () => {
                     </aside>
                 </div>
             </main>
-
-            <Footer />
         </div>
     );
 };

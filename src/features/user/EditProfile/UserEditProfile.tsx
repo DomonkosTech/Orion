@@ -8,8 +8,6 @@ import {
 } from "lucide-react";
 
 // Components
-import { Header } from "../../../components/layout/Header/Header.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 import EditProfile, { type EditProfileRenderProps } from "../../../components/base/EditProfile/EditProfile.tsx";
 import InputField from "../../../components/ui/InputField/InputField.tsx";
 import TextArea from "../../../components/ui/TextArea/TextArea.tsx";
@@ -20,7 +18,6 @@ const UserEditProfile: React.FC = () => {
     const { t } = useTranslation('user');
     return (
         <div className={pageStyles.pageWrapper}>
-            <Header />
             <main className={pageStyles.container}>
                 <EditProfile type="user">
                     {({ user, setUser, documents, setDocuments, editMode, resume, handleDeleteResume, handleViewResume, navigate }: EditProfileRenderProps) => {
@@ -191,7 +188,6 @@ const UserEditProfile: React.FC = () => {
                     }}
                 </EditProfile>
             </main>
-            <Footer />
         </div>
     );
 };

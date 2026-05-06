@@ -5,10 +5,8 @@ import styles from "./ShowFavoritesJobs.module.css";
 import { Trash2, MapPin, Briefcase, Search, ArrowLeft } from "lucide-react";
 
 // Components
-import { Header } from "../../../../components/layout/Header/Header.tsx";
 import { getAdvertisementById, type Job, } from "../../../../Api/advertisementApi.ts";
 import {removeFavorite, getFavorites} from "../../../../Api/userApi.ts"
-import Footer from "../../../../components/layout/Footer/Footer.tsx";
 import Button from "../../../../components/ui/Button/Button.tsx";
 
 // Helper for formatting currency
@@ -91,8 +89,6 @@ const ShowFavoritesJobs: React.FC = () => {
 
     return (
         <div className={styles.pageWrapper}>
-            <Header />
-
             <main className={styles.container}>
                 <header className={styles.header}>
                     <h1 className={styles.title}>{t('jobs.favorites.title', 'Kedvenc állásajánlataid')}</h1>
@@ -194,7 +190,6 @@ const ShowFavoritesJobs: React.FC = () => {
                     </div>
                 )}
             </main>
-            <Footer />
         </div>
     );
 };

@@ -4,8 +4,6 @@ import { useTranslation } from "react-i18next";
 import styles from "../VerifyPage/VerifyPage.module.css";
 import InputField from "../../../components/ui/InputField/InputField";
 import Button from "../../../components/ui/Button/Button.tsx";
-import {Header} from "../../../components/layout/Header/Header.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 
 interface SendVerifyPageProps {
     onSend: (email: string) => Promise<void>;
@@ -41,9 +39,7 @@ const SendVerifyPage: React.FC<SendVerifyPageProps> = ({
     };
 
     return (
-        <>
-            <Header />
-            <div className={styles.page}>
+        <div className={styles.page}>
                 <div className={styles.container}>
                     <div className={styles.card}>
                         <header className={styles.header}>
@@ -78,9 +74,7 @@ const SendVerifyPage: React.FC<SendVerifyPageProps> = ({
                         </form>
                     </div>
                 </div>
-            </div>
-            <Footer />
-        </>
+        </div>
     );
 };
 

@@ -9,9 +9,7 @@ import styles from "./ApplicantTrackingSystem.module.css";
 import { FileText, Check, X, ArrowLeft, Mail, Calendar, MapPin, User, Briefcase, GraduationCap, Globe, ChevronDown, MessageSquare, Info } from "lucide-react";
 
 // Shared Components
-import { Header } from "../../../components/layout/Header/Header.tsx";
 import Button from "../../../components/ui/Button/Button.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
 
 import {
@@ -170,11 +168,10 @@ export const ApplicantTrackingSystem: React.FC = () => {
         navigate(`/messenger?userId=${userId}&userName=${userName}`);
     };
 
-    if (loading) return <div className={styles.page}><Header /><p className={styles.emptyState}>{t('ats.loading')}</p></div>;
+    if (loading) return <div className={styles.page}><p className={styles.emptyState}>{t('ats.loading')}</p></div>;
 
     return (
         <div className={styles.page}>
-            <Header />
             <main className={styles.container}>
                 <header className={styles.header}>
                     <div>
@@ -420,7 +417,6 @@ export const ApplicantTrackingSystem: React.FC = () => {
                     </>
                 )}
             </AnimatePresence>
-            <Footer />
         </div>
     );
 };

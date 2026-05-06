@@ -3,8 +3,6 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import styles from "./VerifyPage.module.css";
-import {Header} from "../../../components/layout/Header/Header.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 
 interface VerifyPageProps {
     onVerify: (token: string) => Promise<void>;
@@ -40,25 +38,21 @@ const VerifyPage: React.FC<VerifyPageProps> = ({
     }, [searchParams, navigate, onVerify, loginPath, t]);
 
     return (
-        <>
-            <Header />
-            <div className={styles.page}>
-                <div className={styles.container}>
-                    <div className={styles.card} style={{ textAlign: 'center' }}>
-                        <header className={styles.header}>
-                            <h1>{t('verify.title')}</h1>
-                            <div className={styles.section}>
-                                <p>{t('verify.verifying')}</p>
-                                <div className={styles.stepper}>
-                                    <div className={`${styles.step} ${styles.active}`} />
-                                </div>
+        <div className={styles.page}>
+            <div className={styles.container}>
+                <div className={styles.card} style={{ textAlign: 'center' }}>
+                    <header className={styles.header}>
+                        <h1>{t('verify.title')}</h1>
+                        <div className={styles.section}>
+                            <p>{t('verify.verifying')}</p>
+                            <div className={styles.stepper}>
+                                <div className={`${styles.step} ${styles.active}`} />
                             </div>
-                        </header>
-                    </div>
+                        </div>
+                    </header>
                 </div>
             </div>
-            <Footer />
-        </>
+        </div>
     );
 };
 

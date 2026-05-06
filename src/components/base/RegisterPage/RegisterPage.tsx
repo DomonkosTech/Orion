@@ -7,8 +7,6 @@ import { useTranslation } from "react-i18next";
 
 // Components
 import Button from "../../ui/Button/Button.tsx";
-import {Header} from "../../layout/Header/Header.tsx";
-import Footer from "../../layout/Footer/Footer.tsx";
 
 interface Step<T> {
     label: string;
@@ -163,9 +161,7 @@ const RegisterPage = <T extends object>({
     }, [step, steps.length, formData]);
 
     return (
-        <>
-            <Header />
-            <div className={styles.page}>
+        <div className={styles.page}>
                 <div className={styles.container} ref={topRef}>
                     <div className={styles.card}>
                         <header className={styles.header}>
@@ -204,9 +200,7 @@ const RegisterPage = <T extends object>({
                         </form>
                     </div>
                 </div>
-            </div>
-            <Footer/>
-        </>
+        </div>
     );
 };
 

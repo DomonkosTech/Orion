@@ -7,8 +7,6 @@ import { ArrowLeft } from "lucide-react";
 import styles from "./AddJob.module.css";
 
 // Components
-import { Header } from "../../../components/layout/Header/Header.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/ui/Button/Button.tsx";
 import TextArea from "../../../components/ui/TextArea/TextArea.tsx";
@@ -80,8 +78,6 @@ const AddJob: React.FC = () => {
 
     return (
         <div className={styles.page}>
-            <Header />
-
             <main className={styles.container}>
                 <header className={styles.header}>
                     <div className={styles.headerContent}>
@@ -224,7 +220,6 @@ const AddJob: React.FC = () => {
                     </aside>
                 </form>
             </main>
-            <Footer />
         </div>
     );
 };

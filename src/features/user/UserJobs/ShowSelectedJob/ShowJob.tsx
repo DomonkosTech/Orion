@@ -12,10 +12,8 @@ import {
 import styles from "./ShowJob.module.css";
 
 //components
-import { Header } from "../../../../components/layout/Header/Header.tsx";
 import Button from "../../../../components/ui/Button/Button.tsx";
 import BannerKicker from "../../../../components/layout/BannerKicker/BannerKicker.tsx";
-import Footer from "../../../../components/layout/Footer/Footer.tsx";
 import AnimatedNumber from "../../../../components/ui/AnimatedNumber/AnimatedNumber.tsx";
 
 const ShowJob = () => {
@@ -99,7 +97,6 @@ const ShowJob = () => {
     if (loading) {
         return (
             <div className={styles.pageWrapper}>
-                <Header />
                 <div style={{ textAlign: 'center', padding: '100px' }}>
                     <p>{t('jobs.show.loading')}</p>
                 </div>
@@ -110,7 +107,6 @@ const ShowJob = () => {
     if (error || !advertisement) {
         return (
             <div className={styles.pageWrapper}>
-                <Header />
                 <div style={{ textAlign: 'center', padding: '100px' }}>
                     <p>{error || t('jobs.show.notFound')}</p>
                     <Button
@@ -128,8 +124,6 @@ const ShowJob = () => {
 
     return (
         <div className={styles.pageWrapper}>
-            <Header />
-
             <header className={styles.banner}>
                 <div className={styles.bannerInner}>
                     <button onClick={() => navigate(-1)} className={styles.backButton}>
@@ -292,7 +286,6 @@ const ShowJob = () => {
                     </div>
                 </aside>
             </main>
-            <Footer></Footer>
         </div>
     );
 };

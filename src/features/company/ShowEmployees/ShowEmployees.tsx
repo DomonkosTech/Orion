@@ -7,8 +7,6 @@ import { ArrowLeft, Trash2 } from "lucide-react";
 import styles from "./ShowEmployees.module.css";
 
 // Shared Components
-import { Header } from "../../../components/layout/Header/Header.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/ui/Button/Button.tsx";
 import ConfirmModal from "../../../components/ui/ConfirmModal/ConfirmModal.tsx";
@@ -85,8 +83,6 @@ const ShowEmployees = () => {
     return (
 
     <div className={styles.page}>
-        <Header />
-
         <main className={styles.container}>
             <header className={styles.header}>
                 <div className={styles.headerContent}>
@@ -157,7 +153,6 @@ const ShowEmployees = () => {
             type="danger"
             icon={<Trash2 size={24} />}
         />
-        <Footer />
     </div>
     );
 };

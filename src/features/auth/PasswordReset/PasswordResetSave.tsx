@@ -5,7 +5,6 @@ import { toast } from "react-hot-toast";
 import styles from "./PasswordResetSave.module.css";
 import InputField from "../../../components/ui/InputField/InputField";
 import Button from "../../../components/ui/Button/Button";
-import { Header } from "../../../components/layout/Header/Header";
 
 interface PasswordResetSaveProps {
     onSavePassword: (token: string, password: string) => Promise<void>;
@@ -53,7 +52,6 @@ const PasswordResetSave: React.FC<PasswordResetSaveProps> = ({
 
     return (
         <div className={styles.page}>
-            <Header />
             <main className={styles.mainContent}>
                 <div className={styles.container}>
                     <div className={styles.card}>

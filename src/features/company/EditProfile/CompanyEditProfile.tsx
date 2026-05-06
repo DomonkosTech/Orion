@@ -7,8 +7,6 @@ import {
 } from "lucide-react";
 
 // Components
-import { Header } from "../../../components/layout/Header/Header.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 import EditProfile, { type EditProfileRenderProps } from "../../../components/base/EditProfile/EditProfile.tsx";
 import InputField from "../../../components/ui/InputField/InputField.tsx";
 import TextArea from "../../../components/ui/TextArea/TextArea.tsx";
@@ -19,7 +17,6 @@ const CompanyEditProfile: React.FC = () => {
 
     return (
         <div className={pageStyles.pageWrapper}>
-            <Header />
             <main className={pageStyles.container}>
                 <EditProfile type="company">
                     {({ company, setCompany, editMode }: EditProfileRenderProps) => {
@@ -111,7 +108,6 @@ const CompanyEditProfile: React.FC = () => {
                     }}
                 </EditProfile>
             </main>
-            <Footer />
         </div>
     );
 };

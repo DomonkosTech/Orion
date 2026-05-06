@@ -7,9 +7,7 @@ import { uploadResume, getUserResume, deleteResume } from "../../../Api/userApi"
 import styles from "./UploadResume.module.css";
 
 //components
-import { Header } from "../../../components/layout/Header/Header.tsx";
 import Button from "../../../components/ui/Button/Button.tsx";
-import Footer from "../../../components/layout/Footer/Footer.tsx";
 import ConfirmModal from "../../../components/ui/ConfirmModal/ConfirmModal.tsx";
 
 const UploadResume = () => {
@@ -101,8 +99,6 @@ const UploadResume = () => {
 
     return (
         <div className={styles.pageWrapper}>
-            <Header />
-
             <main className={styles.container}>
                 <div className={styles.uploadCard}>
                     <div className={styles.headerSection}>
@@ -245,7 +241,6 @@ const UploadResume = () => {
                 type="danger"
                 icon={<Trash2 size={24} />}
             />
-            <Footer></Footer>
         </div>
     );
 };
