@@ -204,7 +204,7 @@
       "taxNumber": "Tax Number",
       "qualifications": "Qualifications",
       "bio": "Short Bio",
-      "terms": "I accept the terms of use"
+      "terms": "I accept the <1>terms of use</1>"
     },
     "passwordRequirements": {
       "title": "Password requirements:",

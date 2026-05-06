@@ -222,7 +222,7 @@
       "phone": "Phone Number *",
       "activityScope": "Scope of Activity *",
       "shortDescription": "Short Introduction *",
-      "terms": "I accept the terms of use"
+      "terms": "I accept the <1>terms of use</1>"
     },
     "passwordRequirements": {
       "title": "Password requirements:",

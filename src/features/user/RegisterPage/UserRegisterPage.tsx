@@ -1,5 +1,5 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import { registerUser } from "../../../Api/userApi.ts";
 import { userRegisterObject, userRegisterSchema, passwordConfirmRefinement } from "../../../validation/Validation.ts";
 import RegisterPage from "../../../components/base/RegisterPage/RegisterPage.tsx";
@@ -136,7 +136,24 @@ const UserRegisterPage: React.FC = () => {
                     <TextArea label={t('register.fields.bio')} name="short_bio" value={formData.short_bio} onChange={handleChange} rows={3} error={errors.short_bio} maxLength={BIO_MAX_LENGTH} />
 
                     <div className={`${styles.terms} ${errors.terms_accepted ? styles.errorShake : ""}`}>
-                        <Checkbox label={t('register.fields.terms')} checked={formData.terms_accepted} onChange={(checked) => handleCheckboxChange("terms_accepted", checked)} />
+                        <Checkbox 
+                            label={
+                                <Trans
+                                    i18nKey="register.fields.terms"
+                                    t={t}
+                                    components={{
+                                        1: <a 
+                                            href="https://nlabffngmifszpwrqetx.supabase.co/storage/v1/object/sign/ASZF/ASZF_Orion.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84NjhlOTgyNy02YjIwLTQ5YWUtYWIwYi0yY2UyMzNmYTJkYTAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBU1pGL0FTWkZfT3Jpb24ucGRmIiwiaWF0IjoxNzc3OTI2MTA0LCJleHAiOjE4MDk0NjIxMDR9._Gnn-msavH9Y3jLilj5dC_2ktDxDZiaE7z2Ft22K7A8" 
+                                            target="_blank" 
+                                            rel="noopener noreferrer" 
+                                            style={{ color: "var(--orion-blue)", fontWeight: "600", textDecoration: "none" }}
+                                        />
+                                    }}
+                                />
+                            } 
+                            checked={formData.terms_accepted} 
+                            onChange={(checked) => handleCheckboxChange("terms_accepted", checked)} 
+                        />
                         {errors.terms_accepted && <span className={styles.errorText}>{errors.terms_accepted}</span>}
                     </div>
                 </>
