@@ -7,10 +7,12 @@ import styles from "./PublicHomePage.module.css";
 import BannerKicker from "../../../components/layout/BannerKicker/BannerKicker.tsx";
 import Button from "../../../components/ui/Button/Button.tsx";
 import { getTop3Advertisements, type CompanyAdvertisement } from "../../../Api/advertisementApi.ts";
+import { useAuth } from "../../../hooks/useAuth.ts";
 
 function PublicHomePage() {
     const navigate = useNavigate();
     const { t } = useTranslation('public');
+    const { loggedIn, userType } = useAuth();
     const [featuredJobs, setFeaturedJobs] = useState<CompanyAdvertisement[]>([]);
 
     useEffect(() => {
@@ -55,13 +57,23 @@ function PublicHomePage() {
                                 {t('hero.mainCta')}
                             </Button>
 
-                            <Button
-                                onClick={() => window.scrollTo({ top: 400, behavior: 'smooth' })}
-                                variant="secondary"
-                                color="orion-blue"
-                            >
-                                {t('hero.secondaryCta')}
-                            </Button>
+                            {loggedIn ? (
+                                <Button
+                                    onClick={() => navigate(userType === "company" ? "/company" : "/userhomepage")}
+                                    variant="secondary"
+                                    color="orion-blue"
+                                >
+                                    Irány a Vezérlőpult
+                                </Button>
+                            ) : (
+                                <Button
+                                    onClick={() => window.scrollTo({ top: 400, behavior: 'smooth' })}
+                                    variant="secondary"
+                                    color="orion-blue"
+                                >
+                                    {t('hero.secondaryCta')}
+                                </Button>
+                            )}
                         </div>
                     </div>
                 </section>

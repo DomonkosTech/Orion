@@ -74,12 +74,6 @@
     "sidebar": {
       "title": "Settings",
       "hourlyWage": "Hourly Wage (HUF)",
-      "jobType": "Type of Employment",
-      "types": {
-        "fullTime": "Full-time",
-        "partTime": "Part-time",
-        "freelance": "Project work"
-      },
       "active": {
         "label": "Immediate activation",
         "hint": "The ad will be visible immediately"

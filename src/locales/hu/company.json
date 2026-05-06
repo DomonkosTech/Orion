@@ -74,12 +74,6 @@
     "sidebar": {
       "title": "Beállítások",
       "hourlyWage": "Órabér (HUF)",
-      "jobType": "Foglalkoztatás típusa",
-      "types": {
-        "fullTime": "Teljes munkaidő",
-        "partTime": "Részmunkaidő",
-        "freelance": "Projektmunka"
-      },
       "active": {
         "label": "Azonnali aktiválás",
         "hint": "A hirdetés rögtön látható lesz"

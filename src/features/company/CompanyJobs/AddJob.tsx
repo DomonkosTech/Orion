@@ -25,7 +25,6 @@ const AddJob: React.FC = () => {
         tasks: "",
         requirements: "",
         job_description: "",
-        job_type: "Full-time",
         category: "Physical Work",
         is_active: true,
     });
@@ -183,15 +182,6 @@ const AddJob: React.FC = () => {
                                     onChange={handleInputChange}
                                     placeholder="2000"
                                 />
-                            </div>
-
-                            <div className={styles.sidebarInputGroup}>
-                                <label>{t('addJob.sidebar.jobType')}</label>
-                                <select name="job_type" className={styles.sidebarSelect} onChange={handleInputChange}>
-                                    <option value="Full-time">{t('addJob.sidebar.types.fullTime')}</option>
-                                    <option value="Part-time">{t('addJob.sidebar.types.partTime')}</option>
-                                    <option value="Freelance">{t('addJob.sidebar.types.freelance')}</option>
-                                </select>
                             </div>
 
                             <div className={styles.statusBox}>

@@ -74,12 +74,6 @@
     "sidebar": {
       "title": "Einstellungen",
       "hourlyWage": "Stundenlohn (HUF)",
-      "jobType": "Anstellungsart",
-      "types": {
-        "fullTime": "Vollzeit",
-        "partTime": "Teilzeit",
-        "freelance": "Projektarbeit"
-      },
       "active": {
         "label": "Sofortige Aktivierung",
         "hint": "Die Anzeige wird sofort sichtbar sein"
