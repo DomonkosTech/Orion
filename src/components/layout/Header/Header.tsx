@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import styles from "./Header.module.css";
 import { useTranslation } from "react-i18next";
 
@@ -64,19 +65,19 @@ export function Header({
         <header className={styles.header}>
             <div className={styles.container}>
                 {/* Left: Logo */}
-                <a href={loggedIn ? (userType === "company" ? "/company" : "/userhomepage") : "/"} className={styles.logo}>
+                <Link to={loggedIn ? (userType === "company" ? "/company" : "/userhomepage") : "/"} className={styles.logo}>
                     <div className={styles.logoBox} style={{ background: logoColor }}>
                         <div className={styles.logoInner} />
                     </div>
                     {companyName}
-                </a>
+                </Link>
 
                 {/* Center: Navigation */}
                 <nav className={styles.nav}>
                     {dynamicNavItems.map((item, index) => (
-                        <a key={`${item.href}-${index}`} href={item.href} className={styles.navLink}>
+                        <Link key={`${item.href}-${index}`} to={item.href} className={styles.navLink}>
                             {item.label}
-                        </a>
+                        </Link>
                     ))}
                 </nav>
 

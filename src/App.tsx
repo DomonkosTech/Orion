@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect, useTransition, useRef } from "react";
+import { lazy, useState, useEffect, useTransition, useRef } from "react";
 import { Router, Routes, Route, useLocation } from "react-router-dom";
 
 // Prevent the browser from trying to restore scroll positions on back/forward.
@@ -59,7 +59,7 @@ const toPath = (to: unknown): string => {
 };
 
 function App() {
-    const [isPending, startTransition] = useTransition();
+    const [, startTransition] = useTransition();
     const [location, setLocation] = useState(() => ({
         pathname: window.location.pathname,
         search: window.location.search,
@@ -136,61 +136,57 @@ function App() {
 
     return (
         <Router location={location} navigator={navigator}>
-            <Suspense fallback={null}>
-                <ScrollToTop />
-                {!isPending && (
-                <Routes>
-                    {/* Pages with Header + Footer */}
-                    <Route element={<AppLayout />}>
-                        {/* Mindenkinek elérhető oldalak (PUBLIC) */}
-                        <Route path="/" element={<PublicHomePage />} />
-                        <Route path="/user/verify" element={<UserVerify />} />
-                        <Route path="/user/sendverify" element={<UserSendVerify />} />
-                        <Route path="/company/sendverify" element={<CompanySendVerify />} />
-                        <Route path="/company/verify" element={<CompanyVerify />} />
+            <ScrollToTop />
+            <Routes>
+                {/* Pages with Header + Footer */}
+                <Route element={<AppLayout />}>
+                    {/* Mindenkinek elérhető oldalak (PUBLIC) */}
+                    <Route path="/" element={<PublicHomePage />} />
+                    <Route path="/user/verify" element={<UserVerify />} />
+                    <Route path="/user/sendverify" element={<UserSendVerify />} />
+                    <Route path="/company/sendverify" element={<CompanySendVerify />} />
+                    <Route path="/company/verify" element={<CompanyVerify />} />
 
-                        {/* Csak USER típusú felhasználóknak */}
-                        <Route element={<IsLoggedIn mode="user" />}>
-                            <Route path="/userhomepage" element={<UserHomePage />} />
-                            <Route path="/favorites" element={<ShowFavoritesJobs />} />
-                            <Route path="/uploadresume" element={<UploadResume />} />
-                            <Route path="/JobApplications" element={<JobApplications />} />
-                            <Route path="/job/show/:id" element={<ShowJob />} />
-                            <Route path="/listjobs" element={<ListJobs />} />
-                            <Route path="/usereditprofile" element={<UserEditProfile />} />
-                        </Route>
-
-                        {/* Csak COMPANY típusú felhasználóknak */}
-                        <Route element={<IsLoggedIn mode="company" />}>
-                            <Route path="/company" element={<CompanyHomePage />} />
-                            <Route path="/ShowListedJobs" element={<ShowListedJobs />} />
-                            <Route path="/company/ATS/:id" element={<ApplicantTrackingSystem />} />
-                            <Route path="/company/edit/:id" element={<EditJob />} />
-                            <Route path="/CompanyEditProfile" element={<CompanyEditProfile />} />
-                            <Route path="/AddJob" element={<AddJob />} />
-                            <Route path="/employees" element={<ShowEmployees />} />
-                        </Route>
-
-                        {/* Csak kijelentkezve elérhető oldalak (GUEST) */}
-                        <Route element={<IsLoggedIn mode="guest" />}>
-                            <Route path="/UserLoginPage" element={<UserLoginPage />} />
-                            <Route path="/UserRegisterPage" element={<UserRegisterPage />} />
-                            <Route path="/CompanyLoginPage" element={<CompanyLoginPage />} />
-                            <Route path="/CompanyRegisterPage" element={<CompanyRegisterPage />} />
-                        </Route>
+                    {/* Csak USER típusú felhasználóknak */}
+                    <Route element={<IsLoggedIn mode="user" />}>
+                        <Route path="/userhomepage" element={<UserHomePage />} />
+                        <Route path="/favorites" element={<ShowFavoritesJobs />} />
+                        <Route path="/uploadresume" element={<UploadResume />} />
+                        <Route path="/JobApplications" element={<JobApplications />} />
+                        <Route path="/job/show/:id" element={<ShowJob />} />
+                        <Route path="/listjobs" element={<ListJobs />} />
+                        <Route path="/usereditprofile" element={<UserEditProfile />} />
                     </Route>
 
-                    {/* Pages with Header only (no Footer) */}
-                    <Route element={<AppLayout showFooter={false} />}>
-                        <Route path="/messenger" element={<Messenger />} />
-                        <Route path="/user/password/reset" element={<UserPasswordResetRequest />} />
-                        <Route path="/user/password" element={<UserPasswordResetSave />} />
-                        <Route path="/company/password/reset" element={<CompanyPasswordResetRequest />} />
-                        <Route path="/company/password" element={<CompanyPasswordResetSave />} />
+                    {/* Csak COMPANY típusú felhasználóknak */}
+                    <Route element={<IsLoggedIn mode="company" />}>
+                        <Route path="/company" element={<CompanyHomePage />} />
+                        <Route path="/ShowListedJobs" element={<ShowListedJobs />} />
+                        <Route path="/company/ATS/:id" element={<ApplicantTrackingSystem />} />
+                        <Route path="/company/edit/:id" element={<EditJob />} />
+                        <Route path="/CompanyEditProfile" element={<CompanyEditProfile />} />
+                        <Route path="/AddJob" element={<AddJob />} />
+                        <Route path="/employees" element={<ShowEmployees />} />
                     </Route>
-                </Routes>
-                )}
-            </Suspense>
+
+                    {/* Csak kijelentkezve elérhető oldalak (GUEST) */}
+                    <Route element={<IsLoggedIn mode="guest" />}>
+                        <Route path="/UserLoginPage" element={<UserLoginPage />} />
+                        <Route path="/UserRegisterPage" element={<UserRegisterPage />} />
+                        <Route path="/CompanyLoginPage" element={<CompanyLoginPage />} />
+                        <Route path="/CompanyRegisterPage" element={<CompanyRegisterPage />} />
+                    </Route>
+                </Route>
+
+                {/* Pages with Header only (no Footer) */}
+                <Route element={<AppLayout showFooter={false} />}>
+                    <Route path="/messenger" element={<Messenger />} />
+                    <Route path="/user/password/reset" element={<UserPasswordResetRequest />} />
+                    <Route path="/user/password" element={<UserPasswordResetSave />} />
+                    <Route path="/company/password/reset" element={<CompanyPasswordResetRequest />} />
+                    <Route path="/company/password" element={<CompanyPasswordResetSave />} />
+                </Route>
+            </Routes>
         </Router>
     );
 }
