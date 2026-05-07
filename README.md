@@ -13,11 +13,12 @@ Töltsd le a legfrissebb **Orion-Setup.exe** fájlt a [kiadások oldaláról](..
 - Az Oriont a `C:\Orion` mappába másolja
 - Létrehozza a Start menü és az asztal parancsikonjait
 
-> **Figyelem:** A `start.bat` jelenleg nem működik megfelelően — **nem telepíti automatikusan** a Node.js-t, Pythont és a projektfüggőségeket. Ezeket kézzel kell telepítened:
-> 1. **[Node.js 22.x](https://nodejs.org/)** letöltése és telepítése
-> 2. **[Python 3.10+](https://www.python.org/)** letöltése és telepítése
-> 3. Függőségek telepítése parancssorból: `npm install`
-> 4. Python virtuális környezet és csomagok: `python -m venv .venv` majd `pip install -r requirements.txt`
+> **Figyelem:** A `start.bat` első indításkor **megpróbálja** automatikusan letölteni és telepíteni a Node.js-t és a Pythont, de ez nem mindig működik. Ha a telepítés elakad vagy hibát ír ki:
+> 1. Zárd be a `start.bat` ablakot
+> 2. Töltsd le és telepítsd kézzel: **[Node.js 22.x](https://nodejs.org/)** és **[Python 3.10+](https://www.python.org/)**
+> 3. Indítsd újra a `start.bat` fájlt
+>
+> Ha többszöri próbálkozás után a Node.js vagy a Python telepítője hibázni kezd, nyisd meg a Windows **"Telepített alkalmazások"** (Installed apps) menüjét, keresd meg és távolítsd el a Node.js-t és/vagy Pythont, majd próbáld újra.
 
 A telepítő **nem tartalmazza** az `.env` fájlt, mert az érzékeny adatokat (Supabase kulcsok, JWT titok, e-mail jelszavak) tartalmaz, amelyek kiszivárgása jelentős anyagi kárt okozhatna. Ha szükséged van az `.env` fájlra a projekt futtatásához, írj egy e-mailt az alábbi címre:
 
