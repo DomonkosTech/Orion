@@ -2,6 +2,24 @@ import { supabase } from "../../lib/supabaseClient.ts";
 import {incrementResumeViews} from "./userService.ts"
 import {createSystemMessage} from "./systemmessageService.ts"
 
+// Advertisement shape needed for employee creation
+interface Advertisement {
+    company_id: number;
+    position: string;
+    title: string;
+    hourly_wage: number;
+}
+
+// Expected query result structure
+interface ApplicantResult {
+    id: number;
+    last_updated: string;
+    status: string;
+    advertisement: Advertisement;
+    user_id: number;
+}
+
+// submit application
 export const submitApplication = async (userId: number, advertisementId: string) => {
     // check if application already exists
     const { data: application } = await supabase
@@ -30,6 +48,7 @@ export const submitApplication = async (userId: number, advertisementId: string)
     return { success: true };
 };
 
+// get user applications
 export const getUserApplications = async (userId: number) => {
     //get all submitted applications
     const { data: submit, error: submitError } = await supabase
@@ -53,6 +72,7 @@ export const getUserApplications = async (userId: number) => {
     };
 };
 
+// get applicants for advertisement
 export const getApplicantsForAdvertisement = async (advertisementId: string, companyId: number) => {
     // Check if the advertisement belongs to the company
     const { data: adCheck, error: adError } = await supabase
@@ -104,6 +124,7 @@ export const getApplicantsForAdvertisement = async (advertisementId: string, com
     return { applicants: mappedApplicants };
 };
 
+// reject application
 export const rejectApplication = async (applicationId: string, companyId: number) => {
     // Minimal application data needed for ownership check
     interface ApplicantData {
@@ -145,6 +166,7 @@ export const rejectApplication = async (applicationId: string, companyId: number
     return { success: true };
 };
 
+// get applicant resume url
 export const getApplicantResumeUrl = async (applicationId: string, companyId: number) => {
     // Minimal application data needed for access check
     interface ApplicantData {
@@ -209,23 +231,8 @@ export const getApplicantResumeUrl = async (applicationId: string, companyId: nu
     return { success: true, url: data.signedUrl };
 };
 
+// accept application
 export const acceptApplication = async (applicationId: string, companyId: number) => {
-    // Advertisement shape needed for employee creation
-    interface Advertisement {
-        company_id: number;
-        position: string;
-        title: string;
-        hourly_wage: number;
-    }
-
-    // Expected query result structure
-    interface ApplicantResult {
-        id: number;
-        last_updated: string;
-        status: string;
-        advertisement: Advertisement;
-        user_id: number;
-    }
 
     // Fetch application with related advertisement data
     const { data: application, error: fetchError } = await supabase
@@ -283,6 +290,7 @@ export const acceptApplication = async (applicationId: string, companyId: number
         .update({ status: "accepted" })
         .eq("id", applicationId);
 
+    // Send system message
     createSystemMessage(application.user_id, 'Gratulálunk!', `Örömmel értesítjük, hogy partnercégünk kiválasztotta Önt a(z) ${advertisement.position} pozícióra. hamarosan felveszik önnel a kapcsolatot majd a további részletekkel.`, 'USER')
 
     if (updateError) throw updateError;

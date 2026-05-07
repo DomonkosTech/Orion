@@ -7,9 +7,12 @@ import { userRegisterSchema, companyRegisterSchema, loginSchema } from "../../va
 
 dotenv.config();
 
+// Environment variables for encryption and JWT secret
+
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY;
 const JWT_SECRET = process.env.JWT_SECRET;
 
+// Interface for user registration data
 interface UserRegistrationData {
     email: string;
     password: string;
@@ -28,6 +31,7 @@ interface UserRegistrationData {
     terms_accepted: boolean;
 }
 
+// Interface for company registration data
 interface CompanyRegistrationData {
     email: string;
     password: string;
@@ -42,11 +46,7 @@ interface CompanyRegistrationData {
     terms_accepted: boolean;
 }
 
-/**
- * Service handling authentication logic for both Users and Companies.
- * Includes login, registration, and token verification.
- */
-
+// user login
 export const loginUser = async (email: string, password: string, rememberMe: boolean) => {
     // Validate input using Zod
     const validation = loginSchema.safeParse({ email, password, rememberMe });
@@ -116,6 +116,7 @@ export const loginUser = async (email: string, password: string, rememberMe: boo
     return { token, cookieOptions };
 };
 
+// user register
 export const registerUser = async (data: UserRegistrationData) => {
     // Validate data using Zod
     const validation = userRegisterSchema.safeParse(data);
@@ -177,6 +178,7 @@ export const registerUser = async (data: UserRegistrationData) => {
     return { success: true, message: "Registration successful" };
 };
 
+// company login
 export const loginCompany = async (email: string, password: string, rememberMe: boolean) => {
     // Validate input using Zod
     const validation = loginSchema.safeParse({ email, password, rememberMe });
@@ -246,6 +248,7 @@ export const loginCompany = async (email: string, password: string, rememberMe: 
     return { token, cookieOptions };
 };
 
+// company register
 export const registerCompany = async (data: CompanyRegistrationData) => {
     // Validate data using Zod
     const validation = companyRegisterSchema.safeParse(data);
@@ -285,6 +288,7 @@ export const registerCompany = async (data: CompanyRegistrationData) => {
     return { success: true, message: "Registration successful" };
 };
 
+// verify token
 export const verifyToken = async (token: string | undefined) => {
     if (!token) return { loggedIn: false };
 

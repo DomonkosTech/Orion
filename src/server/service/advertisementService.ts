@@ -1,5 +1,6 @@
 import { supabase } from "../../lib/supabaseClient.ts";
 
+// Interface defining the structure for advertisement data
 interface AdvertisementData {
     title: string;
     position: string;
@@ -15,31 +16,33 @@ interface AdvertisementData {
 export const createAdvertisement = async (companyId: number, data: AdvertisementData) => {
     const { title, position, location, hourly_wage, tasks, requirements, is_active, job_description } = data;
 
-    // 1. Validate required fields
+    // 1. Validate required fields to ensure essential information is provided.
     if (!title || !position || !location || !job_description) {
         throw new Error("Please fill in all required fields.");
     }
 
-    // 2. Validate hourly wage
+    // 2. Validate hourly wage to prevent negative values.
     if (hourly_wage && hourly_wage < 0) {
         throw new Error("Hourly wage cannot be negative.");
     }
 
-    // 3. Check advertisement limit (max 3 per company)
-    const { count, error: counterror } = await supabase
-        .from("advertisement")
-        .select("*", { count: "exact", head: true })
-        .eq("is_active", true)
-        .eq("company_id", companyId);
+    // 3. Check if the company has reached its active advertisement limit (max 3).
+    // This check only applies if the new advertisement is intended to be active.
+    if (is_active === true) {
+        const {count, error: countError} = await supabase
+            .from("advertisement")
+            .select("*", {count: "exact", head: true})
+            .eq("is_active", true)
+            .eq("company_id", companyId);
 
+        if (countError) throw countError;
 
-    if (counterror) throw counterror;
-
-    if (count! >= 3) {
-        throw new Error("You have reached the maximum limit of 3 advertisements. Please delete one to create a new one.");
+        if (count! >= 3) {
+            throw new Error("You have reached the maximum limit of 3 advertisements. Please delete one to create a new one.");
+        }
     }
 
-    // 4. Insert the new advertisement
+    // 4. Insert the new advertisement into the database.
     const { data: advertisement, error } = await supabase
         .from("advertisement")
         .insert([
@@ -65,6 +68,7 @@ export const createAdvertisement = async (companyId: number, data: Advertisement
 
 // Get all advertisements for a specific company
 export const getCompanyAdvertisements = async (companyId: number) => {
+    // 1. Fetch advertisements from the database filtered by company ID.
     const { data, error } = await supabase
         .from("advertisement")
         .select("id, title, position, is_active")
@@ -77,6 +81,7 @@ export const getCompanyAdvertisements = async (companyId: number) => {
 
 // Get a single advertisement by ID
 export const getAdvertisementById = async (id: string) => {
+    // 1. Fetch advertisement details, including related company name.
     const { data: advertisement, error } = await supabase
         .from("advertisement")
         .select('id, title, position, location, hourly_wage, tasks, requirements, is_active, created_at, company_id, job_description, click_count, company:companies(name)')
@@ -89,6 +94,7 @@ export const getAdvertisementById = async (id: string) => {
 
 // Update an existing advertisement
 export const updateAdvertisement = async (id: string, companyId: number, data: Partial<AdvertisementData>) => {
+    // 1. Update specific fields of an advertisement.
     const { data: updatedAdvertisement, error } = await supabase
         .from("advertisement")
         .update({
@@ -111,6 +117,7 @@ export const updateAdvertisement = async (id: string, companyId: number, data: P
 
 // Get all active advertisements (for users)
 export const getAllAdvertisements = async () => {
+    // 1. Fetch all advertisements that are currently active.
     const { data: advertisements, error } = await supabase
         .from("advertisement")
         .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
@@ -123,6 +130,7 @@ export const getAllAdvertisements = async () => {
 
 // Get all top active advertisements
 export const getTopAdvertisements = async () => {
+    // 1. Fetch a limited set of active advertisements, ordered by creation date.
     const { data: advertisements, error } = await supabase
         .from("advertisement")
         .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
@@ -136,6 +144,7 @@ export const getTopAdvertisements = async () => {
 
 // get selected jobs
 export const getAdvertisementsByIds = async (ids: number[]) => {
+    // 1. Fetch advertisements whose IDs are in the provided list and are active.
     const { data: advertisements, error } = await supabase
         .from("advertisement")
         .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
@@ -147,8 +156,9 @@ export const getAdvertisementsByIds = async (ids: number[]) => {
     return advertisements;
 }
 
-// update the click number
+// Increment the click count for an advertisement
 export const incrementClickCount = async (id: string) => {
+    // 1. Call a Supabase RPC function to atomically increment the click count.
     const { error } = await supabase.rpc("increment_click_count", {
         ad_id: id
     });
@@ -158,6 +168,7 @@ export const incrementClickCount = async (id: string) => {
 
 // update advertisement status
 export const updateAdvertisementStatus = async (id: string, status: boolean, companyId: number) => {
+    // 1. If activating an advertisement, check the company's active advertisement limit.
     if (status) {
         const { count, error: countError } = await supabase
             .from("advertisement")
@@ -172,6 +183,7 @@ export const updateAdvertisementStatus = async (id: string, status: boolean, com
         }
     }
 
+    // 2. Update the 'is_active' status of the advertisement.
     const { error } = await supabase
         .from("advertisement")
         .update({ is_active: status })
@@ -183,27 +195,32 @@ export const updateAdvertisementStatus = async (id: string, status: boolean, com
 
 // Get all active advertisements (for users)
 export const searchAdvertisements = async (q: string, location: string, position: string, hourly_wage: number, page: number, limit: number) => {
+    // 1. Initialize the base query for active advertisements.
     let query = supabase
         .from("advertisement")
         .select("id,title,position,location,hourly_wage,tasks,requirements,job_description")
         .order("created_at", { ascending: false })
         .eq('is_active', true)
 
+    // 2. Apply filters based on provided search parameters.
     if (q) {
         query = query.ilike("title", `%${q}%`)
     }
     if (location) {
-        query = query.eq("location", location)
+        query = query.ilike("location", `%${location}%`)
     }
     if (position) {
-        query = query.eq("position", position)
+        query = query.ilike("position", `%${position}%`)
     }
     if (hourly_wage) {
         query = query.gte("hourly_wage", hourly_wage)
     }
+
+    // 3. Calculate range for pagination.
     const from = (page - 1) * limit
     const to = from + limit - 1
 
+    // 4. Execute the query with the calculated range.
     const { data: advertisements, error } = await query.range(from, to)
 
     if (error) throw error;
