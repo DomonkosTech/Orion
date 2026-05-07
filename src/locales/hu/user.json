@@ -271,7 +271,10 @@
       "empty": "Még nem jelentkeztél egy hirdetésre sem.",
       "advertisement": "Hirdetés",
       "status": "Státusz",
-      "lastUpdated": "Utolsó frissítés"
+      "lastUpdated": "Utolsó frissítés",
+      "statusSubmitted": "Beküldve",
+      "statusRejected": "Elutasítva",
+      "statusAccepted": "Elfogadva"
     }
   }
 }

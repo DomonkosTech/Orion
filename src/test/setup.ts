@@ -16,16 +16,16 @@ vi.mock('react-i18next', () => ({
     type: '3rdParty',
     init: vi.fn(),
   },
-  Trans: ({ children }: any) => children,
+  Trans: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 // Fix ReferenceError: Event is not defined
 if (typeof window !== 'undefined') {
-    // @ts-ignore
+    // @ts-expect-error jsdom global type mismatch with DOM Event types
     global.Event = window.Event;
-    // @ts-ignore
+    // @ts-expect-error jsdom global type mismatch with DOM Event types
     global.MouseEvent = window.MouseEvent;
-    // @ts-ignore
+    // @ts-expect-error jsdom global type mismatch with DOM Event types
     global.KeyboardEvent = window.KeyboardEvent;
 }
 

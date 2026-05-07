@@ -1,4 +1,4 @@
-import i18n from 'i18next';
+import i18n, { type LanguageDetectorModule } from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import enPublic from './locales/en/public.json';
@@ -17,7 +17,7 @@ import huCompany from './locales/hu/company.json';
 import huComponents from './locales/hu/components.json';
 
 // Custom language detector
-const languageDetector = {
+const languageDetector: LanguageDetectorModule = {
   type: 'languageDetector',
   async: false,
   detect: () => {
@@ -30,7 +30,7 @@ const languageDetector = {
 };
 
 i18n
-  .use(languageDetector as any) // Cast to any to avoid type issues with custom detector without proper types
+  .use(languageDetector)
   .use(initReactI18next)
   .init({
     resources: {

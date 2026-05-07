@@ -8,7 +8,7 @@ import { http, HttpResponse } from 'msw';
 const mockedNavigate = vi.fn();
 
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom') as any;
+  const actual = await vi.importActual<Record<string, unknown>>('react-router-dom');
   return {
     ...actual,
     useNavigate: () => mockedNavigate,

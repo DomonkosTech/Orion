@@ -11,7 +11,7 @@ export function useAuth() {
     const [loading, setLoading] = useState(true);
     const [initials, setInitials] = useState<string>("");
     const [name, setName] = useState<string>(""); //bocsi peti
-    const [userData, setUserData] = useState<any>(null);
+    const [userData, setUserData] = useState<unknown>(null);
 
 
     useEffect(() => {

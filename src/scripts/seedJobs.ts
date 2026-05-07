@@ -100,7 +100,7 @@ async function seed() {
     //================|
 
 
-    const pick = (arr: any[]) => arr[Math.floor(Math.random() * arr.length)];
+    const pick = <T,>(arr: T[]) => arr[Math.floor(Math.random() * arr.length)];
     const generateText = (arr: string[], count: number) => {
         const shuffled = [...arr].sort(() => 0.5 - Math.random());
         return shuffled.slice(0, count).join(". ") + ".";

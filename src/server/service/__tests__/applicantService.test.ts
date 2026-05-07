@@ -1,13 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 // Per-table response data (each test populates what tables return)
-const tableData: Record<string, any[]> = [];
+const tableData: Record<string, unknown[]> = [];
 // Control whether from() returns an error
-const tableErrors: Record<string, any> = {};
+const tableErrors: Record<string, unknown> = {};
+
+type SupabaseResult = { data: unknown; error: unknown };
 
 // Build a thenable chain that mimics supabase query builder
-function makeChain(result: { data: any; error: any }) {
-  const chain: any = {
+function makeChain(result: SupabaseResult) {
+  const chain: Record<string, ReturnType<typeof vi.fn>> = {
     select: vi.fn(() => chain),
     eq: vi.fn(() => chain),
     or: vi.fn(() => chain),
@@ -19,8 +21,10 @@ function makeChain(result: { data: any; error: any }) {
 
   // Make the chain itself thenable so `await supabase.from("t").select().eq()`
   // resolves to { data, error }
-  chain.then = (resolve: any) => Promise.resolve(result).then(resolve);
-  chain.catch = (reject: any) => Promise.resolve(result).catch(reject);
+  (chain as unknown as { then: (resolve: (value: typeof result) => void) => Promise<void> }).then =
+    (resolve: (value: typeof result) => void) => Promise.resolve(result).then(resolve);
+  (chain as unknown as { catch: (reject: (reason: unknown) => void) => Promise<void> }).catch =
+    (reject: (reason: unknown) => void) => Promise.resolve(result).catch(reject);
 
   return chain;
 }
@@ -91,7 +95,7 @@ describe('applicantService', () => {
   describe('getUserApplications', () => {
     it('should return submits from job_applications and works from employees', async () => {
       // Track which tables are requested and return the right data
-      (supabase.from as any).mockImplementation((table: string) => {
+      vi.mocked(supabase.from).mockImplementation((table: string) => {
         if (table === 'job_applications') {
           return makeChain({
             data: [{ id: 1, status: 'submitted', advertisement: { title: 'Dev' } }],
@@ -116,7 +120,7 @@ describe('applicantService', () => {
     });
 
     it('should return empty arrays when no data', async () => {
-      (supabase.from as any).mockImplementation(() =>
+      vi.mocked(supabase.from).mockImplementation(() =>
         makeChain({ data: null, error: null })
       );
 
@@ -132,7 +136,7 @@ describe('applicantService', () => {
   describe('getApplicantsForAdvertisement', () => {
     it('should deny access when ad does not belong to company', async () => {
       // First .from("advertisement") returns null → access denied
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({ data: null, error: null })
       );
 
@@ -142,7 +146,7 @@ describe('applicantService', () => {
     });
 
     it('should return mapped applicants with click_count', async () => {
-      (supabase.from as any).mockImplementation((table: string) => {
+      vi.mocked(supabase.from).mockImplementation((table: string) => {
         if (table === 'advertisement') {
           return makeChain({ data: { id: '1' }, error: null });
         }
@@ -168,7 +172,7 @@ describe('applicantService', () => {
 
   describe('rejectApplication', () => {
     it('should reject an application successfully', async () => {
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({ data: { status: 'submitted', advertisement: { company_id: 1 } }, error: null })
       );
 
@@ -178,7 +182,7 @@ describe('applicantService', () => {
     });
 
     it('should return 404 when application is null', async () => {
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({ data: null, error: null })
       );
 
@@ -188,7 +192,7 @@ describe('applicantService', () => {
     });
 
     it('should return 403 when company does not own the application', async () => {
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({ data: { status: 'submitted', advertisement: { company_id: 2 } }, error: null })
       );
 
@@ -201,7 +205,7 @@ describe('applicantService', () => {
     });
 
     it('should reject when application is not in submitted status', async () => {
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({ data: { status: 'accepted', advertisement: { company_id: 1 } }, error: null })
       );
 
@@ -228,7 +232,7 @@ describe('applicantService', () => {
         user_id: 201,
       };
 
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({ data: applicationData, error: null })
       );
 
@@ -244,7 +248,7 @@ describe('applicantService', () => {
     });
 
     it('should return 404 when application not found', async () => {
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({ data: null, error: null })
       );
 
@@ -254,7 +258,7 @@ describe('applicantService', () => {
     });
 
     it('should return 403 when company does not own the application', async () => {
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({
           data: {
             id: 1,
@@ -275,7 +279,7 @@ describe('applicantService', () => {
     });
 
     it('should reject when application is not in submitted status', async () => {
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({
           data: {
             id: 1,
@@ -297,14 +301,14 @@ describe('applicantService', () => {
 
   describe('getApplicantResumeUrl', () => {
     it('should return signed URL for valid resume access', async () => {
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({
           data: { user_id: 201, advertisement: { company_id: 1 } },
           error: null,
         })
       );
 
-      (supabase.storage.from as any).mockReturnValue({
+      vi.mocked(supabase.storage.from).mockReturnValue({
         list: vi.fn().mockResolvedValue({
           data: [{ name: 'resume.pdf', metadata: { size: 1024 } }],
           error: null,
@@ -324,7 +328,7 @@ describe('applicantService', () => {
     });
 
     it('should return 404 when application not found', async () => {
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({ data: null, error: null })
       );
 
@@ -334,7 +338,7 @@ describe('applicantService', () => {
     });
 
     it('should return 403 when company does not own the application', async () => {
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({
           data: { user_id: 201, advertisement: { company_id: 2 } },
           error: null,
@@ -350,14 +354,14 @@ describe('applicantService', () => {
     });
 
     it('should return 404 when no resume file found in storage', async () => {
-      (supabase.from as any).mockReturnValue(
+      vi.mocked(supabase.from).mockReturnValue(
         makeChain({
           data: { user_id: 201, advertisement: { company_id: 1 } },
           error: null,
         })
       );
 
-      (supabase.storage.from as any).mockReturnValue({
+      vi.mocked(supabase.storage.from).mockReturnValue({
         list: vi.fn().mockResolvedValue({ data: [], error: null }),
         createSignedUrl: vi.fn(),
       });

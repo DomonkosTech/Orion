@@ -36,7 +36,7 @@ describe('ApplicantTrackingSystem Component', () => {
   };
 
   it('should load and display applicants on mount', async () => {
-    (appApi.getApplicantsForAdvertisement as any).mockResolvedValue({
+    vi.mocked(appApi.getApplicantsForAdvertisement).mockResolvedValue({
       success: true,
       applicants: [
         {
@@ -57,7 +57,7 @@ describe('ApplicantTrackingSystem Component', () => {
   });
 
   it('should call accept API and show toast when accept button is clicked', async () => {
-    (appApi.getApplicantsForAdvertisement as any).mockResolvedValue({
+    vi.mocked(appApi.getApplicantsForAdvertisement).mockResolvedValue({
       success: true,
       applicants: [
         {
@@ -68,7 +68,7 @@ describe('ApplicantTrackingSystem Component', () => {
         }
       ]
     });
-    (appApi.updateApplicationStatus as any).mockResolvedValue({ success: true });
+    vi.mocked(appApi.updateApplicationStatus).mockResolvedValue({ success: true });
 
     renderComponent();
 
