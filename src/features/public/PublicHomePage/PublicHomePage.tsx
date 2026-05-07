@@ -175,6 +175,7 @@ function PublicHomePage() {
                             </div>
                             <Button
                                 color="orion-blue"
+                                className={styles.calloutCta}
                                 onClick={() => navigate("/UserLoginPage")}
                             >
                                 {t('featuredJobs.callout.cta')}

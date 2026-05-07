@@ -126,7 +126,7 @@ const ShowJob = () => {
         <div className={styles.pageWrapper}>
             <header className={styles.banner}>
                 <div className={styles.bannerInner}>
-                    <button onClick={() => navigate(-1)} className={styles.backButton}>
+                    <button onClick={() => navigate(-1)} className={styles.backButton} data-testid="show-job-back-btn">
                         <ChevronLeft size={16} /> {t('jobs.show.backToBrowsing')}
                     </button>
                     <BannerKicker>{t('jobs.show.kicker')}</BannerKicker>
@@ -256,7 +256,8 @@ const ShowJob = () => {
                                 variant="primary"
                                 onClick={handleSubmitApplication}
                                 className={styles.applyBtn}
-                                disabled={isSubmitting} // Disable to prevent multiple clicks
+                                disabled={isSubmitting}
+                                data-testid="show-job-apply-btn"
                             >
                                 {isSubmitting ? t('jobs.show.applyingButton') : t('jobs.show.applyButton')}
                             </Button>
@@ -275,7 +276,7 @@ const ShowJob = () => {
                         </div>
 
                         {applicationStatus && (
-                            <div className={styles.statusMsg}>
+                            <div className={styles.statusMsg} data-testid="application-status-msg">
                                 {applicationStatus}
                             </div>
                         )}

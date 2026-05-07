@@ -13,7 +13,8 @@
     "login": "Anmelden",
     "register": "Registrieren",
     "dashboard": "Dashboard",
-    "postJob": "Stelle ausschreiben"
+    "postJob": "Stelle ausschreiben",
+    "terms": "AGB"
   },
   "header": {
     "home": "Startseite",

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
-import { Upload, FileText, X, Info, Trash2, Edit3 } from "lucide-react";
+import { Upload, FileText, X, Info, Trash2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { uploadResume, getUserResume, deleteResume } from "../../../Api/userApi";
 import styles from "./UploadResume.module.css";
@@ -18,7 +18,7 @@ const UploadResume = () => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const navigate = useNavigate();
     const [existingResumeUrl, setExistingResumeUrl] = useState<string | null>(null);
-    const [isReplacing, setIsReplacing] = useState(false);
+
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     useEffect(() => {
@@ -106,7 +106,7 @@ const UploadResume = () => {
                         <p className={styles.subtitle}>{t('uploadResume.subtitle')}</p>
                     </div>
 
-                    {!file && existingResumeUrl && !isReplacing ? (
+                    {!file && existingResumeUrl ? (
                         <div className={styles.premiumCard}>
                             <div className={styles.cardGlow}></div>
                             <div className={styles.cardContent}>
@@ -134,16 +134,9 @@ const UploadResume = () => {
                                     </Button>
                                     
                                     <div className={styles.minorActions}>
-                                        <button 
-                                            onClick={() => setIsReplacing(true)} 
-                                            className={styles.iconAction} 
-                                            title={t('uploadResume.buttons.replace')}
-                                        >
-                                            <Edit3 size={18} style={{marginRight: '8px'}} /> {t('uploadResume.buttons.replace')}
-                                        </button>
-                                        <button 
-                                            onClick={() => setIsDeleteModalOpen(true)} 
-                                            className={styles.iconActionDelete} 
+                                        <button
+                                            onClick={() => setIsDeleteModalOpen(true)}
+                                            className={styles.iconActionDelete}
                                             title={t('uploadResume.buttons.delete')}
                                         >
                                             <Trash2 size={18} style={{marginRight: '8px'}} /> {t('uploadResume.buttons.delete')}
@@ -221,7 +214,7 @@ const UploadResume = () => {
                                 <Button
                                     variant="link"
                                     underline
-                                    onClick={() => isReplacing ? setIsReplacing(false) : navigate(-1)}
+                                    onClick={() => navigate(-1)}
                                 >
                                     {t('uploadResume.buttons.cancel')}
                                 </Button>

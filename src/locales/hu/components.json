@@ -13,7 +13,8 @@
     "login": "Bejelentkezés",
     "register": "Regisztráció",
     "dashboard": "Vezérlőpult",
-    "postJob": "Hirdetés feladása"
+    "postJob": "Hirdetés feladása",
+    "terms": "ÁSZF"
   },
   "header": {
     "home": "Kezdőlap",

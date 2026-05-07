@@ -1,7 +1,7 @@
 # Orion — AI-Powered Job Search & Recruitment Platform
 
 [![Website](https://img.shields.io/badge/website-orion--jobs.eu-4B8BBE)](https://orion-jobs.eu/)
-[![Documentation](https://img.shields.io/badge/docs-PDF_(60+_pages)-informational)](./docs/Orion_documentation.pdf)
+[![Documentation](https://img.shields.io/badge/docs-60_pages_(PDF,_in_/docs)-informational)](./docs/Orion_documentation.pdf)
 
 Orion connects job seekers and companies with AI-driven job matching and a built-in Applicant Tracking System (ATS).
 

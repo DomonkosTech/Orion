@@ -29,10 +29,12 @@ const ListJobs: React.FC = () => {
     const { t } = useTranslation('user');
     const PAGE_SIZE = 21;
     const [jobs, setJobs] = useState<Job[]>([]);
+    const [aiJobs, setAiJobs] = useState<Job[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [page, setPage] = useState<number>(1);
     const [totalCount, setTotalCount] = useState<number>(0);
+    const [aiTotalCount, setAiTotalCount] = useState<number>(0);
     const [isAISearchActive, setIsAISearchActive] = useState(false);
     const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
 
@@ -73,11 +75,11 @@ const ListJobs: React.FC = () => {
             const numericWage = parseInt(wage) || 2000;
             const response = await OrionAIApi(input, numericWage);
             if (response.success && Array.isArray(response.data)) {
-                setJobs(response.data);
-                setTotalCount(response.data.length);
+                setAiJobs(response.data);
+                setAiTotalCount(response.data.length);
             } else {
-                setJobs([]);
-                setTotalCount(0);
+                setAiJobs([]);
+                setAiTotalCount(0);
             }
         } catch (err) {
             console.error(err);
@@ -194,12 +196,18 @@ const ListJobs: React.FC = () => {
             isAI: false
         });
         setIsAISearchActive(false);
+        setAiJobs([]);
+        setAiTotalCount(0);
         fetchJobs("", "", "", "", 1);
     };
 
     const handleLoadMore = () => {
         setPage((prev) => prev + 1);
     };
+
+    // Derive displayed jobs based on current mode so each mode remembers its results
+    const displayedJobs = isAISearchActive ? aiJobs : jobs;
+    const displayedTotalCount = isAISearchActive ? aiTotalCount : totalCount;
 
     // Determine if we should show the "Load More" button
     // If totalCount is available, use it.
@@ -224,9 +232,9 @@ const ListJobs: React.FC = () => {
                                 </Trans>
                             </h1>
                             <p className={styles.heroSubtitle}>
-                                {totalCount > 0 ? (
-                                    <Trans t={t} i18nKey={appliedFilters.isAI ? "jobs.list.ai.subtitle" : "jobs.list.subtitle"} values={{ count: totalCount }}>
-                                        Fedezzen fel <strong>{totalCount}</strong> nyitott pozíciót vezető cégeknél.
+                                {displayedTotalCount > 0 ? (
+                                    <Trans t={t} i18nKey={isAISearchActive ? "jobs.list.ai.subtitle" : "jobs.list.subtitle"} values={{ count: displayedTotalCount }}>
+                                        Fedezzen fel <strong>{displayedTotalCount}</strong> nyitott pozíciót vezető cégeknél.
                                     </Trans>
                                 ) : (
                                     <Trans t={t} i18nKey="jobs.list.subtitleDefault">
@@ -261,25 +269,25 @@ const ListJobs: React.FC = () => {
                         </div>
                     )}
 
-                    {loading && appliedFilters.isAI ? (
+                    {loading && isAISearchActive ? (
                         <AILoadingState />
                     ) : (
                         <>
-                            {!loading && !error && jobs.length === 0 && (
+                            {!loading && !error && displayedJobs.length === 0 && (
                                 <EmptyState onClear={clearFilters} />
                             )}
 
                             {!error && (
                                 <>
-                                    {jobs.length > 0 && (
+                                    {displayedJobs.length > 0 && (
                                         <div className={styles.grid}>
-                                            {jobs.map((job) => (
+                                            {displayedJobs.map((job) => (
                                                 <JobCard
                                                     key={job.id}
                                                     job={job}
                                                     onOpen={() => handleshowClick(job.id)}
                                                     formatCurrency={formatCurrency}
-                                                    isAI={appliedFilters.isAI}
+                                                    isAI={isAISearchActive}
                                                     isFavorite={favoriteIds.includes(job.id)}
                                                     onFavoriteAdded={handleFavoriteAdded}
                                                     onFavoriteRemoved={handleFavoriteRemoved}
@@ -288,7 +296,7 @@ const ListJobs: React.FC = () => {
                                             {loading && [1, 2, 3].map((n) => <SkeletonCard key={n} />)}
                                         </div>
                                     )}
-                                    {jobs.length === 0 && loading && (
+                                    {displayedJobs.length === 0 && loading && (
                                         <div className={styles.grid}>
                                             {[1, 2, 3, 4, 5, 6].map((n) => <SkeletonCard key={n} />)}
                                         </div>

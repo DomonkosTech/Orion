@@ -1,9 +1,10 @@
 .pageWrapper {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    height: calc(100vh - 76px);
     box-sizing: border-box;
     background: #f8fafc;
+    overflow: hidden;
 }
 
 .container {

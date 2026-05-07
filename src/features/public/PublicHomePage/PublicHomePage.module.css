@@ -336,6 +336,24 @@
     max-width: 50ch;
 }
 
+.calloutCta {
+    background: white !important;
+    color: var(--orion-blue-dark) !important;
+    font-weight: 700;
+    padding: 0.85rem 2rem;
+    border-radius: 12px;
+    font-size: 1.05rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transition: all 0.25s ease;
+}
+
+.calloutCta:hover {
+    background: #f1f5f9 !important;
+    color: var(--orion-blue) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {
     .featuresGrid { grid-template-columns: 1fr; }

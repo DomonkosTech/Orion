@@ -86,7 +86,7 @@ export const getEmployees = async (companyId: number) => {
         .from("employees")
         .select("*, users( email, lname, fname)")
         .eq("company_id", companyId)
-        .order("hire_date", { ascending: false });
+        .order("position");
 
     if (error) throw error;
     return employees;

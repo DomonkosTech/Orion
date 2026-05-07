@@ -66,6 +66,15 @@ const Footer = () => {
 
             <div className={styles.footerBottom}>
                 {t('footer.copyright', { year: currentYear })}
+                {' | '}
+                <a
+                    href="https://nlabffngmifszpwrqetx.supabase.co/storage/v1/object/sign/ASZF/ASZF_Orion.pdf?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV84NjhlOTgyNy02YjIwLTQ5YWUtYWIwYi0yY2UyMzNmYTJkYTAiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBU1pGL0FTWkZfT3Jpb24ucGRmIiwiaWF0IjoxNzc3OTI2MTA0LCJleHAiOjE4MDk0NjIxMDR9._Gnn-msavH9Y3jLilj5dC_2ktDxDZiaE7z2Ft22K7A8"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.footerLink}
+                >
+                    {t('footer.terms')}
+                </a>
             </div>
         </footer>
     );

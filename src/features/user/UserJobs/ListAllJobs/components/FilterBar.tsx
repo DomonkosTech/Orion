@@ -29,17 +29,17 @@ const FilterBar: React.FC<Props> = (props) => {
     const debouncedPosition = useDebounce(props.positionFilter, 500);
     const debouncedMinWage = useDebounce(props.minWage, 500);
 
-    // Trigger search when any debounced filter changes
+    // Trigger search when any debounced filter changes (normal mode only — AI mode uses explicit submit)
     useEffect(() => {
-        // Skip the initial mount as ListJobs already fetches data on load
         if (isFirstRender.current) {
             isFirstRender.current = false;
             return;
         }
 
-        // Trigger the onSubmit handler (which is handleSearch in ListJobs)
-        props.onSubmit(undefined as unknown as React.FormEvent);
-    }, [debouncedSearchTerm, debouncedLocation, debouncedPosition, debouncedMinWage]);
+        if (!props.isAISearchActive) {
+            props.onSubmit(undefined as unknown as React.FormEvent);
+        }
+    }, [debouncedSearchTerm, debouncedLocation, debouncedPosition, debouncedMinWage, props.isAISearchActive]);
 
     const hasActiveFilters = Boolean(
         props.searchTerm ||

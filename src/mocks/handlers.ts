@@ -106,4 +106,33 @@ export const handlers = [
     const { status } = await request.json() as any;
     return HttpResponse.json({ success: true, status });
   }),
+
+  // --- JOB DETAIL handlers ---
+  http.get('*/api/advertisements/:id', ({ params }) => {
+    const { id } = params;
+    return HttpResponse.json({
+      success: true,
+      advertisement: {
+        id: Number(id),
+        title: 'Teszt Állás',
+        position: 'Fejlesztő',
+        location: 'Budapest',
+        hourly_wage: '3500',
+        tasks: 'Feladatok leírása',
+        requirements: 'Követelmények',
+        job_description: 'Részletes leírás',
+        company_id: 1,
+        is_active: true,
+        company: { name: 'Teszt Kft.' },
+      },
+    });
+  }),
+
+  http.patch('*/api/advertisements/:id/views', () => {
+    return HttpResponse.json({ success: true });
+  }),
+
+  http.post('*/api/applications', () => {
+    return HttpResponse.json({ success: true });
+  }),
 ];
