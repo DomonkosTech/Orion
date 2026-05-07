@@ -1,7 +1,8 @@
 # Orion — Diákmunka közvetítő platform
 
 > # 🌐 [orion-jobs.eu](https://orion-jobs.eu/) ← kattints a megnyitáshoz!
-> # 📄 [Teljes dokumentáció (60 oldalas PDF)](./docs/Orion_documentation.pdf) ← kattints a megnyitáshoz!
+> # 📄 [Teljes dokumentáció](./docs/Orion_documentation.pdf) ← kattints a megnyitáshoz!
+> # 🗄️ [Adatbázis](./docs/adatbazis.jpeg) ← kattints a megnyitáshoz!
 
 Az Orion egy modern diákmunka közvetítő platform, amely mesterséges intelligenciával segíti az álláskereső diákok és a munkáltatók egymásra találását.
 
