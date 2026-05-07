@@ -10,11 +10,18 @@ Az Orion egy modern diákmunka közvetítő platform, amely mesterséges intelli
 
 Töltsd le a legfrissebb **Orion-Setup.exe** fájlt a [kiadások oldaláról](../../releases), majd futtasd. A telepítő:
 
-- Az Oriont a `%LOCALAPPDATA%\Programs\Orion` mappába másolja
+- Az Oriont a `C:\Orion` mappába másolja
 - Létrehozza a Start menü és az asztal parancsikonjait
-- Első indításkor automatikusan telepíti a Node.js-t, a Pythont és az összes projektfüggőséget
 
-A telepítés után be kell állítanod a saját `.env` fájlodat (lásd: [Környezeti változók](#környezeti-változók)).
+> **Figyelem:** A `start.bat` jelenleg nem működik megfelelően — **nem telepíti automatikusan** a Node.js-t, Pythont és a projektfüggőségeket. Ezeket kézzel kell telepítened:
+> 1. **[Node.js 22.x](https://nodejs.org/)** letöltése és telepítése
+> 2. **[Python 3.10+](https://www.python.org/)** letöltése és telepítése
+> 3. Függőségek telepítése parancssorból: `npm install`
+> 4. Python virtuális környezet és csomagok: `python -m venv .venv` majd `pip install -r requirements.txt`
+
+A telepítő **nem tartalmazza** az `.env` fájlt, mert az érzékeny adatokat (Supabase kulcsok, JWT titok, e-mail jelszavak) tartalmaz, amelyek kiszivárgása jelentős anyagi kárt okozhatna. Ha szükséged van az `.env` fájlra a projekt futtatásához, írj egy e-mailt az alábbi címre:
+
+**stieber.domonkos@gmail.com**
 
 > A telepítő az [Inno Setup](https://jrsoftware.org/isinfo.php) segítségével készül. Az újbóli összeállításhoz futtasd a `.\installer\Build-Installer.ps1` parancsot.
 
