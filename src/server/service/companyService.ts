@@ -2,6 +2,7 @@ import { supabase } from "../../lib/supabaseClient.ts";
 import { companyUpdateProfileSchema } from "../../validation/Validation.ts";
 import { createSystemMessage } from "./systemmessageService.ts";
 
+// Interface for company profile data, allowing partial updates
 interface CompanyProfileData {
     name?: string;
     phone_number?: string;
@@ -15,7 +16,7 @@ interface CompanyProfileData {
 
 // Fetch company profile data by ID
 export const getCompanyProfile = async (companyId: number) => {
-    // Fetch basic company data from the database
+    // 1. Fetch basic company data from the 'companies' table
     const { data: company, error } = await supabase
         .from("companies")
         .select("*")
@@ -28,13 +29,13 @@ export const getCompanyProfile = async (companyId: number) => {
 
 // Update company profile data
 export const updateCompanyProfile = async (companyId: number, data: CompanyProfileData) => {
-    // Zod validation
+    // 1. Validate input data using Zod schema for data integrity
     const validation = companyUpdateProfileSchema.safeParse(data);
     if (!validation.success) {
         throw new Error(validation.error.errors[0].message);
     }
 
-    // Update specific fields in the companies table
+    // 2. Update specific fields in the 'companies' table
     const { data: updatedCompany, error } = await supabase
         .from("companies")
         .update({
@@ -57,8 +58,7 @@ export const updateCompanyProfile = async (companyId: number, data: CompanyProfi
 
 // Get company stats
 export const getCompanyStats = async (companyId: number) => {
-
-    // get company stats from the database using the RPC function
+    // 1. Get company statistics using a Supabase RPC function
     const { data: stats, error } = await supabase
         .rpc('get_company_dashboard_stats', { target_company_id: companyId });
 
@@ -66,7 +66,7 @@ export const getCompanyStats = async (companyId: number) => {
         console.error("error getting company stats:", error);
     }
 
-    // get last 4 job applications from the database
+    // 2. Get the last 4 job applications for the company
     const { data: lastApplications, error: err } = await supabase
         .from("job_applications")
         .select(`last_updated, users (fname, lname), advertisement!inner (title,company_id)`)
@@ -77,11 +77,11 @@ export const getCompanyStats = async (companyId: number) => {
     if (err) throw err;
 
     return { stats, lastApplications };
-
 }
 
 // show employees
 export const getEmployees = async (companyId: number) => {
+    // 1. Fetch employee records from the 'employees' table
     const { data: employees, error: error } = await supabase
         .from("employees")
         .select("*, users( email, lname, fname)")
@@ -94,20 +94,28 @@ export const getEmployees = async (companyId: number) => {
 
 // delete employee
 export const deleteEmployee = async (employeeId: number, companyId: number) => {
+    // 1. Delete the employee record from the 'employees' table
     const { data, error } = await supabase
         .from("employees")
         .delete()
-        .eq("id", employeeId)
-        .eq("company_id", companyId)
-        .select('*')
+        .eq("id", employeeId) // Match by employee ID
+        .eq("company_id", companyId) // Ensure it belongs to the correct company
+        .select('*') // Select the deleted record to return it
 
     if (error) throw error
 
+    // 2. Check if an employee was actually found and deleted
     if (!data || data.length === 0) {
         throw new Error("Employee not found")
     }
 
-    createSystemMessage(data[0].user_id, 'Munkaviszony megszűnése!', `Tájékoztatjuk, hogy partnercégünknél a(z) ${data[0].position} pozícióban fennálló munkaviszonya megszűnt. Amennyiben szeretné, segítünk új álláslehetőséget találni.`, 'USER')
+    // 3. Create a system message for the user whose employment was terminated
+    createSystemMessage(
+        data[0].user_id,
+        'Munkaviszony megszűnése!',
+        `Tájékoztatjuk, hogy partnercégünknél a(z) ${data[0].position} pozícióban fennálló munkaviszonya megszűnt. Amennyiben szeretné, segítünk új álláslehetőséget találni.`,
+        'USER'
+    )
 
     return { success: true, deletedEmployee: data[0] }
 }
