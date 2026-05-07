@@ -33,8 +33,7 @@ router.post("/OrionAI", async (req, res) => {
             return res.json({ success: true, data: [] });
         }
         const advertisements = await getAdvertisementsByIds(result)
-        console.log(advertisements);
-        
+
         return res.json({ success: true, data: advertisements });
 
     }
