@@ -1,9 +1,9 @@
-# Orion — MI-alapú álláskeresési és toborzási platform
+# Orion — Diákmunka közvetítő platform
 
-[![Weboldal](https://img.shields.io/badge/weboldal-orion--jobs.eu-4B8BBE)](https://orion-jobs.eu/)
-[![Dokumentáció](https://img.shields.io/badge/dokumentáció-60_oldal_(PDF,_/docs_mappában)-informational)](./docs/Orion_documentation.pdf)
+> # 🌐 [orion-jobs.eu](https://orion-jobs.eu/)
+> # 📄 [Teljes dokumentáció (60 oldalas PDF)](./docs/Orion_documentation.pdf)
 
-Az Orion mesterséges intelligenciával támogatott állásközvetítéssel és beépített jelentkezőkövető rendszerrel (ATS) köti össze az álláskeresőket és a cégeket.
+Az Orion egy modern diákmunka közvetítő platform, amely mesterséges intelligenciával segíti az álláskereső diákok és a munkáltatók egymásra találását.
 
 ## Gyors telepítés (Windows)
 
