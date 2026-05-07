@@ -253,7 +253,10 @@
       "empty": "Sie haben sich noch auf keine Anzeigen beworben.",
       "advertisement": "Anzeige",
       "status": "Status",
-      "lastUpdated": "Zuletzt aktualisiert"
+      "lastUpdated": "Zuletzt aktualisiert",
+      "statusSubmitted": "Eingereicht",
+      "statusRejected": "Abgelehnt",
+      "statusAccepted": "Akzeptiert"
     }
   }
 }

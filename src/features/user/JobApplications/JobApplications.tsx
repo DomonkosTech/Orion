@@ -141,7 +141,7 @@ const JobApplications = () => {
                                                 <div className={`${styles.infoBlock} ${styles.centeredInfo}`}>
                                                     <span className={styles.infoLabel}>{t('jobApplications.submissions.status')}</span>
                                                     <span className={`${styles.statusBadge} ${statusClass}`}>
-                                                        {submit.status}
+                                                        {submit.status === 'rejected' ? t('jobApplications.submissions.statusRejected') : t('jobApplications.submissions.statusSubmitted')}
                                                     </span>
                                                 </div>
 

@@ -271,7 +271,10 @@
       "empty": "You haven't applied for any ads yet.",
       "advertisement": "Ad",
       "status": "Status",
-      "lastUpdated": "Last Updated"
+      "lastUpdated": "Last Updated",
+      "statusSubmitted": "Submitted",
+      "statusRejected": "Rejected",
+      "statusAccepted": "Accepted"
     }
   }
 }

@@ -1,7 +1,7 @@
 #define MyAppName "Orion"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "Domonkos"
-#define MyAppURL "https://orion-jobs.eu/"
+#define MyAppURL "https://github.com/"
 #define MyAppExeName "start.bat"
 
 #ifndef RepoRoot
@@ -16,7 +16,7 @@ AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
-DefaultDirName={localappdata}\Programs\{#MyAppName}
+DefaultDirName=C:\Orion
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 InfoBeforeFile={#RepoRoot}\installer\installer-notes.txt
@@ -26,7 +26,7 @@ Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
 ArchitecturesInstallIn64BitMode=x64compatible
-PrivilegesRequired=lowest
+PrivilegesRequired=admin
 UninstallDisplayIcon={app}\{#MyAppExeName}
 
 [Languages]

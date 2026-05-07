@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useTranslation, Trans } from "react-i18next";
 import styles from "./ListJobs.module.css";
 
@@ -15,6 +15,10 @@ import BannerKicker from "../../../../components/layout/BannerKicker/BannerKicke
 import Button from "../../../../components/ui/Button/Button.tsx";
 import AILoadingState from "./components/AILoadingState.tsx";
 
+// sessionStorage keys for persisting UI state across back-navigation
+const SS_SCROLL_Y = "orion_listjobs_scroll";
+const SS_PAGES = "orion_listjobs_pages";
+const SS_AI_CACHE = "orion_ai_cache";
 
 // Helper for formatting currency
 const formatCurrency = (amount: number) => {
@@ -28,15 +32,36 @@ const formatCurrency = (amount: number) => {
 const ListJobs: React.FC = () => {
     const { t } = useTranslation('user');
     const PAGE_SIZE = 21;
+    const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+
     const [jobs, setJobs] = useState<Job[]>([]);
     const [aiJobs, setAiJobs] = useState<Job[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
-    const [page, setPage] = useState<number>(1);
     const [totalCount, setTotalCount] = useState<number>(0);
     const [aiTotalCount, setAiTotalCount] = useState<number>(0);
-    const [isAISearchActive, setIsAISearchActive] = useState(false);
     const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
+
+    // Initialize filters from URL params so back-navigation restores search state
+    const [searchTerm, setSearchTerm] = useState<string>(() => searchParams.get("q") || "");
+    const [locationFilter, setLocationFilter] = useState<string>(() => searchParams.get("location") || "");
+    const [positionFilter, setPositionFilter] = useState<string>(() => searchParams.get("position") || "");
+    const [minWage, setMinWage] = useState<string>(() => searchParams.get("wage") || "");
+    const [isAISearchActive, setIsAISearchActive] = useState(() => searchParams.get("ai") === "true");
+    const [page, setPage] = useState<number>(() => {
+        const p = parseInt(searchParams.get("page") || "1", 10);
+        return Number.isFinite(p) && p > 0 ? p : 1;
+    });
+
+    // Applied filters state to ensure pagination uses the same filters as the search
+    const [appliedFilters, setAppliedFilters] = useState({
+        searchTerm: searchParams.get("q") || "",
+        locationFilter: searchParams.get("location") || "",
+        positionFilter: searchParams.get("position") || "",
+        minWage: searchParams.get("wage") || "",
+        isAI: searchParams.get("ai") === "true"
+    });
 
     const handleFavoriteAdded = (jobId: number) => {
         setFavoriteIds((prev) => (prev.includes(jobId) ? prev : [...prev, jobId]));
@@ -46,25 +71,12 @@ const ListJobs: React.FC = () => {
         setFavoriteIds((prev) => prev.filter((id) => id !== jobId));
     };
 
-    // Filters
-    const [searchTerm, setSearchTerm] = useState<string>("");
-    const [locationFilter, setLocationFilter] = useState<string>("");
-    const [positionFilter, setPositionFilter] = useState<string>("");
-    const [minWage, setMinWage] = useState<string>("");
-
-    // Applied filters state to ensure pagination uses the same filters as the search
-    const [appliedFilters, setAppliedFilters] = useState({
-        searchTerm: "",
-        locationFilter: "",
-        positionFilter: "",
-        minWage: "",
-        isAI: false
-    });
-
-    const navigate = useNavigate();
-
     // Navigation handlers
     const handleshowClick = (adId: number) => {
+        sessionStorage.setItem(SS_SCROLL_Y, String(window.scrollY));
+        if (!isAISearchActive) {
+            sessionStorage.setItem(SS_PAGES, String(page));
+        }
         navigate(`/job/show/${adId}`);
     };
 
@@ -77,6 +89,13 @@ const ListJobs: React.FC = () => {
             if (response.success && Array.isArray(response.data)) {
                 setAiJobs(response.data);
                 setAiTotalCount(response.data.length);
+                // Cache results so back-navigation doesn't re-trigger AI processing
+                const cacheKey = `${input}::${wage}`;
+                const aiCache = JSON.parse(sessionStorage.getItem(SS_AI_CACHE) || "{}");
+                aiCache[cacheKey] = { results: response.data, timestamp: Date.now() };
+                try {
+                    sessionStorage.setItem(SS_AI_CACHE, JSON.stringify(aiCache));
+                } catch { /* storage full — ignore */ }
             } else {
                 setAiJobs([]);
                 setAiTotalCount(0);
@@ -143,15 +162,90 @@ const ListJobs: React.FC = () => {
         }
     };
 
-    // Initial fetch
+    // Track whether we're restoring a previous session (for scroll restoration)
+    const isRestoring = useRef(false);
+
+    // Initial fetch — restore previous search from URL params if present
     useEffect(() => {
-        fetchJobs();
         fetchFavorites();
+
+        const isAI = searchParams.get("ai") === "true";
+        const q = searchParams.get("q") || "";
+        const loc = searchParams.get("location") || "";
+        const pos = searchParams.get("position") || "";
+        const wage = searchParams.get("wage") || "";
+
+        if (isAI || q || loc || pos || wage) {
+            isRestoring.current = true;
+
+            if (isAI) {
+                // Check sessionStorage cache to avoid re-processing the AI query
+                const cacheKey = `${q}::${wage}`;
+                const raw = sessionStorage.getItem(SS_AI_CACHE);
+                const aiCache = raw ? JSON.parse(raw) : {};
+                const cached = aiCache[cacheKey];
+
+                if (cached?.results?.length) {
+                    setAiJobs(cached.results);
+                    setAiTotalCount(cached.results.length);
+                    setLoading(false);
+                } else {
+                    fetchAIJobs(q, wage);
+                }
+            } else {
+                // Re-fetch all previously loaded pages in parallel
+                const savedPages = parseInt(sessionStorage.getItem(SS_PAGES) || "1", 10);
+                const safePages = Number.isFinite(savedPages) && savedPages > 0 ? savedPages : 1;
+
+                setLoading(true);
+                const promises = [];
+                for (let p = 1; p <= safePages; p++) {
+                    promises.push(getAdvertisements(q, loc, pos, wage, p, PAGE_SIZE));
+                }
+
+                Promise.all(promises).then((results) => {
+                    const allJobs: Job[] = [];
+                    for (const r of results) {
+                        if (r.success && r.advertisements) {
+                            allJobs.push(...r.advertisements);
+                        }
+                    }
+                    setJobs(allJobs);
+                    setTotalCount(Number(results[0]?.totalCount) || allJobs.length);
+                    setPage(safePages);
+                    setLoading(false);
+                }).catch((err) => {
+                    console.error(err);
+                    setError(err instanceof Error ? err.message : "Ismeretlen hiba.");
+                    setLoading(false);
+                });
+            }
+        } else {
+            fetchJobs();
+        }
     }, []);
 
-    // Load more when page increases
+    // Restore scroll position after the restored jobs are rendered
+    useLayoutEffect(() => {
+        if (isRestoring.current && !loading && (jobs.length > 0 || aiJobs.length > 0)) {
+            const savedY = sessionStorage.getItem(SS_SCROLL_Y);
+            if (savedY) {
+                const y = parseInt(savedY, 10);
+                if (Number.isFinite(y) && y > 0) {
+                    requestAnimationFrame(() => {
+                        window.scrollTo(0, y);
+                    });
+                }
+                sessionStorage.removeItem(SS_SCROLL_Y);
+                sessionStorage.removeItem(SS_PAGES);
+            }
+            isRestoring.current = false;
+        }
+    }, [loading, jobs.length, aiJobs.length]);
+
+    // Load more when page increases (skip during restoration — pages already fetched in parallel)
     useEffect(() => {
-        if (page > 1 && !appliedFilters.isAI) {
+        if (page > 1 && !appliedFilters.isAI && !isRestoring.current) {
             fetchJobs(
                 appliedFilters.searchTerm,
                 appliedFilters.locationFilter,
@@ -173,7 +267,16 @@ const ListJobs: React.FC = () => {
             minWage,
             isAI: isAISearchActive
         });
-        
+
+        // Persist search state to URL so back-navigation restores it
+        const params: Record<string, string> = {};
+        if (isAISearchActive) params.ai = "true";
+        if (searchTerm) params.q = searchTerm;
+        if (locationFilter) params.location = locationFilter;
+        if (positionFilter) params.position = positionFilter;
+        if (minWage) params.wage = minWage;
+        setSearchParams(params, { replace: true });
+
         if (isAISearchActive) {
             fetchAIJobs(searchTerm, minWage);
         } else {
@@ -198,11 +301,22 @@ const ListJobs: React.FC = () => {
         setIsAISearchActive(false);
         setAiJobs([]);
         setAiTotalCount(0);
+        setSearchParams({}, { replace: true });
+        sessionStorage.removeItem(SS_SCROLL_Y);
+        sessionStorage.removeItem(SS_PAGES);
+        sessionStorage.removeItem(SS_AI_CACHE);
         fetchJobs("", "", "", "", 1);
     };
 
     const handleLoadMore = () => {
-        setPage((prev) => prev + 1);
+        const nextPage = page + 1;
+        setPage(nextPage);
+        const params: Record<string, string> = {};
+        for (const [key, value] of searchParams.entries()) {
+            params[key] = value;
+        }
+        params.page = String(nextPage);
+        setSearchParams(params, { replace: true });
     };
 
     // Derive displayed jobs based on current mode so each mode remembers its results

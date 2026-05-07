@@ -12,7 +12,7 @@ export const handlers = [
   }),
 
   http.post('*/api/auth/login', async ({ request }) => {
-    const { email } = await request.json() as any;
+    const { email } = await request.json() as { email?: string };
     if (email === 'error@example.com') {
       return HttpResponse.json({ success: false, error: 'Hibás jelszó' }, { status: 401 });
     }
@@ -58,7 +58,7 @@ export const handlers = [
   }),
 
   http.post('*/api/OrionAI', async ({ request }) => {
-    const { userinput } = await request.json() as any;
+    const { userinput } = await request.json() as { userinput?: string };
     return HttpResponse.json({
       success: true,
       data: [
@@ -103,7 +103,7 @@ export const handlers = [
   }),
 
   http.patch('*/api/applications/:id/status', async ({ request }) => {
-    const { status } = await request.json() as any;
+    const { status } = await request.json() as { status?: string };
     return HttpResponse.json({ success: true, status });
   }),
 

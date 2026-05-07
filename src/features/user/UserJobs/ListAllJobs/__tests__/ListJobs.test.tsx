@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import ListJobs from '../ListJobs';
 import * as adApi from '../../../../../Api/advertisementApi';
 
@@ -20,16 +20,16 @@ describe('ListJobs Component', () => {
     vi.clearAllMocks();
   });
 
-  const renderComponent = () => {
+  const renderComponent = (initialRoute = '/listjobs') => {
     return render(
-      <BrowserRouter>
+      <MemoryRouter initialEntries={[initialRoute]}>
         <ListJobs />
-      </BrowserRouter>
+      </MemoryRouter>
     );
   };
 
   it('should load and display standard jobs on mount', async () => {
-    (adApi.getAdvertisements as any).mockResolvedValue({
+    vi.mocked(adApi.getAdvertisements).mockResolvedValue({
       success: true,
       advertisements: [
         { id: 1, title: 'Job 1', position: 'Pos 1', location: 'Loc 1', hourly_wage: 3000 },
@@ -46,8 +46,8 @@ describe('ListJobs Component', () => {
   });
 
   it('should switch to AI search when toggled and submitted', async () => {
-    (adApi.getAdvertisements as any).mockResolvedValue({ success: true, advertisements: [], totalCount: 0 });
-    (adApi.OrionAI as any).mockResolvedValue({
+    vi.mocked(adApi.getAdvertisements).mockResolvedValue({ success: true, advertisements: [], totalCount: 0 });
+    vi.mocked(adApi.OrionAI).mockResolvedValue({
       success: true,
       data: [{ id: 101, title: 'AI Job', position: 'AI Pos', location: 'Remote', hourly_wage: 5000 }]
     });
@@ -68,7 +68,7 @@ describe('ListJobs Component', () => {
   });
 
   it('should trigger search automatically after debouncing when typing', async () => {
-    (adApi.getAdvertisements as any).mockResolvedValue({ success: true, advertisements: [], totalCount: 0 });
+    vi.mocked(adApi.getAdvertisements).mockResolvedValue({ success: true, advertisements: [], totalCount: 0 });
 
     renderComponent();
 
