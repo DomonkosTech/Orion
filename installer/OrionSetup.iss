@@ -1,7 +1,7 @@
 #define MyAppName "Orion"
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "Domonkos"
-#define MyAppURL "https://github.com/"
+#define MyAppURL "https://orion-jobs.eu/"
 #define MyAppExeName "start.bat"
 
 #ifndef RepoRoot

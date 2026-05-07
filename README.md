@@ -1,14 +1,31 @@
 # Orion — AI-Powered Job Search & Recruitment Platform
 
+[![Website](https://img.shields.io/badge/website-orion--jobs.eu-4B8BBE)](https://orion-jobs.eu/)
+[![Documentation](https://img.shields.io/badge/docs-PDF_(60+_pages)-informational)](./docs/Orion_documentation.pdf)
+
 Orion connects job seekers and companies with AI-driven job matching and a built-in Applicant Tracking System (ATS).
 
-## Prerequisites
+## Quick Install (Windows)
+
+Download the latest **Orion-Setup.exe** from the [releases page](../../releases) and run it. The installer:
+
+- Copies Orion to `%LOCALAPPDATA%\Programs\Orion`
+- Creates Start Menu and desktop shortcuts
+- On first launch, automatically installs Node.js, Python, and all project dependencies
+
+After installation, you will need to configure your own `.env` file (see [Environment Variables](#environment-variables)).
+
+> The installer is built with [Inno Setup](https://jrsoftware.org/isinfo.php). To rebuild it yourself, run `.\installer\Build-Installer.ps1`.
+
+## Manual Setup (Developers)
+
+### Prerequisites
 
 - **Node.js** 22.x (the project uses npm 10.x)
 - **Python** 3.10+ (for the OrionAI recommendation engine)
 - A **Supabase** project (used as the database and realtime backend)
 
-## Installation
+### Installation
 
 ```bash
 # 1. Clone and install dependencies
@@ -29,6 +46,19 @@ cp .env.example .env
 npm run dev        # Vite dev server on :5173
 npm run server     # Express API on :4000
 ```
+
+### Environment Variables
+
+Copy `.env.example` to `.env` and fill in every field. Required variables:
+
+| Variable | Description |
+|---|---|
+| `ENCRYPTION_KEY` | AES encryption key for sensitive data |
+| `JWT_SECRET` | Secret for signing JWT tokens |
+| `EMAIL` | Email address for system notifications |
+| `EMAIL_PASSWORD` | App password for the email account |
+| `SUPABASE_SERVICE_KEY` | Supabase service role key |
+| `SUPABASE_URL` | Your Supabase project URL |
 
 ## Basic Usage
 
@@ -59,6 +89,3 @@ The app supports three languages (English, German, Hungarian) and three role mod
 
 **Python script not found** — Run `npm run OrionAI` directly to check if `.venv` is set up correctly.
 
-## Full Documentation
-
-For architecture diagrams, database schema, API reference, and deployment guides, see the [Orion Documentation](./docs/Orion_documentation.pdf) (PDF, 60+ pages).
