@@ -41,7 +41,10 @@ const ShowEmployees = () => {
             try {
                 const data = await getEmployees();
                 if (data.success) {
-                    setEmployees(data.employees);
+                    const sorted = [...data.employees].sort((a, b) =>
+                        a.position.localeCompare(b.position)
+                    );
+                    setEmployees(sorted);
                 }
             } catch (error) {
                 console.error("Error fetching employees:", error);
